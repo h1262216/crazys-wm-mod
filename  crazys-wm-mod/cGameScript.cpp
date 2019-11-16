@@ -17,12 +17,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "cGameScript.h"
-#include "cChoiceMessage.h"
+#include "interface/cChoiceMessage.h"
 #include "src/buildings/cBrothel.h"
 #include "GameFlags.h"
 #include "cGirls.h"
 #include "cInventory.h"
-#include "cWindowManager.h"
+#include "interface/cWindowManager.h"
 #include "cGangs.h"
 #include "cScriptUtils.h"
 #include "cGirlGangFight.h"
@@ -33,10 +33,6 @@
 #include "src/Game.hpp"
 #include "src/sStorage.hpp"
 
-extern cWindowManager g_WinManager;
-extern cChoiceManager g_ChoiceManager;
-extern cScreenBrothelManagement* g_BrothelManagement;
-extern bool g_Cheats;
 extern int g_TalkCount;
 extern cRng g_Dice;
 extern cScreenGirlDetails* g_GirlDetails;
@@ -200,11 +196,9 @@ void cGameScript::RunScript()
 	while (curr != nullptr && !m_Leave && m_Active)
 	{
 		curr = Process(curr);
-		// TODO what was the purpose of: g_InitWin = true;
 	}
 	if (m_Active == false)
 	{
-		g_ChoiceManager.Free();
 		Release();
 	}
 }
@@ -219,7 +213,7 @@ sScript *cGameScript::Script_Dialog(sScript *Script)
 		if (f > -1)	text.replace(f, replacestring.length(), replacewith);
 	} while (f > -1);
 
-	g_Game.push_message(text, COLOR_BLUE);
+	g_Game->push_message(text, COLOR_BLUE);
 	return Script->m_Next; // Go to next script action
 }
 sScript *cGameScript::Script_Init(sScript *Script)
@@ -242,7 +236,7 @@ sScript *cGameScript::Script_ChoiceBox(sScript *Script)
 	value[0] = (Script->m_Entries[0].m_Var == 1 ? m_Vars[Script->m_Entries[0].m_lValue] : Script->m_Entries[0].m_lValue);
 	value[1] = (Script->m_Entries[1].m_Var == 1 ? m_Vars[Script->m_Entries[1].m_lValue] : Script->m_Entries[1].m_lValue);
 
-	g_ChoiceManager.CreateChoiceBoxResize(value[0], value[1]);
+	std::vector<std::string> options;
 	int id = value[0];
 	int num = value[1];
 	int size = 0;
@@ -257,10 +251,10 @@ sScript *cGameScript::Script_ChoiceBox(sScript *Script)
 		do { f = text.find(replacestring); if (f > -1)	text.replace(f, replacestring.length(), replacewith); } while (f > -1);
 		int newlen = text.length();
 		if (newlen > size) size = newlen;
-		g_ChoiceManager.AddChoice(id, text, i);
+		options.push_back(text);
 		Script = Script->m_Next;
 	}
-	g_ChoiceManager.BuildChoiceBox(id, size);
+    window_manager().InputChoice("", std::move(options), {});
 
 	return Script; // Go to next script action
 }
@@ -368,9 +362,11 @@ sScript *cGameScript::Script_EndIfNew(sScript *Script)
 }
 sScript *cGameScript::Script_ActivateChoice(sScript *Script)
 {
-	g_ChoiceManager.SetActive(Script->m_Entries[0].m_lValue);
+    /// TODO(bug) script activate choice is currently broken
+//    choice_manager().SetActive(Script->m_Entries[0].m_lValue);
 	return Script->m_Next; // Go to next script action
 }
+
 sScript *cGameScript::Script_IfChoice(sScript *Script)
 {
 	bool Skipping = false; // Flag for if...then condition
@@ -381,11 +377,12 @@ sScript *cGameScript::Script_IfChoice(sScript *Script)
 	value[0] = (Script->m_Entries[0].m_Var == 1 ? m_Vars[Script->m_Entries[0].m_lValue] : Script->m_Entries[0].m_lValue);
 	value[1] = (Script->m_Entries[1].m_Var == 1 ? m_Vars[Script->m_Entries[1].m_lValue] : Script->m_Entries[1].m_lValue);
 	// See if choice flag matches second entry
-	if (g_ChoiceManager.GetChoice(value[0]) == value[1])
+	/// TODO(bug) Script IfChoice is broken
+/*	if (choice_manager().GetChoice(value[0]) == value[1])
 		Skipping = false;
 	else
 		Skipping = true;
-
+*/
 	// At this point, Skipping states if the script actions
 	// need to be skipped due to a conditional if...then statement.
 	// Actions are further processed if skipped = false, looking
@@ -429,7 +426,7 @@ sScript *cGameScript::Script_SetPlayerSuspision(sScript *Script)
 	int value;
 	value = (Script->m_Entries[0].m_Var == 1 ? m_Vars[Script->m_Entries[0].m_lValue] : Script->m_Entries[0].m_lValue);
 
-    g_Game.player().suspicion(value);
+    g_Game->player().suspicion(value);
 
 	return Script->m_Next;
 }
@@ -438,7 +435,7 @@ sScript *cGameScript::Script_SetPlayerDisposition(sScript *Script)
 	int value;
 	value = (Script->m_Entries[0].m_Var == 1 ? m_Vars[Script->m_Entries[0].m_lValue] : Script->m_Entries[0].m_lValue);
 
-    g_Game.player().disposition(value);
+    g_Game->player().disposition(value);
 
 	return Script->m_Next;
 }
@@ -461,9 +458,9 @@ sScript *cGameScript::Script_AddCustToDungeon(sScript *Script)
 		wife = true;
 
 	if (value[0] == 0)
-		g_Game.dungeon().AddCust(DUNGEON_CUSTNOPAY, value[1], wife);
+		g_Game->dungeon().AddCust(DUNGEON_CUSTNOPAY, value[1], wife);
 	else if (value[0] == 1)
-		g_Game.dungeon().AddCust(DUNGEON_CUSTBEATGIRL, value[1], wife);
+		g_Game->dungeon().AddCust(DUNGEON_CUSTBEATGIRL, value[1], wife);
 
 	return Script->m_Next;
 }
@@ -510,12 +507,12 @@ sScript *cGameScript::Script_AddRandomGirlToDungeon(sScript *Script)
 		age = g_Dice.in_range(minage, maxage);
 	}
 
-	sGirl* newgirl = g_Game.CreateRandomGirl(age, false, slave, false, allowNonHuman, kidnaped, arena, daughter);
+	sGirl* newgirl = g_Game->CreateRandomGirl(age, false, slave, false, allowNonHuman, kidnaped, arena, daughter);
 	stringstream NGmsg;
 	NGmsg << "(DEBUG:: " << newgirl->m_Realname << " was added by a script.\nLookup code: D_001)";
 	newgirl->m_Events.AddMessage(NGmsg.str(), IMGTYPE_PROFILE, EVENT_WARNING);
 
-	g_Game.dungeon().AddGirl(newgirl, reason);
+	g_Game->dungeon().AddGirl(newgirl, reason);
 
 	return Script->m_Next;
 }
@@ -553,7 +550,7 @@ sScript *cGameScript::Script_AddRandomValueToGold(sScript *Script)
 	value[1] = (Script->m_Entries[1].m_Var == 1 ? m_Vars[Script->m_Entries[1].m_lValue] : Script->m_Entries[1].m_lValue);
 	long gold = (value[0] == 0 ? (g_Dice % (value[1] + 1)) + value[0] : (g_Dice % (value[1] + 1)) + value[0] - 1);
 
-	g_Game.gold().misc_credit(gold);
+	g_Game->gold().misc_credit(gold);
 
 	return Script->m_Next;
 }
@@ -581,12 +578,12 @@ sScript *cGameScript::Script_AddManyRandomGirlsToDungeon(sScript *Script)
 	{
 		int age = (value[2] == 0 ? (g_Dice % (value[3] + 1)) + value[2] : (g_Dice % (value[3] + 1)) + value[2] - 1);
 
-		sGirl* newgirl = g_Game.CreateRandomGirl(age, false, slave, false, allowNonHuman, kidnaped, arena);
+		sGirl* newgirl = g_Game->CreateRandomGirl(age, false, slave, false, allowNonHuman, kidnaped, arena);
 		stringstream NGmsg;
 		NGmsg << "(DEBUG:: " << newgirl->m_Realname << " was added by a script.\nLookup code: D_002)";
 		newgirl->m_Events.AddMessage(NGmsg.str(), IMGTYPE_PROFILE, EVENT_WARNING);
 
-		g_Game.dungeon().AddGirl(newgirl, reason);
+		g_Game->dungeon().AddGirl(newgirl, reason);
 	}
 
 	return Script->m_Next;
@@ -616,7 +613,7 @@ sScript *cGameScript::Script_AddFamilyToDungeon(sScript *Script)
 	{
 		surname = g_SurnameList.random();
 		if (i > 3) surname = surname + "-" + g_SurnameList.random();
-		if (g_Game.SurnameExists(surname)) continue;
+		if (g_Game->SurnameExists(surname)) continue;
 		break;
 	}
 
@@ -633,14 +630,14 @@ sScript *cGameScript::Script_AddFamilyToDungeon(sScript *Script)
 	int oldest = 18;	// `J` Legal Note: 18 is the Legal Age of Majority for the USA where I live 
 	if (value[0] > 0)
 	{
-		Daughter1 = g_Game.CreateRandomGirl((g_Dice % 13) + 13, false, slave, false, allowNonHuman, kidnaped, arena);
+		Daughter1 = g_Game->CreateRandomGirl((g_Dice % 13) + 13, false, slave, false, allowNonHuman, kidnaped, arena);
 		if (Daughter1->age() > oldest) oldest = Daughter1->age();
 		Daughter1->m_Surname = surname;
 		cGirls::CreateRealName(Daughter1);
 	}
 	if (value[0] > 1)
 	{
-		Daughter2 = g_Game.CreateRandomGirl((g_Dice % 13) + 13, false, slave, false, allowNonHuman, kidnaped, arena);
+		Daughter2 = g_Game->CreateRandomGirl((g_Dice % 13) + 13, false, slave, false, allowNonHuman, kidnaped, arena);
 		if (Daughter2->age() == Daughter1->age())	// if only 2 daughters and their ages are the same, change that
 		{											// if there is a third daughter, her age can be anything (to allow twins)
 			if (Daughter1->age() > 20) Daughter2->age(-(g_Dice % 3 + 1));
@@ -652,7 +649,7 @@ sScript *cGameScript::Script_AddFamilyToDungeon(sScript *Script)
 	}
 	if (value[0] > 2)
 	{
-		Daughter3 = g_Game.CreateRandomGirl((g_Dice % 13) + 13, false, slave, false, allowNonHuman, kidnaped, arena);
+		Daughter3 = g_Game->CreateRandomGirl((g_Dice % 13) + 13, false, slave, false, allowNonHuman, kidnaped, arena);
 		if (Daughter3->age() > oldest) oldest = Daughter3->age();
 		Daughter3->m_Surname = surname;
 		cGirls::CreateRealName(Daughter3);
@@ -660,7 +657,7 @@ sScript *cGameScript::Script_AddFamilyToDungeon(sScript *Script)
 
 	if (value[1])	// there is a mother
 	{
-		Mother = g_Game.CreateRandomGirl((g_Dice % (50 - (oldest + 18))) + oldest + 18, false, slave, false, allowNonHuman, kidnaped, arena);	// `J` Legal Note: 18 is the Legal Age of Majority for the USA where I live
+		Mother = g_Game->CreateRandomGirl((g_Dice % (50 - (oldest + 18))) + oldest + 18, false, slave, false, allowNonHuman, kidnaped, arena);	// `J` Legal Note: 18 is the Legal Age of Majority for the USA where I live
 		Mother->m_Surname = surname;
 		cGirls::CreateRealName(Mother);
 		if (!g_Dice.percent(Mother->age())) Mother->add_trait("MILF");	// the younger the mother the more likely she will be a MILF
@@ -729,10 +726,10 @@ sScript *cGameScript::Script_AddFamilyToDungeon(sScript *Script)
 		Mother->m_Events.AddMessage(NGmsgM.str(), IMGTYPE_PROFILE, EVENT_DUNGEON);
 	}
 
-	if (value[0] > 0)	g_Game.dungeon().AddGirl(Daughter1, reason);
-	if (value[0] > 1)	g_Game.dungeon().AddGirl(Daughter2, reason);
-	if (value[0] > 2)	g_Game.dungeon().AddGirl(Daughter3, reason);
-	if (value[1])		g_Game.dungeon().AddGirl(Mother, reason);
+	if (value[0] > 0)	g_Game->dungeon().AddGirl(Daughter1, reason);
+	if (value[0] > 1)	g_Game->dungeon().AddGirl(Daughter2, reason);
+	if (value[0] > 2)	g_Game->dungeon().AddGirl(Daughter3, reason);
+	if (value[1])		g_Game->dungeon().AddGirl(Mother, reason);
 
 	return Script->m_Next;
 }
@@ -788,17 +785,17 @@ sScript *cGameScript::Script_PlayerRapeTargetGirl(sScript *Script)
 
 	if (m_GirlTarget->check_virginity()) m_GirlTarget->lose_virginity();	// `J` updated for trait/status
 
-	bool preg = !m_GirlTarget->calc_pregnancy(&g_Game.player(), false, 1.0);
-	if (preg) g_Game.push_message(m_GirlTarget->m_Realname + " has gotten pregnant", COLOR_BLUE);
+	bool preg = !m_GirlTarget->calc_pregnancy(&g_Game->player(), false, 1.0);
+	if (preg) g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", COLOR_BLUE);
 	g_GirlDetails->lastsexact = IMGTYPE_SEX;
 
 	return Script->m_Next;
 }
 sScript *cGameScript::Script_GivePlayerRandomSpecialItem(sScript *Script)
 {
-	sInventoryItem* item = g_Game.inventory_manager().GetRandomItem();
+	sInventoryItem* item = g_Game->inventory_manager().GetRandomItem();
 	while (item == nullptr)
-		item = g_Game.inventory_manager().GetRandomItem();
+		item = g_Game->inventory_manager().GetRandomItem();
 
 	bool ok = false;
 	while (!ok)
@@ -806,12 +803,12 @@ sScript *cGameScript::Script_GivePlayerRandomSpecialItem(sScript *Script)
 		if (item->m_Rarity >= RARITYSHOP05) ok = true;
 		else
 		{
-			do { item = g_Game.inventory_manager().GetRandomItem(); } while (item == nullptr);
+			do { item = g_Game->inventory_manager().GetRandomItem(); } while (item == nullptr);
 		}
 	}
 
-	if(!g_Game.player().inventory().add_item(item)) {
-        g_Game.push_message(" Your inventory is full\n", COLOR_RED);
+	if(!g_Game->player().inventory().add_item(item)) {
+        g_Game->push_message(" Your inventory is full\n", COLOR_RED);
     }
 	return Script->m_Next;
 }
@@ -972,9 +969,8 @@ sScript* cGameScript::Script_IfGirlFlag(sScript* Script)
 }
 sScript* cGameScript::Script_GameOver(sScript* Script)
 {
-	g_Game.push_message("GAME OVER", COLOR_RED);
-	g_WinManager.PopToWindow(g_BrothelManagement);
-	g_WinManager.Pop();
+	g_Game->push_message("GAME OVER", COLOR_RED);
+	window_manager().PopAll();
 	m_Active = false;
 	m_Leave = true;
 	return Script->m_Next;
@@ -1153,7 +1149,7 @@ sScript* cGameScript::Script_ScoldTarget(sScript* Script)
 {
 	if (m_GirlTarget->spirit() <= 10)
 	{
-		g_Game.push_message("She is bawling the entire time you yell at her, obviously wanting to do her best", 0);
+		g_Game->push_message("She is bawling the entire time you yell at her, obviously wanting to do her best", 0);
 		m_GirlTarget->happiness(-5);
 		m_GirlTarget->confidence(-5);
 		m_GirlTarget->obedience(10);
@@ -1164,7 +1160,7 @@ sScript* cGameScript::Script_ScoldTarget(sScript* Script)
 	}
 	else if (m_GirlTarget->spirit() <= 20)
 	{
-		g_Game.push_message("She sobs a lot while you yell at her and fearfully listens to your every word", 0);
+		g_Game->push_message("She sobs a lot while you yell at her and fearfully listens to your every word", 0);
 		m_GirlTarget->happiness(-2);
 		m_GirlTarget->confidence(-2);
 		m_GirlTarget->obedience(6);
@@ -1174,7 +1170,7 @@ sScript* cGameScript::Script_ScoldTarget(sScript* Script)
 	}
 	else if (m_GirlTarget->spirit() <= 30)
 	{
-		g_Game.push_message("She listens with attention and promises to do better", 0);
+		g_Game->push_message("She listens with attention and promises to do better", 0);
 		m_GirlTarget->happiness(-1);
 		m_GirlTarget->confidence(-1);
 		m_GirlTarget->obedience(5);
@@ -1183,14 +1179,14 @@ sScript* cGameScript::Script_ScoldTarget(sScript* Script)
 	}
 	else if (m_GirlTarget->spirit() <= 50)
 	{
-		g_Game.push_message("She listens to what you say but barely pays attention", 0);
+		g_Game->push_message("She listens to what you say but barely pays attention", 0);
 		m_GirlTarget->obedience(3);
 		m_GirlTarget->spirit(-2);
 		m_GirlTarget->pchate(1);
 	}
 	else if (m_GirlTarget->spirit() <= 80)
 	{
-		g_Game.push_message("She looks at you defiantly while you yell at her", 0);
+		g_Game->push_message("She looks at you defiantly while you yell at her", 0);
 		m_GirlTarget->obedience(2);
 		m_GirlTarget->spirit(-1);
 		m_GirlTarget->pclove(-3);
@@ -1198,7 +1194,7 @@ sScript* cGameScript::Script_ScoldTarget(sScript* Script)
 	}
 	else
 	{
-		g_Game.push_message("She stares you down while you yell at her, daring you to hit her", 0);
+		g_Game->push_message("She stares you down while you yell at her, daring you to hit her", 0);
 		m_GirlTarget->obedience(-1);
 		m_GirlTarget->spirit(-1);
 		m_GirlTarget->pclove(-4);
@@ -1215,8 +1211,8 @@ sScript* cGameScript::Script_NormalSexTarget(sScript* Script)
 
 		if (m_GirlTarget->check_virginity()) m_GirlTarget->lose_virginity();	// `J` updated for trait/status
 
-		if (!m_GirlTarget->calc_pregnancy(&g_Game.player(), false, 1.0))
-			g_Game.push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
+		if (!m_GirlTarget->calc_pregnancy(&g_Game->player(), false, 1.0))
+			g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
 	}
 	g_GirlDetails->lastsexact = IMGTYPE_SEX;
 
@@ -1231,11 +1227,11 @@ sScript* cGameScript::Script_BeastSexTarget(sScript* Script)
 		if (m_GirlTarget->check_virginity()) m_GirlTarget->lose_virginity();	// `J` updated for trait/status
 
 		// mod: added check for number of beasts owned; otherwise, fake beasts could somehow inseminate the girl
-		if (g_Game.storage().beasts() > 0)
+		if (g_Game->storage().beasts() > 0)
 		{
 			m_GirlTarget->beastiality(1);	// `J` divided skill gain
 			if (!m_GirlTarget->calc_insemination(*cGirls::GetBeast(), false, 1.0))
-				g_Game.push_message(m_GirlTarget->m_Realname + " has gotten inseminated", 0);
+				g_Game->push_message(m_GirlTarget->m_Realname + " has gotten inseminated", 0);
 		}
 	}
 	g_GirlDetails->lastsexact = IMGTYPE_BEAST;
@@ -1258,8 +1254,8 @@ sScript* cGameScript::Script_BDSMSexTarget(sScript* Script)
 		if (m_GirlTarget->check_virginity()) m_GirlTarget->lose_virginity();	// `J` updated for trait/status
 	}
 
-	if (!m_GirlTarget->calc_pregnancy(&g_Game.player(), false, 0.75))
-		g_Game.push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
+	if (!m_GirlTarget->calc_pregnancy(&g_Game->player(), false, 0.75))
+		g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
 	g_GirlDetails->lastsexact = IMGTYPE_BDSM;
 
 	return Script->m_Next;
@@ -1318,8 +1314,8 @@ sScript* cGameScript::Script_GroupSexTarget(sScript* Script)
 
 		if (m_GirlTarget->check_virginity()) m_GirlTarget->lose_virginity();	// `J` updated for trait/status
 
-		if (!m_GirlTarget->calc_group_pregnancy(&g_Game.player(), false, 1.0))
-			g_Game.push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
+		if (!m_GirlTarget->calc_group_pregnancy(&g_Game->player(), false, 1.0))
+			g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
 
 		g_GirlDetails->lastsexact = IMGTYPE_GROUP;
 	}
@@ -1560,32 +1556,32 @@ sScript* cGameScript::Script_GetRandomGirl(sScript* Script)						// `J` new
 	switch (Script->m_Entries[0].m_Selection)
 	{
 	case 1:	// brothel
-		brothel = g_Game.buildings().building_with_type(BuildingType::BROTHEL, Script->m_Entries[1].m_Selection);
+		brothel = g_Game->buildings().building_with_type(BuildingType::BROTHEL, Script->m_Entries[1].m_Selection);
 		break;
 	case 2:	// studio
-		brothel = g_Game.buildings().building_with_type(BuildingType::STUDIO);
+		brothel = g_Game->buildings().building_with_type(BuildingType::STUDIO);
 		break;
 	case 3:	// arena
-		brothel = g_Game.buildings().building_with_type(BuildingType::ARENA);
+		brothel = g_Game->buildings().building_with_type(BuildingType::ARENA);
 		break;
 	case 4:	// center
-		brothel = g_Game.buildings().building_with_type(BuildingType::CENTRE);
+		brothel = g_Game->buildings().building_with_type(BuildingType::CENTRE);
 		break;
 	case 5:	// clinic
-		brothel = g_Game.buildings().building_with_type(BuildingType::CLINIC);
+		brothel = g_Game->buildings().building_with_type(BuildingType::CLINIC);
 		break;
 	case 6:	// farm
-		brothel = g_Game.buildings().building_with_type(BuildingType::FARM);
+		brothel = g_Game->buildings().building_with_type(BuildingType::FARM);
 		break;
 	case 7:	// house
-		brothel = g_Game.buildings().building_with_type(BuildingType::HOUSE);
+		brothel = g_Game->buildings().building_with_type(BuildingType::HOUSE);
 		break;
 	case 0:	// anywhere
 	default:
 	{
 	    std::vector<IBuilding*> brothels;
 		int totalgirls = 0;
-        for (auto& b : g_Game.buildings().buildings())
+        for (auto& b : g_Game->buildings().buildings())
             brothels.push_back(b.get());
 
         for(auto b : brothels)
@@ -1687,9 +1683,9 @@ sScript* cGameScript::Script_NormalSexWithRandomTarget(sScript* Script)
 		m_GirlTarget->normalsex(2);
 
 		if (m_GirlTarget->check_virginity()) m_GirlTarget->lose_virginity();	// `J` updated for trait/status
-		sCustomer Cust = g_Game.GetCustomer(*m_GirlTarget->m_Building);
+		sCustomer Cust = g_Game->GetCustomer(*m_GirlTarget->m_Building);
 		if (!m_GirlTarget->calc_pregnancy(Cust, false, 1.0))
-			g_Game.push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
+			g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
 	}
 	g_GirlDetails->lastsexact = IMGTYPE_SEX;
 
@@ -1742,7 +1738,7 @@ sScript* cGameScript::Script_IfGirlHasItem(sScript* Script)					// `J` new .06.0
 }
 sScript* cGameScript::Script_AddItemtoGirl(sScript* Script)					// `J` new .06.02.55
 {
-	sInventoryItem* item = g_Game.inventory_manager().GetItem(Script->m_Entries[0].m_Text);
+	sInventoryItem* item = g_Game->inventory_manager().GetItem(Script->m_Entries[0].m_Text);
 	int value[2];
 	value[0] = (Script->m_Entries[1].m_Var == 1 ? m_Vars[Script->m_Entries[1].m_lValue] : Script->m_Entries[1].m_lValue);
 	value[1] = (Script->m_Entries[2].m_Var == 1 ? m_Vars[Script->m_Entries[2].m_lValue] : Script->m_Entries[2].m_lValue);
@@ -1752,7 +1748,7 @@ sScript* cGameScript::Script_AddItemtoGirl(sScript* Script)					// `J` new .06.0
 	if (cGirls::IsInvFull(m_GirlTarget))
 	{
 		g_LogFile.ss() << "Her inventory is full"; g_LogFile.ssend();
-		g_Game.push_message("Her inventory is full", 0);
+		g_Game->push_message("Her inventory is full", 0);
 		return Script->m_Next;
 	}
 	if (item && m_GirlTarget && value[0] > 0)
@@ -1760,7 +1756,7 @@ sScript* cGameScript::Script_AddItemtoGirl(sScript* Script)					// `J` new .06.0
 		for (int i = 0; i < value[0]; i++)
 		{
 			if (value[1] == 0)	m_GirlTarget->add_inv(item);
-			else	g_Game.inventory_manager().Equip(m_GirlTarget, m_GirlTarget->add_inv(item), false);
+			else	g_Game->inventory_manager().Equip(m_GirlTarget, m_GirlTarget->add_inv(item), false);
 		}
 	}
 	g_LogFile.ssend();
@@ -1768,7 +1764,7 @@ sScript* cGameScript::Script_AddItemtoGirl(sScript* Script)					// `J` new .06.0
 }
 sScript* cGameScript::Script_GivePlayerItem(sScript* Script)					// `J` new .06.02.55
 {
-	sInventoryItem* item = g_Game.inventory_manager().GetItem(Script->m_Entries[0].m_Text);
+	sInventoryItem* item = g_Game->inventory_manager().GetItem(Script->m_Entries[0].m_Text);
 	int amount = (Script->m_Entries[1].m_Var == 1 ? m_Vars[Script->m_Entries[1].m_lValue] : Script->m_Entries[1].m_lValue);
 
 	g_LogFile.ss() << "Debug: New script part: GivePlayerItem  ||  Trying to add " << amount << " of item: " << Script->m_Entries[0].m_Text
@@ -1778,7 +1774,7 @@ sScript* cGameScript::Script_GivePlayerItem(sScript* Script)					// `J` new .06.
 	{
 		for (int i = 0; i < amount; i++)
 		{
-		    g_Game.player().inventory().add_item(item);
+		    g_Game->player().inventory().add_item(item);
 		}
 	}
 	return Script->m_Next;
@@ -1789,7 +1785,7 @@ sScript* cGameScript::Script_IfPlayerHasItem(sScript* Script)
 	m_NestLevel++;
 	int Nest = m_NestLevel;
 
-	Skipping = !g_Game.player().inventory().has_item(Script->m_Entries[0].m_Text);
+	Skipping = !g_Game->player().inventory().has_item(Script->m_Entries[0].m_Text);
 
 
 	// At this point, Skipping states if the script actions
@@ -1831,8 +1827,8 @@ sScript* cGameScript::Script_IfPlayerHasItem(sScript* Script)
 }
 sScript* cGameScript::Script_GiveGirlInvItem(sScript* Script)
 {
-    sInventoryItem* item = g_Game.inventory_manager().GetItem(Script->m_Entries[0].m_Text);
-    bool has_item = g_Game.player().inventory().has_item(item);
+    sInventoryItem* item = g_Game->inventory_manager().GetItem(Script->m_Entries[0].m_Text);
+    bool has_item = g_Game->player().inventory().has_item(item);
     bool equip = (Script->m_Entries[1].m_Var == 1 ? m_Vars[Script->m_Entries[1].m_lValue] : Script->m_Entries[1].m_lValue) == 1;
 
 	g_LogFile.ss() << "Debug: New script part: GiveGirlInvItem  ||  Trying to give item: " << Script->m_Entries[0].m_Text << "  to girl: ";
@@ -1847,7 +1843,7 @@ sScript* cGameScript::Script_GiveGirlInvItem(sScript* Script)
 	else if (cGirls::IsInvFull(m_GirlTarget))
 	{
 		g_LogFile.ss() << " |  " << m_GirlTarget->m_Name << "'s inventory is full!";
-		g_Game.push_message("Her inventory is full", 0);
+		g_Game->push_message("Her inventory is full", 0);
 	}
 	else if (item && m_GirlTarget)
 	{
@@ -1857,10 +1853,10 @@ sScript* cGameScript::Script_GiveGirlInvItem(sScript* Script)
 		else
 		{
 			g_LogFile.ss() << " and used it.";
-			g_Game.inventory_manager().Equip(m_GirlTarget, m_GirlTarget->add_inv(item), false);
+			g_Game->inventory_manager().Equip(m_GirlTarget, m_GirlTarget->add_inv(item), false);
 		}
 
-		g_Game.player().inventory().remove_item(item);
+		g_Game->player().inventory().remove_item(item);
 	}
 
 
@@ -1971,7 +1967,7 @@ sScript* cGameScript::Script_GiveGoldToGirl(sScript* Script)
 	}
 	else m_GirlTarget->m_Money += gold;
 
-	g_Game.gold().misc_credit(-gold);
+	g_Game->gold().misc_credit(-gold);
 
 	return Script->m_Next;
 }
@@ -2071,7 +2067,7 @@ sScript* cGameScript::Script_SetGirlStatus(sScript* Script)			// `J` new .06.03.
 		else if (m_GirlTarget->is_pregnant()){}	// she is already pregnant so do nothing
 		else if (status == STATUS_PREGNANT_BY_PLAYER)
 		{
-			cGirls::CreatePregnancy(m_GirlTarget, 1, status, g_Game.player().m_Stats, g_Game.player().m_Skills);
+			cGirls::CreatePregnancy(m_GirlTarget, 1, status, g_Game->player().m_Stats, g_Game->player().m_Skills);
 		}
 		else
 		{
@@ -2110,7 +2106,7 @@ sScript* cGameScript::Script_CreatePregnancy(sScript* Script)		// `J` new .06.03
 	else if (!g_Dice.percent(value[1])){}	// if the percent fails do nothing
 	else if (value[0] == 0)					// STATUS_PREGNANT_BY_PLAYER
 	{
-		cGirls::CreatePregnancy(m_GirlTarget, 1, STATUS_PREGNANT_BY_PLAYER, g_Game.player().m_Stats, g_Game.player().m_Skills);
+		cGirls::CreatePregnancy(m_GirlTarget, 1, STATUS_PREGNANT_BY_PLAYER, g_Game->player().m_Stats, g_Game->player().m_Skills);
 	}
 	else
 	{

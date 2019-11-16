@@ -18,7 +18,7 @@
 */
 #pragma once
 
-#include "cInterfaceWindow.h"
+#include "interface/cInterfaceWindow.h"
 
 class cScreenGirlDetails : public cInterfaceWindowXML
 {
@@ -60,7 +60,6 @@ private:
 	void NextGirl();
 	sGirl *get_prev_girl();
 	sGirl *get_next_girl();
-	sGirl *remove_selected_girl();
 	bool do_take_gold(sGirl *girl, string &message);
 	void take_gold(sGirl *girl);
     void set_shift(int shift);
