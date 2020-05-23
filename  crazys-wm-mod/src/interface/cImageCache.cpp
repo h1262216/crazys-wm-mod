@@ -332,8 +332,10 @@ cSurface cImageCache::CreateTextSurface(TTF_Font * font, std::string text, sColo
                                : TTF_RenderText_Solid(font, text.c_str(), sdlColor);
     if(new_image)
         return AddToCache(std::move(key), surface_ptr_t{new_image}, std::move(text));
-    else
+    else {
+        g_LogFile.ss() << "error in font rendering: " << TTF_GetError() << "\n";
         return cSurface();
+    }
 }
 
 void SurfaceDeleter::operator()(SDL_Surface * surface)

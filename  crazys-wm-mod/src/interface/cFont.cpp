@@ -130,6 +130,9 @@ void cFont::RenderMultilineText()
                                                                      sColor(m_TextColor.r, m_TextColor.g,
                                                                             m_TextColor.b),
                                                                      cfg.fonts.antialias());
+            if(!line)
+                continue;
+
             SDL_SetAlpha(line.RawSurface()->surface(), 0, SDL_ALPHA_OPAQUE);
             SDL_Rect dst = {0, static_cast<Sint16>(i * m_Lineskip),
                             static_cast<Uint16>(line.GetWidth()), static_cast<Uint16>(line.GetHeight())};
