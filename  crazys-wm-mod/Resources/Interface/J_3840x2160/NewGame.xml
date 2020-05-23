@@ -1,7 +1,7 @@
 <Screen>
 <Window     Name="NewGame"                                                  XPos="796"      YPos="236"       Width="2249"     Height="1688" Border="1"  />
 <Image      Name="Background"           File="building_mgt_bg.jpg"          XPos="0"        YPos="0"        Width="2249"     Height="1688"  />
-<Text       Name="Whore Master"         Text="Whore Master"                 XPos="545"      YPos="0"        Width="2249"     Height="225"  FontSize="180"  Red="200"   Green="30"  Blue="30"    />
+<Text       Name="Whore Master"         Text="Whore Master"                 XPos="545"      YPos="0"        Width="2249"     Height="242"  FontSize="180"  Red="200"   Green="30"  Blue="30"    />
 <Text       Name="Label1"               Text="Brothel Name"                 XPos="981"      YPos="259"       Width="843"     Height="90"  FontSize="45"  />
 <EditBox    Name="BrothelName"                                              XPos="728"      YPos="349"       Width="843"     Height="90"  FontSize="45" Border="1"  />
 <Text       Name="Label2"               Text="Player First Name"            XPos="953"      YPos="529"      Width="843"     Height="90"  FontSize="45"  />
