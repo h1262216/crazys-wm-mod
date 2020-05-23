@@ -767,3 +767,12 @@ void cScreenGirlDetails::process()
         init(false);
     }
 }
+
+void cScreenGirlDetails::set_image(int img) {
+    lastsexact = img;
+    if (lastsexact != -1)
+    {
+        PrepareImage(girlimage_id, m_SelectedGirl, lastsexact, true, ImageNum);
+        lastsexact = -1;
+    }
+}

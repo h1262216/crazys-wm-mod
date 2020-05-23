@@ -190,7 +190,7 @@ void IBuildingScreenManagement::set_ids() {
     // setting up button callbacks
     SetButtonNavigation(back_id, "<back>");
     SetButtonCallback(viewdetails_id, [this](){
-        g_GirlDetails->lastsexact = -1;
+        g_GirlDetails->set_image(-1);
         ViewSelectedGirl(); });
     SetButtonNavigation(transfer_id, "Transfer Screen");
     SetButtonCallback(firegirl_id, [this](){  handle_ffsd(FFSD_fire); });
@@ -215,7 +215,7 @@ void IBuildingScreenManagement::set_ids() {
     SetListBoxSelectionCallback(joblist_id, [this](int selection) { on_select_job(selection); });
     SetListBoxSelectionCallback(girllist_id, [this](int selection) { on_select_girl(selection); });
     SetListBoxDoubleClickCallback(girllist_id, [this](int sel){
-        g_GirlDetails->lastsexact = -1;
+        g_GirlDetails->set_image(-1);
         ViewSelectedGirl();
     });
     SetListBoxHotKeys(girllist_id, g_AltKeys ? SDLK_a : SDLK_UP, g_AltKeys ? SDLK_d : SDLK_DOWN);
@@ -951,7 +951,7 @@ void IBuildingScreenManagement::OnKeyPress(SDL_keysym keysym)
     auto key = keysym.sym;
 
     // girl list
-    if (key == SDLK_SPACE || key == SDLK_KP_ENTER)	{ g_GirlDetails->lastsexact = -1;	ViewSelectedGirl();	}
+    if (key == SDLK_SPACE || key == SDLK_KP_ENTER)	{ g_GirlDetails->set_image(-1);	ViewSelectedGirl();	}
 
     else if (key == SDLK_q || key == SDLK_e) {
         int selection = -1;

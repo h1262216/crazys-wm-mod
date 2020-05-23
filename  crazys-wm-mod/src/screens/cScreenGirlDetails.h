@@ -69,8 +69,9 @@ private:
     void OnKeyPress(SDL_keysym keysym) override;
 
     bool m_Refresh = false;
-public:
     int lastsexact = -1;
+public:
+    void set_image(int img);
 	cScreenGirlDetails();
 
     void init(bool back) override;

@@ -790,7 +790,7 @@ sScript *cGameScript::Script_PlayerRapeTargetGirl(sScript *Script)
 
 	bool preg = !m_GirlTarget->calc_pregnancy(&g_Game->player(), false, 1.0);
 	if (preg) g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", COLOR_BLUE);
-	g_GirlDetails->lastsexact = IMGTYPE_SEX;
+	g_GirlDetails->set_image(IMGTYPE_SEX);
 
 	return Script->m_Next;
 }
@@ -1144,7 +1144,7 @@ sScript* cGameScript::Script_IfHasTrait(sScript* Script)
 sScript* cGameScript::Script_TortureTarget(sScript* Script)
 {
 	cGirlTorture gt(m_GirlTarget);
-	g_GirlDetails->lastsexact = IMGTYPE_TORTURE;
+	g_GirlDetails->set_image(IMGTYPE_TORTURE);
 
 	return Script->m_Next;
 }
@@ -1217,7 +1217,7 @@ sScript* cGameScript::Script_NormalSexTarget(sScript* Script)
 		if (!m_GirlTarget->calc_pregnancy(&g_Game->player(), false, 1.0))
 			g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
 	}
-	g_GirlDetails->lastsexact = IMGTYPE_SEX;
+	g_GirlDetails->set_image(IMGTYPE_SEX);
 
 	return Script->m_Next;
 }
@@ -1237,14 +1237,14 @@ sScript* cGameScript::Script_BeastSexTarget(sScript* Script)
 				g_Game->push_message(m_GirlTarget->m_Realname + " has gotten inseminated", 0);
 		}
 	}
-	g_GirlDetails->lastsexact = IMGTYPE_BEAST;
+	g_GirlDetails->set_image(IMGTYPE_BEAST);
 
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_AnalSexTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->anal(2);
-	g_GirlDetails->lastsexact = IMGTYPE_ANAL;
+	g_GirlDetails->set_image(IMGTYPE_ANAL);
 
 	return Script->m_Next;
 }
@@ -1259,7 +1259,7 @@ sScript* cGameScript::Script_BDSMSexTarget(sScript* Script)
 
 	if (!m_GirlTarget->calc_pregnancy(&g_Game->player(), false, 0.75))
 		g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
-	g_GirlDetails->lastsexact = IMGTYPE_BDSM;
+	g_GirlDetails->set_image(IMGTYPE_BDSM);
 
 	return Script->m_Next;
 }
@@ -1320,7 +1320,7 @@ sScript* cGameScript::Script_GroupSexTarget(sScript* Script)
 		if (!m_GirlTarget->calc_group_pregnancy(&g_Game->player(), false, 1.0))
 			g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
 
-		g_GirlDetails->lastsexact = IMGTYPE_GROUP;
+		g_GirlDetails->set_image(IMGTYPE_GROUP);
 	}
 
 	return Script->m_Next;
@@ -1328,19 +1328,19 @@ sScript* cGameScript::Script_GroupSexTarget(sScript* Script)
 sScript* cGameScript::Script_LesbianSexTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->lesbian(2);
-	g_GirlDetails->lastsexact = IMGTYPE_LESBIAN;
+	g_GirlDetails->set_image(IMGTYPE_LESBIAN);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_OralSexTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->oralsex(2);
-	g_GirlDetails->lastsexact = IMGTYPE_ORAL;
+	g_GirlDetails->set_image(IMGTYPE_ORAL);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_StripTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->strip(2);
-	g_GirlDetails->lastsexact = IMGTYPE_STRIP;
+	g_GirlDetails->set_image(IMGTYPE_STRIP);
 	return Script->m_Next;
 }
 
@@ -1354,176 +1354,176 @@ sScript* cGameScript::Script_CleanTarget(sScript* Script)
 		sstemp << "Cleanliness rating improved by " << (int)CleanAmt;
 		m_GirlTarget->service(1);
 	}
-	g_GirlDetails->lastsexact = IMGTYPE_MAID;
+	g_GirlDetails->set_image(IMGTYPE_MAID);
 
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_NudeTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->strip(1);
-	g_GirlDetails->lastsexact = IMGTYPE_NUDE;
+	g_GirlDetails->set_image(IMGTYPE_NUDE);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_MastTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->service(2);
-	g_GirlDetails->lastsexact = IMGTYPE_MAST;
+	g_GirlDetails->set_image(IMGTYPE_MAST);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_CombatTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->combat(1);
-	g_GirlDetails->lastsexact = IMGTYPE_COMBAT;
+	g_GirlDetails->set_image(IMGTYPE_COMBAT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_TittyTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->tittysex(2);
-	g_GirlDetails->lastsexact = IMGTYPE_TITTY;
+	g_GirlDetails->set_image(IMGTYPE_TITTY);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_DeathTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->combat(0);
-	g_GirlDetails->lastsexact = IMGTYPE_DEATH;
+	g_GirlDetails->set_image(IMGTYPE_DEATH);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_ProfileTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_PROFILE;
+	g_GirlDetails->set_image(IMGTYPE_PROFILE);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_HandJobTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->handjob(2);
-	g_GirlDetails->lastsexact = IMGTYPE_HAND;
+	g_GirlDetails->set_image(IMGTYPE_HAND);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_EcchiTarget(sScript* Script)
 {
 	if (m_GirlTarget){}		//m_GirlTarget->handjob(1);
-	g_GirlDetails->lastsexact = IMGTYPE_ECCHI;
+	g_GirlDetails->set_image(IMGTYPE_ECCHI);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_BunnyTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->performance(1);
-	g_GirlDetails->lastsexact = IMGTYPE_BUNNY;
+	g_GirlDetails->set_image(IMGTYPE_BUNNY);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_CardTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->performance(1);
-	g_GirlDetails->lastsexact = IMGTYPE_CARD;
+	g_GirlDetails->set_image(IMGTYPE_CARD);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_MilkTarget(sScript* Script)
 {
 	if (m_GirlTarget){}		//m_GirlTarget->handjob(1);
-	g_GirlDetails->lastsexact = IMGTYPE_MILK;
+	g_GirlDetails->set_image(IMGTYPE_MILK);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_WaitTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->service(1);
-	g_GirlDetails->lastsexact = IMGTYPE_WAIT;
+	g_GirlDetails->set_image(IMGTYPE_WAIT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_SingTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->performance(1);
-	g_GirlDetails->lastsexact = IMGTYPE_SING;
+	g_GirlDetails->set_image(IMGTYPE_SING);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_TorturePicTarget(sScript* Script)
 {
 	if (m_GirlTarget){}		//m_GirlTarget->performance(1);
-	g_GirlDetails->lastsexact = IMGTYPE_TORTURE;
+	g_GirlDetails->set_image(IMGTYPE_TORTURE);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_FootTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->footjob(1);
-	g_GirlDetails->lastsexact = IMGTYPE_FOOT;
+	g_GirlDetails->set_image(IMGTYPE_FOOT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_BedTarget(sScript* Script)
 {
 	if (m_GirlTarget){}		//m_GirlTarget->performance(1);
-	g_GirlDetails->lastsexact = IMGTYPE_BED;
+	g_GirlDetails->set_image(IMGTYPE_BED);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_FarmTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->farming(1);
-	g_GirlDetails->lastsexact = IMGTYPE_FARM;
+	g_GirlDetails->set_image(IMGTYPE_FARM);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_HerdTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->animalhandling(1);
-	g_GirlDetails->lastsexact = IMGTYPE_HERD;
+	g_GirlDetails->set_image(IMGTYPE_HERD);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_CookTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->cooking(1);
-	g_GirlDetails->lastsexact = IMGTYPE_COOK;
+	g_GirlDetails->set_image(IMGTYPE_COOK);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_CraftTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->crafting(1);
-	g_GirlDetails->lastsexact = IMGTYPE_CRAFT;
+	g_GirlDetails->set_image(IMGTYPE_CRAFT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_SwimTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->strength(1);
-	g_GirlDetails->lastsexact = IMGTYPE_SWIM;
+	g_GirlDetails->set_image(IMGTYPE_SWIM);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_BathTarget(sScript* Script)
 {
 	if (m_GirlTarget){}		//m_GirlTarget->crafting(1);
-	g_GirlDetails->lastsexact = IMGTYPE_BATH;
+	g_GirlDetails->set_image(IMGTYPE_BATH);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_NurseTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->medicine(1);
-	g_GirlDetails->lastsexact = IMGTYPE_NURSE;
+	g_GirlDetails->set_image(IMGTYPE_NURSE);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_FormalTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->refinement(1);
-	g_GirlDetails->lastsexact = IMGTYPE_FORMAL;
+	g_GirlDetails->set_image(IMGTYPE_FORMAL);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_ShopTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_SHOP;
+	g_GirlDetails->set_image(IMGTYPE_SHOP);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_MagicTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_MAGIC;
+	g_GirlDetails->set_image(IMGTYPE_MAGIC);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_SignTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_SIGN;
+	g_GirlDetails->set_image(IMGTYPE_SIGN);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_PresentedTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_PRESENTED;
+	g_GirlDetails->set_image(IMGTYPE_PRESENTED);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_DomTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_DOM;
+	g_GirlDetails->set_image(IMGTYPE_DOM);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_AddTrait(sScript* Script)						// `J` new
@@ -1616,67 +1616,67 @@ sScript* cGameScript::Script_GetRandomGirl(sScript* Script)						// `J` new
 sScript* cGameScript::Script_DeepTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->oralsex(1);
-	g_GirlDetails->lastsexact = IMGTYPE_DEEPTHROAT;
+	g_GirlDetails->set_image(IMGTYPE_DEEPTHROAT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_EatOutTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->lesbian(1);
-	g_GirlDetails->lastsexact = IMGTYPE_EATOUT;
+	g_GirlDetails->set_image(IMGTYPE_EATOUT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_StrapOnTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->lesbian(1);
-	g_GirlDetails->lastsexact = IMGTYPE_STRAPON;
+	g_GirlDetails->set_image(IMGTYPE_STRAPON);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_Les69ingTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->lesbian(1);
-	g_GirlDetails->lastsexact = IMGTYPE_LES69ING;
+	g_GirlDetails->set_image(IMGTYPE_LES69ING);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_DildoTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->service(1);
-	g_GirlDetails->lastsexact = IMGTYPE_DILDO;
+	g_GirlDetails->set_image(IMGTYPE_DILDO);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_SubTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->bdsm(1);
-	g_GirlDetails->lastsexact = IMGTYPE_SUB;
+	g_GirlDetails->set_image(IMGTYPE_SUB);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_LickTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->oralsex(1);
-	g_GirlDetails->lastsexact = IMGTYPE_LICK;
+	g_GirlDetails->set_image(IMGTYPE_LICK);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_SuckBallsTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->oralsex(1);
-	g_GirlDetails->lastsexact = IMGTYPE_SUCKBALLS;
+	g_GirlDetails->set_image(IMGTYPE_SUCKBALLS);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_CowGirlTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->normalsex(1);
-	g_GirlDetails->lastsexact = IMGTYPE_COWGIRL;
+	g_GirlDetails->set_image(IMGTYPE_COWGIRL);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_RevCowGirlTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->normalsex(1);
-	g_GirlDetails->lastsexact = IMGTYPE_REVCOWGIRL;
+	g_GirlDetails->set_image(IMGTYPE_REVCOWGIRL);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_SexDoggyTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->normalsex(1);
-	g_GirlDetails->lastsexact = IMGTYPE_SEXDOGGY;
+	g_GirlDetails->set_image(IMGTYPE_SEXDOGGY);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_NormalSexWithRandomTarget(sScript* Script)
@@ -1690,7 +1690,7 @@ sScript* cGameScript::Script_NormalSexWithRandomTarget(sScript* Script)
 		if (!m_GirlTarget->calc_pregnancy(Cust, false, 1.0))
 			g_Game->push_message(m_GirlTarget->m_Realname + " has gotten pregnant", 0);
 	}
-	g_GirlDetails->lastsexact = IMGTYPE_SEX;
+	g_GirlDetails->set_image(IMGTYPE_SEX);
 
 	return Script->m_Next;
 }
@@ -2130,7 +2130,7 @@ sScript* cGameScript::Script_BrandTarget(sScript* Script)
 		m_GirlTarget->pcfear(g_Dice % 3 + 1);
 		m_GirlTarget->pclove(-(g_Dice % 3));
 	}
-	g_GirlDetails->lastsexact = IMGTYPE_BRAND;
+	g_GirlDetails->set_image(IMGTYPE_BRAND);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_RapeTarget(sScript* Script)
@@ -2141,7 +2141,7 @@ sScript* cGameScript::Script_RapeTarget(sScript* Script)
 		m_GirlTarget->pcfear(g_Dice % 5 + 1);
 		m_GirlTarget->pclove(-(g_Dice % 5));
 	}
-	g_GirlDetails->lastsexact = IMGTYPE_RAPE;
+	g_GirlDetails->set_image(IMGTYPE_RAPE);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_RapeBeastTarget(sScript* Script)
@@ -2152,94 +2152,94 @@ sScript* cGameScript::Script_RapeBeastTarget(sScript* Script)
 		m_GirlTarget->pcfear(g_Dice % 6 + 1);
 		m_GirlTarget->pclove(-(g_Dice % 3));
 	}
-	g_GirlDetails->lastsexact = IMGTYPE_RAPEBEAST;
+	g_GirlDetails->set_image(IMGTYPE_RAPEBEAST);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_BirthHumanTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_BIRTHHUMAN;
+	g_GirlDetails->set_image(IMGTYPE_BIRTHHUMAN);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_BirthHumanMultipleTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_BIRTHHUMANMULTIPLE;
+	g_GirlDetails->set_image(IMGTYPE_BIRTHHUMANMULTIPLE);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_BirthBeastTarget(sScript* Script)
 {
-	g_GirlDetails->lastsexact = IMGTYPE_BIRTHBEAST;
+	g_GirlDetails->set_image(IMGTYPE_BIRTHBEAST);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_ImpregSexTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->normalsex(g_Dice % 3 + 1);
-	g_GirlDetails->lastsexact = IMGTYPE_IMPREGSEX;
+	g_GirlDetails->set_image(IMGTYPE_IMPREGSEX);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_ImpregGroupTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->group(g_Dice % 3 + 1);
-	g_GirlDetails->lastsexact = IMGTYPE_IMPREGGROUP;
+	g_GirlDetails->set_image(IMGTYPE_IMPREGGROUP);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_ImpregBDSMTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->bdsm(g_Dice % 3 + 1);
-	g_GirlDetails->lastsexact = IMGTYPE_IMPREGBDSM;
+	g_GirlDetails->set_image(IMGTYPE_IMPREGBDSM);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_ImpregBeastTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->beastiality(g_Dice % 3 + 1);
-	g_GirlDetails->lastsexact = IMGTYPE_IMPREGBEAST;
+	g_GirlDetails->set_image(IMGTYPE_IMPREGBEAST);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_VirginSexTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->normalsex(1);
-	g_GirlDetails->lastsexact = IMGTYPE_VIRGINSEX;
+	g_GirlDetails->set_image(IMGTYPE_VIRGINSEX);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_VirginGroupTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->group(1);
-	g_GirlDetails->lastsexact = IMGTYPE_VIRGINGROUP;
+	g_GirlDetails->set_image(IMGTYPE_VIRGINGROUP);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_VirginBDSMTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->bdsm(1);
-	g_GirlDetails->lastsexact = IMGTYPE_VIRGINBDSM;
+	g_GirlDetails->set_image(IMGTYPE_VIRGINBDSM);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_VirginBeastTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->beastiality(1);
-	g_GirlDetails->lastsexact = IMGTYPE_VIRGINBEAST;
+	g_GirlDetails->set_image(IMGTYPE_VIRGINBEAST);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_EscortTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->upd_skill(STAT_CHARISMA, 1);
-	g_GirlDetails->lastsexact = IMGTYPE_ESCORT;
+	g_GirlDetails->set_image(IMGTYPE_ESCORT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_SportTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->upd_skill(STAT_CONSTITUTION, 1);
-	g_GirlDetails->lastsexact = IMGTYPE_SPORT;
+	g_GirlDetails->set_image(IMGTYPE_SPORT);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_StudyTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->upd_skill(STAT_INTELLIGENCE, 1);
-	g_GirlDetails->lastsexact = IMGTYPE_STUDY;
+	g_GirlDetails->set_image(IMGTYPE_STUDY);
 	return Script->m_Next;
 }
 sScript* cGameScript::Script_TeacherTarget(sScript* Script)
 {
 	if (m_GirlTarget) m_GirlTarget->performance(1);
-	g_GirlDetails->lastsexact = IMGTYPE_TEACHER;
+	g_GirlDetails->set_image(IMGTYPE_TEACHER);
 	return Script->m_Next;
 }
 
@@ -2257,7 +2257,7 @@ sScript* cGameScript::Script_TeacherTarget(sScript* Script)
 //		stringstream sstemp;
 //		sstemp << ("Im ") << girlName;
 //	}
-//		//g_GirlDetails->lastsexact = IMGTYPE_TORTURE;
+//		//g_GirlDetails->set_image(IMGTYPE_TORTURE);
 //
 //	return Script->m_Next;
 //}

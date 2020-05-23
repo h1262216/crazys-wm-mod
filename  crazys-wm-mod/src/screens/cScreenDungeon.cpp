@@ -328,7 +328,7 @@ void cScreenDungeon::selection_change()
 
 int cScreenDungeon::view_girl()
 {
-    g_GirlDetails->lastsexact = -1;
+    g_GirlDetails->set_image(-1);
 
 	selection = GetSelectedItemFromList(girllist_id);
 
