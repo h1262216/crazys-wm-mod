@@ -216,10 +216,12 @@ sScript *cGameScript::Script_Dialog(sScript *Script)
 	g_Game->push_message(text, COLOR_BLUE);
 	return Script->m_Next; // Go to next script action
 }
+
 sScript *cGameScript::Script_Init(sScript *Script)
 {
 	return Script->m_Next; // Go to next script action
 }
+
 sScript *cGameScript::Script_EndInit(sScript *Script)
 {
 	return Script->m_Next; // Go to next script action
@@ -230,6 +232,7 @@ sScript *cGameScript::Script_EndScript(sScript *Script)
 	m_Leave = true;
 	return Script->m_Next; // Go to next script action
 }
+
 sScript *cGameScript::Script_ChoiceBox(sScript *Script)
 {
 	int value[2];
@@ -254,7 +257,7 @@ sScript *cGameScript::Script_ChoiceBox(sScript *Script)
 		options.push_back(text);
 		Script = Script->m_Next;
 	}
-    window_manager().InputChoice("", std::move(options), {});
+    m_ChoiceBoxes.push_back(sChoiceBox{"", std::move(options)});
 
 	return Script; // Go to next script action
 }
@@ -362,8 +365,9 @@ sScript *cGameScript::Script_EndIfNew(sScript *Script)
 }
 sScript *cGameScript::Script_ActivateChoice(sScript *Script)
 {
-    /// TODO(bug) script activate choice is currently broken
-//    choice_manager().SetActive(Script->m_Entries[0].m_lValue);
+    int id = Script->m_Entries[0].m_lValue;
+    window_manager().InputChoice(m_ChoiceBoxes[id].Prompt, m_ChoiceBoxes[id].Options,
+            [this]( int selected ){ m_LastSelection = selected; });
 	return Script->m_Next; // Go to next script action
 }
 
@@ -377,12 +381,8 @@ sScript *cGameScript::Script_IfChoice(sScript *Script)
 	value[0] = (Script->m_Entries[0].m_Var == 1 ? m_Vars[Script->m_Entries[0].m_lValue] : Script->m_Entries[0].m_lValue);
 	value[1] = (Script->m_Entries[1].m_Var == 1 ? m_Vars[Script->m_Entries[1].m_lValue] : Script->m_Entries[1].m_lValue);
 	// See if choice flag matches second entry
-	/// TODO(bug) Script IfChoice is broken
-/*	if (choice_manager().GetChoice(value[0]) == value[1])
-		Skipping = false;
-	else
-		Skipping = true;
-*/
+    Skipping = m_LastSelection != value[1];
+
 	// At this point, Skipping states if the script actions
 	// need to be skipped due to a conditional if...then statement.
 	// Actions are further processed if skipped = false, looking

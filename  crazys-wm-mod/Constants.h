@@ -19,7 +19,8 @@
 #ifndef __CONSTANTS_H
 #define __CONSTANTS_H
 
-#include"cRng.h"
+#include "cRng.h"
+#include <string>
 #include <array>
 #include <unordered_map>
 

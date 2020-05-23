@@ -615,7 +615,7 @@ bool SaveScriptFile(const char *Filename, sScript *ScriptRoot)
 sScript *LoadScriptFile(string Filename)
 {
 	FILE *fp;
-    std::int32_t i, j, Num;
+    std::int32_t j, Num;
 	sScript *ScriptRoot = nullptr, *Script = nullptr, *ScriptPtr = nullptr;
 
 	// Open the file for input
@@ -629,7 +629,7 @@ sScript *LoadScriptFile(string Filename)
 	fread(&Num, 1, sizeof(std::int32_t), fp);
 
 	// Loop through each script action
-	for (i = 0; i < Num; i++)
+	for (int i = 0; i < Num; i++)
 	{
 		// Allocate a script structure and link in
 		Script = new sScript();

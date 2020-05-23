@@ -79,7 +79,7 @@ void cScreenGirlDetails::set_ids()
 	traitdesc_id	/**/ = get_id("TraitDescription");
 
 	SetButtonNavigation(back_id, "<back>");
-	SetButtonNavigation(gallery_id, "Gallery");
+	SetButtonNavigation(gallery_id, "Gallery", false);
 	SetButtonHotKey(gallery_id, SDLK_SPACE);
 	SetButtonCallback(day_id, [this]( ) { set_shift(SHIFT_DAY); });
 	SetButtonCallback(night_id, [this]( ) { set_shift(SHIFT_NIGHT); });
@@ -381,7 +381,7 @@ void cScreenGirlDetails::on_select_job(int selection, bool fulltime)
         text << g_Game->job_manager().JobName[old_job] << " (" << m_SelectedGirl->m_Building->num_girls_on_job((JOBS)old_job, Day0Night1) << ")";
         SetSelectedItemText(joblist_id, old_job, text.str());
         text.str("");
-text << g_Game->job_manager().JobName[selection] << " (" << m_SelectedGirl->m_Building->num_girls_on_job((JOBS)selection, Day0Night1) << ")";
+        text << g_Game->job_manager().JobName[selection] << " (" << m_SelectedGirl->m_Building->num_girls_on_job((JOBS)selection, Day0Night1) << ")";
     }
     RefreshJobList();
 }

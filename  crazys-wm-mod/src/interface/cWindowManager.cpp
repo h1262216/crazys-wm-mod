@@ -92,7 +92,7 @@ void cWindowManager::PopToWindow(const std::string& window_name)
 
 void cWindowManager::UpdateCurrent()
 {
-    if (HasActiveModal()) {
+    if (m_MessageBox->IsActive()) {
     } else if (!m_WindowStack.empty()) {
         m_WindowStack.back()->update();
     }
@@ -214,7 +214,7 @@ void cWindowManager::PushMessage(std::string text, int color)
 
 bool cWindowManager::HasActiveModal() const
 {
-    return m_MessageBox->IsActive();
+    return m_MessageBox->IsActive() || dynamic_cast<cModalWindow*>(m_WindowStack.back().get()) != nullptr;
 }
 
 void cWindowManager::load()
