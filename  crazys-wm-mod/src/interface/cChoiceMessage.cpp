@@ -203,6 +203,9 @@ int cChoice::FindActive(int x, int y) const {
 }
 
 bool cChoice::HandleClick(int x, int y, bool press) {
+    if(press)
+        return false;
+
     // check for scroll buttons
     if(!m_ScrollDisabled) {
         // TODO these conditions need to be fixed
