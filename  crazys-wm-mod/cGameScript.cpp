@@ -257,7 +257,10 @@ sScript *cGameScript::Script_ChoiceBox(sScript *Script)
 		options.push_back(text);
 		Script = Script->m_Next;
 	}
-    m_ChoiceBoxes.push_back(sChoiceBox{"", std::move(options)});
+	while(m_ChoiceBoxes.size() < id + 1) {
+        m_ChoiceBoxes.push_back({});
+	}
+    m_ChoiceBoxes[id] = sChoiceBox{"", std::move(options)};
 
 	return Script; // Go to next script action
 }

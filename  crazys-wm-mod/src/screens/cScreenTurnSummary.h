@@ -24,20 +24,20 @@
 class cScreenTurnSummary : public cInterfaceWindowXML
 {
 private:
-	int brothel_id;
-	int gold_id;			// Player Gold
-	int category_id;
-	int labelitem_id;
-	int item_id;
-	int event_id;
-	int labeldesc_id;
-	int goto_id;
-	int nextweek_id;
-	int back_id;
-	int prev_id;
-	int next_id;
-	int image_id;
-	int imagename_id;
+    int brothel_id;
+    int gold_id;			// Player Gold
+    int category_id;
+    int labelitem_id;
+    int item_id;
+    int event_id;
+    int labeldesc_id;
+    int goto_id;
+    int nextweek_id;
+    int back_id;
+    int prev_id;
+    int next_id;
+    int image_id;
+    int imagename_id;
 
     enum SummaryCategory {
         Summary_GIRLS,
@@ -51,25 +51,25 @@ private:
     void set_ids() override;
 
 public:
-	cScreenTurnSummary();
+    cScreenTurnSummary();
 
-	void init(bool back) override;
-	void process() override;
+    void init(bool back) override;
+    void process() override;
 
     void Fill_Items_GANGS();
-	void Fill_Items_BUILDINGS();
-	void Fill_Items_DUNGEON();
+    void Fill_Items_BUILDINGS();
+    void Fill_Items_DUNGEON();
     void Fill_Items_Building(IBuilding * building);
 
-	void Fill_Events(sGirl* girl);
-	void Fill_Events_Gang(int gang_id);
-	void Fill_Events_Buildings(int building_id);
+    void Fill_Events(sGirl* girl);
+    void Fill_Events_Gang(int gang_id);
+    void Fill_Events_Buildings(int building_id);
 
     void change_category(SummaryCategory);
 
     void change_item(int selection);
 
-    void change_event();
+    void change_event(int selection);
 
     void goto_selected();
 };

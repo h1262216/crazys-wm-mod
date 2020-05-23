@@ -34,9 +34,7 @@
 #include "Game.hpp"
 #include "interface/cSurface.h"
 
-extern cScreenBrothelManagement* g_BrothelManagement;
 extern	cScreenGirlDetails*		g_GirlDetails;
-extern	bool					eventrunning;
 extern	bool					g_AllTogle;
 
 extern	string					pic_types[];
@@ -61,26 +59,26 @@ cScreenTurnSummary::cScreenTurnSummary() : cInterfaceWindowXML("TurnSummary.xml"
 
 void cScreenTurnSummary::set_ids()
 {
-	back_id			= get_id("BackButton", "Back");
-	brothel_id		= get_id("CurrentBrothel");
-	category_id		= get_id("Category");
-	gold_id			= get_id("Gold", "*Unused*");//
-	labelitem_id	= get_id("LabelItem");
-	item_id			= get_id("Item");
-	event_id		= get_id("Event");
-	labeldesc_id	= get_id("LabelDesc");
-	goto_id			= get_id("GoTo");
-	nextweek_id		= get_id("NextWeek");
-	prev_id			= get_id("PrevButton","Prev");
-	next_id			= get_id("NextButton","Next");
-	image_id		= get_id("Background");
-	imagename_id	= get_id("ImageName", "*Unused*");//
+    back_id			= get_id("BackButton", "Back");
+    brothel_id		= get_id("CurrentBrothel");
+    category_id		= get_id("Category");
+    gold_id			= get_id("Gold", "*Unused*");//
+    labelitem_id	= get_id("LabelItem");
+    item_id			= get_id("Item");
+    event_id		= get_id("Event");
+    labeldesc_id	= get_id("LabelDesc");
+    goto_id			= get_id("GoTo");
+    nextweek_id		= get_id("NextWeek");
+    prev_id			= get_id("PrevButton","Prev");
+    next_id			= get_id("NextButton","Next");
+    image_id		= get_id("Background");
+    imagename_id	= get_id("ImageName", "*Unused*");//
 
-	SetButtonNavigation(back_id, "<back>");
-	SetButtonCallback(next_id, [this]() {
+    SetButtonNavigation(back_id, "<back>");
+    SetButtonCallback(next_id, [this]() {
         cycle_building(1);
         change_category(m_ActiveCategory);
-	});
+    });
     SetButtonCallback(prev_id, [this]() {
         cycle_building(-1);
         change_category(m_ActiveCategory);
@@ -103,7 +101,7 @@ void cScreenTurnSummary::set_ids()
 
     SetListBoxHotKeys(event_id, SDLK_w, SDLK_s);
     SetListBoxSelectionCallback(event_id, [this](int selection) {
-        change_event();
+        change_event(selection);
     });
 
     SetButtonCallback(goto_id, [this]() { goto_selected(); });
@@ -126,27 +124,27 @@ void cScreenTurnSummary::set_ids()
 
 void cScreenTurnSummary::process()
 {
-	// process a change of the selected item within the category, e.g. selecting a different girl.
-	if (Item_Change)
-	{
+    // process a change of the selected item within the category, e.g. selecting a different girl.
+    if (Item_Change)
+    {
         change_item(0);
         Item_Change = false;
     }
 
     EditTextItem(active_building().name(), brothel_id);
 
-	// Draw the image
-	if (m_ActiveCategory == Summary_BUILDINGS)
-	{
+    // Draw the image
+    if (m_ActiveCategory == Summary_BUILDINGS)
+    {
         SetImage(image_id, active_building().background_image());
-		if (imagename_id >= 0)	EditTextItem("", imagename_id);
-	}
-	else if (m_ActiveCategory == Summary_GANGS)
-	{
-		SetImage(image_id, active_building().background_image());
-		if (imagename_id >= 0)	EditTextItem("", imagename_id);
-	}
-	else {
+        if (imagename_id >= 0)	EditTextItem("", imagename_id);
+    }
+    else if (m_ActiveCategory == Summary_GANGS)
+    {
+        SetImage(image_id, active_building().background_image());
+        if (imagename_id >= 0)	EditTextItem("", imagename_id);
+    }
+    else {
         cImageItem * image_item = GetImage(image_id);
         if (selected_girl() && Image_Change)
         {
@@ -175,25 +173,26 @@ void cScreenTurnSummary::process()
 
 }
 
-void cScreenTurnSummary::change_event()
+void cScreenTurnSummary::change_event(int selection)
 {
-    if(Event < 0)
+    Event = selection;
+    if(selection < 0)
         return;
 
-    string text;
+    std::string text;
     if (selected_girl() && (m_ActiveCategory == Summary_DUNGEON || m_ActiveCategory == Summary_GIRLS)) {
         if (!selected_girl()->m_Events.IsEmpty()) {
-            text       = selected_girl()->m_Events.GetMessage(Event).m_Message;
-            Image_Type = selected_girl()->m_Events.GetMessage(Event).m_MessageType;
+            text       = selected_girl()->m_Events.GetMessage(selection).m_Message;
+            Image_Type = selected_girl()->m_Events.GetMessage(selection).m_MessageType;
         }
         Image_Change = true;
     } else if (m_ActiveCategory == Summary_GANGS) {
         if (g_Game->gang_manager().GetGang(Item) && !g_Game->gang_manager().GetGang(Item)->m_Events.IsEmpty())
-            text = g_Game->gang_manager().GetGang(Item)->m_Events.GetMessage(Event).m_Message;
+            text = g_Game->gang_manager().GetGang(Item)->m_Events.GetMessage(selection).m_Message;
     } else if (m_ActiveCategory == Summary_BUILDINGS) {
         IBuilding * brothel = &g_Game->buildings().get_building(Item);
         if (!brothel->m_Events.IsEmpty()) {
-            text = brothel->m_Events.GetMessage(Event).m_Message;
+            text = brothel->m_Events.GetMessage(selection).m_Message;
             EditTextItem(brothel->name(), brothel_id);
         }
     }
@@ -204,26 +203,26 @@ void cScreenTurnSummary::change_item(int selection)
 {
     ClearListBox(event_id);
     switch(m_ActiveCategory) {
-    case Summary_GANGS:
-        Fill_Events_Gang(selection);
-        break;
-    case Summary_BUILDINGS:
-        Fill_Events_Buildings(selection);
-        break;
-    case Summary_DUNGEON:
-        if (g_Game->dungeon().GetGirlByName(GetSelectedTextFromList(item_id))) {
-            set_active_girl(g_Game->dungeon().GetGirlByName(GetSelectedTextFromList(item_id))->m_Girl.get());
-        }
-        break;
-    case Summary_GIRLS:
-        set_active_girl(active_building().find_girl_by_name(GetSelectedTextFromList(item_id)));
-        Fill_Events(selected_girl());
-        break;
+        case Summary_GANGS:
+            Fill_Events_Gang(selection);
+            break;
+        case Summary_BUILDINGS:
+            Fill_Events_Buildings(selection);
+            break;
+        case Summary_DUNGEON:
+            if (g_Game->dungeon().GetGirlByName(GetSelectedTextFromList(item_id))) {
+                set_active_girl(g_Game->dungeon().GetGirlByName(GetSelectedTextFromList(item_id))->m_Girl.get());
+            }
+            break;
+        case Summary_GIRLS:
+            set_active_girl(active_building().find_girl_by_name(GetSelectedTextFromList(item_id)));
+            Fill_Events(selected_girl());
+            break;
     }
 
     Event = 0;
     SetSelectedItemInList(event_id, Event);
-    change_event();
+    change_event(0);
     Image_Change = true;
 }
 
@@ -232,18 +231,18 @@ void cScreenTurnSummary::change_category(SummaryCategory new_category)
     ClearListBox(item_id);
     ClearListBox(event_id);
     switch(new_category) {
-    case Summary_GANGS:
-        Fill_Items_GANGS();
-        break;
-    case Summary_BUILDINGS:
-        Fill_Items_BUILDINGS();
-        break;
-    case Summary_DUNGEON:
-        Fill_Items_DUNGEON();
-        break;
-    case Summary_GIRLS:
-        Fill_Items_Building(&active_building());
-        break;
+        case Summary_GANGS:
+            Fill_Items_GANGS();
+            break;
+        case Summary_BUILDINGS:
+            Fill_Items_BUILDINGS();
+            break;
+        case Summary_DUNGEON:
+            Fill_Items_DUNGEON();
+            break;
+        case Summary_GIRLS:
+            Fill_Items_Building(&active_building());
+            break;
     }
 
     if (m_ActiveCategory == new_category) Item = GetSelectedItemFromList(item_id);
@@ -266,39 +265,39 @@ void cScreenTurnSummary::change_category(SummaryCategory new_category)
 
 void cScreenTurnSummary::init(bool back)
 {
-	Focused();
+    Focused();
 
-	if (selected_girl())
-	{
-		if (selected_girl()->m_DayJob == JOB_INDUNGEON)	m_ActiveCategory = Summary_DUNGEON;
-		else {
+    if (selected_girl())
+    {
+        if (selected_girl()->m_DayJob == JOB_INDUNGEON)	m_ActiveCategory = Summary_DUNGEON;
+        else {
             m_ActiveCategory = Summary_GIRLS;
-		}
-	}
+        }
+    }
 
-	EditTextItem(active_building().name(), brothel_id);
+    EditTextItem(active_building().name(), brothel_id);
 
-	if (gold_id >= 0)
-	{
-		stringstream ss; ss << "Gold: " << g_Game->gold().ival();
-		EditTextItem(ss.str(), gold_id);
-	}
+    if (gold_id >= 0)
+    {
+        stringstream ss; ss << "Gold: " << g_Game->gold().ival();
+        EditTextItem(ss.str(), gold_id);
+    }
 
-	// Clear everything
-	ClearListBox(category_id);
-	ClearListBox(item_id);
-	ClearListBox(event_id);
-	EditTextItem("", labeldesc_id);
+    // Clear everything
+    ClearListBox(category_id);
+    ClearListBox(item_id);
+    ClearListBox(event_id);
+    EditTextItem("", labeldesc_id);
 
-	AddToListBox(category_id, 0, "GIRLS");
-	AddToListBox(category_id, 1, "GANGS");
-	AddToListBox(category_id, 2, "BROTHELS");
-	AddToListBox(category_id, 3, "DUNGEON");
-	change_category(m_ActiveCategory);
+    AddToListBox(category_id, 0, "GIRLS");
+    AddToListBox(category_id, 1, "GANGS");
+    AddToListBox(category_id, 2, "BROTHELS");
+    AddToListBox(category_id, 3, "DUNGEON");
+    change_category(m_ActiveCategory);
 
-	int size = GetListBoxSize(item_id);
-	if (Item >= size)	Item = size;
-	SetSelectedItemInList(item_id, Item);
+    int size = GetListBoxSize(item_id);
+    if (Item >= size)	Item = size;
+    SetSelectedItemInList(item_id, Item);
 
 }
 
@@ -362,13 +361,13 @@ void cScreenTurnSummary::goto_selected()
 
 void cScreenTurnSummary::Fill_Items_GANGS()
 {
-	for (int i = 0; i < g_Game->gang_manager().GetNumGangs(); i++)
-		AddToListBox(item_id, i, g_Game->gang_manager().GetGang(i)->name());
+    for (int i = 0; i < g_Game->gang_manager().GetNumGangs(); i++)
+        AddToListBox(item_id, i, g_Game->gang_manager().GetGang(i)->name());
 }
 void cScreenTurnSummary::Fill_Items_BUILDINGS()
 {
     auto& active = active_building();
-	for (int i = 0; i < g_Game->buildings().num_buildings(); i++) {
+    for (int i = 0; i < g_Game->buildings().num_buildings(); i++) {
         IBuilding& next = g_Game->buildings().get_building(i);
         if(&active == &next) {
             Item = i;
@@ -378,106 +377,106 @@ void cScreenTurnSummary::Fill_Items_BUILDINGS()
 }
 void cScreenTurnSummary::Fill_Items_DUNGEON()
 {
-	// Fill the list box
-	cDungeon* pDungeon = &g_Game->dungeon();
-	int ID = 0, nNumGirls = pDungeon->GetNumGirls();
-	vector<sGirl*> tmpGoodNewsGirls, tmpDangerGirls, tmpWarningGirls, tmpOtherGirls;
-	tmpGoodNewsGirls.clear(); tmpDangerGirls.clear(); tmpWarningGirls.clear(); tmpOtherGirls.clear();
-	sGirl* pTmpGirl;
+    // Fill the list box
+    cDungeon* pDungeon = &g_Game->dungeon();
+    int ID = 0, nNumGirls = pDungeon->GetNumGirls();
+    vector<sGirl*> tmpGoodNewsGirls, tmpDangerGirls, tmpWarningGirls, tmpOtherGirls;
+    tmpGoodNewsGirls.clear(); tmpDangerGirls.clear(); tmpWarningGirls.clear(); tmpOtherGirls.clear();
+    sGirl* pTmpGirl;
 
-	for (int i = 0; i < nNumGirls; i++)
-	{
-		pTmpGirl = pDungeon->GetGirl(i)->m_Girl.get();
+    for (int i = 0; i < nNumGirls; i++)
+    {
+        pTmpGirl = pDungeon->GetGirl(i)->m_Girl.get();
 
-		/* */if (!pTmpGirl->m_Events.HasUrgent())	tmpOtherGirls.push_back(pTmpGirl);
-		else if (pTmpGirl->m_Events.HasDanger())	tmpDangerGirls.push_back(pTmpGirl);
-		else if (pTmpGirl->m_Events.HasGoodNews())	tmpGoodNewsGirls.push_back(pTmpGirl);
-		else /*                                */	tmpWarningGirls.push_back(pTmpGirl);
-	}
+        /* */if (!pTmpGirl->m_Events.HasUrgent())	tmpOtherGirls.push_back(pTmpGirl);
+        else if (pTmpGirl->m_Events.HasDanger())	tmpDangerGirls.push_back(pTmpGirl);
+        else if (pTmpGirl->m_Events.HasGoodNews())	tmpGoodNewsGirls.push_back(pTmpGirl);
+        else /*                                */	tmpWarningGirls.push_back(pTmpGirl);
+    }
 
-	//Girls with Danger events
-	for (u_int i = 0; i < tmpDangerGirls.size(); i++)
-	{
-		string tname = tmpDangerGirls[i]->m_Realname;
-		AddToListBox(item_id, ID, tname, COLOR_RED);
-		if (selected_girl() == tmpDangerGirls[i]) Item = ID;
-		ID++;
-	}
-	//Girls with GoodNews events
-	for (u_int i = 0; i < tmpGoodNewsGirls.size(); i++)
-	{
-		string tname = tmpGoodNewsGirls[i]->m_Realname;
-		AddToListBox(item_id, ID, tname, COLOR_GREEN);
-		if (selected_girl() == tmpGoodNewsGirls[i]) Item = ID;
-		ID++;
-	}
-	//Girls wih Warnings
-	for (u_int i = 0; i < tmpWarningGirls.size(); i++)
-	{
-		string tname = tmpWarningGirls[i]->m_Realname;
-		AddToListBox(item_id, ID, tname, COLOR_DARKBLUE);
-		if (selected_girl() == tmpWarningGirls[i]) Item = ID;
-		ID++;
-	}
-	//ServiceJob Girls
-	for (u_int i = 0; i < tmpOtherGirls.size(); i++)
-	{
-		string tname = tmpOtherGirls[i]->m_Realname;
-		AddToListBox(item_id, ID, tname);
-		if (selected_girl() == tmpOtherGirls[i]) Item = ID;
-		ID++;
-	}
+    //Girls with Danger events
+    for (u_int i = 0; i < tmpDangerGirls.size(); i++)
+    {
+        string tname = tmpDangerGirls[i]->m_Realname;
+        AddToListBox(item_id, ID, tname, COLOR_RED);
+        if (selected_girl() == tmpDangerGirls[i]) Item = ID;
+        ID++;
+    }
+    //Girls with GoodNews events
+    for (u_int i = 0; i < tmpGoodNewsGirls.size(); i++)
+    {
+        string tname = tmpGoodNewsGirls[i]->m_Realname;
+        AddToListBox(item_id, ID, tname, COLOR_GREEN);
+        if (selected_girl() == tmpGoodNewsGirls[i]) Item = ID;
+        ID++;
+    }
+    //Girls wih Warnings
+    for (u_int i = 0; i < tmpWarningGirls.size(); i++)
+    {
+        string tname = tmpWarningGirls[i]->m_Realname;
+        AddToListBox(item_id, ID, tname, COLOR_DARKBLUE);
+        if (selected_girl() == tmpWarningGirls[i]) Item = ID;
+        ID++;
+    }
+    //ServiceJob Girls
+    for (u_int i = 0; i < tmpOtherGirls.size(); i++)
+    {
+        string tname = tmpOtherGirls[i]->m_Realname;
+        AddToListBox(item_id, ID, tname);
+        if (selected_girl() == tmpOtherGirls[i]) Item = ID;
+        ID++;
+    }
 }
 
 void cScreenTurnSummary::Fill_Events(sGirl* girl)
 {
-	if (girl == nullptr) return;
-	Image_Change = true;
-	Image_Type = IMGTYPE_PROFILE;
-	if (!girl->m_Events.IsEmpty())
-	{
-		girl->m_Events.DoSort();		// Sort Events to put Warnings & Dangers first.
-		for (int l = 0; l < girl->m_Events.GetNumEvents(); l++)
-		{
-			string			sTitle = girl->m_Events.GetMessage(l).TitleText();
-			unsigned int	uiListboxColour = girl->m_Events.GetMessage(l).ListboxColour();
-			AddToListBox(event_id, l, sTitle, uiListboxColour);
-		}
-	}
-	if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
+    if (girl == nullptr) return;
+    Image_Change = true;
+    Image_Type = IMGTYPE_PROFILE;
+    if (!girl->m_Events.IsEmpty())
+    {
+        girl->m_Events.DoSort();		// Sort Events to put Warnings & Dangers first.
+        for (int l = 0; l < girl->m_Events.GetNumEvents(); l++)
+        {
+            string			sTitle = girl->m_Events.GetMessage(l).TitleText();
+            unsigned int	uiListboxColour = girl->m_Events.GetMessage(l).ListboxColour();
+            AddToListBox(event_id, l, sTitle, uiListboxColour);
+        }
+    }
+    if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
 }
 
 void cScreenTurnSummary::Fill_Events_Gang(int gang_id)
 {
-	sGang* gang = g_Game->gang_manager().GetGang(gang_id);
-	if (gang == nullptr) return;
-	if (!gang->m_Events.IsEmpty())
-	{
-		gang->m_Events.DoSort();						// Sort Events to put Warnings & Dangers first.
+    sGang* gang = g_Game->gang_manager().GetGang(gang_id);
+    if (gang == nullptr) return;
+    if (!gang->m_Events.IsEmpty())
+    {
+        gang->m_Events.DoSort();						// Sort Events to put Warnings & Dangers first.
 
-		for (int l = 0; l < gang->m_Events.GetNumEvents(); l++)
-		{
-			string			sTitle = gang->m_Events.GetMessage(l).TitleText();
-			unsigned int	uiListboxColour = gang->m_Events.GetMessage(l).ListboxColour();
-			AddToListBox(event_id, l, sTitle, uiListboxColour);
-		}
-	}
-	if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
+        for (int l = 0; l < gang->m_Events.GetNumEvents(); l++)
+        {
+            string			sTitle = gang->m_Events.GetMessage(l).TitleText();
+            unsigned int	uiListboxColour = gang->m_Events.GetMessage(l).ListboxColour();
+            AddToListBox(event_id, l, sTitle, uiListboxColour);
+        }
+    }
+    if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
 }
 void cScreenTurnSummary::Fill_Events_Buildings(int building_id)
 {
-	auto& pSelectedBrothel = g_Game->buildings().get_building(building_id);
-	if (!pSelectedBrothel.m_Events.IsEmpty())
-	{
-		pSelectedBrothel.m_Events.DoSort();						// Sort Events to put Warnings & Dangers first.
+    auto& pSelectedBrothel = g_Game->buildings().get_building(building_id);
+    if (!pSelectedBrothel.m_Events.IsEmpty())
+    {
+        pSelectedBrothel.m_Events.DoSort();						// Sort Events to put Warnings & Dangers first.
 
-		for (int l = 0; l < pSelectedBrothel.m_Events.GetNumEvents(); l++)
-		{
-			string			sTitle = pSelectedBrothel.m_Events.GetMessage(l).TitleText();
-			unsigned int	uiListboxColour = pSelectedBrothel.m_Events.GetMessage(l).ListboxColour();
-			AddToListBox(event_id, l, sTitle, uiListboxColour);
-		}
-	}
+        for (int l = 0; l < pSelectedBrothel.m_Events.GetNumEvents(); l++)
+        {
+            string			sTitle = pSelectedBrothel.m_Events.GetMessage(l).TitleText();
+            unsigned int	uiListboxColour = pSelectedBrothel.m_Events.GetMessage(l).ListboxColour();
+            AddToListBox(event_id, l, sTitle, uiListboxColour);
+        }
+    }
 }
 
 struct EventRating {
@@ -507,19 +506,19 @@ EventRating default_rating(const sGirl& g) {
 bool is_sex_job(JOBS job) {
     switch (job)
     {
-    case JOB_XXXENTERTAINMENT:
-    case JOB_PEEP:
-    case JOB_BARSTRIPPER:
-    case JOB_BROTHELSTRIPPER:
-    case JOB_MASSEUSE:
-    case JOB_BARWHORE:
-    case JOB_WHOREGAMBHALL:
-    case JOB_WHOREBROTHEL:
-    case JOB_WHORESTREETS:
-    case JOB_ESCORT:
-        return true;
-    default:
-        return false;
+        case JOB_XXXENTERTAINMENT:
+        case JOB_PEEP:
+        case JOB_BARSTRIPPER:
+        case JOB_BROTHELSTRIPPER:
+        case JOB_MASSEUSE:
+        case JOB_BARWHORE:
+        case JOB_WHOREGAMBHALL:
+        case JOB_WHOREBROTHEL:
+        case JOB_WHORESTREETS:
+        case JOB_ESCORT:
+            return true;
+        default:
+            return false;
     }
 }
 
@@ -581,22 +580,22 @@ EventRating studio_rating_default(const sGirl& g)
     bool sexjob = false;
     switch (g.m_NightJob)
     {
-    case JOB_FILMBEAST:
-    case JOB_FILMSEX:
-    case JOB_FILMANAL:
-    case JOB_FILMLESBIAN:
-    case JOB_FILMBONDAGE:
-    case JOB_FILMGROUP:
-    case JOB_FILMORAL:
-    case JOB_FILMMAST:
-    case JOB_FILMTITTY:
-    case JOB_FILMSTRIP:
-    case JOB_FILMRANDOM:
-    case JOB_FLUFFER:
-        sexjob = true;
-        break;
-    default:
-        break;
+        case JOB_FILMBEAST:
+        case JOB_FILMSEX:
+        case JOB_FILMANAL:
+        case JOB_FILMLESBIAN:
+        case JOB_FILMBONDAGE:
+        case JOB_FILMGROUP:
+        case JOB_FILMORAL:
+        case JOB_FILMMAST:
+        case JOB_FILMTITTY:
+        case JOB_FILMSTRIP:
+        case JOB_FILMRANDOM:
+        case JOB_FLUFFER:
+            sexjob = true;
+            break;
+        default:
+            break;
     }
 
     if (!g.m_Events.HasUrgent() && sexjob)	{
