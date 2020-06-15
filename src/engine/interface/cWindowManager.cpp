@@ -261,6 +261,18 @@ std::shared_ptr<cModalWindow> cWindowManager::GetModalWindow() {
     return std::move(choice_window);
 }
 
+void cWindowManager::EnableTextInput() {
+    if(m_TextInputEnabled == 0)
+        SDL_StartTextInput();
+    m_TextInputEnabled += 1;
+}
+
+void cWindowManager::DisableTextInput() {
+    m_TextInputEnabled -= 1;
+    if(m_TextInputEnabled == 0)
+        SDL_StopTextInput();
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 
 static std::unique_ptr<cWindowManager> WindowManager;

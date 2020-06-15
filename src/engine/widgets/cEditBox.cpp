@@ -23,6 +23,7 @@
 #include "sConfig.h"
 #include "interface/cFont.h"
 #include "interface/cInterfaceWindow.h"
+#include "interface/cWindowManager.h"
 #include "interface/cColor.h"
 
 extern cConfig cfg;
@@ -106,9 +107,9 @@ void cEditBox::HandleTextInput(const char* t) {
 bool cEditBox::HandleSetFocus(bool focus)
 {
     if(focus) {
-        SDL_StartTextInput();
+        window_manager().EnableTextInput();
     } else {
-        SDL_StopTextInput();
+        window_manager().DisableTextInput();
     }
     return true;
 }
