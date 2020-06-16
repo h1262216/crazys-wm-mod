@@ -205,7 +205,7 @@ void cScreenPreparingGame::process()
             // load the version
             int minorA = -1;
             pRoot->QueryIntAttribute("MinorVersionA", &minorA);
-            if (minorA != 6) { push_message("You must start a new game with this version", 2); loading = false; return; }
+            if (minorA != 7) { push_message("You must start a new game with this version", 2); loading = false; return; }
             string version("<blank>");
             if (pRoot->Attribute("ExeVersion")) { version = pRoot->Attribute("ExeVersion"); }
             if (version != "official") { push_message("Warning, the exe was not detected as official, it was detected as " + version + ".  Attempting to load anyways.", 1); }
