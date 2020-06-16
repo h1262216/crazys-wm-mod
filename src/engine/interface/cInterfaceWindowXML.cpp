@@ -18,7 +18,7 @@
 */
 
 #include "cInterfaceWindowXML.h"
-#include "DirPath.h"
+#include "utils/DirPath.h"
 #include "sConfig.h"
 #include "CLog.h"
 #include <tinyxml2.h>

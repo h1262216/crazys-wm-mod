@@ -19,7 +19,7 @@
 
 #include "cInterfaceWindow.h"
 #include "cWindowManager.h"
-#include "DirPath.h"
+#include "utils/DirPath.h"
 #include "CLog.h"
 #include <tinyxml2.h>
 #include "xml/util.h"

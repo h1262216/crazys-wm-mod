@@ -24,7 +24,7 @@
 #include <memory>
 #include <functional>
 #include <map>
-#include "fwd.hpp"
+#include "interface/fwd.hpp"
 
 class cModalWindow;
 class IBuilding;

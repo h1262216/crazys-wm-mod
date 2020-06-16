@@ -18,8 +18,8 @@
 */
 #include "cScreenPreparingGame.h"
 #include "buildings/cHouse.h"
-#include "FileList.h"
-#include "DirPath.h"
+#include "utils/FileList.h"
+#include "utils/DirPath.h"
 #include "InterfaceProcesses.h"
 #include "MasterFile.h"
 #include "cGangs.h"

@@ -19,10 +19,9 @@
 #include "cChoiceMessage.h"
 
 #include <memory>
-#include "cFont.h"
 #include "CGraphics.h"
 #include "sConfig.h"
-#include "DirPath.h"
+#include "utils/DirPath.h"
 #include "cColor.h"
 
 extern cConfig cfg;

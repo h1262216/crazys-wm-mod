@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(WM_Engine)
 
-set(SRC CLog.cpp DirPath.cpp FileList.cpp sConfig.cpp SDL_anigif.c utils/cKeyValueStore.cpp)
+set(SRC CLog.cpp utils/DirPath.cpp utils/FileList.cpp sConfig.cpp interface/SDL_anigif.c utils/cKeyValueStore.cpp)
 
 set(INTERFACE_SRC
         interface/cColor.cpp

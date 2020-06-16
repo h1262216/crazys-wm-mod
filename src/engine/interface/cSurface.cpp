@@ -22,7 +22,7 @@
 #include "cColor.h"
 #include <SDL_image.h>
 #include <algorithm>
-#include "DirPath.h"
+#include "utils/DirPath.h"
 
 
 cSurface::cSurface(std::shared_ptr<cCachedSurface> surface, CGraphics* gfx) :

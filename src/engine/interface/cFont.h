@@ -21,7 +21,7 @@
 #include <string>
 #include <memory>
 #include <SDL_video.h>
-#include "fwd.hpp"
+#include "interface/fwd.hpp"
 #include "cSurface.h"
 
 class cFont

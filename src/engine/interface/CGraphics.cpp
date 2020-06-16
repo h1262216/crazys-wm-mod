@@ -20,7 +20,7 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include "CLog.h"
-#include "DirPath.h"
+#include "utils/DirPath.h"
 #include "sConfig.h"
 #include "cColor.h"
 #include "cTimer.h"

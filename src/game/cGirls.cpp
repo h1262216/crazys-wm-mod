@@ -37,8 +37,8 @@
 #include "scripting/GameEvents.h"
 #include "interface/CGraphics.h"
 
-#include "DirPath.h"
-#include "FileList.h"
+#include "utils/DirPath.h"
+#include "utils/FileList.h"
 #include "sConfig.h"
 #include "character/traits/ITraitSpec.h"
 #include "Inventory.hpp"

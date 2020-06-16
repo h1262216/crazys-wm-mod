@@ -23,9 +23,9 @@
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>
-#include <SDL_anigif.h>
+#include "SDL_anigif.h"
 #include <SDL_ttf.h>
-#include <CLog.h>
+#include "CLog.h"
 #include <cassert>
 #include <utility>
 #include <iostream> // TODO replace with real logging!

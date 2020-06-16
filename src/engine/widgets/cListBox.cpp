@@ -18,7 +18,7 @@
 */
 #include <algorithm>
 #include <SDL_timer.h>              // needed to detect double clicks
-#include "DirPath.h"
+#include "utils/DirPath.h"
 #include "cListBox.h"
 #include "interface/CGraphics.h"
 #include "interface/cColor.h"

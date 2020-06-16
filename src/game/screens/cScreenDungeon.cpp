@@ -23,7 +23,7 @@
 #include "cScreenDungeon.h"
 #include "buildings/cBrothel.h"
 #include "main.h"
-#include "DirPath.h"
+#include "utils/DirPath.h"
 #include "cTariff.h"
 #include "cGirlGangFight.h"
 #include "cGirlTorture.h"

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cScrollBar.h"
-#include "DirPath.h"
+#include "utils/DirPath.h"
 #include "interface/CGraphics.h"
 
 //these static vars defined in the header file need to be specified here

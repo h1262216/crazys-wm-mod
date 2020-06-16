@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include "fwd.hpp"
+#include "interface/fwd.hpp"
 #include "cSurface.h"
 
 struct sAnimationFrame {
