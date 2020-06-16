@@ -109,6 +109,13 @@ void cScreenNewGame::start_game()
     }
 }
 
+// for some reason, when mingw compiles the following
+// function with optimization it causes segfaults.
+// therefore we tune down the optimization in that case
+#ifdef __MINGW32__
+#pragma GCC push_options
+#pragma GCC optimize("Og")
+#endif
 void cScreenNewGame::OnKeyPress(SDL_Keysym keysym)
 {
     if (keysym.sym == SDLK_TAB)
@@ -147,6 +154,9 @@ void cScreenNewGame::OnKeyPress(SDL_Keysym keysym)
 
     cInterfaceWindow::OnKeyPress(keysym);
 }
+#ifdef __MINGW32__
+#pragma GCC pop_options
+#endif
 
 void cScreenNewGame::update_ui()
 {
