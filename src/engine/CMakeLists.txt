@@ -31,7 +31,8 @@ set(WIDGETS_SRC
 SET(XML_SRC xml/getattr.cpp xml/util.cpp)
 
 add_library(WMEngine STATIC ${SRC} ${WIDGETS_SRC} ${INTERFACE_SRC} ${XML_SRC})
-target_link_libraries(WMEngine PUBLIC SDL2::SDL2 SDL2::Image SDL2::TTF lua::lua Boost::headers tinyxml2)
+target_link_libraries(WMEngine PUBLIC SDL2::SDL2 lua::lua Boost::headers tinyxml2)
+target_link_libraries(WMEngine PRIVATE SDL2::TTF SDL2::Image)
 set_target_properties(WMEngine PROPERTIES CXX_STANDARD 14)
 
 if (UNIX)
