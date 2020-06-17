@@ -40,5 +40,5 @@ if (UNIX)
 endif(UNIX)
 
 # Long-term goal: make the first one PRIVATE
-target_include_directories(WMEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(WMEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(WMEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

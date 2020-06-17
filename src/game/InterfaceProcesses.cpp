@@ -33,7 +33,6 @@
 #undef bool
 
 #ifdef LINUX
-#include "linux.h"
 #else
 #include <windows.h>
 #endif

@@ -22,7 +22,14 @@
 #include <memory>
 #include <SDL_video.h>
 #include "interface/fwd.hpp"
-#include "cSurface.h"
+#include "interface/cSurface.h"
+
+// fonts
+struct FontDeleter {
+    void operator()(TTF_Font* font);
+};
+
+using ttf_font_ptr = std::unique_ptr<TTF_Font, FontDeleter>;
 
 class cFont
 {

@@ -17,9 +17,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "cImageCache.hpp"
-#include "cSurface.h"
-#include "cColor.h"
+#include "interface/cImageCache.h"
+#include "interface/cSurface.h"
+#include "interface/cColor.h"
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>

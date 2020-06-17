@@ -17,13 +17,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <algorithm>
-#include "cInterfaceWindowXML.h"
+#include "interface/cInterfaceWindowXML.h"
 #include "widgets/cScreenGetInput.h"
-#include "cWindowManager.h"
+#include "interface/cWindowManager.h"
 #include "CLog.h"
 #include "widgets/cMessageBox.h"
 #include "cChoiceMessage.h"
-#include "cInterfaceObject.h"
+#include "interface/cInterfaceObject.h"
 
 #include <cassert>
 #include <utility>

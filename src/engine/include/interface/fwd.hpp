@@ -30,14 +30,6 @@ struct AG_Frame;
 typedef struct _TTF_Font TTF_Font;
 }
 
-
-// fonts
-struct FontDeleter {
-    void operator()(TTF_Font* font);
-};
-
-using ttf_font_ptr = std::unique_ptr<TTF_Font, FontDeleter>;
-
 // our own classes
 class cFont;
 class CGraphics;

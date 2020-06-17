@@ -22,7 +22,7 @@
 #include <vector>
 #include <chrono>
 #include "interface/fwd.hpp"
-#include "cSurface.h"
+#include "interface/cSurface.h"
 
 struct sAnimationFrame {
     cSurface surface;

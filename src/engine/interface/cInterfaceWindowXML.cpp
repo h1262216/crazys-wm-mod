@@ -17,7 +17,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "cInterfaceWindowXML.h"
+#include "interface/cInterfaceWindowXML.h"
 #include "utils/DirPath.h"
 #include "sConfig.h"
 #include "CLog.h"

@@ -28,7 +28,7 @@
 
 class cModalWindow;
 class IBuilding;
-class SDL_Keysym;
+struct SDL_Keysym;
 class sGirl;
 class CGraphics;
 

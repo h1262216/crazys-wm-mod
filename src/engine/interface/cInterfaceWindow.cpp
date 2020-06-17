@@ -17,8 +17,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "cInterfaceWindow.h"
-#include "cWindowManager.h"
+#include "interface/cInterfaceWindow.h"
+#include "interface/cWindowManager.h"
 #include "utils/DirPath.h"
 #include "CLog.h"
 #include <tinyxml2.h>
@@ -33,7 +33,7 @@
 #include "widgets/cImageItem.h"
 #include "widgets/cScrollBar.h"
 #include "interface/CGraphics.h"
-#include "cColor.h"
+#include "interface/cColor.h"
 #include "sConfig.h"
 #include <cassert>
 
