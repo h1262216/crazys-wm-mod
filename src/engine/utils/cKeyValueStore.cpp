@@ -92,7 +92,7 @@ void cKeyValueBase::set_value(const char* name, std::string value) {
 
 void cKeyValueBase::set_value(const char* name, sPercent value) {
     auto& val = get_value(name);
-    if(val.type() == typeid(std::string)) {
+    if(val.type() == typeid(sPercent)) {
         val = std::move(value);
     } else {
         throw std::logic_error("Cannot set non-string setting to string value");
