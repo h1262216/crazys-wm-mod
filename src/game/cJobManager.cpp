@@ -1985,7 +1985,17 @@ void cJobManager::register_job(std::unique_ptr<IGenericJob> job) {
 }
 
 const IGenericJob* cJobManager::get_job(JOBS job) const {
-    return m_OOPJobs.at(job).get();
+    if(job < 0 || job >= m_OOPJobs.size())
+      job = JOB_INDUNGEON;
+
+    auto& ptr = m_OOPJobs[job];
+    if(!ptr) {
+      // this one NEEDS to be non-null.
+      assert(m_OOPJobs[JOB_INDUNGEON].get() != nullptr);
+      return m_OOPJobs[JOB_INDUNGEON].get();
+    }
+
+    return ptr.get();
 }
 
 const std::string& cJobManager::get_job_name(JOBS job) const {
