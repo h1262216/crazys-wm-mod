@@ -1985,14 +1985,17 @@ void cJobManager::register_job(std::unique_ptr<IGenericJob> job) {
 }
 
 const IGenericJob* cJobManager::get_job(JOBS job) const {
-    if(job < 0 || job >= m_OOPJobs.size())
-      job = JOB_INDUNGEON;
+    if(job < 0 || job >= m_OOPJobs.size()) {
+      g_LogFile.error("jobmgr",
+		      "Job ", job, " is outside the (0..", m_OOPJobs.size(), "( range.");
+      throw std::out_of_range("cJobManager::get_job()");
+    }
 
     auto& ptr = m_OOPJobs[job];
     if(!ptr) {
-      // this one NEEDS to be non-null.
-      assert(m_OOPJobs[JOB_INDUNGEON].get() != nullptr);
-      return m_OOPJobs[JOB_INDUNGEON].get();
+      g_LogFile.error("jobmgr",
+		      "Job ", job, " has not been registered.");
+      throw std::invalid_argument("cJobManager::get_job()");
     }
 
     return ptr.get();
