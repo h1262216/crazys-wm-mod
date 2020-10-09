@@ -18,6 +18,8 @@
 */
 #include <fstream>
 #include <algorithm>
+#include <regex>
+
 #include "cTariff.h"
 #include "cGirls.h"
 #include <tinyxml2.h>
@@ -498,31 +500,18 @@ void cGirls::EndDayGirls(IBuilding& brothel, sGirl& girl)
     if (g_Dice.percent(5))    girl.upd_skill(SKILL_COOKING, -1);
 }
 
+namespace {
+  const std::regex name_rx(R"(\$\{name\})",
+			   std::regex::ECMAScript | std::regex::optimize);
+}
+
 std::string process_message(const sGirl& girl, std::string message) {
     // for now, just replace ${name} with the girl's name
     if(message.find("${name}") == std::string::npos) {
-        return std::move(message);
+        return message;
     }
 
-    std::string result;
-    result.reserve(message.size() + 1024);
-    auto r = message.cbegin();
-    auto w = std::back_inserter(result);
-    // TODO this is usafe, and generally not nice. Maybe rewrite using regex
-    while(true) {
-        // first, copy the part until the next ${name}
-        auto next = message.find("${name}", std::distance(message.cbegin(), r));
-        if(next == std::string::npos) {
-            std::copy(r, message.cend(), w);
-            break;
-        } else {
-            std::copy(r, message.cbegin() + next, w);
-            // then write the name
-            std::copy(girl.FullName().begin(), girl.FullName().end(), w);
-            r = message.cbegin() + next + 7;
-        }
-    }
-    return std::move(result);
+    return std::regex_replace(message, name_rx, girl.FullName());
 }
 
 
