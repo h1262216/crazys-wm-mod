@@ -52,7 +52,9 @@ cListBox::cListBox(cInterfaceWindow* parent, int ID, int x, int y, int width, in
 
     m_LastSelected = m_Items.end();
 
-    DefineColumns(std::vector<std::string>(1), std::vector<std::string>(1), std::vector<int>(1), std::vector<bool>(1));
+    DefineColumns(std::vector<std::string>(1), std::vector<std::string>(1),
+                  std::vector<ColumnType>(1),
+                  std::vector<int>(1), std::vector<bool>(1));
     SDL_Rect dest_rect;
 
     m_RowHeight = (rowheight == 0 ? LISTBOX_ITEMHEIGHT : rowheight);
@@ -636,7 +638,7 @@ void cListBox::AddElement(int ID, std::vector<std::string> data, int color)
         m_ScrollBar->m_ItemsTotal = m_NumElements;
 }
 
-void cListBox::DefineColumns(std::vector<std::string> name, std::vector<std::string> header, std::vector<int> offset, std::vector<bool> skip)
+void cListBox::DefineColumns(std::vector<std::string> name, std::vector<std::string> header, std::vector<ColumnType> types, std::vector<int> offset, std::vector<bool> skip)
 {
     m_Columns.clear();
 
@@ -648,7 +650,7 @@ void cListBox::DefineColumns(std::vector<std::string> name, std::vector<std::str
         int left = offset[i];
         int right = i == name.size() - 1 ? m_eWidth : offset[i + 1];
         auto gfx = m_Font.RenderText(header[i]);
-        m_Columns.emplace_back(sColumnData{std::move(name[i]), std::move(header[i]), left, right - left, i, skip[i], gfx});
+        m_Columns.emplace_back(sColumnData{std::move(name[i]), std::move(header[i]), types[i], left, right - left, i, skip[i], gfx});
     }
     m_Font.SetFontBold(false);
 
@@ -780,85 +782,6 @@ void cListBox::UnSortList()
 }
 
 namespace {
-  // No std::string::starts_with() until C++20. So here's a
-  // reimplementation.
-  bool starts_with(std::string const& str, std::string const& prefix)
-  {
-    return prefix.size() <= str.size()
-      && std::equal(prefix.begin(), prefix.end(), str.begin());
-  };
-
-  enum class ColumnType {
-			 Numeric,
-			 Age,	// numeric, or '???'
-			 String,
-  };
-
-  const std::map<std::string, ColumnType> column_types =
-    {
-     // The main girl management screen
-     {"Name", ColumnType::String},
-     {"Health", ColumnType::Numeric},
-     {"Happiness", ColumnType::Numeric},
-     {"Tiredness", ColumnType::Numeric},
-     {"DayJob", ColumnType::String},
-     {"NightJob", ColumnType::String},
-     {"is_pregnant", ColumnType::String},
-     {"is_slave", ColumnType::String},
-     {"Rebel", ColumnType::Numeric},
-     {"Age", ColumnType::Age},
-     {"Looks", ColumnType::Numeric},
-     {"SexAverage", ColumnType::Numeric},
-
-     // Centre
-     {"is_addict", ColumnType::String},
-
-     // Clinic
-     {"has_disease", ColumnType::String},
-
-     // Dungeon
-     {"Rebelliousness", ColumnType::Numeric},
-     {"Duration", ColumnType::Numeric},
-     {"Feeding", ColumnType::String},
-     {"Tortured", ColumnType::String},
-     {"Reason", ColumnType::String},
-
-     // House
-     {"SO", ColumnType::String},
-     {"SkillAverage", ColumnType::Numeric},
-
-     // Transfer screen
-     {"DayJobShort", ColumnType::String},
-     {"NightJobShort", ColumnType::String},
-
-     // Gangs screen
-     {"GangName", ColumnType::String},
-     {"Mission", ColumnType::String},
-     {"Number", ColumnType::Numeric},
-     {"Combat", ColumnType::Numeric},
-     {"Magic", ColumnType::Numeric},
-     {"Intelligence", ColumnType::Numeric},
-     {"Agility", ColumnType::Numeric},
-     {"Constitution", ColumnType::Numeric},
-     {"Strength", ColumnType::Numeric},
-     {"Service", ColumnType::Numeric},
-     {"Charisma", ColumnType::Numeric},
-    };
-
-  ColumnType find_column_type(std::string const& name)
-  {
-    // First look in the table
-    auto iter = column_types.find(name);
-    if(iter != column_types.end())
-      return iter->second;
-
-    // Then apply some heuristics
-    if(starts_with(name, "STAT_") || starts_with(name, "SKILL_"))
-      return ColumnType::Numeric; // Stats and skills are numeric.
-
-    return ColumnType::String;	// Say that it's a string
-  }
-
   enum class Direction { Ascending, Descending };
 
   // Fetches the value of `item` at column `col_id`, and returns it as
@@ -937,7 +860,7 @@ void cListBox::SortByColumn(std::string ColumnName, bool Descending)
     // target element's new position.
 
     auto direction = Descending ? Direction::Descending : Direction::Ascending;
-    switch(find_column_type(ColumnName)) {
+    switch(m_Columns[col_ref].type) {
     case ColumnType::Numeric:
       do_sort<ColumnType::Numeric>(m_Items, col_id, direction);
       break;
