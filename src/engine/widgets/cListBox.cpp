@@ -861,72 +861,41 @@ namespace {
 
   enum class Direction { Ascending, Descending };
 
+  // Fetches the value of `item` at column `col_id`, and returns it as
+  // some type with an `operator<()` that gives us the sorting order
+  // we want.
   template<ColumnType>
-  void do_sort(cListBox::item_list_t& list, int col_id, Direction dir);
+  auto get_value(cListItem const& item, int col_id);
 
   template<>
-  void do_sort<ColumnType::Numeric>(cListBox::item_list_t& list, int col_id, Direction dir)
+  auto get_value<ColumnType::Numeric>(cListItem const& item, int col_id)
   {
-    auto get_value = [col_id](cListItem const& item) {
-		       return std::stoi(item.m_Data[col_id]);
-		     };
-
-    auto less_than = [get_value](cListItem const& a, cListItem const& b) {
-		       return get_value(a) < get_value(b);
-		     };
-
-    switch(dir) {
-    case Direction::Ascending:
-      list.sort([less_than](const cListItem& a, const cListItem& b) {
-		  return less_than(a, b);
-		});
-      break;
-    case Direction::Descending:
-      list.sort([less_than](const cListItem& a, const cListItem& b) {
-		  return less_than(b, a);
-		});
-      break;
-    }
+    return std::stoi(item.m_Data[col_id]);
   }
 
   template<>
-  void do_sort<ColumnType::Age>(cListBox::item_list_t& list, int col_id, Direction dir)
+  auto get_value<ColumnType::Age>(cListItem const& item, int col_id)
   {
-    auto get_value = [col_id](cListItem const& item) {
-		       if(item.m_Data[col_id] == "???")
-			 return std::numeric_limits<int>::max();
-		       else
-			 return std::stoi(item.m_Data[col_id]);
-		     };
-
-    auto less_than = [get_value](cListItem const& a, cListItem const& b) {
-		       return get_value(a) < get_value(b);
-		     };
-
-    switch(dir) {
-    case Direction::Ascending:
-      list.sort([less_than](const cListItem& a, const cListItem& b) {
-		  return less_than(a, b);
-		});
-      break;
-    case Direction::Descending:
-      list.sort([less_than](const cListItem& a, const cListItem& b) {
-		  return less_than(b, a);
-		});
-      break;
-    }
+    if(item.m_Data[col_id] == "???")
+      return std::numeric_limits<int>::max();
+    else
+      return std::stoi(item.m_Data[col_id]);
   }
 
   template<>
-  void do_sort<ColumnType::String>(cListBox::item_list_t& list, int col_id, Direction dir)
+  auto get_value<ColumnType::String>(cListItem const& item, int col_id)
   {
-    auto get_value = [col_id](cListItem const& item) {
-		       return item.m_Data[col_id];
-		     };
+    return item.m_Data[col_id];
+  }
 
-    auto less_than = [get_value](cListItem const& a, cListItem const& b) {
-		       return get_value(a).compare(get_value(b)) < 0;
-		     };
+  // Sorts `list` by column `col_id` of type `col_type`.
+  template<ColumnType col_type>
+  void do_sort(cListBox::item_list_t& list, int col_id, Direction dir)
+  {
+    auto less_than
+      = [col_id](cListItem const& a, cListItem const& b) {
+	  return get_value<col_type>(a, col_id) < get_value<col_type>(b, col_id);
+	};
 
     switch(dir) {
     case Direction::Ascending:
