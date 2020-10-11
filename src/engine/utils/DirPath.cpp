@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "boost/optional.hpp"
 #include "utils/DirPath.h"
 #include "CLog.h"
 
@@ -76,7 +78,7 @@ namespace {
 
   // look up my current home directory in /etc/passwd (or NIS or
   // wherever).
-  std::unique_ptr<std::string> find_pwd_home()
+  boost::optional<std::string> find_pwd_home()
   {
     size_t bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
     if(bufsize == static_cast<size_t>(-1))
@@ -97,7 +99,7 @@ namespace {
 	return {};
       }
 
-    return std::make_unique<std::string>(pwd.pw_dir);
+    return boost::make_optional<std::string>(pwd.pw_dir);
   }
 
   // Expand "~/some/dir" to "<my home-dir>/some/dir"
