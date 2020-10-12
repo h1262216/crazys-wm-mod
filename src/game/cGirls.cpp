@@ -946,7 +946,7 @@ string cGirls::GetMoreDetailsString(const sGirl& girl, bool purchase)
         int tricount = 0;
         for (int i = 0; i < NUM_TRAININGTYPES; ++i)
         {
-            if (sGirl::training_jobs[i] == "")            continue;
+            if (strcmp(sGirl::training_jobs[i], "") == 0)            continue;
             int e = girl.get_training(i);
             /* */if (e < 0)    { text = " hasn't started "; }
             // if she's indifferent, why specify it? Let's instead skip it.
@@ -2071,7 +2071,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         //does she get knocked up?
         bool antiPregStatus = girl->m_UseAntiPreg;
         girl->m_UseAntiPreg = false;                    //won't have access to this
-        girl->calc_group_pregnancy(*customer, false, 2);
+        girl->calc_group_pregnancy(*customer, 2);
         girl->m_UseAntiPreg = antiPregStatus;            //afterwards she'll go back to normal
 
         // player has 6 weeks to retrieve
@@ -2635,6 +2635,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     case SKILL_GROUP:       event = EDefaultEvent::GIRL_SEX_GROUP; break;
     case SKILL_LESBIAN:     event = EDefaultEvent::GIRL_SEX_LESBIAN; break;
     case SKILL_STRIP:       event = EDefaultEvent::GIRL_SEX_STRIP; break;
+    default: /* did some non-sex skill sneak in? */ break;
     }    //end switch
 
     auto result = girl->CallScriptFunction(event, customer);
