@@ -21,6 +21,8 @@
 #include "utils/DirPath.h"
 #include "CLog.h"
 
+#include "doctest.h"
+
 /*
  * kind of trivial...
  */
@@ -129,4 +131,117 @@ std::string DirPath::expand_path(std::string path)
 #else
   return path;
 #endif
+}
+
+namespace
+{
+   std::vector<std::string> do_split_search_path(std::string const& search_path,
+                                                 std::string const& sep)
+   {
+      const auto npos = std::string::npos;
+      const auto endpos = search_path.length();
+
+      std::vector<std::string> paths;
+
+      size_t from = 0;
+
+      while(true)
+      {
+         size_t to = search_path.find_first_of(sep, from);
+         assert(to >= from && "impossible to move backwards");
+
+                                // figure out the actual length
+         const size_t len = std::min(to, endpos) - from;
+
+         if(len != 0)          // don't collect zero-length file paths
+            paths.push_back(search_path.substr(from, len));
+
+         if(to == npos)         // reached the end
+            return paths;
+
+         from = to+1;           // step past the separator
+      }
+   }
+}
+
+std::vector<std::string>
+DirPath::split_search_path(std::string const& search_path)
+{
+#if defined(LINUX)
+   return do_split_search_path(search_path, ":;");
+#else
+   return do_split_search_path(search_path, ";");
+#endif
+}
+
+// Tell doctest how to print std::vector<>
+namespace doctest
+{
+   template<typename T, typename Alloc>
+   struct StringMaker<std::vector<T, Alloc>>
+   {
+      static String convert(std::vector<T, Alloc> const& vec)
+      {
+         std::ostringstream os;
+
+         std::string sep = "";
+
+         os << "{";
+         for(auto const& el : vec)
+         {
+            os << sep << el;
+            sep = ", ";
+         }
+         os << "}";
+
+         return os.str().c_str();
+      }
+   };
+}
+
+TEST_CASE("split search path") {
+   {
+      std::vector<std::string> expects = {"abcde"};
+      CHECK(do_split_search_path("abcde", ":") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {"aa", "bb", "cc"};
+      CHECK(do_split_search_path("aa:bb:cc", ":") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {"aa:bb:cc"};
+      CHECK(do_split_search_path("aa:bb:cc", ";") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {"aa", "bb", "cc"};
+      CHECK(do_split_search_path("aa:bb;cc", ":;") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {"aa", "bb", "cc"};
+      CHECK(do_split_search_path("aa;bb;cc", ";") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {};
+      CHECK(do_split_search_path("", ":") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {"abcde"};
+      CHECK(do_split_search_path(":abcde:", ":") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {"aaa", "bb"};
+      CHECK(do_split_search_path(":aaa::bb:", ":") == expects);
+   }
+
+   {
+      std::vector<std::string> expects = {};
+      CHECK(do_split_search_path(":::", ":") == expects);
+   }
 }
