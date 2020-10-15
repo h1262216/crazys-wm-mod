@@ -28,6 +28,8 @@
 #include <algorithm>
 
 #include "Constants.h"
+#include "utils/streaming_random_selection.hpp"
+
 #include <memory>
 
 struct sGirl;
@@ -236,13 +238,14 @@ public:
     bool LoadItemsXML(const std::string& filename);
     sInventoryItem* GetItem(std::string name);
 
+
     // Returns a random item; if none can be found (that is, if the
     // internal item list is empty) ,`nullptr` is returned instead.
     //
     // Note: Will not spuriously return `nullptr`.
     sInventoryItem* GetRandomItem() const
     {
-       return GetRandomItem_from(m_Items);
+       return GetRandomItem([](auto& /*item*/){return true;});;
     }
 
     // Returns a random item that satisfies the predicate `pred`; if
@@ -252,14 +255,14 @@ public:
     template<typename Pred>
     sInventoryItem* GetRandomItem(Pred pred) const
     {
-       std::vector<sInventoryItem*> filtered;
-       std::copy_if(begin(m_Items), end(m_Items),
-                    std::back_inserter(filtered),
-                    [pred](sInventoryItem const* ptr) {
-                       return ptr && pred(*ptr);
-                    });
+       RandomSelector<sInventoryItem> sel;
 
-       return GetRandomItem_from(filtered);
+       std::for_each(begin(m_Items), end(m_Items),
+                     [pred, &sel](sInventoryItem* ptr) {
+                       if(ptr && pred(*ptr))
+                          sel.process(ptr, 1.0);
+                    });
+       return sel.selection();
     }
 
     sInventoryItem* GetRandomCatacombItem();
@@ -289,9 +292,6 @@ private:
 
     static
     void cull_null_items(std::vector<sInventoryItem *>& items);
-
-    static
-    sInventoryItem* GetRandomItem_from(std::vector<sInventoryItem *>& items);
 };
 
 #endif

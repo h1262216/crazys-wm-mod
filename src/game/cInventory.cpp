@@ -31,6 +31,8 @@
 #include "xml/getattr.h"
 #include "Inventory.h"
 
+#include "utils/algorithms.hpp"
+
 using namespace std;
 
 namespace settings {
@@ -179,48 +181,7 @@ ostream& operator<<(ostream& os, sEffect& eff) {
 // Deletes all nulls from `items`.
 void cInventory::cull_null_items(std::vector<sInventoryItem *>& items)
 {
-   items.erase(
-      std::remove_if(begin(items), end(items),
-                     [](auto* ptr) {return ptr == nullptr;}),
-      end(items));
-}
-
-// ----- Get
-//
-// Returns a random non-null item from `items`; if `items` is empty,
-// null is returned. May choose to clean out null items from `items`.
-//
-// Note: Will not spuriously return `nullptr`.
-sInventoryItem*
-cInventory::GetRandomItem_from(std::vector<sInventoryItem *>& items)
-{
-   auto find_item
-      = [](std::vector<sInventoryItem *> const& items) -> sInventoryItem* {
-           switch(items.size())
-           {
-              case 0:
-                 return nullptr;
-
-              case 1:
-                 return items[0];
-
-              default:
-                 return items[g_Dice % (items.size() - 1)];
-           }
-        };
-
-   if(auto* ptr = find_item(items))
-      return ptr;
-   else
-   {                       // bad luck; clean out any nulls and retry
-      cull_null_items(items);
-      assert(std::none_of(begin(items), end(items),
-                          [](auto* ptr) {return ptr == nullptr;})
-             && "no nulls in `items`.");
-
-      // if we're truly empty then we return `nullptr`
-      return find_item(items);
-   }
+   erase_if(items, [](auto* ptr) {return ptr == nullptr;});
 }
 
 sInventoryItem* cInventory::GetRandomCatacombItem()
