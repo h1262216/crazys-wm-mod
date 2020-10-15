@@ -25,6 +25,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <algorithm>
 
 #include "Constants.h"
 #include <memory>
@@ -234,7 +235,33 @@ public:
 
     bool LoadItemsXML(const std::string& filename);
     sInventoryItem* GetItem(std::string name);
-    sInventoryItem* GetRandomItem();
+
+    // Returns a random item; if none can be found (that is, if the
+    // internal item list is empty) ,`nullptr` is returned instead.
+    //
+    // Note: Will not spuriously return `nullptr`.
+    sInventoryItem* GetRandomItem() const
+    {
+       return GetRandomItem_from(m_Items);
+    }
+
+    // Returns a random item that satisfies the predicate `pred`; if
+    // none can be found, `nullptr` is returned instead.
+    //
+    // Note: Will not spuriously return `nullptr`.
+    template<typename Pred>
+    sInventoryItem* GetRandomItem(Pred pred) const
+    {
+       std::vector<sInventoryItem*> filtered;
+       std::copy_if(begin(m_Items), end(m_Items),
+                    std::back_inserter(filtered),
+                    [pred](sInventoryItem const* ptr) {
+                       return ptr && pred(*ptr);
+                    });
+
+       return GetRandomItem_from(filtered);
+    }
+
     sInventoryItem* GetRandomCatacombItem();
 
     sInventoryItem* GetCraftableItem(sGirl& girl, JOBS job, int craft_points);
@@ -258,7 +285,13 @@ public:
 
 
 private:
-    std::vector<sInventoryItem *> m_Items;  // Master list of items?
+    mutable std::vector<sInventoryItem *> m_Items;  // Master list of items?
+
+    static
+    void cull_null_items(std::vector<sInventoryItem *>& items);
+
+    static
+    sInventoryItem* GetRandomItem_from(std::vector<sInventoryItem *>& items);
 };
 
 #endif

@@ -176,26 +176,62 @@ ostream& operator<<(ostream& os, sEffect& eff) {
     return os << endl;
 }
 
-// ----- Get
-sInventoryItem* cInventory::GetRandomItem()
+// Deletes all nulls from `items`.
+void cInventory::cull_null_items(std::vector<sInventoryItem *>& items)
 {
-    sInventoryItem *ipt;
-    if (m_Items.empty())
-    {
-        return nullptr;
-    }
-    if (m_Items.size() == 1)
-    {
-        ipt = m_Items[0];
-        return m_Items[0];
-    }
-    int index = g_Dice % (m_Items.size() - 1);    // fixed crash with going outside vector size - necro
-    ipt = m_Items[index];
-    return ipt;
+   items.erase(
+      std::remove_if(begin(items), end(items),
+                     [](auto* ptr) {return ptr == nullptr;}),
+      end(items));
 }
+
+// ----- Get
+//
+// Returns a random non-null item from `items`; if `items` is empty,
+// null is returned. May choose to clean out null items from `items`.
+//
+// Note: Will not spuriously return `nullptr`.
+sInventoryItem*
+cInventory::GetRandomItem_from(std::vector<sInventoryItem *>& items)
+{
+   auto find_item
+      = [](std::vector<sInventoryItem *> const& items) -> sInventoryItem* {
+           switch(items.size())
+           {
+              case 0:
+                 return nullptr;
+
+              case 1:
+                 return items[0];
+
+              default:
+                 return items[g_Dice % (items.size() - 1)];
+           }
+        };
+
+   if(auto* ptr = find_item(items))
+      return ptr;
+   else
+   {                       // bad luck; clean out any nulls and retry
+      cull_null_items(items);
+      assert(std::none_of(begin(items), end(items),
+                          [](auto* ptr) {return ptr == nullptr;})
+             && "no nulls in `items`.");
+
+      // if we're truly empty then we return `nullptr`
+      return find_item(items);
+   }
+}
+
 sInventoryItem* cInventory::GetRandomCatacombItem()
 {
     if (m_Items.empty())    return nullptr;
+
+    cull_null_items(m_Items);
+    assert(std::none_of(begin(m_Items), end(m_Items),
+                        [](auto* ptr) {return ptr == nullptr;})
+           && "no nulls in `m_Items`.");
+
     sInventoryItem *temp = nullptr;
     int index = g_Dice % (m_Items.size() - 1);
 
