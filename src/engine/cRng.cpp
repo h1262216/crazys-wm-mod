@@ -18,6 +18,11 @@
  */
 #include"cRng.h"
 #include <ctime>
+#include <array>
+#include <iostream>
+#include <iomanip>
+
+#include "doctest.h"
 
 /*
  * easier to use the method internally than an operator
@@ -89,3 +94,192 @@ const char* cRng::select_text(std::initializer_list<const char*> options) {
 }
 
 //end mod
+
+TEST_CASE("random(int) statistics 1"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 20;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 1> bins = {};
+
+   cRng rng;
+
+   std::cout << "random(" << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng.random(n_bins)]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("random(int) statistics 2"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 19;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 1> bins = {};
+
+   cRng rng;
+
+   std::cout << "random(" << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng.random(n_bins)]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("operator%() statistics 1"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 20;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 1> bins = {};
+
+   cRng rng;
+
+   std::cout << "operator%(" << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng % n_bins]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("operator%() statistics 2"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 19;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 1> bins = {};
+
+   cRng rng;
+
+   std::cout << "operator%(" << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng % n_bins]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("in_range() statistics 1"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 20;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 1> bins = {};
+
+   cRng rng;
+
+   std::cout << "in_range(0, " << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng.in_range(0, n_bins)]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("in_range() statistics 2"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 19;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 1> bins = {};
+
+   cRng rng;
+
+   std::cout << "in_range(0, " << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng.in_range(0, n_bins)]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("in_range() statistics 3"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 19;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 2> bins = {};
+
+   cRng rng;
+
+   std::cout << "in_range(1, " << n_bins+1 << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng.in_range(1, n_bins+1)]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("bell() statistics 1"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 20;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 2> bins = {};
+
+   cRng rng;
+
+   std::cout << "bell(0, " << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng.bell(0, n_bins)]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
+
+TEST_CASE("bell() statistics 2"
+          * doctest::skip(true))
+{
+   constexpr const size_t n_bins = 19;
+   constexpr const size_t fill_factor = 10'000'000;
+
+   std::array<size_t, n_bins + 2> bins = {};
+
+   cRng rng;
+
+   std::cout << "bell(0, " << n_bins << ") statistics:\n"
+             << "  fill factor is " << fill_factor << " samples per bin\n";
+
+   for(size_t i = 0; i < n_bins * fill_factor; ++i)
+      bins[rng.bell(0, n_bins)]++;
+
+   for(size_t i = 0; i < bins.size(); ++i)
+      std::cout << std::right << std::setw(2) << i << ": "
+                << std::setw(8) << bins[i] << std::setw(0) << '\n';
+}
