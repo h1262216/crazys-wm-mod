@@ -71,12 +71,7 @@ struct cRng
 */
     int bell(int min, int max, int mid);
     int bell(int min, int max);
-/*
- *    I was thinking of this as useful shorthand for all the
- *    (g_Dice % 100)+1 lines, but on reflection, I think 
- *    I prefer the function following
- */
-    int operator +(int n) { return random(100) + n; }
+
 /*
  *    returns true n percent of the time. 
  *    so g_Dice.percent(20) will return true 20% of the time
