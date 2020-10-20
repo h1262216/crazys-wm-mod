@@ -22,7 +22,7 @@
 <Button     Name="CreateMovieButton"    Image="CreateMovie"                 XPos="1616"     YPos="914"      Width="225"     Height="45"     Transparency="true" PushWindow="Movie Maker"/>
 <ListBox    Name="GirlList"                                                 XPos="14"       YPos="49"       Width="1434"     Height="771"    FontSize="17"       RowHeight="30"      Border="1"          Events="true"      Multi="true"   ShowHeaders="true"   HeaderDiv="true"   HeaderClicksSort="true"   >
 <Column     Name="Name"              Type="String"    Header="Girl Name"                  Offset="0" />
-<Column     Name="Health"            Type="Numeric"   Header="Health"                     Offset="281" /> 
+<Column     Name="Health"            Type="Health"    Header="Health"                     Offset="281" />
 <Column     Name="Happiness"         Type="Numeric"   Header="Happy"                      Offset="351" />
 <Column     Name="Tiredness"         Type="Numeric"   Header="Tired"                      Offset="421" />
 <Column     Name="DayJob"            Type="String"    Header="Day Job"                    Offset="491" />

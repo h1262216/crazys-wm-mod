@@ -47,6 +47,7 @@ enum class ColumnType {
                        String = 0, // also the fallback choice
                        Numeric,
                        Age,     // numeric, or '???'
+                       Health,  // 'DEAD', or numeric.
 };
 
 inline
@@ -58,6 +59,8 @@ ColumnType from_string(std::string const& str)
     return ColumnType::Numeric;
   else if(str == "Age")
     return ColumnType::Age;
+  else if(str == "Health")
+    return ColumnType::Health;
   else
     return ColumnType{};
 }
@@ -69,6 +72,7 @@ std::string to_string(ColumnType type)
       case ColumnType::String:  return "String";
       case ColumnType::Numeric: return "Numeric";
       case ColumnType::Age:     return "Age";
+      case ColumnType::Health:  return "Health";
       default:                  return "(?)";
    };
 }

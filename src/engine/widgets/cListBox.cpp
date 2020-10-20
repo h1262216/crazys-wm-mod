@@ -807,6 +807,15 @@ namespace {
   }
 
   template<>
+  auto get_value<ColumnType::Health>(cListItem const& item, int col_id)
+  {
+    if(item.m_Data[col_id] == "DEAD")
+      return std::numeric_limits<int>::min();
+    else
+      return std::stoi(item.m_Data[col_id]);
+  }
+
+  template<>
   auto get_value<ColumnType::String>(cListItem const& item, int col_id)
   {
     return item.m_Data[col_id];
@@ -869,6 +878,9 @@ void cListBox::SortByColumn(std::string ColumnName, bool Descending)
                 break;
             case ColumnType::Age:
                 do_sort<ColumnType::Age>(m_Items, col_id, direction);
+                break;
+            case ColumnType::Health:
+                do_sort<ColumnType::Health>(m_Items, col_id, direction);
                 break;
             case ColumnType::String:
                 do_sort<ColumnType::String>(m_Items, col_id, direction);
