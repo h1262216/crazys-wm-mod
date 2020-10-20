@@ -53,7 +53,6 @@ cListBox::cListBox(cInterfaceWindow* parent, int ID, int x, int y, int width, in
     m_LastSelected = m_Items.end();
 
     DefineColumns(std::vector<std::string>(1), std::vector<std::string>(1),
-                  std::vector<ColumnType>(1),
                   std::vector<int>(1), std::vector<bool>(1));
     SDL_Rect dest_rect;
 
@@ -640,7 +639,7 @@ void cListBox::AddElement(int ID, std::vector<ItemContents> data, int color)
         m_ScrollBar->m_ItemsTotal = m_NumElements;
 }
 
-void cListBox::DefineColumns(std::vector<std::string> name, std::vector<std::string> header, std::vector<ColumnType> types, std::vector<int> offset, std::vector<bool> skip)
+void cListBox::DefineColumns(std::vector<std::string> name, std::vector<std::string> header, std::vector<int> offset, std::vector<bool> skip)
 {
     m_Columns.clear();
 
@@ -652,7 +651,7 @@ void cListBox::DefineColumns(std::vector<std::string> name, std::vector<std::str
         int left = offset[i];
         int right = i == name.size() - 1 ? m_eWidth : offset[i + 1];
         auto gfx = m_Font.RenderText(header[i]);
-        m_Columns.emplace_back(sColumnData{std::move(name[i]), std::move(header[i]), types[i], left, right - left, i, skip[i], gfx});
+        m_Columns.emplace_back(sColumnData{std::move(name[i]), std::move(header[i]), left, right - left, i, skip[i], gfx});
     }
     m_Font.SetFontBold(false);
 
