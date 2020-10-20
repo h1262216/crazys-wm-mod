@@ -28,6 +28,7 @@
 #include "cScrollBar.h"
 #include "interface/cWindowManager.h"
 #include "interface/cInterfaceWindow.h"
+#include "CLog.h"
 
 extern sColor g_ListBoxBorderColor;
 extern sColor g_ListBoxBackgroundColor;
@@ -823,13 +824,13 @@ namespace {
     switch(dir) {
     case Direction::Ascending:
       list.sort([less_than](const cListItem& a, const cListItem& b) {
-		  return less_than(a, b);
-		});
+                 return less_than(a, b);
+               });
       break;
     case Direction::Descending:
       list.sort([less_than](const cListItem& a, const cListItem& b) {
-		  return less_than(b, a);
-		});
+                 return less_than(b, a);
+               });
       break;
     }
   }
@@ -874,7 +875,16 @@ void cListBox::SortByColumn(std::string ColumnName, bool Descending)
                 break;
         }
     } catch (const std::exception& error) {
-        window_manager().PushError(std::string("Error during sorting: ") + error.what());
+       g_LogFile.error("game", "Cannot sort on column '", ColumnName, "' of type ", to_string(m_Columns[col_ref].type), ".");
+#if defined(NDEBUG)
+       // Release build -- early out, leave the sort incomplete.
+       return;
+#else
+       // Debug build -- crash and dump core.
+       //
+       // FIXME: And what to do on Windows?
+       std::abort();
+#endif
     }
 
     UpdatePositionsAfterSort();

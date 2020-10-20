@@ -62,6 +62,17 @@ ColumnType from_string(std::string const& str)
     return ColumnType{};
 }
 
+inline
+std::string to_string(ColumnType type)
+{
+   switch(type) {
+      case ColumnType::String:  return "String";
+      case ColumnType::Numeric: return "Numeric";
+      case ColumnType::Age:     return "Age";
+      default:                  return "(?)";
+   };
+}
+
 struct sColumnData {
     std::string name;           // internal name of the column
     std::string header;         // displayed header of the column
