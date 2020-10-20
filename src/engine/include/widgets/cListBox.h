@@ -24,6 +24,7 @@
 #include <vector>
 #include <functional>
 #include <SDL_keyboard.h>
+#include <boost/variant.hpp>
 
 #include "interface/cInterfaceObject.h"
 #include "interface/cFont.h"
@@ -32,23 +33,53 @@
 
 class cScrollBar;
 
+// Age is unknown, as a singleton type.
+struct AgeUnknown {
+   friend constexpr bool operator==(AgeUnknown, AgeUnknown) { return true; }
+   friend constexpr bool operator< (AgeUnknown, AgeUnknown) { return false; }
+};
+
+using Age = boost::variant<size_t, AgeUnknown>;
+
+// Health is "DEAD", as a singleton type
+struct HealthDead {
+   friend constexpr bool operator==(HealthDead, HealthDead) { return true; }
+   friend constexpr bool operator< (HealthDead, HealthDead) { return false; }
+};
+
+using Health = boost::variant<HealthDead, size_t>;
+
+using ItemData = boost::variant<std::string, int, Age, Health>;
+
+struct ItemContents {
+   ItemData val_;
+   std::string fmt_;
+};
+
 struct cListItem
 {
     int m_Color = 0;
     bool m_Selected = false;
-    std::vector<std::string> m_Data;    // the text to display, up to LISTBOX_COLUMNS number of columns (+1 is used for "original sort" slot)
+
+    // The text to display, and data to sort on; up to LISTBOX_COLUMNS
+    // number of columns (+1 is used for "original sort" slot)
+    std::vector<ItemContents> m_Data;
+
     int m_ID;    // the id for the item
     std::unique_ptr<SDL_Color> m_TextColor;
     int m_InsertionOrder = -1;      // tracks the order in which elements were put into the list box.
     std::vector<cSurface> m_PreRendered;
 };
 
+#if 1 // TODO: Remove `ColumnType`
 enum class ColumnType {
                        String = 0, // also the fallback choice
                        Numeric,
                        Age,     // numeric, or '???'
 };
+#endif
 
+#if 1 // TODO: Remove `ColumnType`
 inline
 ColumnType from_string(std::string const& str)
 {
@@ -61,6 +92,7 @@ ColumnType from_string(std::string const& str)
   else
     return ColumnType{};
 }
+#endif
 
 struct sColumnData {
     std::string name;           // internal name of the column
@@ -128,7 +160,7 @@ public:
 
     void DefineColumns(std::vector<std::string> name, std::vector<std::string> header, std::vector<ColumnType> types, std::vector<int> offset, std::vector<bool> skip);  // define column layout
     void SetColumnSort(const std::vector<std::string>& column_name);    // Update column sorting based on expected default order
-    void AddElement(int ID, std::vector<std::string> data, int color);
+    void AddElement(int ID, std::vector<ItemContents> data, int color);
     void SetElementText(int ID, std::string data[], int columns);
     void SetElementColumnText(int ID, std::string data, const std::string& column);
     void SetElementTextColor(int ID, SDL_Color text_color);
