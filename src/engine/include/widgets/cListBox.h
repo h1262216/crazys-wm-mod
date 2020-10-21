@@ -33,23 +33,7 @@
 
 class cScrollBar;
 
-// Age is unknown, as a singleton type.
-struct AgeUnknown {
-   friend constexpr bool operator==(AgeUnknown, AgeUnknown) { return true; }
-   friend constexpr bool operator< (AgeUnknown, AgeUnknown) { return false; }
-};
-
-using Age = boost::variant<size_t, AgeUnknown>;
-
-// Health is "DEAD", as a singleton type
-struct HealthDead {
-   friend constexpr bool operator==(HealthDead, HealthDead) { return true; }
-   friend constexpr bool operator< (HealthDead, HealthDead) { return false; }
-};
-
-using Health = boost::variant<HealthDead, size_t>;
-
-using ItemData = boost::variant<std::string, int, Age, Health>;
+using ItemData = boost::variant<std::string, int, bool>;
 
 struct ItemContents {
    ItemData val_;

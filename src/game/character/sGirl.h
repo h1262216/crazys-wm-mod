@@ -34,6 +34,8 @@
 #include "pregnancy.h"
 #include "utils/DirPath.h"
 
+#include "widgets/cListBox.h"
+
 
 class TraitSpec;
 class sInventoryItem;
@@ -264,8 +266,17 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
     bool is_havingsex() const;
     bool was_resting() const;
 
-    void OutputGirlDetailString(std::string& Data, const std::string& detailName) const;
+    void OutputGirlDetailString(std::string& Data, const std::string& detailName) const
+    {
+       Data = OutputGirlDetail(detailName).fmt_;
+    }
 
+    ItemContents OutputGirlDetail(const std::string& detailName) const;
+
+private:
+   ItemContents OutputGirlDetail_Job(const std::string& detailName) const;
+
+public:
     // END MOD
 
     double job_performance(JOBS job, bool estimate=true) const;
