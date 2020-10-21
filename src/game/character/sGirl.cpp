@@ -836,13 +836,13 @@ bool sGirl::was_resting() const
 
 /// Given a name of a detail (stat, skill, trait, etc.), returns its
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
-ItemContents sGirl::OutputGirlDetail(const std::string& detailName) const
+FormattedCellData sGirl::OutputGirlDetail(const std::string& detailName) const
 {
     auto mk_age = [](int val) {
                      if(val == 100)
-                        return ItemContents{val, "???"};
+                        return FormattedCellData{val, "???"};
                      else
-                        return ItemContents{val, std::to_string(val)};
+                        return FormattedCellData{val, std::to_string(val)};
                   };
 
     /* */if (detailName == "Name")     return mk_text(FullName());
@@ -1019,7 +1019,7 @@ ItemContents sGirl::OutputGirlDetail(const std::string& detailName) const
 /// Builds the detail value for jobs and job-like activities.
 ///
 /// \param detailName Either "DayJob" or "NightJob".
-ItemContents sGirl::OutputGirlDetail_Job(std::string const& detailName) const
+FormattedCellData sGirl::OutputGirlDetail_Job(std::string const& detailName) const
 {
    bool interrupted = false;    // `J` added
    if (m_YesterDayJob != m_DayJob &&

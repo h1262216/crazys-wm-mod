@@ -613,7 +613,7 @@ void cListBox::SetElementTextColor(int ID, SDL_Color text_color)
         }
     }
 }
-void cListBox::AddElement(int ID, std::vector<ItemContents> data, int color)
+void cListBox::AddElement(int ID, std::vector<FormattedCellData> data, int color)
 {
     m_Items.emplace_back();
     auto& newItem = m_Items.back();

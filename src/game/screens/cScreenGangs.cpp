@@ -231,7 +231,7 @@ void cScreenGangs::init(bool back)
     for(auto& gang : g_Game->gang_manager().GetPlayerGangs())
     {
         // format the string with the gang name, mission and number of men
-        std::vector<ItemContents> Data(11);
+        std::vector<FormattedCellData> Data(11);
 
         Data[0]  = mk_text(gang->name());
         Data[1]  = mk_num(gang->m_Num);

@@ -280,7 +280,7 @@ void cDungeon::RemoveCust(sDungeonCust* cust)
     m_NumCusts--;
 }
 
-void cDungeon::OutputGirlRow(int i, std::vector<ItemContents>& Data, const std::vector<std::string>& columnNames)
+void cDungeon::OutputGirlRow(int i, std::vector<FormattedCellData>& Data, const std::vector<std::string>& columnNames)
 {
     Data.resize(columnNames.size());
     int tmp = 0;
@@ -300,7 +300,7 @@ void cDungeon::OutputGirlRow(int i, std::vector<ItemContents>& Data, const std::
 
 /// Given a name of a detail (stat, skill, trait, etc.), returns its
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
-ItemContents sDungeonGirl::OutputGirlDetail(const std::string& detailName) const
+FormattedCellData sDungeonGirl::OutputGirlDetail(const std::string& detailName) const
 {
     if (detailName == "Rebelliousness")
     {
@@ -347,7 +347,7 @@ ItemContents sDungeonGirl::OutputGirlDetail(const std::string& detailName) const
     }
 }
 
-void cDungeon::OutputCustRow(int i, std::vector<ItemContents>& Data, const std::vector<std::string>& columnNames)
+void cDungeon::OutputCustRow(int i, std::vector<FormattedCellData>& Data, const std::vector<std::string>& columnNames)
 {
     Data.resize(columnNames.size());
     sDungeonCust* cust = m_Custs;
@@ -370,7 +370,7 @@ void cDungeon::OutputCustRow(int i, std::vector<ItemContents>& Data, const std::
 
 /// Given a name of a detail (stat, skill, trait, etc.), returns its
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
-ItemContents sDungeonCust::OutputCustDetail(const std::string& detailName) const
+FormattedCellData sDungeonCust::OutputCustDetail(const std::string& detailName) const
 {
     if (detailName == "Name")           return mk_text("Customer");
     else if (detailName == "Health")    return mk_health(m_Health);

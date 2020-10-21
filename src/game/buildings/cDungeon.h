@@ -51,7 +51,7 @@ struct sDungeonCust
     sDungeonCust*   m_Prev;
     int             m_Health;
 
-    ItemContents OutputCustDetail(const std::string& detailName) const;
+    FormattedCellData OutputCustDetail(const std::string& detailName) const;
 };
 
 // Keeps track of girls in the dungeon
@@ -70,7 +70,7 @@ struct sDungeonGirl
     // customer data
     std::shared_ptr<sGirl> m_Girl;
 
-    ItemContents OutputGirlDetail(const std::string& detailName) const;
+    FormattedCellData OutputGirlDetail(const std::string& detailName) const;
 };
 
 
@@ -99,8 +99,8 @@ public:
     bool SendGirlToDungeon(std::shared_ptr<sGirl> girl);
     void AddGirl(std::shared_ptr<sGirl> girl, int reason);
     void AddCust(int reason, int numDaughters, bool hasWife);
-    void OutputGirlRow(int i, std::vector<ItemContents>& Data, const std::vector<std::string>& columnNames);
-    void OutputCustRow(int i, std::vector<ItemContents>& Data, const std::vector<std::string>& columnNames);
+    void OutputGirlRow(int i, std::vector<FormattedCellData>& Data, const std::vector<std::string>& columnNames);
+    void OutputCustRow(int i, std::vector<FormattedCellData>& Data, const std::vector<std::string>& columnNames);
     sDungeonGirl* GetGirl(int i);
     sDungeonGirl* GetGirlByName(std::string name);
     sDungeonCust* GetCust(int i);

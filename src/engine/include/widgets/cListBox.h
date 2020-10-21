@@ -33,45 +33,52 @@
 
 class cScrollBar;
 
-using ItemData = boost::variant<std::string, int, bool>;
+/// Data that we want to put in a \c cListBox cell.
+using CellData = boost::variant<std::string, int, bool>;
 
-struct ItemContents {
-   ItemData val_;
+/// Cell data with attached formatting.
+struct FormattedCellData {
+   CellData val_;
    std::string fmt_;
 };
 
+/// Create a formatted cell with text.
 inline
-ItemContents mk_text(std::string val)
+FormattedCellData mk_text(std::string val)
 {
    auto str = val;
-   return ItemContents{std::move(val), std::move(str)};
+   return FormattedCellData{std::move(val), std::move(str)};
 }
 
+/// Create a formatted cell with a numeric value.
 inline
-ItemContents mk_num(int val)
+FormattedCellData mk_num(int val)
 {
-   return ItemContents{val, std::to_string(val)};
+   return FormattedCellData{val, std::to_string(val)};
 };
 
+/// Create a formatted "Yes/No" cell.
 inline
-ItemContents mk_yesno(bool val)
+FormattedCellData mk_yesno(bool val)
 {
-   return ItemContents{val, val ? "Yes" : "No"};
+   return FormattedCellData{val, val ? "Yes" : "No"};
 };
 
+/// Create a formatted cell with a numeric percentage.
 inline
-ItemContents mk_percent(int val)
+FormattedCellData mk_percent(int val)
 {
-   return ItemContents{val, std::to_string(val) + '%'};
+   return FormattedCellData{val, std::to_string(val) + '%'};
 };
 
+/// Create a formatted cell with a health value.
 inline
-ItemContents mk_health(int val)
+FormattedCellData mk_health(int val)
 {
    if(val <= 0)
-      return ItemContents{val, "DEAD"};
+      return FormattedCellData{val, "DEAD"};
    else
-      return ItemContents{val, std::to_string(val) + '%'};
+      return FormattedCellData{val, std::to_string(val) + '%'};
 };
 
 struct cListItem
@@ -81,7 +88,7 @@ struct cListItem
 
     // The text to display, and data to sort on; up to LISTBOX_COLUMNS
     // number of columns (+1 is used for "original sort" slot)
-    std::vector<ItemContents> m_Data;
+    std::vector<FormattedCellData> m_Data;
 
     int m_ID;    // the id for the item
     std::unique_ptr<SDL_Color> m_TextColor;
@@ -154,7 +161,7 @@ public:
 
     void DefineColumns(std::vector<std::string> name, std::vector<std::string> header, std::vector<int> offset, std::vector<bool> skip);  // define column layout
     void SetColumnSort(const std::vector<std::string>& column_name);    // Update column sorting based on expected default order
-    void AddElement(int ID, std::vector<ItemContents> data, int color);
+    void AddElement(int ID, std::vector<FormattedCellData> data, int color);
     void SetElementText(int ID, std::string data[], int columns);
     void SetElementColumnText(int ID, std::string data, const std::string& column);
     void SetElementTextColor(int ID, SDL_Color text_color);

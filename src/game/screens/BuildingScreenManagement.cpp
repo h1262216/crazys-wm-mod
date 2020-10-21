@@ -439,7 +439,7 @@ void IBuildingScreenManagement::init(bool back)
     // get a list of all the column names, so we can find which data goes in that column
     std::vector<std::string> columnNames = GetListBox(girllist_id)->GetColumnNames();
     int numColumns = columnNames.size();
-    std::vector<ItemContents> data(numColumns);
+    std::vector<FormattedCellData> data(numColumns);
 
     for (int i = 0; i < active_building().num_girls(); i++)    // Add girls to list
     {

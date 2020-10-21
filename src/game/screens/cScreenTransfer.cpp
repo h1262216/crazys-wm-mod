@@ -142,7 +142,7 @@ void cScreenTransfer::select_brothel(Side side, int selected)
         int i = 0;
         temp->girls().visit([&](const sGirl& girl) {
             if (selected_girl().get() == &girl) selection = i;
-            std::vector<ItemContents> Data(columnNames.size());
+            std::vector<FormattedCellData> Data(columnNames.size());
             for (unsigned int x = 0; x < columnNames.size(); ++x)
             {
                 Data[x] = girl.OutputGirlDetail(columnNames[x]);
