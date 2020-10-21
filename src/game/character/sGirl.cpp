@@ -1049,7 +1049,7 @@ ItemContents sGirl::OutputGirlDetail_Job(std::string const& detailName) const
        ((m_WorkingDay > 0) || m_PrevWorkingDay > 0))
       interrupted = true;
 
-   static std::ostringstream ss;
+   std::ostringstream ss;
 
    bool DN_Day = detailName == "NightJob";
    JOBS DN_Job = get_job(DN_Day);
