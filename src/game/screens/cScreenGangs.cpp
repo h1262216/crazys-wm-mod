@@ -226,16 +226,6 @@ void cScreenGangs::init(bool back)
     ClearListBox(ganglist_id);
     int num = 0;
 
-    auto mk_textitem = [](std::string str) {
-                          return ItemContents{str, str};
-                       };
-    auto mk_numitem  = [](int val) {
-                          return ItemContents{val, std::to_string(val)};
-                       };
-    auto mk_statitem = [](int val) {
-                          return ItemContents{val, std::to_string(val) + '%'};
-                       };
-
     // loop through the gangs, populating the list box
     g_LogFile.log(ELogLevel::DEBUG, "Setting gang mission descriptions\n");
     for(auto& gang : g_Game->gang_manager().GetPlayerGangs())
@@ -243,18 +233,18 @@ void cScreenGangs::init(bool back)
         // format the string with the gang name, mission and number of men
         std::vector<ItemContents> Data(11);
 
-        Data[0]  = mk_textitem(gang->name());
-        Data[1]  = mk_numitem(gang->m_Num);
-        Data[2]  = mk_textitem(short_mission_desc(gang->m_MissionID));
+        Data[0]  = mk_text(gang->name());
+        Data[1]  = mk_num(gang->m_Num);
+        Data[2]  = mk_text(short_mission_desc(gang->m_MissionID));
 
-        Data[3]  = mk_statitem(gang->m_Skills[SKILL_COMBAT]);
-        Data[4]  = mk_statitem(gang->m_Skills[SKILL_MAGIC]);
-        Data[5]  = mk_statitem(gang->m_Stats[STAT_INTELLIGENCE]);
-        Data[6]  = mk_statitem(gang->m_Stats[STAT_AGILITY]);
-        Data[7]  = mk_statitem(gang->m_Stats[STAT_CONSTITUTION]);
-        Data[8]  = mk_statitem(gang->m_Stats[STAT_CHARISMA]);
-        Data[9]  = mk_statitem(gang->m_Stats[STAT_STRENGTH]);
-        Data[10] = mk_statitem(gang->m_Skills[SKILL_SERVICE]);
+        Data[3]  = mk_percent(gang->m_Skills[SKILL_COMBAT]);
+        Data[4]  = mk_percent(gang->m_Skills[SKILL_MAGIC]);
+        Data[5]  = mk_percent(gang->m_Stats[STAT_INTELLIGENCE]);
+        Data[6]  = mk_percent(gang->m_Stats[STAT_AGILITY]);
+        Data[7]  = mk_percent(gang->m_Stats[STAT_CONSTITUTION]);
+        Data[8]  = mk_percent(gang->m_Stats[STAT_CHARISMA]);
+        Data[9]  = mk_percent(gang->m_Stats[STAT_STRENGTH]);
+        Data[10] = mk_percent(gang->m_Skills[SKILL_SERVICE]);
 
         //        cerr << "Gang:\t" << Data[0] << "\t" << Data[1] << "\t" << Data[2]
         //            << "\t" << Data[3] << "\t" << Data[4] << "\t" << Data[5] << "\t" << Data[6] << endl;

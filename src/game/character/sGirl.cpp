@@ -838,30 +838,12 @@ bool sGirl::was_resting() const
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
 ItemContents sGirl::OutputGirlDetail(const std::string& detailName) const
 {
-    auto mk_text = [](std::string str) {
-                      return ItemContents{str, str};
-                   };
-    auto mk_num = [](int val) {
-                     return ItemContents{val, std::to_string(val)};
+    auto mk_age = [](int val) {
+                     if(val == 100)
+                        return ItemContents{val, "???"};
+                     else
+                        return ItemContents{val, std::to_string(val)};
                   };
-    auto mk_health = [](int val) {
-                        if(val <= 0)
-                           return ItemContents{val, "DEAD"};
-                        else
-                           return ItemContents{val, std::to_string(val) + '%'};
-                     };
-    auto mk_age  = [](int val) {
-                      if(val == 100)
-                         return ItemContents{val, "???"};
-                      else
-                         return ItemContents{val, std::to_string(val)};
-                   };
-    auto mk_percent = [](int val) {
-                         return ItemContents{val, std::to_string(val) + '%'};
-                      };
-    auto mk_yesno = [](bool val) {
-                       return ItemContents{val, val ? "Yes" : "No"};
-                      };
 
     /* */if (detailName == "Name")     return mk_text(FullName());
     else if (detailName == "Health")   return mk_health(get_stat(STAT_HEALTH));
@@ -1039,10 +1021,6 @@ ItemContents sGirl::OutputGirlDetail(const std::string& detailName) const
 /// \param detailName Either "DayJob" or "NightJob".
 ItemContents sGirl::OutputGirlDetail_Job(std::string const& detailName) const
 {
-   auto mk_text = [](std::string str) {
-                     return ItemContents{str, str};
-                  };
-
    bool interrupted = false;    // `J` added
    if (m_YesterDayJob != m_DayJob &&
        (cJobManager::is_Surgery_Job(m_YesterDayJob) || m_YesterDayJob == JOB_REHAB) &&

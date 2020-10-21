@@ -40,6 +40,40 @@ struct ItemContents {
    std::string fmt_;
 };
 
+inline
+ItemContents mk_text(std::string val)
+{
+   auto str = val;
+   return ItemContents{std::move(val), std::move(str)};
+}
+
+inline
+ItemContents mk_num(int val)
+{
+   return ItemContents{val, std::to_string(val)};
+};
+
+inline
+ItemContents mk_yesno(bool val)
+{
+   return ItemContents{val, val ? "Yes" : "No"};
+};
+
+inline
+ItemContents mk_percent(int val)
+{
+   return ItemContents{val, std::to_string(val) + '%'};
+};
+
+inline
+ItemContents mk_health(int val)
+{
+   if(val <= 0)
+      return ItemContents{val, "DEAD"};
+   else
+      return ItemContents{val, std::to_string(val) + '%'};
+};
+
 struct cListItem
 {
     int m_Color = 0;

@@ -302,16 +302,6 @@ void cDungeon::OutputGirlRow(int i, std::vector<ItemContents>& Data, const std::
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
 ItemContents sDungeonGirl::OutputGirlDetail(const std::string& detailName) const
 {
-    auto mk_text = [](std::string str) {
-                      return ItemContents{str, str};
-                   };
-    auto mk_num = [](int val) {
-                     return ItemContents{val, std::to_string(val)};
-                  };
-    auto mk_yesno = [](bool val) {
-                       return ItemContents{val, val ? "Yes" : "No"};
-                      };
-
     if (detailName == "Rebelliousness")
     {
         // `J` Dungeon "Matron" can be a Torturer from any brothel
@@ -382,22 +372,6 @@ void cDungeon::OutputCustRow(int i, std::vector<ItemContents>& Data, const std::
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
 ItemContents sDungeonCust::OutputCustDetail(const std::string& detailName) const
 {
-    auto mk_text = [](std::string str) {
-                      return ItemContents{str, str};
-                   };
-    auto mk_num = [](int val) {
-                     return ItemContents{val, std::to_string(val)};
-                  };
-    auto mk_yesno = [](bool val) {
-                       return ItemContents{val, val ? "Yes" : "No"};
-                      };
-    auto mk_health = [](int val) {
-                        if(val <= 0)
-                           return ItemContents{val, "DEAD"};
-                        else
-                           return ItemContents{val, std::to_string(val) + '%'};
-                     };
-
     if (detailName == "Name")           return mk_text("Customer");
     else if (detailName == "Health")    return mk_health(m_Health);
     else if (detailName == "Reason")
