@@ -915,7 +915,7 @@ FormattedCellData sGirl::OutputGirlDetail(const std::string& detailName) const
         }
         else
         {
-            return mk_text("Error");
+            return mk_error("Error");
         }
     }
     else if (detailName.substr(0, 6) == "SKILL_")
@@ -928,7 +928,7 @@ FormattedCellData sGirl::OutputGirlDetail(const std::string& detailName) const
         }
         else
         {
-            return mk_text("Error");
+            return mk_error("Error");
         }
     }
     else if (detailName.substr(0, 6) == "TRAIT_")
@@ -946,7 +946,7 @@ FormattedCellData sGirl::OutputGirlDetail(const std::string& detailName) const
         }
         else
         {
-            return mk_text("Error");
+            return mk_error("Error");
         }
     }
     else if (detailName == "is_pregnant")
@@ -1013,7 +1013,7 @@ FormattedCellData sGirl::OutputGirlDetail(const std::string& detailName) const
     else if (detailName == "SkillAverage")
         return mk_num((int)cGirls::GetAverageOfAllSkills(*this));
     else
-        return mk_text("Not found");
+        return mk_error("Not found");
 }
 
 /// Builds the detail value for jobs and job-like activities.

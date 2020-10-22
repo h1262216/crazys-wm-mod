@@ -322,7 +322,7 @@ FormattedCellData sDungeonGirl::OutputGirlDetail(const std::string& detailName) 
            case DUNGEON_KID:              return mk_text("Child of one of your girls.");
            case DUNGEON_NEWARENA:         return mk_text("This is a girl won in the arena.");
            case DUNGEON_RECRUITED:        return mk_text("This girl was recruited for you.");
-           default:                       return mk_text("(error)");
+           default:                       return mk_error("(error)");
         }
     }
     else if (detailName == "Duration")    return mk_num(m_Weeks);
@@ -382,13 +382,13 @@ FormattedCellData sDungeonCust::OutputCustDetail(const std::string& detailName) 
         case DUNGEON_CUSTBEATGIRL:      return mk_text("Beating your girls.");
         case DUNGEON_CUSTSPY:           return mk_text("Being a rival's spy.");
         case DUNGEON_RIVAL:             return mk_text("Is a rival.");
-        default:                        return mk_text("(error)");
+        default:                        return mk_error("(error)");
         }
     }
     else if (detailName == "Duration")  return mk_num((int)m_Weeks);
     else if (detailName == "Feeding")   return mk_yesno(m_Feeding);
     else if (detailName == "Tortured")  return mk_yesno(m_Tort);
-    else                                return mk_text("---");
+    else                                return mk_error("---");
 }
 
 sDungeonGirl* cDungeon::GetGirl(int i)
