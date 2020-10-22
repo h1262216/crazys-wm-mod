@@ -266,10 +266,10 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
     bool is_havingsex() const;
     bool was_resting() const;
 
-    FormattedCellData OutputGirlDetail(const std::string& detailName) const;
+    FormattedCellData GetDetail(const std::string& detailName) const;
 
 private:
-    FormattedCellData OutputGirlDetail_Job(const std::string& detailName) const;
+    FormattedCellData GetDetail_Job(const std::string& detailName) const;
 
 public:
     // END MOD

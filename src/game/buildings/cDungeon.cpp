@@ -290,7 +290,7 @@ void cDungeon::OutputGirlRow(int i, std::vector<FormattedCellData>& Data, const 
             for (unsigned int x = 0; x < columnNames.size(); ++x)
             {
                 //for each column, write out the statistic that goes in it
-                Data[x] = current.OutputGirlDetail(columnNames[x]);
+                Data[x] = current.GetDetail(columnNames[x]);
             }
             break;
         };
@@ -300,7 +300,7 @@ void cDungeon::OutputGirlRow(int i, std::vector<FormattedCellData>& Data, const 
 
 /// Given a name of a detail (stat, skill, trait, etc.), returns its
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
-FormattedCellData sDungeonGirl::OutputGirlDetail(const std::string& detailName) const
+FormattedCellData sDungeonGirl::GetDetail(const std::string& detailName) const
 {
     if (detailName == "Rebelliousness")
     {
@@ -343,7 +343,7 @@ FormattedCellData sDungeonGirl::OutputGirlDetail(const std::string& detailName) 
     }
     else
     {
-        return m_Girl->OutputGirlDetail(detailName);
+        return m_Girl->GetDetail(detailName);
     }
 }
 
@@ -363,14 +363,14 @@ void cDungeon::OutputCustRow(int i, std::vector<FormattedCellData>& Data, const 
         for (unsigned int x = 0; x < columnNames.size(); ++x)
         {
             //for each column, write out the statistic that goes in it
-            Data[x] = cust->OutputCustDetail(columnNames[x]);
+            Data[x] = cust->GetDetail(columnNames[x]);
         }
     }
 }
 
 /// Given a name of a detail (stat, skill, trait, etc.), returns its
 /// value as itself (`.val_`) and as a formatted string (`.fmt_`).
-FormattedCellData sDungeonCust::OutputCustDetail(const std::string& detailName) const
+FormattedCellData sDungeonCust::GetDetail(const std::string& detailName) const
 {
     if (detailName == "Name")           return mk_text("Customer");
     else if (detailName == "Health")    return mk_health(m_Health);

@@ -448,7 +448,7 @@ void IBuildingScreenManagement::init(bool back)
         unsigned int item_color = (gir->health() <= 30 || gir->tiredness() >= 80 || gir->happiness() <= 30) ? COLOR_RED : COLOR_BLUE;
         for (unsigned int x = 0; x < columnNames.size(); ++x)
         {
-            data[x] = gir->OutputGirlDetail(columnNames[x]);
+            data[x] = gir->GetDetail(columnNames[x]);
         }
         AddToListBox(girllist_id, i, data, item_color);
     }

@@ -51,7 +51,7 @@ struct sDungeonCust
     sDungeonCust*   m_Prev;
     int             m_Health;
 
-    FormattedCellData OutputCustDetail(const std::string& detailName) const;
+    FormattedCellData GetDetail(const std::string& detailName) const;
 };
 
 // Keeps track of girls in the dungeon
@@ -70,7 +70,7 @@ struct sDungeonGirl
     // customer data
     std::shared_ptr<sGirl> m_Girl;
 
-    FormattedCellData OutputGirlDetail(const std::string& detailName) const;
+    FormattedCellData GetDetail(const std::string& detailName) const;
 };
 
 
