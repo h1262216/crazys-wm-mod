@@ -29,7 +29,7 @@
 
 #include "cGirls.h"
 
-#include "widgets/cListBox.h"
+#include "interface/TableCells.h"
 
 class cGirlTorture;
 

@@ -24,79 +24,14 @@
 #include <vector>
 #include <functional>
 #include <SDL_keyboard.h>
-#include <boost/variant.hpp>
 
 #include "interface/cInterfaceObject.h"
 #include "interface/cFont.h"
 #include "interface/cSurface.h"
 #include "interface/constants.h"
+#include "interface/TableCells.h"
 
 class cScrollBar;
-
-/// An error type for our cell data.
-///
-/// Currently this is a singleton type (so all errors are effectively
-/// the same).
-struct Error
-{
-   constexpr friend bool operator==(Error, Error) { return true;}
-   constexpr friend bool operator< (Error, Error) { return false;}
-};
-
-/// Data that we want to put in a \c cListBox cell.
-using CellData = boost::variant<std::string, int, bool, Error>;
-
-/// Cell data with attached formatting.
-struct FormattedCellData {
-   CellData val_;
-   std::string fmt_;
-};
-
-/// Create a formatted cell with text.
-inline
-FormattedCellData mk_text(std::string val)
-{
-   auto str = val;
-   return FormattedCellData{std::move(val), std::move(str)};
-}
-
-/// Create a formatted cell with an error.
-inline
-FormattedCellData mk_error(std::string errtext)
-{
-   return FormattedCellData{Error{}, std::move(errtext)};
-}
-
-/// Create a formatted cell with a numeric value.
-inline
-FormattedCellData mk_num(int val)
-{
-   return FormattedCellData{val, std::to_string(val)};
-};
-
-/// Create a formatted "Yes/No" cell.
-inline
-FormattedCellData mk_yesno(bool val)
-{
-   return FormattedCellData{val, val ? "Yes" : "No"};
-};
-
-/// Create a formatted cell with a numeric percentage.
-inline
-FormattedCellData mk_percent(int val)
-{
-   return FormattedCellData{val, std::to_string(val) + '%'};
-};
-
-/// Create a formatted cell with a health value.
-inline
-FormattedCellData mk_health(int val)
-{
-   if(val <= 0)
-      return FormattedCellData{val, "DEAD"};
-   else
-      return FormattedCellData{val, std::to_string(val) + '%'};
-};
 
 struct cListItem
 {

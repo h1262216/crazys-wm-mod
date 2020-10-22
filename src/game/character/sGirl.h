@@ -34,7 +34,7 @@
 #include "pregnancy.h"
 #include "utils/DirPath.h"
 
-#include "widgets/cListBox.h"
+#include "interface/TableCells.h"
 
 
 class TraitSpec;
