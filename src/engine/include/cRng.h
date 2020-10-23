@@ -31,7 +31,7 @@
  
 struct cRng
 {
-  std::mt19937 gen_;
+  std::ranlux48 gen_;
 
 /*
  *    changed this to be the base random number generator 
