@@ -1244,13 +1244,13 @@ bool WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
     //BSIN bit more randomness
     if (is_addict(girl, true) && rng.percent(20))
     {
-        int theft = rng.in_range(5, 50);
+        int theft = rng.flat(5, 50);
         ss << "\nWhile you're not looking, she steals " << theft << " gold from your room to feed her addiction.\n";
         wages += theft;
     }
     if (rng.percent(30) && girl.has_active_trait("Natural Pheromones"))
     {
-        int wowfactor = rng.in_range(5, 55);
+        int wowfactor = rng.flat(5, 55);
         ss << "\nSomething about her drives you wild. You pay her " << wowfactor << " gold extra.\n";
         wages += wowfactor;
     }

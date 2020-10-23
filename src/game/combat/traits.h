@@ -39,7 +39,7 @@ namespace ct {
     if (m_girl->has_trait("Fearless"))        m_odds += 0.10;
     if (m_girl->has_trait("Fleet of Foot"))    m_odds += 0.10;
     if (m_girl->has_trait("Brawler"))        m_odds += 0.15;
-    if (m_girl->has_trait("Assassin"))        casualties += g_Dice.in_range(1, 6);
+    if (m_girl->has_trait("Assassin"))        casualties += g_Dice.flat(1, 5);
     if (m_girl->has_trait("Adventurer"))    casualties += 2;    // some level clearing instincts
     if (m_girl->has_trait("Merciless"))        casualties++;
     if (m_girl->has_trait("Yandere"))        casualties++;

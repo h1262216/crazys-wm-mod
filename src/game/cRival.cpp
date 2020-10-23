@@ -58,9 +58,16 @@ std::string cRivalManager::rivals_plunder_pc_gold(cRival* rival)
     if (g_Game->gold().ival() <= 0) return "";                        // no gold to sieze? nothing to do.
     long pc_gold = g_Game->gold().ival();                            // work out how much they take. make a note of how much we have
 
-    long gold = g_Dice.random(std::min((long)2000, pc_gold));
-    if (gold < 45) gold = 45;                                // make sure there's at least 45 gold taken
-    if (pc_gold < gold) gold = pc_gold;                        // unless the pc has less than that, in which case take the lot
+    long gold;
+    if(pc_gold <= 45)
+    {
+       gold = pc_gold;          //  take the lot
+    }
+    else
+    {                           // take 45...2000 gold
+       gold = g_Dice.flat(45, std::min((long)2000, pc_gold));
+    }
+
     g_Game->gold().rival_raids(gold);                                // deduct the losses against rival raid losses
     rival->m_Gold += gold;                                    // add the aount to rival coffers
 

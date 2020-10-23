@@ -340,7 +340,7 @@ bool cMissionSabotage::execute_mission(sGang& gang, std::stringstream& ss)
     {
         // mod: brighter goons do better damage they need 100% to be better than before however
         int spread = gang.intelligence() / 4;
-        int num = 1 + g_Dice.random(spread);    // get the number of businesses lost
+        int num = g_Dice.flat(1, spread);    // get the number of businesses lost
         if (rival->m_BusinessesExtort < num)  // Can't destroy more businesses than they have
             num = rival->m_BusinessesExtort;
         rival->m_BusinessesExtort -= num;
@@ -739,7 +739,7 @@ bool cMissionPettyTheft::execute_mission(sGang& gang, std::stringstream& ss)
             girl->health(100);
             girl->tiredness(-100);
             auto health_potion = g_Game->inventory_manager().GetItem("Healing Salve (S)");
-            girl->add_item(health_potion, g_Dice.in_range(2, 4));
+            girl->add_item(health_potion, g_Dice.flat(2, 4));
 
             ss << "Your men are confronted by a masked vigilante.\n";
 

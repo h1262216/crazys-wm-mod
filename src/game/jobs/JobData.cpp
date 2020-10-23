@@ -78,7 +78,7 @@ void cJobGains::apply(sGirl& girl) const {
     if (girl.has_active_trait("Quick Learner"))        { xp += 3; learner = QUICK; }
     else if (girl.has_active_trait("Slow Learner"))    { xp -= 3; learner = SLOW; }
 
-    girl.exp(g_Dice.in_range(1, xp));
+    girl.exp(g_Dice.flat(1, xp));
 
     if(!Gains.empty()) {
         while (skill > 0) {

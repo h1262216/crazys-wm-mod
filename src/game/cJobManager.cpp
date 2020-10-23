@@ -863,7 +863,7 @@ bool cJobManager::work_related_violence(sGirl& girl, bool Day0Night1, bool stree
         // the security girl or defending gang is defeated, any casualties they inflicts
         // carry over to the next layer of defense.
         sGang *enemy_gang = g_Game->gang_manager().GetTempWeakGang();
-        enemy_gang->give_potions(g_Dice.in_range(1, 10));
+        enemy_gang->give_potions(g_Dice.flat(1, 10));
         enemy_gang->m_Skills[SKILL_MAGIC] = 0;
         // There is also between 1 and 10 of them, not 10 every time
         enemy_gang->m_Num = std::max(1, g_Dice.bell(-5, 10));

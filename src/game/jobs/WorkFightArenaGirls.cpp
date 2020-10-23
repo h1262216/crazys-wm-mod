@@ -73,9 +73,9 @@ bool WorkFightArenaGirls(sGirl& girl, bool Day0Night1, cRng& rng)
                 std::stringstream msg;    // goes to the girl and the g_MessageQue
                 std::stringstream Umsg;    // goes to the new girl
                 std::stringstream Tmsg;    // temp msg
-                ugirl->set_stat(STAT_HEALTH, rng.in_range(1, 50));
-                ugirl->set_stat(STAT_HAPPINESS, rng.in_range(1, 80));
-                ugirl->set_stat(STAT_TIREDNESS, rng.in_range(50, 100));
+                ugirl->set_stat(STAT_HEALTH, rng.flat(1, 50));
+                ugirl->set_stat(STAT_HAPPINESS, rng.flat(1, 80));
+                ugirl->set_stat(STAT_TIREDNESS, rng.flat(50, 100));
                 ugirl->set_status(STATUS_ARENA);
                 msg << "${name} won her fight against " << ugirl->FullName() << ".\n \n";
                 Umsg << ugirl->FullName() << " lost her fight against your girl ${name}.\n \n";

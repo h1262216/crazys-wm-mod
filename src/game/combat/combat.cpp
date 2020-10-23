@@ -290,9 +290,9 @@ void Combat::add_combatants(ECombatSide side, sGang& gang, int chance) {
         int strength = mage ? rng() % gang.strength() : gang.strength();
 
         auto& cbt = add_combatant(side, std::make_unique<Combatant>( g_BoysNameList.random(),
-                rng().in_range(50, 100),
-                rng().in_range(magic / 2, magic),
-                rng().in_range(5, 20), constitution, combat, magic, gang.agility(),
+                rng().flat(50, 100),
+                rng().flat(magic / 2, magic),
+                rng().flat(5, 20), constitution, combat, magic, gang.agility(),
                 strength
                 ));
         cbt.set_gang(&gang);

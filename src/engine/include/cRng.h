@@ -154,7 +154,7 @@ struct cRng
     /// Simulates a d100 die.
     ///
     /// The returned random integer `x` is within `1 <= x <= 100`.
-    int d100() { return random(100) + 1; }
+    int d100() { return flat(1, 100); }
 /*
  *    constructor and destructor
  */

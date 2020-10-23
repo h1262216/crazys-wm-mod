@@ -194,8 +194,8 @@ ActionResult PhysicalAttack::calc_score(Combatant& self, Combatant& target) cons
 }
 
 void PhysicalAttack::do_act(Combatant& self, Combatant& target) const {
-    double parry = parry_chance(self, target) + rng().in_range(-5, 5) / 100.0;
-    double evade = evade_chance(self, target) + rng().in_range(-5, 5) / 100.0;
+    double parry = parry_chance(self, target) + rng().flat(-5, 5) / 100.0;
+    double evade = evade_chance(self, target) + rng().flat(-5, 5) / 100.0;
     bool feeble = false;
     int followed = 0;
 
@@ -211,7 +211,7 @@ void PhysicalAttack::do_act(Combatant& self, Combatant& target) const {
         followed = 50;
 
         // cause the pursuer to spend even more vitality points
-        int run_away = rng().in_range( 10 + 25 * target.get_agility(), 20 + 75 * target.get_agility() );
+        int run_away = rng().flat( 10 + 25 * target.get_agility(), 20 + 75 * target.get_agility() );
         if(target.get_vitality() > run_away / 2) {
             target.use_vitality(run_away / 2);
             if (self.get_vitality() < run_away * 1.5) {
@@ -262,7 +262,7 @@ void PhysicalAttack::do_act(Combatant& self, Combatant& target) const {
 
     target.inc_crowding();
     int dev = (100 - target.get_smarts()) / 10;
-    bool should_parry = 100 * parry + rng().in_range(0, dev) > 100 * evade + rng().in_range(0, dev);
+    bool should_parry = 100 * parry + rng().flat(0, dev) > 100 * evade + rng().flat(0, dev);
 
     // surrender?
     if(self.get_party()->aim == ECombatObjective::CAPTURE) {
@@ -315,7 +315,7 @@ void PhysicalAttack::do_act(Combatant& self, Combatant& target) const {
             narration() << " Critical Hit!";
         }
 
-        damage = rng().in_range(0.5*damage, 1.5*damage);
+        damage = rng().flat(0.5*damage, 1.5*damage);
 
         if(!target.hurt(damage, self)) {
             narration() << " " << target.get_name() << " takes " << damage << " damage.";
@@ -390,8 +390,8 @@ void MagicalAttack::do_act(Combatant& self, Combatant& target) const {
         return;
     }
 
-    double parry = deflect(self, target) + rng().in_range(-5, 5) / 100.0;
-    double evade = std::max(0.0, evade_chance(self, target) + rng().in_range(-5, 5) / 100.0);
+    double parry = deflect(self, target) + rng().flat(-5, 5) / 100.0;
+    double evade = std::max(0.0, evade_chance(self, target) + rng().flat(-5, 5) / 100.0);
     bool smart = rng().percent(target.get_smarts());
     bool success = false;
 
@@ -438,7 +438,7 @@ void MagicalAttack::do_act(Combatant& self, Combatant& target) const {
     if(success) {
         // damage target
         int damage = expected_damage(self, target);
-        damage = rng().in_range(0.5*damage, 1.5*damage);
+        damage = rng().flat(0.5*damage, 1.5*damage);
         if(!target.hurt(damage, self)) {
             narration() << " " << target.get_name() << " takes " << damage << " damage.";
         } else {

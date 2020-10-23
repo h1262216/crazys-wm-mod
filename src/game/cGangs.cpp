@@ -281,7 +281,7 @@ void cGangManager::AddNewGang(bool boosted)
 
     int max_members = g_Game->settings().get_integer(settings::GANG_MAX_START_MEMBERS);
     int min_members = g_Game->settings().get_integer(settings::GANG_MIN_START_MEMBERS);
-    newGang->m_Num = g_Dice.in_range(min_members, max_members);
+    newGang->m_Num = g_Dice.flat(min_members, max_members);
     if (boosted) newGang->m_Num = std::min(15, newGang->m_Num + 5);
 
     int new_val;
@@ -346,7 +346,7 @@ sGang cGangManager::GetTempGang()
     for (int & m_Stat : newGang.m_Stats)    m_Stat = (g_Dice % 30) + 21;
     newGang.m_Stats[STAT_HEALTH] = 100;
     newGang.m_Stats[STAT_HAPPINESS] = 100;
-    newGang.set_weapon_level( g_Dice.in_range(1, 3) );
+    newGang.set_weapon_level( g_Dice.flat(1, 3) );
     return newGang;
 }
 
@@ -369,7 +369,7 @@ sGang cGangManager::GetTempGang(int mod)
     }
     newGang.m_Stats[STAT_HEALTH] = 100;
     newGang.m_Stats[STAT_HAPPINESS] = 100;
-    newGang.set_weapon_level( g_Dice.in_range(1, 3) );
+    newGang.set_weapon_level( g_Dice.flat(1, 3) );
 
     return newGang;
 }
@@ -390,7 +390,7 @@ sGang* cGangManager::GetTempWeakGang()
     for (int & m_Skill : newGang->m_Skills)    m_Skill = g_Dice % 30 + 51;
     for (int & m_Stat : newGang->m_Stats)    m_Stat = g_Dice % 30 + 51;
     newGang->m_Stats[STAT_HEALTH] = 100;
-    newGang->set_weapon_level( g_Dice.in_range(0, 1) );
+    newGang->set_weapon_level( g_Dice.flat(0, 1) );
     return newGang;
 }
 
@@ -444,31 +444,28 @@ void sGang::BoostRandomSkill(const std::vector<int *>& possible_skills, int coun
     *    ex. 60 combat, 50 magic, and 40 intelligence: squared, that comes to 3600, 2500 and 1600...
     *        so: ~46.75% chance combat, ~32.46% chance magic, ~20.78% chance intelligence
     */
-    for (int j = 0; j < count; j++)  // we'll pick and boost a skill/stat "count" number of times
+
+    auto sqr = [](double x) { return x*x; };
+
+    // we'll pick and boost a skill/stat "count" number of times
+    for (int j = 0; j < count; j++)
     {
-        int *affect_skill = nullptr;
-        int total_chance = 0;
-        std::vector<int> chance;
+        std::vector<double> weights;
 
-        for (int i = 0; i < (int)possible_skills.size(); i++)
-        {  // figure chances for each skill/stat; more likely to choose those they're better at
-            chance.push_back((int)pow((float)*possible_skills.at(i), 2));
-            total_chance += chance[i];
-        }
-        int choice = g_Dice.random(total_chance);
-
-        total_chance = 0;
-        for (int i = 0; i < (int)chance.size(); i++)
+        // figure weights (= chances) for each skill/stat; more likely
+        // to choose those they're better at
+        for(auto skill : possible_skills)
         {
-            if (choice < (chance[i] + total_chance))
-            {
-                affect_skill = possible_skills.at(i);
-                break;
-            }
-            total_chance += chance[i];
+           weights.push_back(sqr((double)*skill));
         }
+
+        std::discrete_distribution<size_t> dist(begin(weights), end(weights));
+        size_t i = dist(g_Dice.gen_);
+        auto affect_skill = possible_skills[i];
+
         /*
-        *    OK, we've picked a skill/stat. Now to boost it however many times were specified
+        *    OK, we've picked a skill/stat. Now to boost it however
+        *    many times were specified
         */
         BoostSkill(affect_skill, boost_count);
     }
@@ -492,16 +489,24 @@ void sGang::BoostSkill(int* affect_skill, int count)
     *    ex. 2: 30 points in skill. (70/30)^2 = 5.44. Possible point range: 2.72 to 8.16
     *    ex. 3: 75 points in skill. (70/75)^2 = 0.87. Possible point range: 0.44 to 1.31
     */
+
+    auto sqr = [](double x) { return x*x; };
+
     for (int j = 0; j < count; j++)  // we'll boost the skill/stat "count" number of times
     {
         if (*affect_skill < 1) *affect_skill = 1;
 
-        double boost_amount = pow(70 / (double)*affect_skill, 2);
+        double boost_amount = sqr(70 / (double)*affect_skill);
         if (boost_amount > 5) boost_amount = 5;
 
-        boost_amount = (double)g_Dice.in_range(int((boost_amount / 2) * 100), int((boost_amount*1.5) * 100)) / 100;
-        char one_more = g_Dice.percent(int((boost_amount - (int)boost_amount) * 100)) ? 1 : 0;
-        char final_boost = (char)boost_amount + one_more;
+        std::uniform_real_distribution<>
+           boost_dist{boost_amount * 0.5, boost_amount * 1.5};
+        boost_amount = boost_dist(g_Dice.gen_);
+
+        auto boost_frac = boost_amount - std::floor(boost_amount);
+        int one_more = g_Dice.percent(boost_frac * 100.0) ? 1 : 0;
+
+        int final_boost = boost_amount + one_more;
 
         *affect_skill += final_boost;
 
