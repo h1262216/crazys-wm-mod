@@ -52,9 +52,6 @@ int cRng::gauss(int lo, int hi)
    // Sum this many flat dists together.
    constexpr const size_t n = 4;
 
-   auto lo1 = lo / n;
-   auto hi1 = hi / n;
-
    // find (lo, hi) ends for the sub-dists
    std::array<int, n> lo_i = {};
    std::array<int, n> hi_i = {};
