@@ -89,6 +89,16 @@ struct cRng
     /// algorithm.
     int in_range(int min, int max, int range=101);
 
+    /// Returns a random integer `x` within `lo <= x <= hi` (a closed
+    /// interval).
+    ///
+    /// All integers within the interval has the same probability.
+    int flat(int lo, int hi)
+    {
+        std::uniform_int_distribution<> dist(lo, hi);
+        return dist(gen_);
+    }
+
 /*
  *    `J` trying to add a bell curve
 */
@@ -102,6 +112,13 @@ struct cRng
     /// \note I believe the author was trying for a Gaussian ("bell")
     /// distribution.
     int bell(int min, int max);
+
+    /// Returns a random integer `x` within `lo <= x <= hi` (a closed
+    /// interval).
+    ///
+    /// This distribution is better at faking a Gaussian distribution,
+    /// with the mid-point `(lo + hi)/2` as the average.
+    int gauss(int lo, int hi);
 
 /*
  *    returns true n percent of the time. 

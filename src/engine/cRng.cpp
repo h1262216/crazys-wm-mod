@@ -46,6 +46,44 @@ int cRng::bell(int min, int max)    // `J` added - not sure how well it will wor
     return (int)test;
 }
 
+// fake a Gaussian distribution by summing uniform ones.
+int cRng::gauss(int lo, int hi)
+{
+   // Sum this many flat dists together.
+   constexpr const size_t n = 4;
+
+   auto lo1 = lo / n;
+   auto hi1 = hi / n;
+
+   // find (lo, hi) ends for the sub-dists
+   std::array<int, n> lo_i = {};
+   std::array<int, n> hi_i = {};
+
+   // split the endpoints `n` ways
+   for(size_t i = 0; i < n; ++i)
+   {
+      lo_i[i] = lo / n;
+      hi_i[i] = hi / n;
+   }
+
+   // hand out the remainders
+   for(size_t i = 0; i < lo % n; ++i)
+      ++lo_i[i];
+   for(size_t i = 0; i < hi % n; ++i)
+      ++hi_i[i];
+
+   // it should sum up
+   assert(std::accumulate(begin(lo_i), end(lo_i), 0) == lo);
+   assert(std::accumulate(begin(hi_i), end(hi_i), 0) == hi);
+
+   // now loop and build the random number
+   int val = 0;
+   for(size_t i = 0; i < n; ++i)
+      val += flat(lo_i[i], hi_i[i]);
+
+   return val;
+}
+
 const char* cRng::select_text(std::initializer_list<const char*> options) {
     auto option = random(options.size());
     return *(options.begin() + option);
