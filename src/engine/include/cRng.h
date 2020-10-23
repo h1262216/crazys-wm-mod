@@ -21,24 +21,37 @@
 
 #ifndef _H_CRNG
 #define _H_CRNG
-#include <cstdlib>
+
 #include <initializer_list>
+#include <random>
+#include <array>
+#include <cassert>
+
 #include <utils/sPercent.h>
  
 struct cRng
 {
+  std::mt19937 gen_;
+
 /*
  *    changed this to be the base random number generator 
  *    because it's easier to build other funcs around a
  *    function than an operator. Well, less messy, anyway.
  */
 
-    /// Returns a random integer `x` within `0 <= x < n`.
+    /// Returns a random integer `x` within `0 <= x < a` (a half-open
+    /// interval).
     ///
     /// All integers within the interval has the same probability.
 
     // @{
-    int random(int n);
+    int random(int a)
+    {
+        // -1 because `uniform_int_distribution` works with closed
+        // intervals.
+        std::uniform_int_distribution<> dist(0, a-1);
+        return dist(gen_);
+    }
 
     /*
  *    modulus operator re-implemented using random()
@@ -48,7 +61,16 @@ struct cRng
     }
     // @}
 
-    double randomd(double n); // returns double between 0 and n - `J` added
+    /// Returns a random real `x` within `0 <= x < a` (a half-open
+    /// interval).
+    ///
+    /// All values within the interval has the same probability.
+    double randomd(double a) // returns double between 0 and a - `J` added
+    {
+        std::uniform_real_distribution<> dist(0, a);
+        return dist(gen_);
+    }
+
 /*
  *    returns a number randomly distributed between
  *    min and max.
@@ -57,7 +79,8 @@ struct cRng
  *    in order to replicate how the girl stat generation works
  */
 
-    /// Returns a random integer `x` within `min <= x < max`.
+    /// Returns a random integer `x` within `min <= x < max` (a
+    /// half-open interval).
     ///
     /// All integers within the interval has the same probability.
     ///
@@ -69,7 +92,15 @@ struct cRng
 /*
  *    `J` trying to add a bell curve
 */
-    int bell(int min, int max, int mid);
+
+
+    /// Returns a random integer `x` within `min <= x < max`.
+    ///
+    /// The distribution has a triangular shape with the peak (== avg)
+    /// at mid-point `(min + max)/2`.
+    ///
+    /// \note I believe the author was trying for a Gaussian ("bell")
+    /// distribution.
     int bell(int min, int max);
 
 /*
@@ -80,15 +111,26 @@ struct cRng
     /// Returns `true` with a probability `p/100` (or `p` percents).
 
     // @{
-    bool percent(int p) { return random(100) < p; }
-    bool percent(sPercent p) { return percent(100.f * p); }
-/*
-*    `J` added percent allowing double input up to 3 decimal
-*    returns true n percent of the time.
-*    so g_Dice.percent(20.005) will return true 20.005% of the time
-*/
-    bool percent(double p) { return (1 + random(100000)) < (p * 1000.0); }
+
+    bool percent(int p)
+    {
+       std::bernoulli_distribution dist((double)p / 100.0);
+       return dist(gen_);
+    }
+
+    bool percent(double p)
+    {
+       std::bernoulli_distribution dist(p / 100.0);
+       return dist(gen_);
+    }
+
+    bool percent(sPercent p)
+    {
+       std::bernoulli_distribution dist((double)(float)p);
+       return dist(gen_);
+    }
     // @}
+
 /*
  *    we generate d100 rolls a lot
  */
@@ -99,7 +141,7 @@ struct cRng
 /*
  *    constructor and destructor
  */
-    cRng();
+    cRng()  : gen_(std::random_device()()) {}
     ~cRng() = default;
 
     /// Chooses one string to return, with equal probability.

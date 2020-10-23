@@ -17,26 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include"cRng.h"
-#include <ctime>
-
-/*
- * easier to use the method internally than an operator
- * (OK - I could use (*this) % foo, but that's messy...)
- */
-int cRng::random(int n)
-{
-    float scaling_factor = rand() / float(RAND_MAX);
-    if (scaling_factor == 1) scaling_factor = 0.9999f;
-    return  int(scaling_factor * n);
-}
-double cRng::randomd(double n)
-{
-    float scaling_factor = rand() / float(RAND_MAX);
-    if (scaling_factor == 1) scaling_factor = 0.9999f;
-    return  double(scaling_factor * n);
-}
-
-
 
 int cRng::in_range(int min, int max, int range)
 {
@@ -64,23 +44,6 @@ int cRng::bell(int min, int max)    // `J` added - not sure how well it will wor
     if (test < min)    return min;
     if (test > max) return max;
     return (int)test;
-}
-#if 0
-int cRng::bell(int min, int max, int mid)
-{
-    if (min == max) return max;
-    return min + random(bdif);
-}
-int cRng::bell(int min, int max, int mlo, int mhi)
-{
-    if (min == max) return max;
-    return min + random(bdif);
-}
-#endif
-
-cRng::cRng()
-{
-    srand((int)time(nullptr));
 }
 
 const char* cRng::select_text(std::initializer_list<const char*> options) {
