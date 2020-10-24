@@ -26,6 +26,7 @@
 #include <random>
 #include <array>
 #include <cassert>
+#include <iterator>
 
 #include <utils/sPercent.h>
  
@@ -92,11 +93,36 @@ struct cRng
     /// Returns a random integer `x` within `lo <= x <= hi` (a closed
     /// interval).
     ///
-    /// All integers within the interval has the same probability.
+    /// All integers within the interval have the same probability.
     int flat(int lo, int hi)
     {
         std::uniform_int_distribution<> dist(lo, hi);
         return dist(gen_);
+    }
+
+    /// Returns a random real number `x` within `lo <= x < hi` (a
+    /// half-open interval).
+    ///
+    /// All reals within the interval have the same probability.
+    double flat(double lo, double hi)
+    {
+#if 0
+       // An known bug on many platforms makes this occasionally
+       // return `hi`. (See 'Notes' in
+       // <https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution>.)
+        std::uniform_real_distribution<> dist(lo, hi);
+        return dist(gen_);
+#else
+        auto hi1 = std::nextafter(hi, std::numeric_limits<double>::min());
+        if(lo == hi1) return lo; // singleton interval.
+
+        std::uniform_real_distribution<> dist(lo, hi);
+        auto val = dist(gen_);
+        while(val == hi)        // retry
+           val = dist(gen_);
+
+        return val;
+#endif
     }
 
 /*
@@ -161,8 +187,103 @@ struct cRng
     cRng()  : gen_(std::random_device()()) {}
     ~cRng() = default;
 
+private:
+   // one_of_
+   //
+   /// Helper functions for `one_of()`.
+   ///
+   /// These helpers take a third parameter for type dispatch, and
+   /// then do the actual work.
+
+   // @{
+
+   template<class RandomIt>
+   auto&& one_of_(RandomIt first, RandomIt last,
+                  std::random_access_iterator_tag)
+   {
+      assert(first != last);
+      return first[random(last - first)];
+   }
+
+   // Effectively, a reimplementation of RandomSelector in
+   // streaming_random_selection.hpp.
+   template<class FwdIt>
+   auto&& one_of_(FwdIt first, FwdIt last,
+                  std::forward_iterator_tag)
+   {
+      assert(first != last);
+
+      auto it_picked = first;
+      ++first;
+
+      size_t cnt = 2;           // length so far
+      while(first != last)
+      {
+         if(random(cnt) == 0)   // 1/cnt chance to replace
+            it_picked = first;
+         ++cnt;
+         ++first;
+      }
+
+      return *it_picked;
+   }
+
+   // input iter, we don't do that
+   template<class InputIt>
+   auto one_of_(InputIt first, InputIt last,
+                std::input_iterator_tag) = delete;
+
+   // @}
+
+public:
+
+   // one_of
+   //
+   /// Returns one random element from a range.
+   ///
+   /// Returns one randomly chosen element from a non-empty range,
+   /// with equal probability of choosing each element.
+   ///
+   /// (See the C++17 algorithm `std::sample()`.)
+   ///
+   /// \param first,last the range of elements to choose from
+   ///
+   /// \param container a container holding elements to choose from
+   ///
+   /// \param initlist an initializer list holding elements to choose from
+   ///
+   /// \note Only random-access iterators (and containers) are
+   /// currently supported.
+
+   // @{
+   template<class Iter>
+   auto&& one_of(Iter first, Iter last)
+   {
+      return one_of_(first, last,
+                     typename std::iterator_traits<Iter>::iterator_category());
+   }
+
+   template<class Container>
+   auto&& one_of(Container&& container)
+   {
+      using std::begin; using std::end;
+      return one_of(begin(container), end(container));
+   }
+
+   template<class T>
+   auto&& one_of(std::initializer_list<T> initlist)
+   {
+      using std::begin; using std::end;
+      return one_of(begin(initlist), end(initlist));
+   }
+
+   // @}
+
     /// Chooses one string to return, with equal probability.
-    const char* select_text(std::initializer_list<const char*> options);
+    const char* select_text(std::initializer_list<const char*> options)
+    {
+       return one_of(options);
+    }
 };
 
 #endif

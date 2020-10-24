@@ -16,7 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include"cRng.h"
+
+#include <list>
+#include <cmath>
+
+#include "cRng.h"
+
+#include "doctest.h"
 
 int cRng::in_range(int min, int max, int range)
 {
@@ -81,9 +87,55 @@ int cRng::gauss(int lo, int hi)
    return val;
 }
 
-const char* cRng::select_text(std::initializer_list<const char*> options) {
-    auto option = random(options.size());
-    return *(options.begin() + option);
+TEST_CASE("cRng singleton intervals")
+{
+   cRng rng;
+
+   double d1 = 3.5;
+   double d2 = std::nextafter(d1, 100.0);
+   for(size_t i = 0; i < 10'000; ++i)
+   {
+      CHECK(rng.random(1) == 0);
+      CHECK(rng.flat(5, 5) == 5);
+      CHECK(rng.flat(d1, d2) == d1);
+      CHECK(rng.percent(100) == true);
+      CHECK(rng.percent(0) == false);
+      CHECK(rng.one_of({12}) == 12);
+   }
+}
+
+TEST_CASE("cRng::one_of")
+{
+   if(false)               // compile-time test of the template magic.
+   {
+      cRng rng;
+
+      {
+         std::vector<int> v;
+         auto x = rng.one_of(begin(v), end(v));
+         x = rng.one_of(v);
+         rng.one_of(v) = 42;
+      }
+
+      {
+         int v[] = {1, 2, 3};
+         auto x = rng.one_of(std::begin(v), std::end(v));
+         x = rng.one_of(v);
+         rng.one_of(v) = 42;
+      }
+
+      {
+         std::list<int> v;
+         auto x = rng.one_of(begin(v), end(v));
+         x = rng.one_of(v);
+         rng.one_of(v) = 42;
+      }
+
+      {
+         auto text = rng.one_of({"this", "that", "the other"});
+         auto x = rng.one_of({10, 20, 30, 40});
+      }
+   }
 }
 
 //end mod
