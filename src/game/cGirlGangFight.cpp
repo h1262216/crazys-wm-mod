@@ -38,7 +38,7 @@ EGirlEscapeAttemptResult AttemptEscape(sGirl& girl) {
     std::vector<sGang*> v = g_Game->gang_manager().gangs_on_mission(MISS_GUARDING);
     if (!v.empty())
     {
-        int index = g_Dice.in_range(0, v.size() - 1);
+        int index = g_Dice.random(v.size());
         sGang *gang = v[index];
         g_LogFile.log(ELogLevel::DEBUG, "cGirlGangFight: random gang index = ", index, " gang = ", gang->name());
 

@@ -92,8 +92,8 @@ bool WorkFightBeast(sGirl& girl, bool Day0Night1, cRng& rng)
     Combat combat(ECombatObjective::KILL, ECombatObjective::KILL);
     combat.add_combatant(ECombatSide::ATTACKER, girl);
     auto beast = std::make_unique<Combatant>("Beast", 100, 0, 0,
-            g_Dice.in_range(40, 80), g_Dice.in_range(40, 80), 0,
-            g_Dice.in_range(40, 80), g_Dice.in_range(40, 80));
+            g_Dice.flat(40, 80), g_Dice.flat(40, 80), 0,
+            g_Dice.flat(40, 80), g_Dice.flat(40, 80));
     combat.add_combatant(ECombatSide::DEFENDER, std::move(beast));
 
     auto result = combat.run(15);

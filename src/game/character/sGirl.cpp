@@ -738,7 +738,7 @@ bool sGirl::calc_group_pregnancy(cPlayer* player, double factor)
 {
     double girl_chance = fertility(*this);
     sPercent guy_chance = g_Game->settings().get_percent(settings::PREG_CHANCE_PLAYER);
-    int n_guys = g_Dice.in_range(3,6); // the player, and a few more dudes
+    int n_guys = g_Dice.flat(3,5); // the player, and a few more dudes
     float chance = girl_chance * (1.f - std::pow(1.f - float(guy_chance), n_guys)) * factor;
 
     // now do the calculation

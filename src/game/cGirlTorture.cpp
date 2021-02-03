@@ -258,7 +258,7 @@ void cGirlTorture::AddTextPlayer()
 {
     bool was, is;
 
-    int mes = g_Dice.in_range(0, 4);
+    int mes = g_Dice.flat(0, 4);
     switch (mes) {
     case 0:
         m_Message += "you torture her for hours leaving her sobbing.\n";

@@ -94,8 +94,8 @@ void sCustomer::Setup(int social_class, IBuilding& brothel)
     }
 
     // get their stats generated
-    for (auto& m_Stat : m_Stats)    m_Stat.m_Value = g_Dice.in_range(10, 100);
-    for (auto& m_Skill : m_Skills)    m_Skill.m_Value = g_Dice.in_range(10, 100);
+    for (auto& m_Stat : m_Stats)    m_Stat.m_Value = g_Dice.flat(10, 100);
+    for (auto& m_Skill : m_Skills)    m_Skill.m_Value = g_Dice.flat(10, 100);
 
     SetGoals();
 

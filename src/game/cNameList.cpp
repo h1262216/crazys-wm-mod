@@ -79,6 +79,5 @@ string cNameList::random()
     /*
     *    otherwise, pick a random name
     */
-    unsigned size = m_names.size();
-    return m_names[g_Dice.random(size - 1)];  // edited from size to size-1 since I got an OOB vector crash once
+    return m_names[g_Dice.random(m_names.size())];
 }
