@@ -265,9 +265,9 @@ void IBuilding::EndShift(bool Day0Night1)
 
         // Level the girl up if nessessary
         cGirls::LevelUp(current);
-        // Natural healing, 2% health and 2% tiredness per day
+        // Natural healing, 2% health and 4% tiredness per day
         current.upd_base_stat(STAT_HEALTH, 2, false);
-        current.upd_base_stat(STAT_TIREDNESS, -2, false);
+        current.upd_base_stat(STAT_TIREDNESS, -4, false);
 
         // list increase (moved here from jobs)
         int libido = 1;

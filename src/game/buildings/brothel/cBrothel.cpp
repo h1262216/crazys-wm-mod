@@ -288,9 +288,9 @@ void sBrothel::UpdateGirls(bool is_night)
             // update for girls items that are not used up
             do_daily_items(current);                    // `J` added
 
-            // Natural healing, 2% health and 2% tiredness per day
+            // Natural healing, 2% health and 4% tiredness per day
             current.upd_base_stat(STAT_HEALTH, 2, false);
-            current.upd_base_stat(STAT_TIREDNESS, -2, false);
+            current.upd_base_stat(STAT_TIREDNESS, -4, false);
         }
 
         // Level the girl up if necessary
