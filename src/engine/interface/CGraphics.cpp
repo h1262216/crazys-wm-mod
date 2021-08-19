@@ -98,6 +98,27 @@ bool CGraphics::InitGraphics(const std::string& caption, int UIWidth, int UIHeig
     // Setup the screen
     g_LogFile.info("interface", "Determining Fullscreen or Windowed Mode");
     if (m_Fullscreen) {
+        // Get Desktop Mode
+        extern cConfig cfg;
+        SDL_DisplayMode dektop_mode;
+        SDL_GetDesktopDisplayMode(0, &dektop_mode);
+        const std::string temp_msg = "Desktop Display Mode = " + std::to_string(dektop_mode.w) + " x " + std::to_string(dektop_mode.h);
+        g_LogFile.info("interface", temp_msg);
+        m_ScreenWidth  = dektop_mode.w;
+        m_ScreenHeight = dektop_mode.h;
+        cfg.set_value("interface.width",  m_ScreenWidth);
+        cfg.set_value("interface.height", m_ScreenHeight);
+
+        // Try to set interface.theme accordingly
+        switch (m_ScreenHeight) {
+            using namespace std::string_literals;
+            case 768:  cfg.set_value("interface.theme", "J_1024x768"s);  break;
+            case 900:  cfg.set_value("interface.theme", "J_1600x900"s);  break;
+            case 1080: cfg.set_value("interface.theme", "J_1920x1080"s); break;
+            case 1440: cfg.set_value("interface.theme", "J_2560x1440"s); break;
+            case 2160: cfg.set_value("interface.theme", "J_3840x2160"s); break;
+        }
+        cfg.save();
         SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP, &m_Window, &m_Renderer);
     }
     else {
@@ -178,9 +199,8 @@ cFont CGraphics::LoadFont(const std::string& font, int size)
     return f;
 }
 
-extern cConfig cfg;
-
 cFont CGraphics::LoadNormalFont(int size) {
+    extern cConfig cfg;
     return LoadFont(cfg.fonts.normal(), size);
 }
 
