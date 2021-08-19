@@ -50,7 +50,10 @@ void cConfig::set_value(const char* id, std::string value) {
     data->set_value(id, std::move(value));
 }
 
-void cConfig::set_value(const char* id, bool value) {
+template void cConfig::set_value(const char* id, int value);
+template void cConfig::set_value(const char* id, bool value);
+template <typename T>
+void cConfig::set_value(const char* id, T value) {
     data->set_value(id, value);
 }
 
@@ -76,7 +79,7 @@ sConfigData::sConfigData(const char *a_filename) : cSimpleKeyValue("Entry", "Key
     add_setting("folders.prefer_defaults", "Prefer Defaults", false);
 
     add_setting("interface.theme", "Interface Theme", "J_1024x768");
-    add_setting("interface.fullscreen", "Fullscreen", false);
+    add_setting("interface.fullscreen", "Fullscreen", true);
     add_setting("interface.width", "Width", 1024);
     add_setting("interface.height", "Height", 768);
     add_setting("interface.list_scroll", "List Scroll", 3);
