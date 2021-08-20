@@ -1474,6 +1474,12 @@ FormattedCellData sGirl::GetJobRating(JOBS job) const {
 
 }
 
-void sGirl::AddMessage(std::string message, int nImgType, EventType event) {
-    m_Events.AddMessage(std::move(message), nImgType, event);
+void sGirl::AddMessage(std::string m, int nImgType, EventType event) {
+    const std::string s("${name}");
+    bool first_occurence = true;
+    while (m.find(s) != std::string::npos) {
+        m.replace(m.find(s), s.size(), first_occurence ? this->FullName() : "She");
+        first_occurence = false;
+    }
+    m_Events.AddMessage(std::move(m), nImgType, event);
 }
