@@ -291,14 +291,13 @@ void cGirlTorture::AddTextPlayer()
         */
         m_Girl->calc_pregnancy(&g_Game->player(), 1.5, true);
         is = m_Girl->is_pregnant();
+        m_Girl->violated(1);
         /*
         *        if she was not, but is now, then the player
         *        just knocked her up. We should mention this.
         */
-        if (is && !was)
-        {
-            m_Message += " She is now pregnant.";
-        }
+        if (is && !was) m_Message += " She is now pregnant.";
+
         m_Girl->lose_trait("Virgin");
         break;
     }

@@ -52,6 +52,7 @@ sRandomGirl::sRandomGirl()
         case STAT_PCLOVE:
         case STAT_PCHATE:
         case STAT_ASKPRICE:
+        case STAT_VIOLATED:
             m_MinStats[i] = m_MaxStats[i] = 0;
             break;
         case STAT_AGE:

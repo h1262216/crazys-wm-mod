@@ -158,6 +158,7 @@ sWorkJobResult WorkExploreCatacombs(sGirl& girl, bool Day0Night1, cRng& rng)
         girl.spirit(spirit);
         cGirls::GirlInjured(girl, injury);
         girl.upd_Enjoyment(ACTION_SEX, sex);
+        girl.violated(1);
         girl.upd_Enjoyment(actiontype, combat);
 
         return {false, 0, 0, 0};

@@ -202,6 +202,8 @@ public:
     int npclove(int n)                              { return upd_base_stat(STAT_NPCLOVE, n, true); }
     int sanity() const                              { return get_stat(STAT_SANITY); }
     int sanity(int n)                               { return upd_base_stat(STAT_SANITY, n, true); }
+    int violated() const                            { return get_stat(STAT_VIOLATED); }
+    int violated(int n)                             { return upd_base_stat(STAT_VIOLATED, n, true); }
 
     // -----------------------------------------------------------------------------------------------------------------
     //                                            SKILLS

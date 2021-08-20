@@ -1010,6 +1010,7 @@ sWorkJobResult Waitress::DoWork(sGirl& girl, bool is_night) {
         girl.happiness(-5);
         girl.health(-1);
         girl.upd_Enjoyment(ACTION_SEX, -2);
+        girl.violated(1);
         girl.spirit(-2);
         imagetype = IMGTYPE_GROUP;
         girl.AddMessage(ss.str(), IMGTYPE_GROUP, EVENT_DANGER);
@@ -1018,6 +1019,7 @@ sWorkJobResult Waitress::DoWork(sGirl& girl, bool is_night) {
             ss << "\nShe is no longer a virgin.\n";
             girl.happiness(-10);
             girl.upd_Enjoyment(ACTION_SEX, -2);
+            girl.violated(1);
             girl.health(-1);
             girl.spirit(-1);
         }

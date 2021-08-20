@@ -231,7 +231,7 @@ int cLuaScript::GameOver(lua_State* state) {
 int cLuaScript::GivePlayerRandomSpecialItem(lua_State* state) {
     auto filter
        = [](sInventoryItem const& item){
-            return item.m_Rarity >= RARITYSHOP05;
+            return (int) item.m_Rarity >= (int) RARITYSHOP05;
          };
 
     sInventoryItem* item = g_Game->inventory_manager().GetRandomItem(filter);

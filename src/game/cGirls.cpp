@@ -717,8 +717,10 @@ string cGirls::GetDetailsString(sGirl& girl, bool purchase)
 
     if (!purchase)
     {
-        int cust = girl.m_NumCusts;
-        ss << "\nShe has slept with " << cust << " Customers.";
+        ss << "\nShe has slept with " << girl.m_NumCusts << " Customers.";
+        if (girl.get_stat(STAT_VIOLATED)) {
+            ss << '\n' << "She was violated " << girl.stat_with_change_str(STAT_VIOLATED) << " time(s).";
+        } else ss << "\nShe has never been violated.";
     }
 
     // display Skills
@@ -2586,7 +2588,8 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
                         sexMessage << '\n';
                     }
 
-                }
+                } else girl->violated(1); // forced
+
                 //Forced to do what they want, so no changes
                 //let's reset choice to avoid outcomes above being always paired with ones below
                 choice = g_Dice.d100();
@@ -2595,7 +2598,6 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         }
         //else she doesn't refuse - so move along, nothing to see here
     }
-
     EDefaultEvent event = EDefaultEvent::GIRL_SEX_STRIP;
     switch (SexType)
     {

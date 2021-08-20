@@ -23,6 +23,7 @@
 #include "CLog.h"
 #include <cassert>
 #include "utils/lookup.h"
+#include <limits>
 
 const std::array<sAttribute, NUM_STATS>& get_all_stats () {
     static std::array<sAttribute, NUM_STATS> stats {
@@ -53,7 +54,8 @@ const std::array<sAttribute, NUM_STATS>& get_all_stats () {
             sAttribute{"Lactation",    "Lac", "", .min=-100},
             sAttribute{"Strength",     "Str", ""},
             sAttribute{"NPCLove",      "NPL", ""},
-            sAttribute{"Sanity",       "San", ""}
+            sAttribute{"Sanity",       "San", ""},
+            sAttribute{"Violated",     "Vio", "", .min=0, .max=std::numeric_limits<int>::max(), .default_value=0, .permanent=false},
     };
     return stats;
 }

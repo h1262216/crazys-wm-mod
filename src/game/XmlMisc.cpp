@@ -19,6 +19,7 @@
 #include "Constants.h"
 #include "XmlMisc.h"
 #include "xml/util.h"
+#include "limits"
 
 const char* trainingTypeNames[] =
 {
@@ -114,6 +115,7 @@ bool LoadStatsXML(const tinyxml2::XMLElement* pStats, int * stats, int * statMod
                 else if (tempInt < 18)        tempInt = 18;    // `J` Legal Note: 18 is the Legal Age of Majority for the USA where I live
                 break;
             case STAT_EXP:        max = 32000;    break;
+            case STAT_VIOLATED:   max = std::numeric_limits<int>::max();    break; // to LOL or not to LOL?
             case STAT_LEVEL:    max = 255;        break;
             case STAT_PCFEAR:        case STAT_PCHATE:    case STAT_PCLOVE:    case STAT_MORALITY:
             case STAT_REFINEMENT:    case STAT_DIGNITY:    case STAT_LACTATION:
