@@ -33,6 +33,16 @@
 extern cRng g_Dice;
 extern cNameList g_BoysNameList;
 
+Party::Party(ECombatSide s, ECombatObjective obj) : aim(obj), side(s) {}
+
+Party::~Party() = default;
+
+void Party::finalize() {
+    for(auto& m : members) {
+        m->finalize();
+    }
+}
+
 Combatant& Party::draw_target() {
     return *active_members[ g_Dice % active_members.size() ];
 }
@@ -51,37 +61,25 @@ void Party::notify_end_combat(Combatant* cbt) {
 }
 
 void Party::log_status(std::ostream& os, bool brief) {
-    for(auto& m : members) {
+    for(const auto& m : members) {
         m->log_status(os, brief);
         os << "\n";
     }
 }
 
 bool Party::is_defeated() const {
-    for(auto& m : members) {
+    for(const auto& m : members) {
         if(!(m->is_dead() || m->is_captured())) return false;
     }
     return true;
 }
 
 bool Party::is_repelled() const {
-    for(auto& m : members) {
+    for(const auto& m : members) {
         if(!(m->is_dead() || m->is_captured() || m->is_escaped())) return false;
     }
     return true;
 }
-
-
-Party::Party(ECombatSide s, ECombatObjective obj) : aim(obj), side(s) {}
-
-void Party::finalize() {
-    for(auto& m : members) {
-        m->finalize();
-    }
-}
-
-Party::~Party() = default;
-
 
 cRng& Combat::rng() {
     return g_Dice;
@@ -245,9 +243,9 @@ Combatant& Combat::add_combatant(ECombatSide side, std::unique_ptr<Combatant> co
 
 ECombatResult Combat::run(int max_duration) {
     g_LogFile.info("combat", "Starting Combat");
-    for(int r = 0; r < max_duration; ++r) {
+    for (int r = 0; r < max_duration; ++r) {
         m_Narration.str("");
-        bool result = round(r);
+        const bool result = round(r);
         m_RoundSummaries.push_back( m_Narration.str() );
         g_LogFile.debug("combat", m_RoundSummaries.back());
         if(!result) break;
@@ -258,19 +256,24 @@ ECombatResult Combat::run(int max_duration) {
 
     // one last summary
     narration().str("");
-    narration() << "     ** RESULT **\n";
+    narration() << "Attackers: ";
     m_Attackers.log_status(narration(), true);
-    narration() << "    VS    \n";
+    narration() << "Defenders: ";
     m_Defenders.log_status(narration(), true);
     m_RoundSummaries.push_back( m_Narration.str() );
-    g_LogFile.debug("combat", m_RoundSummaries.back());
 
+    g_LogFile.debug("combat", m_RoundSummaries.back());
     g_LogFile.info("combat", "End Combat");
 
-    if(m_Attackers.is_defeated() && !m_Defenders.is_defeated())
+    if(m_Attackers.is_defeated() && !m_Defenders.is_defeated()) {
+        narration() << "Result: Attacker(s) were defeated";
         return ECombatResult::DEFEAT;
-    else if (m_Defenders.is_defeated() && !m_Attackers.is_defeated())
+    }
+    else if (m_Defenders.is_defeated() && !m_Attackers.is_defeated()) {
+        narration() << "Result: Attacker(s) were defeated";
         return ECombatResult::VICTORY;
+    }
+    narration() << "Result: Draw";
     return ECombatResult::DRAW;
 }
 

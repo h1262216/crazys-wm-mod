@@ -2,9 +2,8 @@
 <Config>
     <Entry Key="interface.text_scroll" Value="3"/>
     <Entry Key="interface.list_scroll" Value="3"/>
-    <Entry Key="interface.height" Value="768"/>
-    <Entry Key="interface.width" Value="1024"/>
-    <Entry Key="interface.theme" Value="J_1024x768"/>
+    <Entry Key="interface.height" Value="1080"/>
+    <Entry Key="interface.width" Value="1920"/>
     <Entry Key="interface.fullscreen" Value="true"/>
     <Entry Key="folders.saves" Value="./Saves"/>
     <Entry Key="folders.items" Value="./Resources/Items"/>
@@ -12,4 +11,5 @@
     <Entry Key="folders.prefer_defaults" Value="false"/>
     <Entry Key="folders.default_images" Value="./Resources/DefaultImages"/>
     <Entry Key="folders.characters" Value="./Resources/Characters"/>
+    <Entry Key="interface.theme" Value="J_1920x1080"/>
 </Config>

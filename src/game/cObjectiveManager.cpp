@@ -22,6 +22,7 @@
 #include "buildings/cDungeon.h"
 #include "character/cPlayer.h"
 #include "cGangs.h"
+#include "cGangManager.hpp"
 #include "cRival.h"
 #include "IGame.h"
 #include "cInventory.h"
@@ -433,7 +434,7 @@ void cObjectiveManager::PassObjective()
                 sInventoryItem* item = g_Game->inventory_manager().GetRandomItem();
                 if(!item)
                    break;       // supplier is all out :(
-                else if (item->m_Rarity < RARITYSCRIPTONLY)
+                else if ((int) item->m_Rarity < (int) RARITYSCRIPTONLY)
                 {
                     if(g_Game->player().inventory().add_item(item)) {
                         itemnames.push_back(item->m_Name);

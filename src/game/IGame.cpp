@@ -5,6 +5,7 @@
 #include "cGold.h"
 #include "utils/DirPath.h"
 #include "cGangs.h"
+#include "cGangManager.hpp"
 #include "cJobManager.h"
 #include "cObjectiveManager.hpp"
 #include "buildings/IBuilding.h"

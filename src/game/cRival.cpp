@@ -27,6 +27,7 @@
 #include "cGold.h"
 #include "utils/DirPath.h"
 #include "cGangs.h"
+#include "cGangManager.hpp"
 #include "cInventory.h"
 #include "CLog.h"
 #include "xml/util.h"
@@ -239,7 +240,11 @@ void cRivalManager::Update(int& NumPlayerBussiness)
         }
 
         // process money
-        totalincome += income; totalupkeep += upkeep; curr->m_Gold += income; curr->m_Gold += upkeep; profit = totalincome + totalupkeep;
+        totalincome += income;
+        totalupkeep += upkeep; // (upkeep is negative)
+        curr->m_Gold += income;
+        curr->m_Gold += upkeep;
+        profit = totalincome + totalupkeep;
         income = upkeep = 0;
 
         // Work out gang missions
@@ -587,30 +592,25 @@ void cRivalManager::Update(int& NumPlayerBussiness)
                     {
                         auto filter
                            = [](sInventoryItem const& item){
-                                return item.m_Rarity >= RARITYSHOP25
-                                   && item.m_Rarity <= RARITYCATACOMB01;
+                                return (int) item.m_Rarity >= (int) RARITYSHOP25
+                                   && (int) item.m_Rarity <= (int) RARITYCATACOMB01;
                              };
 
                         sInventoryItem* temp
                            = g_Game->inventory_manager().GetRandomItem(filter);
 
                         bool add = false;
-                        switch (temp->m_Rarity)
-                        {
-                        case RARITYSHOP25:                                add = true;        break;
-                        case RARITYSHOP05:        if (g_Dice.percent(25))    add = true;        break;
-                        case RARITYCATACOMB15:    if (g_Dice.percent(15))    add = true;        break;
-                        case RARITYCATACOMB05:    if (g_Dice.percent(5))    add = true;        break;
-                        case RARITYCATACOMB01:    if (g_Dice.percent(1))    add = true;        break;
-                            // adding these cases to shut the compiler up
-                        case RARITYCOMMON:    case RARITYSHOP50:    case RARITYSCRIPTONLY:    case RARITYSCRIPTORREWARD:
-                        default:
-                            break;
+                        switch (temp->m_Rarity) {
+                            case RARITYSHOP25:                                   add = true; break;
+                            case RARITYSHOP05:        if (g_Dice.percent(25)) add = true; break;
+                            case RARITYCATACOMB15:    if (g_Dice.percent(15)) add = true; break;
+                            case RARITYCATACOMB05:    if (g_Dice.percent(5))  add = true; break;
+                            case RARITYCATACOMB01:    if (g_Dice.percent(1))  add = true; break;
+                                // adding these cases to shut the compiler up
+                            case RARITYCOMMON: case RARITYSHOP50: case RARITYSCRIPTONLY: case RARITYSCRIPTORREWARD:
+                            default: break;
                         }
-                        if (add)
-                        {
-                            curr->add_to_inventory(temp);
-                        }
+                        if (add) curr->add_to_inventory(temp);
                     }
 
                     int girls = 0;
@@ -620,10 +620,10 @@ void cRivalManager::Update(int& NumPlayerBussiness)
                         curr->m_NumGirls++;
                     }
                 }
-            }break;
-            default:    break;            // No mission
-            }    // end mission switch
-        }    // end Gang Missions
+            } break;
+            default: break; // No mission
+            } // end mission switch
+        } // end Gang Missions
 
         // process money
         totalincome += income; totalupkeep += upkeep; curr->m_Gold += income; curr->m_Gold += upkeep; profit = totalincome + totalupkeep;
@@ -643,8 +643,7 @@ void cRivalManager::Update(int& NumPlayerBussiness)
                     for (int i = 0; i < MAXNUM_RIVAL_INVENTORY && curr->m_Gold + income + upkeep - (profit * 2) < 0; i++)
                     {
                         sInventoryItem* temp = curr->m_Inventory[i];
-                        if (temp)
-                        {
+                        if (temp) {
                             income += (temp->m_Cost / 2);
                             curr->remove_from_inventory(i);
                         }
@@ -758,7 +757,7 @@ void cRivalManager::Update(int& NumPlayerBussiness)
             while (i < 6)
             {
                 sInventoryItem* item = g_Game->inventory_manager().GetRandomItem();
-                if (item && item->m_Rarity <= RARITYCATACOMB01 && g_Dice.percent(rper[item->m_Rarity])
+                if (item && (int) item->m_Rarity <= (int) RARITYCATACOMB01 && g_Dice.percent(rper[item->m_Rarity])
                     && curr->m_Gold + income + upkeep > item->m_Cost)
                 {
                     if (g_Dice.percent(50))

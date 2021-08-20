@@ -150,6 +150,7 @@ bool SavesList::LoadGame(const std::string& source_file, const std::function<voi
 std::vector<SavesList::sSaveEntry> SavesList::get_saves() const {
     std::vector<sSaveEntry> target;
     for(auto& entry : m_SaveData) {
+        std::cout << "WUPPI SAVE=" << entry.first << std::endl;
         target.emplace_back(sSaveEntry{entry.first, entry.second});
     }
     std::sort(begin(target), end(target), [](const sSaveEntry& a, const sSaveEntry& b) -> bool {
