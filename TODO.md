@@ -75,3 +75,11 @@
   and if the girl refuses a customer due to sexual preference.
 * [ ] Recruiters, cooks and cleaners in the house do not appear to cost any money???
 * [ ] SexText.lua line 649
+
+## =nada='s Ideas & TODO's
++ _(ordered by priority)_
++ [ ] Nicer Finances Overview incl. Income/Expenses Code
++ [ ] Simplify / Merge very similar Jobs
++ [ ] Put amount of fatigue regain into settings
++ [ ] Switch out save game XML-Code
++ [ ] Improve save game menu XML code
