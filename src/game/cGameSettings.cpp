@@ -23,6 +23,7 @@
 #include "xml/getattr.h"
 #include <utility>
 #include "CLog.h"
+#include "cGangs.h"
 
 // pre-defined setting constants
 /*!
@@ -101,6 +102,7 @@ namespace settings {
 
     const char* TORTURE_INJURY_CHANCE   = "interact.torture_injury_chance";
 
+    const char* BALANCING_FATIGUE_REGAIN = "balancing.fatigue.regain";
 
     const char* MOVIES_SATURATION_DECAY = "movies.saturation-decay";
     const char* MOVIES_HYPE_DECAY = "movies.hype-decay";
@@ -111,10 +113,9 @@ namespace settings {
     const char* MOVIES_AUDIENCE_SATED_CHANCE = "movies.audience.sated-chance";
 }
 
-using namespace settings;
-
 cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
 {
+    using namespace settings;
     // game specific settings
     add_setting(INITIAL_GOLD, "Initial Gold", "The amount of gold available to the player at the beginning of the game", 4000);
     add_setting(INITIAL_BOOSTED_GANGS, "Start Gangs Boosted", "The number of boosted gangs available at game start", 2);
@@ -133,7 +134,7 @@ cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
 
     add_setting(GANG_MAX_RECRUIT_LIST, "Max Recruit List", "The maximum amount of gangs available for recruitment.", 6);
     add_setting(GANG_MIN_START_MEMBERS, "Init Member Min", "The minimum number of members in a newly created gang.", 1);
-    add_setting(GANG_MAX_START_MEMBERS, "Init Member Max", "The maximum number of members in a newly created gang.", 10);
+    add_setting(GANG_MAX_START_MEMBERS, "Init Member Max", "The maximum number of members in a newly created gang.", sGang::MAX_MEMBERS);
     add_setting(GANG_REMOVE_CHANCE, "Remove Unwanted", "The chance that an unrecruited gang will be removed.", sPercent(0.25f));
     add_setting(GANG_MIN_WEEKLY_NEW, "Add New Weekly Min", "The minimum number of new gangs created each week.", 0);
     add_setting(GANG_MAX_WEEKLY_NEW, "Add New Weekly Max", "The maximum number of new gangs created each week.", 2);
@@ -147,7 +148,7 @@ cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
     add_setting(USER_ACCOMODATION_SLAVE, "Base Slave Accom", "The default accommodation level for slave girls.", 1);
     add_setting(USER_KEEP_TIPS_FREE, "Girls Keep Tips", "Whether free girls are allowed to keep their tips.", true);
     add_setting(USER_KEEP_TIPS_SLAVE, "Slave Keep Tips", "Whether slaves are allowed to keep their tips.", false);
-    add_setting(USER_PAY_SLAVE, "Pay Slaves", "Whether slaves you pay your slave girls.", false);
+    add_setting(USER_PAY_SLAVE, "Pay Slaves", "Whether you pay your slave girls.", false);
 
     add_setting(USER_ITEMS_AUTO_USE, "Auto Use Items", "Whether items from the player's inventory should be applied automatically to suitable girls.", true);
     add_setting(USER_ITEMS_AUTO_EQUIP_COMBAT, "Auto Equip Combat", "If this is enabled, girls will equip their combat gear before doing any combat-related jobs.", true);
@@ -192,6 +193,8 @@ cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
 
     add_setting(TORTURE_INJURY_CHANCE, "Torture Injury Chance", "Base chance for inflicting permanent damage on a girl during torture.",
                 sPercent(.03f));
+
+    add_setting(BALANCING_FATIGUE_REGAIN, "Weekly Girl Fatigue Regain", "Home many fatigue points girls regain each week.", 2);
 
     add_setting(MOVIES_SATURATION_DECAY, "Audience Saturation Decay", "Percentage of sated moviegoers that will be reset each week.", sPercent(0.02f));
     add_setting(MOVIES_HYPE_DECAY, "Hype Decay", "Percentage of hype points a movie loses each week", sPercent(0.05f));
