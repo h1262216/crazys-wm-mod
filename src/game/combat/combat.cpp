@@ -260,21 +260,25 @@ ECombatResult Combat::run(int max_duration) {
     m_Attackers.log_status(narration(), true);
     narration() << "Defenders: ";
     m_Defenders.log_status(narration(), true);
-    m_RoundSummaries.push_back( m_Narration.str() );
 
     g_LogFile.debug("combat", m_RoundSummaries.back());
     g_LogFile.info("combat", "End Combat");
+    ECombatResult result;
 
     if(m_Attackers.is_defeated() && !m_Defenders.is_defeated()) {
         narration() << "Result: Attacker(s) were defeated";
-        return ECombatResult::DEFEAT;
+        result = ECombatResult::DEFEAT;
     }
     else if (m_Defenders.is_defeated() && !m_Attackers.is_defeated()) {
         narration() << "Result: Attacker(s) were defeated";
-        return ECombatResult::VICTORY;
+        result = ECombatResult::VICTORY;
     }
-    narration() << "Result: Draw";
-    return ECombatResult::DRAW;
+    else {
+        narration() << "Result: Draw";
+        result = ECombatResult::DRAW;
+    }
+    m_RoundSummaries.push_back(m_Narration.str());
+    return result;
 }
 
 void Combat::add_combatants(ECombatSide side, sGang& gang, int chance) {
