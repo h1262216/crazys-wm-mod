@@ -38,7 +38,8 @@ void cSurface::DrawSurface(int x, int y, SDL_Rect * clip) const
     SDL_Rect offset;
     offset.x = x;
     offset.y = y;
-    SDL_BlitSurface(m_Surface->surface(), clip, m_GFX->GetScreen(), &offset);
+    //SDL_BlitSurface(m_Surface->surface(), clip, m_GFX->GetScreen(), &offset);
+    SDL_UpperBlit(m_Surface->surface(), clip, m_GFX->GetScreen(), &offset);
 }
 
 int cSurface::GetWidth() const

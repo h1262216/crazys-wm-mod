@@ -60,7 +60,6 @@ bool CGraphics::End()
     }
     SDL_RenderPresent(m_Renderer);
 
-
     // Maintain framerate
     if((m_FPS->GetTicks() < 1000 / FRAMES_PER_SECOND))
     {
@@ -124,7 +123,6 @@ bool CGraphics::InitGraphics(const std::string& caption, int UIWidth, int UIHeig
     else {
         SDL_CreateWindowAndRenderer(WindowWidth, WindowHeight, 0, &m_Window, &m_Renderer);
     }
-
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
     SDL_RenderSetLogicalSize(m_Renderer, m_ScreenWidth, m_ScreenHeight);
 

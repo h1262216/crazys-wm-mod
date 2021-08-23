@@ -194,7 +194,7 @@ cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
     add_setting(TORTURE_INJURY_CHANCE, "Torture Injury Chance", "Base chance for inflicting permanent damage on a girl during torture.",
                 sPercent(.03f));
 
-    add_setting(BALANCING_FATIGUE_REGAIN, "Weekly Girl Fatigue Regain", "Home many fatigue points girls regain each week.", 2);
+    add_setting(BALANCING_FATIGUE_REGAIN, "Weekly Girl Fatigue Regain", "Home many fatigue points girls regain each week.", 5);
 
     add_setting(MOVIES_SATURATION_DECAY, "Audience Saturation Decay", "Percentage of sated moviegoers that will be reset each week.", sPercent(0.02f));
     add_setting(MOVIES_HYPE_DECAY, "Hype Decay", "Percentage of hype points a movie loses each week", sPercent(0.05f));

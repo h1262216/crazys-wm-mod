@@ -78,8 +78,8 @@
 
 ## =nada='s Ideas & TODO's
 + _(ordered by priority)_
-+ [ ] Nicer Finances Overview incl. Income/Expenses Code
++ [ ] Nicer Finances incl. Income/Expenses Code
 + [ ] Simplify / Merge very similar Jobs
-+ [ ] Put amount of fatigue regain into settings
++ [X] Put amount of fatigue regain into settings
 + [ ] Switch out save game XML-Code
 + [ ] Improve save game menu XML code
