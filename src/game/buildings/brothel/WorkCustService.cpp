@@ -145,7 +145,7 @@ sWorkJobResult WorkCustService(sGirl& girl, bool Day0Night1, cRng& rng)
     // Bad customer service reps will leave the customer with 2-20 happiness. Bad customer service is at least better than no customer service.
     // Now pay the girl.
     // TODO [GOLD] PAYMENT HERE????
-    g_Game->gold().staff_wages(50);  // wages come from you
+    g_Game->gold().staff_wages(50, &girl);  // wages come from you
     girl.AddMessage(ss.str(), IMGTYPE_PROFILE, Day0Night1 ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     // Raise skills

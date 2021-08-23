@@ -399,6 +399,7 @@ void cGame::SaveGame(tinyxml2::XMLElement& root) {
 void cGame::NextWeek()
 {
     g_LogFile.info("turn", "Start processing next week");
+    cGoldBase::reset_transfers();
     gang_manager().GangStartOfShift();
 
     g_LogFile.info("turn", "Processing buildings");

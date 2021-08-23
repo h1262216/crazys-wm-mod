@@ -28,6 +28,7 @@ protected:
     int buildinglabel_id = -1;
     int background_id = -1;
     int walk_id = -1;            // Walk Around Town button
+    int finances_id = -1;
 
     int weeks_id = -1;           // next week map button
     int details_id = -1;         // description text

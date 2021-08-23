@@ -313,7 +313,7 @@ sWorkJobResult FightBeasts::DoWork(sGirl& girl, bool is_night) {
     {
         earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
     }
-    brothel->m_Finance.arena_income(earned);
+    brothel->m_Finance.arena_income(earned, &girl);
     ss.str("");
     ss << "${name} drew in " << jobperformance << " people to watch her and you earned " << earned << " from it.";
     girl.AddMessage(ss.str(), IMGTYPE_PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
@@ -406,7 +406,7 @@ sWorkJobResult FightGirls::DoWork(sGirl& girl, bool is_night) {
             fame = -uniform(1, 3);
             add_text("defeat") << "\n";
             int cost = 150;
-            brothel->m_Finance.arena_costs(cost);
+            brothel->m_Finance.arena_costs(cost, &girl);
             ss << " You had to pay " << cost << " gold cause your girl lost.";
             /*that should work but now need to make if you lose the girl if you dont have the gold zzzzz FIXME*/
         }
@@ -464,7 +464,7 @@ sWorkJobResult FightGirls::DoWork(sGirl& girl, bool is_night) {
     {
         earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
     }
-    brothel->m_Finance.arena_income(earned);
+    brothel->m_Finance.arena_income(earned, &girl);
     ss.str("");
     ss << "${name} drew in " << jobperformance << " people to watch her and you earned " << earned << " from it.";
     girl.AddMessage(ss.str(), IMGTYPE_PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);

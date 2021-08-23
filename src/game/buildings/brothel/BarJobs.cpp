@@ -575,7 +575,7 @@ bool cBarMaidJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
 
 #endif
 
-    g_Game->gold().bar_income(profit);
+    g_Game->gold().bar_income(profit, &girl);
 
 #pragma endregion
 #pragma region    //    Finish the shift            //

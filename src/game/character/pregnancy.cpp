@@ -409,7 +409,7 @@ bool child_is_due(sGirl& girl, sChild& child, std::string& summary, bool PlayerC
         if (sell > 0)
         {
             gold = sell * g_Game->tariff().creature_sales();
-            g_Game->gold().creature_sales(gold);
+            g_Game->gold().creature_sales(gold, &girl);
         }
 
         if (died > 0)

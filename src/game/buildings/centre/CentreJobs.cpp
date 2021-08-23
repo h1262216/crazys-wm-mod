@@ -202,7 +202,7 @@ sWorkJobResult CommunityService::DoWork(sGirl& girl, bool is_night) {
     else
     {
         ss << "\nThe fact that your paying this girl to do this helps people think your a better person.";
-        g_Game->gold().staff_wages(m_Wages);  // wages come from you
+        g_Game->gold().staff_wages(m_Wages, &girl);  // wages come from you
         dispo = int(dispo*1.5);
     }
 
@@ -312,7 +312,7 @@ sWorkJobResult FeedPoor::DoWork(sGirl& girl, bool is_night) {
     else
     {
         ss << "\nThe fact that your paying this girl to do this helps people think your a better person.";
-        g_Game->gold().staff_wages(m_Wages);  // wages come from you
+        g_Game->gold().staff_wages(m_Wages, &girl);  // wages come from you
         g_Game->player().disposition(int(dispo*1.5));
     }
 
@@ -389,7 +389,7 @@ sWorkJobResult FeedPoor::DoWork(sGirl& girl, bool is_night) {
     {
         cost += uniform(2, 5); // 2-5 gold per customer
     }
-    brothel->m_Finance.centre_costs(cost);
+    brothel->m_Finance.centre_costs(cost, &girl);
     ss.str("");
     ss << "${name} feed " << feed << " costing you " << cost << " gold.";
     girl.AddMessage(ss.str(), imagetype, msgtype);

@@ -1309,7 +1309,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
 
 #endif
     if (wages < 0) wages = 0;
-    g_Game->gold().girl_support(wages);  // wages come from you
+    g_Game->gold().girl_support(wages, &girl);  // wages come from you
 
     // Improve stats
     int xp = 10;

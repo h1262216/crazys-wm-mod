@@ -570,7 +570,7 @@ void do_food_and_digs(IBuilding& brothel, sGirl& girl)
 
     // Gold per accommodation level
     int gold = (girl.is_slave() ? 5 : 20) * (girl.m_AccLevel + 1);
-    brothel.m_Finance.girl_support(gold);
+    brothel.m_Finance.girl_support(gold, &girl);
 
     int preferredaccom = cGirls::PreferredAccom(girl);    // what she wants/expects
     int mod = girl.m_AccLevel - preferredaccom;

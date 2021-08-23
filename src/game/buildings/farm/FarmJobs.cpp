@@ -454,7 +454,7 @@ bool cFarmJobMarketer::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
 
 
     // Money
-    g_Game->gold().farm_income(gold);
+    g_Game->gold().farm_income(gold, &girl);
     HandleGains(girl, enjoy);
 
     // Push out the turn report

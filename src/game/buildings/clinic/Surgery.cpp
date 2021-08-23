@@ -654,7 +654,7 @@ void CureDiseases::ReceiveTreatment(sGirl& girl, bool is_night) {
     }
     ss << ".\n \n";
 
-    brothel->m_Finance.clinic_costs(cost);    // pay for it
+    brothel->m_Finance.clinic_costs(cost, &girl);    // pay for it
 
     girl.AddMessage(ss.str(), IMGTYPE_PROFILE, msgtype);
 }

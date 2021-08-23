@@ -23,11 +23,14 @@
 #include <tinyxml2.h>
 #include "xml/util.h"
 #include "IGame.h"
+#include "character/sGirl.h"
 
 namespace settings {
     extern const char* INITIAL_GOLD;
     extern const char* MONEY_SELL_ITEM;
 }
+
+std::unordered_map<std::string, std::unordered_map<cGoldBase::TRANSFER_TYPE, double>> cGoldBase::transfers_by_girl;
 
 /*
 * Two types of transaction here: instant and delayed.
@@ -87,14 +90,16 @@ void cGoldBase::misc_credit(double income)
 }
 
 // this is for girls working at the brothel - goes into income
-void cGoldBase::brothel_work(double income)
+void cGoldBase::brothel_work(double income, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income;
     m_income += income;
 }
 
 // for when a girl gives birth to a monster -  The cash goes to the brothel, so we add this to m_income
-void cGoldBase::creature_sales(double income)
+void cGoldBase::creature_sales(double income, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income;
     m_income += income;
 }
 
@@ -105,32 +110,37 @@ void cGoldBase::movie_income(double income)
 }
 
 // income from the clinic
-void cGoldBase::clinic_income(double income)
+void cGoldBase::clinic_income(double income, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income;
     m_income += income;
 }
 
 // income from the arena
-void cGoldBase::arena_income(double income)
+void cGoldBase::arena_income(double income, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income;
     m_income += income;
 }
 
 // income from the farm
-void cGoldBase::farm_income(double income)
+void cGoldBase::farm_income(double income, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income;
     m_income += income;
 }
 
 // income from the bar
-void cGoldBase::bar_income(double income)
+void cGoldBase::bar_income(double income, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income;
     m_income += income;
 }
 
 // income from gambling halls
-void cGoldBase::gambling_profits(double income)
+void cGoldBase::gambling_profits(double income, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income;
     m_income += income;
 }
 
@@ -157,8 +167,9 @@ void cGoldBase::grand_theft(double income)
 {
     m_income += income;
 }
-void cGoldBase::catacomb_loot(double income)
+void cGoldBase::catacomb_loot(double income, const sGirl* girl)
 {
+    if (girl) transfers_by_girl[girl->FullName()][TOTAL_INCOME] += income; // can be loot from a girl or a gang
     m_income += income;
 }
 
@@ -257,13 +268,15 @@ bool cGoldBase::brothel_cost(double price)
 }
 
 // training is a delayed cost
-void cGoldBase::girl_training(double cost)
+void cGoldBase::girl_training(double cost, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_UPKEEP] += cost;
     m_upkeep += cost;
 }
 
-void cGoldBase::girl_support(double cost)
+void cGoldBase::girl_support(double cost, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_UPKEEP] += cost;
     m_upkeep += cost;
 }
 
@@ -289,8 +302,9 @@ void cGoldBase::goon_wages(double cost)
     m_upkeep += cost;
 }
 
-void cGoldBase::staff_wages(double cost)
+void cGoldBase::staff_wages(double cost, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_UPKEEP] += cost;
     m_upkeep += cost;
 }
 
@@ -299,17 +313,20 @@ void cGoldBase::advertising_costs(double cost)
     m_upkeep += cost;
 }
 
-void cGoldBase::centre_costs(double cost)
+void cGoldBase::centre_costs(double cost, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_UPKEEP] += cost;
     m_upkeep += cost;
 }
 
-void cGoldBase::arena_costs(double cost)
+void cGoldBase::arena_costs(double cost, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_UPKEEP] += cost;
     m_upkeep += cost;
 }
-void cGoldBase::clinic_costs(double cost)
+void cGoldBase::clinic_costs(double cost, const sGirl* girl)
 {
+    transfers_by_girl[girl->FullName()][TOTAL_UPKEEP] += cost;
     m_upkeep += cost;
 }
 
@@ -386,6 +403,11 @@ bool cGoldBase::loadGoldXML(const tinyxml2::XMLElement* pGold)
     pGold->QueryDoubleAttribute("cash_out", &m_cash_out);
     pGold->QueryDoubleAttribute("interest_rate", &m_interest_rate);
     return true;
+}
+
+int cGoldBase::get_transfers_by_girl(const sGirl* girl, cGold::TRANSFER_TYPE transfer_type) {
+    try { return std::floor(transfers_by_girl.at(girl->FullName()).at(transfer_type)); }
+    catch (const std::out_of_range& return_zero) { return 0; }
 }
 
 void cGold::brothel_accounts(cGold &g, int brothel_id)

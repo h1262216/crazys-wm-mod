@@ -9,6 +9,7 @@
 <Button     Name="Staff Management"     Image="Staff"                       XPos="2061"     YPos="844"      Width="300"     Height="60"     Transparency="true" PushWindow="Gangs"/>
 <Button     Name="Setup"                Image="Building"                    XPos="2061"     YPos="938"      Width="300"     Height="60"     Transparency="true" PushWindow="Building Setup"/>
 <Button     Name="Dungeon"              Image="Dungeon"                     XPos="2061"     YPos="1031"      Width="300"     Height="60"     Transparency="true" PushWindow="Dungeon"/>
+<Button     Name="Finances"             Image="Finances"                    XPos="2061"     YPos="1125"      Width="300"     Height="60"     Transparency="true" PushWindow="Finances"/>
 <Button     Name="Turn Summary"         Image="TurnSum"                     XPos="1537"      YPos="1309"      Width="300"     Height="60"     Transparency="true" PushWindow="Turn Summary"/>
 
 <Button     Name="Visit Town"           Image="VisitTown"                   XPos="2061"     YPos="1219"      Width="300"     Height="60"     Transparency="true" PushWindow="Town"/>

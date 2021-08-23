@@ -352,7 +352,7 @@ sWorkJobResult NurseJob::DoWork(sGirl& girl, bool is_night) {
     {
         earned += uniform(5, 40); // 5-40 gold per customer
     }
-    brothel->m_Finance.clinic_income(earned);
+    brothel->m_Finance.clinic_income(earned, &girl);
     ss.str("");    ss << "${name} earned " << earned << " gold from taking care of " << patients << " patients.";
     girl.AddMessage(ss.str(), IMGTYPE_PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 

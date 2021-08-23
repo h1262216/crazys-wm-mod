@@ -119,7 +119,7 @@ void cScreenPrison::release_button()
         return;
     }
     g_Game->gold().item_cost((double)cost);
-    g_Game->gold().girl_support((double)cost);
+    g_Game->gold().girl_support((double)cost, pgirls);
     auto girl = g_Game->GetPrison().TakeGirl(pgirls);
     IBuilding& bld = active_building();
     if (bld.free_rooms() < 1)

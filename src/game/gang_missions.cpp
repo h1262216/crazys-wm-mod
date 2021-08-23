@@ -970,7 +970,7 @@ bool cMissionCatacombs::execute_mission(sGang& gang, std::stringstream& ss)
         if (gold > 0)
         {
             ss << "They bring back with them:   " << gold << " gold\n \n";
-            g_Game->gold().catacomb_loot(gold);
+            g_Game->gold().catacomb_loot(gold, nullptr);
         }
 
         // get catacomb girls (is "monster" if trait not human)

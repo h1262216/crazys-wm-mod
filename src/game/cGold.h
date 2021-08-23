@@ -22,8 +22,10 @@
 #include <map>
 #include <cmath>
 #include <tinyxml2.h>
+#include <unordered_map>
 
 struct sBrothel;
+struct sGirl;
 
 class cGoldBase
 {
@@ -65,6 +67,21 @@ protected:
     double m_interest_rate = 0.000;
 
 public:
+    /* Financial statistics grouped by girl */
+    enum TRANSFER_TYPE : unsigned {
+        TOTAL_INCOME = 0,   // every type of income (also) goes here
+        TOTAL_UPKEEP,       // every type of upkeep (also) goes here
+        NUM_TRANSFER_TYPES  // last
+    };
+protected:
+    // Cash transfers grouped by girl (full name) and type of transfer
+    static std::unordered_map<std::string, std::unordered_map<TRANSFER_TYPE, double>> transfers_by_girl;
+public:
+    static int get_transfers_by_girl(const sGirl* girl, TRANSFER_TYPE transfer_type); // get income/upkeep by type + girl
+    static const decltype(transfers_by_girl)& get_transfers_all() { return transfers_by_girl; }
+    static void reset_transfers() { transfers_by_girl.clear(); } // this needs to be called at the start of end week processing
+
+public:
     cGoldBase(int initial = 0);
     /*
     *    save and load methods
@@ -95,14 +112,14 @@ public:
     *    afford it. You just go into debt.
     */
     void goon_wages(double cost);
-    void staff_wages(double cost);
-    void girl_support(double cost);
-    void girl_training(double cost);
+    void staff_wages(double cost, const sGirl* girl);
+    void girl_support(double cost, const sGirl* girl);
+    void girl_training(double cost, const sGirl* girl);
     void building_upkeep(double cost);
     void advertising_costs(double cost);
-    void centre_costs(double cost);
-    void arena_costs(double cost);
-    void clinic_costs(double cost);
+    void centre_costs(double cost, const sGirl* girl);
+    void arena_costs(double cost, const sGirl* girl);
+    void clinic_costs(double cost, const sGirl* girl);
     void bribes(double cost);
     void fines(double cost);
     void tax(double cost);
@@ -110,22 +127,22 @@ public:
     /*
     *    income methods
     */
-    void brothel_work(double income);
+    void brothel_work(double income, const sGirl* girl);
     void item_sales(double income);
     void slave_sales(double income);
-    void creature_sales(double income);
+    void creature_sales(double income, const sGirl* girl);
     void movie_income(double income);
-    void clinic_income(double income);
-    void arena_income(double income);
-    void farm_income(double income);
-    void bar_income(double income);
-    void gambling_profits(double income);
+    void clinic_income(double income, const sGirl* girl);
+    void arena_income(double income, const sGirl* girl);
+    void farm_income(double income, const sGirl* girl);
+    void bar_income(double income, const sGirl* girl);
+    void gambling_profits(double income, const sGirl* girl);
     void extortion(double income);
     void objective_reward(double income);
     void plunder(double income);        // from raiding rivals
     void petty_theft(double income);
     void grand_theft(double income);
-    void catacomb_loot(double income);
+    void catacomb_loot(double income, const sGirl* girl);
     /*
     *    this doesn't get added to the player's
     *    cash in hand - it's just here for

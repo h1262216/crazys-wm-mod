@@ -41,6 +41,7 @@ void IBuildingScreen::set_ids()
     buildinglabel_id = get_id("BuildingLabel", "Header");
     background_id    = get_id("Background");
     walk_id          = get_id_optional("WalkButton");
+    finances_id      = get_id("Finances");
 
     weeks_id         = get_id("Next Week", "Weeks");
 
@@ -65,7 +66,19 @@ void IBuildingScreen::set_ids()
         cycle_building(1);
         replace_window("Building Management");
     });
-
+    SetButtonCallback(finances_id, [this]() {
+        std::string finances_text("Income/Expenses Summary by Girl:\n\n");
+        for (const auto& item : cGold::get_transfers_all()) {
+            finances_text += item.first + "     +";
+            try { finances_text += std::to_string((int)item.second.at(cGoldBase::TOTAL_INCOME)); }
+            catch (const std::out_of_range&) { finances_text += '0'; }
+            finances_text += "    -";
+            try { finances_text += std::to_string((int)item.second.at(cGoldBase::TOTAL_UPKEEP)); }
+            catch (const std::out_of_range&) { finances_text += '0'; }
+            finances_text += '\n';
+        }
+        push_message(finances_text, COLOR_GREEN); // TODO make a nice screen for this
+    });
     SetButtonCallback(weeks_id, [this]() {
         if (!is_ctrl_held()) { AutoSaveGame(); }
         // need to switch the windows first, so that any new events will show up!
