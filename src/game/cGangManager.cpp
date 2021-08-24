@@ -254,10 +254,10 @@ int cGangManager::GetNumHireableGangs()
 sGang cGangManager::GetTempGang()
 {
     sGang newGang;
-    newGang.m_Num = g_Dice % 6 + 10;
-    for (int & m_Skill : newGang.m_Skills)    m_Skill = (g_Dice % 30) + 21;
+    newGang.m_Num = g_Dice.in_range(1, 10);
+    for (int & m_Skill : newGang.m_Skills)  m_Skill = (g_Dice % 30) + 21;
     for (int & m_Stat : newGang.m_Stats)    m_Stat = (g_Dice % 30) + 21;
-    newGang.m_Stats[STAT_HEALTH] = 100;
+    newGang.m_Stats[STAT_HEALTH] = g_Dice.in_range(50, 100);
     newGang.m_Stats[STAT_HAPPINESS] = 100;
     newGang.set_weapon_level( g_Dice.in_range(1, 3) );
     return newGang;
@@ -266,7 +266,9 @@ sGang cGangManager::GetTempGang()
 // `J` added temp gang mod - base strength + mod
 sGang cGangManager::GetTempGang(int mod)
 {
-    sGang newGang;
+    return GetTempGang();
+    // TODO below code generated OP gangs
+    /*sGang newGang;
     newGang.m_Num = std::min(sGang::MAX_MEMBERS, g_Dice.bell(4, sGang::MAX_MEMBERS));
     for (int & m_Skill : newGang.m_Skills)
     {
@@ -284,7 +286,7 @@ sGang cGangManager::GetTempGang(int mod)
     newGang.m_Stats[STAT_HAPPINESS] = 100;
     newGang.set_weapon_level( g_Dice.in_range(1, 3) );
 
-    return newGang;
+    return newGang;*/
 }
 
 sGang* cGangManager::GetGang(int gangID)

@@ -78,8 +78,10 @@
 
 ## =nada='s Ideas & TODO's
 + _(ordered by priority)_
++ [ ] Screen, where deceased chicks linger
++ [ ] cJobManager::GetGirlAttackedString less funky stuff + more impact on girl
++ [ ] AutoRest Button (<50 HP || >= 80 Tired)
 + [ ] Nicer Finances incl. Income/Expenses Code
 + [ ] Simplify / Merge very similar Jobs
-+ [X] Put amount of fatigue regain into settings
 + [ ] Switch out save game XML-Code
 + [ ] Improve save game menu XML code

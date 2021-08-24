@@ -609,8 +609,8 @@ bool cMissionExtortion::execute_mission(sGang& gang, std::stringstream& ss)
             ss << "They storm into your rival " << rival->m_Name << "'s territory.\n";
             if (rival->m_NumGangs > 0)
             {
-                sGang rival_gang = gang_manager().GetTempGang(rival->m_Power);
-                rival_gang.give_potions(10);
+                sGang rival_gang = gang_manager().GetTempGang();
+                //rival_gang.give_potions(10);
                 ss << "Your men run into one of their gangs and a brawl breaks out.\n";
 
                 int num_before = gang.m_Num;
