@@ -471,3 +471,10 @@ template <typename T> std::string ICharacter::generate_change_string(const std::
     display_value += std::to_string(change) + ')';
     return display_value;
 }
+
+int ICharacter::libido() const {
+    const unsigned easy_hash = std::accumulate(this->FullName().begin(), this->FullName().end(), 0u);
+    const float weekly_mod = static_cast<float>((g_Game->get_weeks_played() + easy_hash) % 4) * 0.5f + 0.25f; // fertility cycles every 4 weeks
+    // weekly_mod => 0.25, 0.75, 1.25, 1.75
+    return std::min(static_cast<int>(get_stat(STAT_LIBIDO) * weekly_mod), 100);
+}

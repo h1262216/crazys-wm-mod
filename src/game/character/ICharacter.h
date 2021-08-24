@@ -150,7 +150,7 @@ public:
     int charisma(int n)                             { return upd_base_stat(STAT_CHARISMA, n, true); }
     int happiness() const                           { return get_stat(STAT_HAPPINESS); }
     int happiness(int n)                            { return upd_base_stat(STAT_HAPPINESS, n, true); }
-    int libido() const                              { return get_stat(STAT_LIBIDO); }
+    int libido() const;
     int libido(int n)                               { return upd_base_stat(STAT_LIBIDO, n, true); }
     int constitution() const                        { return get_stat(STAT_CONSTITUTION); }
     int constitution(int n)                         { return upd_base_stat(STAT_CONSTITUTION, n, true); }

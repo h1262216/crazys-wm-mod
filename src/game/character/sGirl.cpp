@@ -341,12 +341,12 @@ int sGirl::upd_base_stat(int stat_id, int amount, bool usetraits) {
 // returns false if she becomes pregnant or true if she does not
 bool sGirl::calc_pregnancy(int chance, int type, const ICharacter& father)
 {
-    std::string text = "She has";
     if (g_Dice.percent(100 - chance)) return true;
     /*
     *    narrative depends on what it was that Did The Deed
     *    specifically, was it human or not?
     */
+    std::string text = "She has";
     switch (type)
     {
     case STATUS_INSEMINATED:

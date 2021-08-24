@@ -117,8 +117,9 @@ int fertility(const sGirl& girl) {
 
     int chance = 100.f * g_Game->settings().get_percent(settings::PREG_CHANCE_GIRL);
     chance += girl.get_trait_modifier("fertility");
-    g_LogFile.debug("pregnancy", girl.FullName(), "'s fertility: ", chance);
-    return chance;
+    chance += girl.libido() - 25; // libido affects pregnancy chance
+    g_LogFile.info("pregnancy", girl.FullName(), "'s fertility: ", chance);
+    return std::min(std::max(0, chance), 100);
 }
 
 void create_pregnancy(sGirl& girl, int num_children, int type, const ICharacter& father) {
