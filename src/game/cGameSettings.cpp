@@ -23,7 +23,6 @@
 #include "xml/getattr.h"
 #include <utility>
 #include "CLog.h"
-#include "cGangs.h"
 
 // pre-defined setting constants
 /*!
@@ -48,11 +47,16 @@ namespace settings {
     const char* GANG_MAX_RECRUIT_LIST    = "gang.max_recruit_list";
     const char* GANG_MIN_START_MEMBERS   = "gang.min_start_members";
     const char* GANG_MAX_START_MEMBERS   = "gang.max_start_members";
+    const char* GANG_MAX_MEMBERS         = "gang.max_members";
     const char* GANG_REMOVE_CHANCE       = "gang.chance_remove";
     const char* GANG_MIN_WEEKLY_NEW      = "gang.min_weekly_new";
     const char* GANG_MAX_WEEKLY_NEW      = "gang.max_weekly_new";
     const char* GANG_WEAPON_UPGRADE_COST = "gang.weapon_upgrade_cost";
     const char* GANG_WAGES_FACTOR        = "gang.wages_factor";
+    const char* GANG_MIN_RIVAL_MEMBERS   = "gang.min_rival_members";
+    const char* GANG_MAX_RIVAL_MEMBERS   = "gang.max_rival_members";
+    const char* GANG_MIN_RIVAL_SKILL     = "gang.min_rival_skill";
+    const char* GANG_MAX_RIVAL_SKILL     = "gang.max_rival_skill";
 
     const char* USER_HOUSE_PERCENT_FREE  = "user.house_percent.free";
     const char* USER_HOUSE_PERCENT_SLAVE = "user.house_percent.slave";
@@ -102,6 +106,7 @@ namespace settings {
 
     const char* TORTURE_INJURY_CHANCE   = "interact.torture_injury_chance";
 
+    const char* BALANCING_HEALTH_REGAIN = "balancing.health.regain";
     const char* BALANCING_FATIGUE_REGAIN = "balancing.fatigue.regain";
 
     const char* MOVIES_SATURATION_DECAY = "movies.saturation-decay";
@@ -134,12 +139,18 @@ cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
 
     add_setting(GANG_MAX_RECRUIT_LIST, "Max Recruit List", "The maximum amount of gangs available for recruitment.", 6);
     add_setting(GANG_MIN_START_MEMBERS, "Init Member Min", "The minimum number of members in a newly created gang.", 1);
-    add_setting(GANG_MAX_START_MEMBERS, "Init Member Max", "The maximum number of members in a newly created gang.", sGang::MAX_MEMBERS);
+    add_setting(GANG_MAX_START_MEMBERS, "Init Member Max", "The maximum number of members in a newly created gang.", 8);
+    add_setting(GANG_MAX_MEMBERS, "Member Max", "The maximum number of members in a newly created gang.", 10);
     add_setting(GANG_REMOVE_CHANCE, "Remove Unwanted", "The chance that an unrecruited gang will be removed.", sPercent(0.25f));
     add_setting(GANG_MIN_WEEKLY_NEW, "Add New Weekly Min", "The minimum number of new gangs created each week.", 0);
     add_setting(GANG_MAX_WEEKLY_NEW, "Add New Weekly Max", "The maximum number of new gangs created each week.", 2);
     add_setting(GANG_WEAPON_UPGRADE_COST, "Weapon Upgrade Cost", "The base cost for a weapon upgrade.", 150);
     add_setting(GANG_WAGES_FACTOR, "Wages Factor", "Multiplier for all gang wages (mission costs).", 1.f);
+    add_setting(GANG_MIN_RIVAL_MEMBERS, "Rival Member Min", "The minimum number of members in a rival gang.", 2);
+    add_setting(GANG_MAX_RIVAL_MEMBERS, "Rival Member Max", "The maximum number of members in a rival gang.", 8);
+    // This is the base skill. There might be modifiers that change the effective values of these.
+    add_setting(GANG_MIN_RIVAL_SKILL, "Rival Skill Min", "The minimum skill for rival gangs.", 20);
+    add_setting(GANG_MIN_RIVAL_SKILL, "Rival Skill Max", "The maximum skill for rival gangs.", 60);
 
     // user adjustable settings
     add_setting(USER_HOUSE_PERCENT_FREE, "Free House %", "The percentage of earnings that are taken from free girls by default.", 60);
@@ -194,7 +205,8 @@ cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
     add_setting(TORTURE_INJURY_CHANCE, "Torture Injury Chance", "Base chance for inflicting permanent damage on a girl during torture.",
                 sPercent(.03f));
 
-    add_setting(BALANCING_FATIGUE_REGAIN, "Weekly Girl Fatigue Regain", "Home many fatigue points girls regain each week.", 5);
+    add_setting(BALANCING_HEALTH_REGAIN, "Weekly Girl Health Regain", "Home many health points girls regain each week.", 2);
+    add_setting(BALANCING_FATIGUE_REGAIN, "Weekly Girl Fatigue Regain", "Home many fatigue points girls regain each week.", 2);
 
     add_setting(MOVIES_SATURATION_DECAY, "Audience Saturation Decay", "Percentage of sated moviegoers that will be reset each week.", sPercent(0.02f));
     add_setting(MOVIES_HYPE_DECAY, "Hype Decay", "Percentage of hype points a movie loses each week", sPercent(0.05f));

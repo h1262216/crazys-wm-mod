@@ -28,7 +28,7 @@
 #include "utils/DirPath.h"
 #include "utils/FileList.h"
 #include <boost/numeric/conversion/cast.hpp>
-#include <sConfig.h>
+#include "sConfig.h"
 #include "Revision.h"
 
 void SavesList::NotifySaveGame(const std::string& file_name, IGame& game) {

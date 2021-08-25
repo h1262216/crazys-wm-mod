@@ -3,8 +3,6 @@
 #include "character/cPlayer.h"
 #include "buildings/cDungeon.h"
 #include "cGold.h"
-#include "utils/DirPath.h"
-#include "cGangs.h"
 #include "cGangManager.hpp"
 #include "cJobManager.h"
 #include "cObjectiveManager.hpp"

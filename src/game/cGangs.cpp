@@ -43,15 +43,8 @@
 extern cRng g_Dice;
 
 namespace settings {
-    extern const char* GANG_MAX_RECRUIT_LIST;
-    extern const char* GANG_MAX_START_MEMBERS;
-    extern const char* GANG_MIN_START_MEMBERS;
-    extern const char* GANG_REMOVE_CHANCE;
-    extern const char* GANG_MIN_WEEKLY_NEW;
-    extern const char* GANG_MAX_WEEKLY_NEW;
+    extern const char* GANG_MAX_MEMBERS;
 }
-
-const int sGang::MAX_MEMBERS = 10;
 
 tinyxml2::XMLElement& sGang::SaveGangXML(tinyxml2::XMLElement& elRoot)
 {
@@ -304,4 +297,8 @@ void sGang::use_potion()
 
 void sGang::AddMessage(std::string message, EventType event_type) {
     m_Events.AddMessage(std::move(message), IMGTYPE_PROFILE, event_type);
+}
+
+int sGang::max_members() {
+    return g_Game->settings().get_integer(settings::GANG_MAX_MEMBERS);
 }

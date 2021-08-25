@@ -609,7 +609,7 @@ bool cMissionExtortion::execute_mission(sGang& gang, std::stringstream& ss)
             ss << "They storm into your rival " << rival->m_Name << "'s territory.\n";
             if (rival->m_NumGangs > 0)
             {
-                sGang rival_gang = gang_manager().GetTempGang();
+                sGang rival_gang = gang_manager().GetTempGang(0);
                 //rival_gang.give_potions(10);
                 ss << "Your men run into one of their gangs and a brawl breaks out.\n";
 
@@ -700,17 +700,19 @@ bool cMissionPettyTheft::execute_mission(sGang& gang, std::stringstream& ss)
         else/*                           */    ss << "group of thugs from the streets";
         ss << " and a brawl breaks out.\n";
 
-        sGang rival_gang = gang_manager().GetTempGang();
+        sGang rival_gang = gang_manager().GetTempGang(0);
         rival_gang.give_potions(10);
         int cur_members = gang.m_Num;
 
         switch(GangBrawl(gang, rival_gang)) {
             case EFightResult::VICTORY:
-                ss << "Your men win, but you lost " << cur_members - gang.m_Num << " men. ";
+                ss << "Your men win";
+                numlost = cur_members - gang.m_Num;
+                if(numlost > 0) {
+                    ss << ", but you lost " << numlost << " men. ";
+                }
                 ss << "\n \n";
                 if (rival && rival->m_NumGangs > 0 && rival_gang.m_Num <= 0) rival->m_NumGangs--;
-
-                numlost += startnum - gang.m_Num;
                 break;
             case EFightResult::DRAW:
                 ss << "After a few bloody exchanges, both gangs decide to look for easier prey. You lost " <<
@@ -833,7 +835,7 @@ bool cMissionPettyTheft::execute_mission(sGang& gang, std::stringstream& ss)
 
     if (gang.m_Num <= 0) return false;    // they all died so return and the message will be taken care of in the losegang function
 
-    ss << "Your gang robs " << numberoftargets << " " << who << " and get " << gold << " gold from them.";
+    ss << "Your gang robs " << numberoftargets << " " << who << " and gets " << gold << " gold from them.";
     if (numlost > 0) { ss << "\n \n" << gang.name() << " lost "; if (numlost == 1) ss << "one man."; else ss << numlost << " men."; }
 
     gang.AddMessage(ss.str());
@@ -1082,10 +1084,10 @@ bool cMissionService::execute_mission(sGang& gang, std::stringstream& ss)
         }
     }
 
-    if (gang.m_Num < sGang::MAX_MEMBERS && g_Dice.percent(std::min(25 - gang.m_Num, gang.charisma())))
+    if (gang.m_Num < sGang::max_members() && g_Dice.percent(std::min(25 - gang.m_Num, gang.charisma())))
     {
         int addnum = std::max(1, g_Dice.bell(-2, 4));
-        if (addnum + gang.m_Num > sGang::MAX_MEMBERS)    addnum = sGang::MAX_MEMBERS - gang.m_Num;
+        if (addnum + gang.m_Num > sGang::max_members()) addnum = sGang::max_members() - gang.m_Num;
         ss << "\n \n";
         /* */if (addnum <= 1)    { addnum = 1;    ss << "A local boy"; }
         else if (addnum == 2)    { ss << "Two locals"; }
@@ -1265,7 +1267,7 @@ bool cMissionRecruiting::execute_mission(sGang& gang, std::stringstream& ss)
         available--;
     }
 
-    while (add > recruit && gang.m_Num < sGang::MAX_MEMBERS)
+    while (add > recruit && gang.m_Num < sGang::max_members())
     {
         recruit++;
         gang.m_Num++;
@@ -1282,10 +1284,10 @@ bool cMissionRecruiting::execute_mission(sGang& gang, std::stringstream& ss)
         else if (add == 1)        ss << " but were only able to convince one of them to join.";
         else                    ss << " and were able to convince " << add << " of them to join.";
 
-        if (gang.m_Num >= sGang::MAX_MEMBERS && add == recruit) ss << "\nThey got as many as they needed to fill their ranks.";
-        else if (gang.m_Num >= sGang::MAX_MEMBERS && add > recruit)
+        if (gang.m_Num >= sGang::max_members() && add == recruit) ss << "\nThey got as many as they needed to fill their ranks.";
+        else if (gang.m_Num >= sGang::max_members() && add > recruit)
         {
-            gang.m_Num = sGang::MAX_MEMBERS;
+            gang.m_Num = sGang::max_members();
             ss << "\nThey only had room for ";
             if (recruit == 1) ss << "one"; else ss << recruit;
             ss << " more in their gang so they ";
@@ -1309,11 +1311,11 @@ bool cMissionRecruiting::execute_mission(sGang& gang, std::stringstream& ss)
                 {
                     if (passnumgotthere == passnum) pss << ".\nThey " << (passnum > 1 ? "all " : "") << "arrived ";
                     else pss << ".\nOnly " << passnumgotthere << " arrived ";
-                    if (passto->m_Num + passnumgotthere <= sGang::MAX_MEMBERS)
+                    if (passto->m_Num + passnumgotthere <= sGang::max_members())
                         pss << "and got accepted into the gang.";
                     else
                     {
-                        passnumgotthere = sGang::MAX_MEMBERS - passto->m_Num;
+                        passnumgotthere = sGang::max_members() - passto->m_Num;
                         pss << "but " << passto->name() << " could only take " << passnumgotthere << " of them.";
                     }
                     passto->m_Num += passnumgotthere;

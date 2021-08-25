@@ -101,7 +101,7 @@ public:
     cEvents& GetEvents() { return m_Events; }
     void AddMessage(std::string message, EventType event_type = EventType::EVENT_GANG);
 public:
-    static const int MAX_MEMBERS; // number of memberts a gang can have
+    static int max_members(); // number of memberts a gang can have
     int m_Num = 0;    // number in the gang
     int m_Skills[NUM_SKILLS];    // skills of the gang
     int m_Stats[NUM_STATS];    // stats of the gang
