@@ -226,7 +226,7 @@ const settings_value_t & cGameSettings::get_value(const char* name) const
 {
     try { return m_Settings.at(std::string(name)).value; }
     catch (const std::out_of_range& e) { g_LogFile.warning("game", "Game setting not found in current game: ", name); }
-    static const auto empty_value = settings_value_t{};
+    static const settings_value_t empty_value{0};
     return empty_value;
 }
 
