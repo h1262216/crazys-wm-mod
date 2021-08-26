@@ -224,7 +224,10 @@ void cGameSettings::add_setting(const char* tag, const char* name, const char* d
 
 const settings_value_t & cGameSettings::get_value(const char* name) const
 {
-    return m_Settings.at(std::string(name)).value;
+    try { return m_Settings.at(std::string(name)).value; }
+    catch (const std::out_of_range& e) { g_LogFile.warning("game", "Game setting not found in current game: ", name); }
+    static const auto empty_value = settings_value_t{};
+    return empty_value;
 }
 
 void cGameSettings::save_xml(tinyxml2::XMLElement& target) const {
