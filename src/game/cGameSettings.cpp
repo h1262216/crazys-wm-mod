@@ -225,7 +225,12 @@ void cGameSettings::add_setting(const char* tag, const char* name, const char* d
 const settings_value_t & cGameSettings::get_value(const char* name) const
 {
     try { return m_Settings.at(std::string(name)).value; }
-    catch (const std::out_of_range& e) { g_LogFile.warning("game", "Game setting not found in current game: ", name); }
+    catch (const std::out_of_range& e) {
+        g_LogFile.warning("game", "Game setting not found in current game: ", name);
+        cGameSettings default_values;
+        try { return default_values.get_value(name); }
+        catch (const std::out_of_range& e) { g_LogFile.error("game", "Invalid game setting: ", name); }
+    }
     static const settings_value_t empty_value{0};
     return empty_value;
 }
