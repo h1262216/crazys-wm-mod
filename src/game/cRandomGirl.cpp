@@ -285,7 +285,8 @@ void sRandomGirl::process_item_xml(tinyxml2::XMLElement *el)
 
 void sRandomGirl::process_stat_xml(tinyxml2::XMLElement *el)
 {
-    int ival, index; const char *pt;
+    int ival = 0;
+    int index; const char *pt;
     if ((pt = el->Attribute("Name")))
     {
         try {
@@ -306,7 +307,8 @@ void sRandomGirl::process_stat_xml(tinyxml2::XMLElement *el)
 
 void sRandomGirl::process_skill_xml(tinyxml2::XMLElement *el)
 {
-    int ival, index;
+    int ival = 0;
+    int index;
     const char *pt;
     /*
     *    Strictly, I should use something that lets me
@@ -325,7 +327,7 @@ void sRandomGirl::process_skill_xml(tinyxml2::XMLElement *el)
 
 void sRandomGirl::process_cash_xml(tinyxml2::XMLElement *el)
 {
-    int ival;
+    int ival = 0;
     if (el->QueryAttribute("Min", &ival))
     {
         m_MinMoney = ival;
