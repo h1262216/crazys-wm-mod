@@ -99,6 +99,7 @@ namespace settings {
     const char* PREG_GOOD_FACTOR   = "pregnancy.good_sex_factor";
 
     const char* MONEY_SELL_ITEM    = "money.sell.item";
+	const char* MONEY_BUY_ITEM    = "money.buy.item";
     const char* MONEY_SELL_SLAVE   = "money.sell.slave";
     const char* MONEY_BUY_SLAVE    = "money.buy.slave";
     const char* MONEY_COST_ROOM    = "money.cost.room";
@@ -226,6 +227,7 @@ cGameSettings::cGameSettings() : cKeyValueBase("Setting", "Name", "Value")
     add_setting(PREG_GOOD_FACTOR, "Good Preg Factor", "??? FIGURE OUT WHAT THIS DOES ???", 2.f);
 
     add_setting(MONEY_SELL_ITEM, "Sell Item Factor", "Percentage of item's worth (buy price) you get when selling", sPercent(.5f));
+    add_setting(MONEY_BUY_ITEM, "Buy Item Factor", "Percentage of item's worth you pay when buying", sPercent(1.f));
     add_setting(MONEY_SELL_SLAVE, "Sell Slave Factor", "Percentage of slave's worth you get when selling", sPercent(.9f));
     add_setting(MONEY_BUY_SLAVE, "Buy Slave Factor", "Factor of slave's worth used when buying", sPercent(.9f));
     add_setting(MONEY_COST_ROOM, "Room Cost", "The cost for buying a new room.",

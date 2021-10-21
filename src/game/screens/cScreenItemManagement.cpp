@@ -37,6 +37,7 @@
 
 namespace settings {
     extern const char* MONEY_SELL_ITEM;
+	extern const char* MONEY_BUY_ITEM;
 }
 
 
@@ -102,7 +103,7 @@ struct cInventoryProviderShop : public IInventoryProvider {
     }
 
     int take_item(const sInventoryItem *item, int amount) override {
-        int cost = item->m_Cost;
+        int cost = int(((float)item->m_Cost) * g_Game->settings().get_percent(settings::MONEY_BUY_ITEM));
         int bought = 0;
         if (g_Game->gold().afford(cost*amount))
         {
@@ -401,13 +402,13 @@ void cScreenItemManagement::write_item_text(const sInventoryItem* item, int owne
     }
     else
     {
-        iCost << item->m_Cost << " gold";
+        iCost << int(((float)item->m_Cost) * g_Game->settings().get_percent(settings::MONEY_BUY_ITEM)) << " gold";
         iSell << int(((float)item->m_Cost) * g_Game->settings().get_percent(settings::MONEY_SELL_ITEM)) << " gold";
         iType << item->m_Type;
     }
     ss << "Item Name:      " << item->m_Name;
     ss << "\nCost:  " << iCost.str();
-    if (target == 1) ss << "Sell for:  " << iSell.str();
+    if (target == 1) ss << " Sell for:  " << iSell.str();
     ss << "\nType:  " << iType.str();
     ss << "\n \n" << item->m_Desc;
 
