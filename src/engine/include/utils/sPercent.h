@@ -24,7 +24,7 @@
 
 struct sPercent {
     explicit sPercent(float v) : value(v) {
-        if(v < 0 || 1.f < v) {
+        if(v < 0) {
             throw std::invalid_argument("Invalid percentage");
         }
     }
