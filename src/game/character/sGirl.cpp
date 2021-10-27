@@ -91,8 +91,8 @@ sGirl::sGirl(bool unique) : ICharacter( g_Game->create_traits_collection(), uniq
     // Enjoyment
     for (int i = 0; i < NUM_ACTIONTYPES; i++)    // `J` Added m_Enjoyment here to zero out any that are not specified
         m_Enjoyment[i] = m_EnjoymentMods[i] = m_EnjoymentTemps[i] = 0;
-    for (int i = 0; i < NUM_ACTIONTYPES; i++)    // `J` randomize starting likes -10 to 10 most closer to 0
-        m_Enjoyment[i] = (g_Dice.bell(-10, 10));
+    for (int& enjoy : m_Enjoyment)    // `J` randomize starting likes -10 to 10 most closer to 0
+        enjoy = g_Dice.bell(-10, 10);
 
     // Training
     for (int i = 0; i < NUM_TRAININGTYPES; i++)    // Added m_Training here to zero out any that are not specified
@@ -111,10 +111,7 @@ sGirl::sGirl(bool unique) : ICharacter( g_Game->create_traits_collection(), uniq
     //    cChildList m_Children;
     //    vector<string> m_Canonical_Daughters;
 }
-sGirl::~sGirl()        // destructor
-{
-    m_Events.Clear();
-}
+sGirl::~sGirl() = default;
 
 std::string stringtolowerj(std::string name)
 {
@@ -436,8 +433,7 @@ bool sGirl::is_unpaid() const {
     return is_slave() && !g_Game->settings().get_bool(settings::USER_PAY_SLAVE);
 }
 
-// This load
-
+// This loads the girl from a save game
 bool sGirl::LoadGirlXML(const tinyxml2::XMLElement* pGirl)
 {
     //this is always called after creating a new girl, so let's not init sGirl again
@@ -844,7 +840,7 @@ bool sGirl::is_havingsex() const
 }
 bool sGirl::was_resting() const
 {
-    return m_PrevDayJob == JOB_RESTING    && m_PrevNightJob == JOB_RESTING;
+    return m_PrevDayJob == JOB_RESTING && m_PrevNightJob == JOB_RESTING;
 }
 
 /// Given a name of a detail (stat, skill, trait, etc.), returns its
@@ -1268,7 +1264,7 @@ bool sGirl::unequip(const sInventoryItem* item) {
     return true;
 }
 
-scripting::sAsyncScriptHandle sGirl::TriggerEvent(scripting::sEventID id)
+scripting::sAsyncScriptHandle sGirl::TriggerEvent(const scripting::sEventID& id)
 {
     return m_EventMapping->RunAsync(id, *this);
 }
@@ -1279,8 +1275,25 @@ std::shared_ptr<sGirl> sGirl::LoadFromTemplate(const tinyxml2::XMLElement& root)
     const char *pt;
     // get the simple fields
     girl->m_Name = GetStringAttribute(root, "Name");
-    /// TODO fix name handling here!
-    girl->m_FullName = girl->m_Name;
+    std::string first_name = GetDefaultedStringAttribute(root, "FirstName", "");
+    std::string surname = GetDefaultedStringAttribute(root, "Surname", "");
+    std::string middle_name = GetDefaultedStringAttribute(root, "MiddleName", "");
+    if(!first_name.empty() && !surname.empty()) {
+        girl->SetName(first_name, middle_name, surname);
+    } else {
+        // for girl files that don't specify the name parts, try to guess
+        std::vector<std::string> parts;
+        split(parts, girl->m_Name, [](char c){ return std::isspace(c); });
+        // if there are two or three space separated parts, assume these are the parts of the name
+        if (parts.size() == 2) {
+            girl->SetName(parts[0], "", parts[1]);
+        } else if(parts.size() == 3) {
+            girl->SetName(parts[0], parts[1], parts[2]);
+        } else {
+            girl->m_FullName = girl->m_Name;
+        }
+        g_LogFile.warning("girl", "Girl file for '", girl->m_Name, "' does not specify first and last name");
+    }
 
     auto set_statebit
       = [&](int bitnum, char const* attr) {
@@ -1447,6 +1460,12 @@ void sGirl::AddMessage(const std::string& message, int nImgType, EventType event
                                            [this](const std::string& pattern) -> std::string {
         if(pattern == "name") {
             return this->FullName();
+        } else if(pattern == "surname") {
+            return this->Surname();
+        } else if(pattern == "firstname") {
+            return this->FirstName();
+        } else if(pattern == "middlename") {
+            return this->MiddleName();
         }
         throw std::runtime_error("Invalid pattern " + pattern);
         }, g_Dice), nImgType, event);

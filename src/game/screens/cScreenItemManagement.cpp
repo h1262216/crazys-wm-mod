@@ -281,7 +281,7 @@ void cScreenItemManagement::init_side(sItemTransferSide& target, int owner, int 
 
     /// this works because here ID == index
     if(owner >= 0) {
-        target.owners_list->SetSelectedIndex(owner);
+        target.owners_list->SetSelectedIndex(owner, true, true);
         SetSelectedItemInList(target.items_id, item);
     }
 
@@ -455,7 +455,7 @@ void cScreenItemManagement::on_select_filter(int selection)
 void cScreenItemManagement::sync_owner_selection(const sItemTransferSide& side)
 {
     if (side.owners_list->GetSelectedID() != side.selected_owner) {
-        side.owners_list->SetSelectedID(side.selected_owner);
+        side.owners_list->SetSelectedID(side.selected_owner, true, true);
     }
 }
 
@@ -553,7 +553,7 @@ void cScreenItemManagement::refresh_item_list(Side which_list)
         if(selection == data.selected_owner)
             std::cout << "THIS IS WEIRD\n";
         else {
-            data.owners_list->SetSelectedID(data.selected_owner);
+            data.owners_list->SetSelectedID(data.selected_owner, true, true);
         }
         return;
     } else {
@@ -589,7 +589,7 @@ void cScreenItemManagement::refresh_item_list(Side which_list)
     SortListItems(data.items_id, "");
 
     if(selected_item >= 0 && selected_item < GetListBox(data.items_id)->NumItems())
-        GetListBox(data.items_id)->SetSelectedIndex(selected_item);
+        GetListBox(data.items_id)->SetSelectedIndex(selected_item, true, true);
     data.selected_item = GetLastSelectedItemFromList(data.items_id);
 
     if (data.selected_item < 0)
