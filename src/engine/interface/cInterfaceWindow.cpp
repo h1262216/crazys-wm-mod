@@ -225,6 +225,11 @@ void cInterfaceWindow::SetButtonCallback(int id, std::function<void()> cb) {
         GetButton(id)->SetCallback(std::move(cb));
 }
 
+void cInterfaceWindow::SetButtonAction(int id, const std::string& name) {
+    if (id > -1)
+        GetButton(id)->SetCallback(m_Actions.at(name));
+}
+
 void cInterfaceWindow::SetButtonNavigation(int id, std::string target, bool replace)
 {
     if(target == "<back>") {
@@ -711,6 +716,13 @@ std::size_t cInterfaceWindow::NumWidgets() const {
 
 void cInterfaceWindow::ForAllSelectedItems(int id, std::function<void(int)> handler) {
     GetListBox(id)->HandleSelectedIndices(std::move(handler));
+}
+
+void cInterfaceWindow::declare_action(std::string name, std::function<void()> action) {
+    auto inserted = m_Actions.insert(std::make_pair(std::move(name), std::move(action)));
+    if(!inserted.second) {
+        g_LogFile.warning("interface", "Declared action could not be inserted: ", inserted.first->first);
+    }
 }
 
 void cModalWindow::process() {

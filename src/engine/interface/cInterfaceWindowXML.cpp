@@ -271,6 +271,9 @@ void cInterfaceWindowXML::read_button_definition(const tinyxml2::XMLElement& el)
     if(const char* pw = el.Attribute("ReplaceWindow")) {
         SetButtonNavigation(id, pw, true);
     }
+    if(const char* pw = el.Attribute("Action")) {
+        SetButtonAction(id, pw);
+    }
     register_id(id, GetStringAttribute(el, "Name"));
 }
 

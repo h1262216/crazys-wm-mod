@@ -21,9 +21,9 @@
 </ListBox>
 
 <Image      Name="FireArrow"            File="imgArrowDown.png"             XPos="70"       YPos="598"      Width="84"      Height="62"  Dir="Widgets"/>
-<Button     Name="GangFireButton"       Image="Fire"                        XPos="56"       YPos="661"      Width="112"      Height="45"  Transparency="true"/>
+<Button     Name="GangFireButton"       Image="Fire"                        XPos="56"       YPos="661"      Width="112"      Height="45"  Transparency="true" Action="FireGang" />
 <Image      Name="HireArrow"            File="imgArrowLeft.png"             XPos="273"      YPos="696"      Width="45"      Height="112"  Dir="Widgets"/>
-<Button     Name="GangHireButton"       Image="Hire"                        XPos="163"      YPos="731"      Width="112"      Height="45"  Transparency="true"/>
+<Button     Name="GangHireButton"       Image="Hire"                        XPos="163"      YPos="731"      Width="112"      Height="45"  Transparency="true" Action="HireGang" />
 
 <ListBox    Name="RecruitList"                                              XPos="295"      YPos="633"      Width="1265"     Height="256" FontSize="17" RowHeight="30" Border="1" Events="true" Multi="true" ShowHeaders="true" HeaderDiv="true" HeaderClicksSort="true" >
 <Column     Name="GangName"     Header="Recruitable Gang"           Offset="0"  />
@@ -43,7 +43,7 @@
 <Text       Name="MissionDescription"   Text=""                             XPos="1588"     YPos="394"      Width="281"     Height="162" FontSize="17"  />
 
 <Text       Name="WeaponDescription"    Text="Weapon Level: 0"              XPos="1124"      YPos="949"      Width="422"     Height="45" FontSize="18"  />
-<Button     Name="WeaponUpButton"       Image="UpAds"                       XPos="1195"     YPos="982"      Width="112"      Height="45" Transparency="true" />
+<Button     Name="WeaponUpButton"       Image="UpAds"                       XPos="1195"     YPos="982"      Width="112"      Height="45" Transparency="true" Action="WeaponUpgrade" />
 
 <Text       Name="HealPotDescription"   Text="Heal Potions (10g each): 0"   XPos="1588"      YPos="562"      Width="281"     Height="45" FontSize="18"  />
 <Button     Name="BuyHealPotButton"     Image="Buy"                         XPos="1609"      YPos="591"      Width="101"      Height="45" Transparency="true" />

@@ -81,6 +81,7 @@ public:
     int AddButton(const std::string& OffImage, const std::string& DisabledImage, const std::string& OnImage,
                   int x, int y, int width, int height);
     void SetButtonCallback(int id, std::function<void()>);
+    void SetButtonAction(int id, const std::string& action);
     void SetButtonNavigation(int id, std::string target, bool replace = true);
     void SetButtonHotKey(int id, SDL_Keycode key);
     cButton* GetButton(int id);
@@ -196,10 +197,14 @@ protected:
     void input_confirm(std::function<void()> callback);
     void input_string(std::function<void(const std::string&)> callback, std::string def_value={}, std::string prompt={});
     void input_choice(std::string question, std::vector<std::string> options, std::function<void(int)> callback);
+
+    void declare_action(std::string, std::function<void()>);
 private:
     cWindowManager* m_WindowManager = nullptr;
 
     std::string m_Name;     // name of the window
+
+    std::map<std::string, std::function<void()>> m_Actions;
 };
 
 class cModalWindow : public cInterfaceWindow {

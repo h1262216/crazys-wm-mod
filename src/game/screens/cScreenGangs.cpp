@@ -30,6 +30,33 @@ static std::stringstream ss;
 
 cScreenGangs::cScreenGangs() : cInterfaceWindowXML("gangs_screen.xml")
 {
+    declare_action("FireGang", [this]() {
+        int selection = GetLastSelectedItemFromList(ganglist_id);
+        if (selection != -1)
+        {
+            g_Game->gang_manager().FireGang(selection);
+            init(false);
+        };
+    });
+
+    declare_action("HireGang", [this]() {
+        hire_recruitable();
+    });
+
+    declare_action("WeaponUpgrade", [this]() {
+        ForAllSelectedItems(ganglist_id, [&](int selection) {
+            sGang* gang = g_Game->gang_manager().GetGang(selection);
+            if(gang) {
+                int wlev = gang->weapon_level();
+                int cost = g_Game->tariff().goon_weapon_upgrade(wlev);
+                if (g_Game->gold().item_cost(cost) && wlev < 3)
+                {
+                    gang->set_weapon_level(wlev + 1);
+                }
+            }
+        });
+        init(false);
+    });
 }
 
 void cScreenGangs::set_ids()
@@ -77,34 +104,6 @@ void cScreenGangs::set_ids()
     std::vector<std::string> GangColumns{ "GangName", "Number", "Mission", "Combat", "Magic", "Intelligence", "Agility", "Constitution", "Charisma", "Strength", "Service" };
     SortColumns(ganglist_id, GangColumns);
 
-    // set button callbacks
-    SetButtonCallback(gangfire_id, [this](){
-        int selection = GetLastSelectedItemFromList(ganglist_id);
-        if (selection != -1)
-        {
-            g_Game->gang_manager().FireGang(selection);
-            init(false);
-        };
-    });
-
-    SetButtonCallback(ganghire_id, [this]() {
-        hire_recruitable();
-    });
-
-    SetButtonCallback(weaponup_id, [this]() {
-        ForAllSelectedItems(ganglist_id, [&](int selection) {
-            sGang* gang = g_Game->gang_manager().GetGang(selection);
-            if(gang) {
-                int wlev = gang->weapon_level();
-                int cost = g_Game->tariff().goon_weapon_upgrade(wlev);
-                if (g_Game->gold().item_cost(cost) && wlev < 3)
-                {
-                    gang->set_weapon_level(wlev + 1);                }
-            }
-        });
-        init(false);
-    });
-
     SetButtonCallback(netbuy_id,    [this]() { buy_nets(1);});
     SetButtonCallback(netbuy10_id,  [this]() { buy_nets(10);});
     SetButtonCallback(netbuy20_id,  [this]() { buy_nets(20);});
@@ -119,7 +118,7 @@ void cScreenGangs::set_ids()
     SetListBoxSelectionCallback(recruitlist_id, [this](int sel) {
         update_recruit_btn();
     });
-    SetListBoxDoubleClickCallback(recruitlist_id, [this](int sel) {hire_recruitable(); });
+    SetListBoxDoubleClickCallback(recruitlist_id, [this](int sel) { hire_recruitable(); });
     SetListBoxHotKeys(recruitlist_id, SDLK_q, SDLK_e);
 
     AddKeyCallback(SDLK_SPACE, [this](){ hire_recruitable(); });
