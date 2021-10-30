@@ -56,7 +56,7 @@ static static_brothel_data brothel_data[] = {
         { 10000, 10, 20, 200, "Farm.png", BuildingType::FARM },
         { 15000, 15, 20, 200, "Arena.png", BuildingType::ARENA },
         { 20000, 20, 20, 200, "Movies.jpg", BuildingType::STUDIO },
-        { 25000, 25, 20, 200, "Clinic.png", BuildingType::CLINIC }
+        { 25000, 25, 20, 200, "Clinic.jpg", BuildingType::CLINIC }
 };
 
 cScreenTown::cScreenTown() : cGameWindow("town_screen.xml")
@@ -240,14 +240,12 @@ bool cScreenTown::buy_building(static_brothel_data* bck)
         input_choice("", std::vector<std::string>{"Buy It", "Don't Buy It"}, [this, bck](int selection) {
             if(selection != 0) return;
             if (bck->data.type == BuildingType::BROTHEL) {
-                push_message("Enter a name for your new brothel.", 0);
                 input_string([this, bck](const std::string& name){
                     if (g_Game->get_objective() && g_Game->get_objective()->m_Objective == OBJECTIVE_GETNEXTBROTHEL)
                         g_Game->objective_manager().PassObjective();
                     init_building(bck).set_name(name);
                     init(false);
-                });
-
+                    }, "", "Enter a name for your new brothel.");
             } else {
                 init_building(bck);
                 init(false);
