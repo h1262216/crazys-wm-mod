@@ -182,8 +182,8 @@ ITraitsCollection::ETraitState cTraitsCollection::has_permanent_trait(sTraitID t
     return _find_trait_status(trait, m_PermanentTraits);
 }
 
-void cTraitsCollection::update() {
-    if(!m_DirtyFlag)
+void cTraitsCollection::update(bool force = false) {
+    if(!m_DirtyFlag&&!force)
         return;
 
     m_DirtyFlag = false;

@@ -22,7 +22,7 @@ public:
 
     const std::unordered_set<const ITraitSpec*>& get_active_traits() const override;
 
-    void update() override;
+    void update(bool force) override;
     void tick() override;
 
     void load_from_xml(const tinyxml2::XMLElement& root) override;
