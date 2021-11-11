@@ -1367,6 +1367,7 @@ bool sGirl::unequip(const sInventoryItem* item) {
     if (!item) return false;    // if already unequiped do nothing
     if(!inventory().remove_from_equipment(item)) return false;        // nothing was unequipped
     // unapply the effects
+    bool traitChanged = false;
     for (int i = 0; i < item->m_Effects.size(); i++)
     {
         int eff_id = item->m_Effects[i].m_EffectID;
@@ -1381,7 +1382,9 @@ bool sGirl::unequip(const sInventoryItem* item) {
             if (amount == 1) m_States &= ~(1 << eff_id);        // add status
             else if (amount == 0) m_States |= (1 << eff_id);    // remove status
         }
+        else if (affects == sEffect::Trait) traitChanged = true;
     }
+    if (traitChanged) raw_traits().update(true);
 
     cGirls::CalculateGirlType(*this);
 

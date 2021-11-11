@@ -34,7 +34,6 @@
 #include "cShop.h"
 #include "CLog.h"
 #include "interface/cTheme.h"
-#include "character/traits/ITraitsCollection.h"
 
 namespace settings {
     extern const char* MONEY_SELL_ITEM;
@@ -473,7 +472,6 @@ void cScreenItemManagement::change_equip(Side side, bool equip)
             targetGirl->equip(own_side.items[item], true);
         } else {
             targetGirl->unequip(own_side.items[item]);
-            targetGirl->raw_traits().update(true);
         }
         DisableWidget(own_side.equip_id, equip);
         DisableWidget(own_side.unequip_id, !equip);
