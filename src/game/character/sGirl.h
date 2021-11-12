@@ -284,6 +284,8 @@ public:
 
     bool equip(const sInventoryItem* item, bool force);
 
+    void AddOrEquip(const sInventoryItem* item) override;
+
     bool unequip(const sInventoryItem* item) override;
     bool can_equip(const sInventoryItem* item) const override;
 

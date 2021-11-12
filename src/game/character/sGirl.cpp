@@ -432,6 +432,10 @@ bool sGirl::is_unpaid() const {
     return is_slave() && !g_Game->settings().get_bool(settings::USER_PAY_SLAVE);
 }
 
+void sGirl::AddOrEquip(const sInventoryItem* item){
+    equip(item,true);
+}
+
 // This loads the girl from a save game
 bool sGirl::LoadGirlXML(const tinyxml2::XMLElement* pGirl)
 {

@@ -237,6 +237,9 @@ void ICharacter::LoadXML(const tinyxml2::XMLElement& elRoot)
     if(inv)
         m_Inventory->load_from_xml(*inv, this);
 }
+void ICharacter::AddOrEquip(const sInventoryItem* item){
+    inventory().add_to_equipment(item,*this);
+}
 
 void ICharacter::DecayTemp()
 {

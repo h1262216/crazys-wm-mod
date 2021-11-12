@@ -91,6 +91,8 @@ public:
     virtual bool can_equip(const sInventoryItem* item) const { return false; };
     virtual bool unequip(const sInventoryItem* item);
 
+    virtual void AddOrEquip(const sInventoryItem* item);
+
     // -----------------------------------------------------------------------------------------------------------------
     //                                        Traits
     // -----------------------------------------------------------------------------------------------------------------
