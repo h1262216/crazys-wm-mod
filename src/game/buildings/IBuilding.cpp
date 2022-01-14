@@ -112,10 +112,10 @@ void IBuilding::BeginWeek()
         {
             m_Filthiness++; // `J` Death is messy
             ss.str(""); ss << cgirl.FullName() << " has died from her injuries, the other girls all fear and hate you a little more.";
-            cgirl.AddMessage(ss.str(), IMGTYPE_DEATH, EVENT_DANGER);
+            cgirl.AddMessage(ss.str(), EBaseImage::DEATH, EVENT_DANGER);
             g_Game->push_message(ss.str(), COLOR_RED);
             ss.str(""); ss << "${name} has died from her injuries.  Her body will be removed by the end of the week.";
-            cgirl.AddMessage(ss.str(), IMGTYPE_DEATH, EVENT_SUMMARY);
+            cgirl.AddMessage(ss.str(), EBaseImage::DEATH, EVENT_SUMMARY);
             dead_girls.push_back(&cgirl);
             return;
         }
@@ -236,7 +236,7 @@ void IBuilding::HandleRestingGirls(bool is_night)
             sum = EVENT_WARNING;
         }
 
-        if (ss.str().length() > 0) current.AddMessage(ss.str(), IMGTYPE_PROFILE, sum);
+        if (ss.str().length() > 0) current.AddMessage(ss.str(), EBaseImage::PROFILE, sum);
     });
 }
 
@@ -385,7 +385,7 @@ void IBuilding::EndShift(bool Day0Night1)
             }
         }
 
-        if (ss.str().length() > 0)    current.AddMessage(ss.str(), IMGTYPE_PROFILE, sum);
+        if (ss.str().length() > 0)    current.AddMessage(ss.str(), EBaseImage::PROFILE, sum);
     });
 }
 
@@ -631,7 +631,7 @@ bool IBuilding::SetupMatron(bool is_night)
         matron_candidate->m_DayJob = matron_candidate->m_NightJob = m_MatronJob;
         matron_candidate->m_PrevDayJob = matron_candidate->m_PrevNightJob = JOB_UNSET;
 
-        matron_candidate->AddMessage("The " + std::string(get_job_name(m_MatronJob)) + " puts herself back to work.", IMGTYPE_PROFILE,
+        matron_candidate->AddMessage("The " + std::string(get_job_name(m_MatronJob)) + " puts herself back to work.", EBaseImage::PROFILE,
                            EVENT_BACKTOWORK);
     }
 
@@ -643,7 +643,7 @@ bool IBuilding::SetupMatron(bool is_night)
     if (!matron_candidate->m_Refused_To_Work_Day && is_night)    // but if she worked the first shift she continues the rest of the night
     {
         ss << "${name} continued to help the other girls throughout the night.";
-        matron_candidate->AddMessage(ss.str(), IMGTYPE_PROFILE, EVENT_SUMMARY);
+        matron_candidate->AddMessage(ss.str(), EBaseImage::PROFILE, EVENT_SUMMARY);
         m_ActiveMatron = matron_candidate;
         return true;
     }
@@ -656,7 +656,7 @@ bool IBuilding::SetupMatron(bool is_night)
         }
         m_Fame -= matron_candidate->fame();
         ss << "${name} refused to work as the " << get_job_name(m_MatronJob) << ".";
-        matron_candidate->AddMessage(ss.str(), IMGTYPE_PROFILE, EVENT_NOWORK);
+        matron_candidate->AddMessage(ss.str(), EBaseImage::PROFILE, EVENT_NOWORK);
         return false;
     }
     else    // so there is less chance of a matron refusing the entire turn
@@ -671,7 +671,7 @@ bool IBuilding::SetupMatron(bool is_night)
 
         m_Fame += matron_candidate->fame();
         ss << "${name} earned a total of " << totalGold << " gold directly from you. She gets to keep it all.";
-        matron_candidate->AddMessage(ss.str(), IMGTYPE_PROFILE, sum);
+        matron_candidate->AddMessage(ss.str(), EBaseImage::PROFILE, sum);
         m_ActiveMatron = matron_candidate;
         return true;
     }
@@ -1634,14 +1634,14 @@ void IBuilding::do_daily_items(sGirl& girl)
 
     if (ss.str().length()>0)        // only pass the summary if she has any of the items listed
     {
-        int imagetype = IMGTYPE_PROFILE;
-        /* */if (mast)        imagetype = IMGTYPE_MAST;
-        else if (strip)        imagetype = IMGTYPE_STRIP;
-        else if (combat)    imagetype = IMGTYPE_COMBAT;
-        else if (formal)    imagetype = IMGTYPE_FORMAL;
-        else if (swim)        imagetype = IMGTYPE_SWIM;
-        else if (cook)        imagetype = IMGTYPE_COOK;
-        else if (maid)        imagetype = IMGTYPE_MAID;
+        EBaseImage imagetype = EBaseImage::PROFILE;
+        /* */if (mast)        imagetype = EBaseImage::MAST;
+        else if (strip)        imagetype = EBaseImage::STRIP;
+        else if (combat)    imagetype = EBaseImage::COMBAT;
+        else if (formal)    imagetype = EBaseImage::FORMAL;
+        else if (swim)        imagetype = EBaseImage::SWIM;
+        else if (cook)        imagetype = EBaseImage::COOK;
+        else if (maid)        imagetype = EBaseImage::MAID;
 
         girl.AddMessage(ss.str(), imagetype, EVENT_SUMMARY);
 
@@ -1839,7 +1839,7 @@ void IBuilding::IterateGirls(bool is_night, std::initializer_list<JOBS> jobs, co
 }
 
 void IBuilding::AddMessage(std::string message, EventType event) {
-    m_Events.AddMessage(std::move(message), IMGTYPE_PROFILE, event);
+    m_Events.AddMessage(std::move(message), event);
 }
 
 void IBuilding::end_of_week_update(sGirl& girl) {

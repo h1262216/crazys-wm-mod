@@ -268,7 +268,7 @@ int cLuaScript::UpdateImage(lua_State* state) {
     long image_type = luaL_checkinteger(state, 1);
     auto top_window = window_manager().GetWindow(false);
     if(auto gw = dynamic_cast<cGameWindow*>(top_window)) {
-        gw->UpdateImage(image_type);
+        gw->UpdateImage((EBaseImage)image_type);
     } else {
         g_LogFile.warning("scripting", "Script cannot set image on current screen");
     }
@@ -360,7 +360,7 @@ int cLuaScript::AddFamilyToDungeon(lua_State *L) {
             }
         }
         NGmsg1 << ".";
-        Daughter1->AddMessage(NGmsg1.str(), IMGTYPE_PROFILE, EVENT_DUNGEON);
+        Daughter1->AddMessage(NGmsg1.str(), EBaseImage::PROFILE, EVENT_DUNGEON);
     }
     if (num_daughters > 1)
     {
@@ -369,14 +369,14 @@ int cLuaScript::AddFamilyToDungeon(lua_State *L) {
         NGmsg2 << "her sister" << (num_daughters > 2 ? "s " : " ") << Daughter1->FullName();
         if (num_daughters > 2) NGmsg2 << " and " << Daughter3->FullName();
         NGmsg2 << ".";
-        Daughter2->AddMessage(NGmsg2.str(), IMGTYPE_PROFILE, EVENT_DUNGEON);
+        Daughter2->AddMessage(NGmsg2.str(), EBaseImage::PROFILE, EVENT_DUNGEON);
     }
     if (num_daughters > 2)
     {
         NGmsg3 << Daughter3->FullName() << " was " << kstring << " along with ";
         if (mother) NGmsg3 << "her mother " << Mother->FullName() << " and ";
         NGmsg3 << "her sisters " << Daughter1->FullName() << " and " << Daughter2->FullName() << ".";
-        Daughter3->AddMessage(NGmsg3.str(), IMGTYPE_PROFILE, EVENT_DUNGEON);
+        Daughter3->AddMessage(NGmsg3.str(), EBaseImage::PROFILE, EVENT_DUNGEON);
     }
     if (mother)
     {
@@ -390,7 +390,7 @@ int cLuaScript::AddFamilyToDungeon(lua_State *L) {
             if (num_daughters > 2)        NGmsgM << " and " << Daughter3->FullName();
         }
         NGmsgM << ".";
-        Mother->AddMessage(NGmsgM.str(), IMGTYPE_PROFILE, EVENT_DUNGEON);
+        Mother->AddMessage(NGmsgM.str(), EBaseImage::PROFILE, EVENT_DUNGEON);
     }
 
     if (Daughter1)    g_Game->dungeon().AddGirl(Daughter1, DUNGEON_GIRLKIDNAPPED);

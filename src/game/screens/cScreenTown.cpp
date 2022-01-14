@@ -210,7 +210,7 @@ void cScreenTown::do_walk()
 
     if (girlimage_id != -1)
     {
-        PrepareImage(girlimage_id, m_MeetingGirl.get(), IMGTYPE_PROFILE, true);
+        PrepareImage(girlimage_id, *m_MeetingGirl, EBaseImage::PROFILE);
         HideWidget(girlimage_id, false);
     }
 
@@ -280,8 +280,12 @@ void cScreenTown::check_building(int BrothelNum)
     }
 }
 
-void cScreenTown::UpdateImage(int imagetype) {
-    PrepareImage(girlimage_id, m_MeetingGirl.get(), imagetype, true);
-    HideWidget(girlimage_id, false);
+void cScreenTown::UpdateImage(EBaseImage imagetype) {
+    if(m_MeetingGirl) {
+        PrepareImage(girlimage_id, *m_MeetingGirl , imagetype);
+        HideWidget(girlimage_id, false);
+    } else {
+        HideWidget(girlimage_id, true);
+    }
 }
 

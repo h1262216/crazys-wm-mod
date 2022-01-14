@@ -44,7 +44,7 @@ void IBuildingScreenManagement::update_image()
             Rand = true;
             m_LastSelection = selected_girl;
         }
-        PrepareImage(girlimage_id, selected_girl, IMGTYPE_PROFILE, Rand);
+        PrepareImage(girlimage_id, *selected_girl, EBaseImage::PROFILE);
         HideWidget(girlimage_id, false);
     }
     else

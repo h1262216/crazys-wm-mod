@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ImageTypes>
+    <!--
+    Meaning of the field: <Name> the internal name used by the code. Needs to match `images/ids.cpp`
+    <Display> how to display the image name e.g. in the gallery
+    <Pattern> Regex that specified the file name that are accepted for this image type. Can be given multiple times.
+              If no pattern is given, one will be generated based on the name as `${Name}.*`. If at least one pattern
+              is given, no pattern will be generated automatically.
+    <Fallback> Fallback image type (its <Name>). Can be given multiple times. Fallbacks can have an optional Cost
+              attribute (default value: 10). Fallbacks are only considered if no fallback with lower const value can be
+              found. The cost of a Fallback has to be at least 1. Going from a pregnant to a non-pregnant version of
+              an image has a cost of 5. If multiple fallbacks have the same cost,
+              the game chooses randomly between them.
+    -->
+    <Type Name="anal">
+        <Display>Anal</Display>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="bdsm">
+        <Display>BDSM</Display>
+        <Fallback>anal</Fallback>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="sex">
+        <Display>Sex</Display>
+        <Fallback Cost="5">anal</Fallback>
+        <Fallback Cost="3">sexdoggy</Fallback>
+        <Fallback Cost="3">cowgirl</Fallback>
+        <Fallback Cost="3">revcowgirl</Fallback>
+        <Fallback Cost="25">ecchi</Fallback>
+        <Fallback Cost="25">strip</Fallback>
+        <Fallback Cost="25">nude</Fallback>
+        <Fallback Cost="8">mast</Fallback>
+        <Fallback Cost="20">lesbian</Fallback>
+        <Fallback Cost="20">oral</Fallback>
+        <Fallback Cost="20">titty</Fallback>
+        <Fallback Cost="20">foot</Fallback>
+        <Fallback Cost="20">hand</Fallback>
+        <Fallback Cost="15">group</Fallback>
+    </Type>
+    <Type Name="beast">
+        <Display>Bestiality</Display>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="group">
+        <Display>Group Sex</Display>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="lesbian">
+        <Display>Lesbian</Display>
+        <Fallback Cost="3">les69</Fallback>
+        <Fallback Cost="5">mast</Fallback>
+        <Fallback Cost="9">nude</Fallback>
+        <Fallback Cost="8">eatout</Fallback> <!-- TODO is this eating our or getting eaten out -->
+        <Fallback Cost="10">sex</Fallback>
+    </Type>
+    <Type Name="oral">
+        <Display>Oral</Display>
+        <Fallback Cost="5">deepthroat</Fallback>
+        <Fallback Cost="5">suckballs</Fallback>
+        <Fallback Cost="10">hand</Fallback>
+        <Fallback Cost="10">foot</Fallback>
+        <Fallback Cost="15">sex</Fallback>
+    </Type>
+    <Type Name="mast">
+        <Display>Masturbate</Display>
+        <Fallback Cost="5">dildo</Fallback>
+        <Fallback>ecchi</Fallback>
+        <Fallback>strip</Fallback>
+        <Fallback>nude</Fallback>
+    </Type>
+    <Type Name="titty">
+        <Display>Titty Sex</Display>
+        <Fallback>oral</Fallback>
+        <Fallback>foot</Fallback>
+        <Fallback>hand</Fallback>
+        <Fallback Cost="15">ecchi</Fallback>
+    </Type>
+    <Type Name="hand">
+        <Display>Handjob</Display>
+        <Fallback>oral</Fallback>
+        <Fallback>foot</Fallback>
+        <Fallback>titty</Fallback>
+        <Fallback Cost="15">ecchi</Fallback>
+    </Type>
+    <Type Name="foot">
+        <Display>Footjob</Display>
+        <Fallback>oral</Fallback>
+        <Fallback>hand</Fallback>
+        <Fallback>titty</Fallback>
+        <Fallback Cost="15">ecchi</Fallback>
+    </Type>
+    <Type Name="deepthroat">
+        <Display>Deepthroat</Display>
+        <Fallback>oral</Fallback>
+        <Fallback>suckballs</Fallback>
+    </Type>
+    <Type Name="eatout">
+        <Display>Eat Out</Display>
+        <Fallback>les69</Fallback>
+        <Fallback>lesbian</Fallback>
+    </Type>
+    <Type Name="dildo">
+        <Display>Dildo</Display>
+        <Fallback>mast</Fallback>
+    </Type>
+    <Type Name="strapon">
+        <Display>Strap-On</Display>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="les69">
+        <Display>Lesbian 69</Display>
+        <Fallback>lesbian</Fallback>
+    </Type>
+    <Type Name="lick">
+        <Display>Lick</Display>
+        <Fallback>oral</Fallback>
+    </Type>
+    <Type Name="suckballs">
+        <Display>Suck Balls</Display>
+        <Pattern>suckballs.*</Pattern>
+        <Pattern>balls.*</Pattern>
+        <Fallback>oral</Fallback>
+    </Type>
+    <Type Name="cowgirl">
+        <Display>Cowgirl</Display>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="revcowgirl">
+        <Display>Rev. Cowgirl</Display>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="sexdoggy">
+        <Display>Doggy Style</Display>
+        <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="rape">
+        <Display>Rape</Display>
+        <Fallback>sex</Fallback>
+        <Fallback>bdsm</Fallback>
+    </Type>
+    <Type Name="rapebeast">
+        <Display>Rape (Beast)</Display>
+        <Fallback>beast</Fallback>
+    </Type>
+
+    <Type Name="strip">
+        <Display>Strip</Display>
+        <Fallback>ecchi</Fallback>
+        <Fallback>nude</Fallback>
+    </Type>
+    <Type Name="ecchi">
+        <Display>Ecchi</Display>
+        <Fallback>nude</Fallback>
+        <Fallback>bunny</Fallback>
+    </Type>
+    <Type Name="nude">
+        <Display>Nude</Display>
+        <Fallback>ecchi</Fallback>
+        <Fallback>strip</Fallback>
+    </Type>
+    <Type Name="bunny">
+        <Display>Playboy Bunny</Display>
+        <Fallback>ecchi</Fallback>
+    </Type>
+    <Type Name="massage">
+        <Display>Massage</Display>
+        <Fallback>ecchi</Fallback>
+    </Type>
+    <Type Name="milk">
+        <Display>Milk</Display>
+        <Fallback>titty</Fallback>
+        <Fallback>nude</Fallback>
+    </Type>
+    <Type Name="dom">
+        <Display>Dominatrix</Display>
+        <Fallback>profile</Fallback>
+        <Fallback Cost="9">combat</Fallback>
+    </Type>
+    <Type Name="sub">
+        <Display>Submissive</Display>
+        <Fallback>presented</Fallback>
+    </Type>
+
+    <Type Name="maid">
+        <Display>Maid</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="sing">
+        <Display>singing</Display>
+        <Fallback>music</Fallback>
+        <Fallback Cost="15">bunny</Fallback>
+    </Type>
+    <Type Name="wait">
+        <Display>Waitress</Display>
+        <Fallback>bunny</Fallback>
+    </Type>
+    <Type Name="card">
+        <Display>Card Dealer</Display>
+        <Fallback>bunny</Fallback>
+    </Type>
+    <Type Name="nurse">
+        <Display>Nurse</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="piano">
+        <Display>Piano</Display>
+        <Fallback>music</Fallback>
+    </Type>
+    <Type Name="music">
+        <Display>Music</Display>
+        <Fallback Cost="1">sing</Fallback>
+        <Fallback Cost="1">piano</Fallback>
+        <Fallback>profile</Fallback>
+        <Fallback Cost="9">formal</Fallback>
+    </Type>
+    <Type Name="stagehand">
+        <Display>Stage Hand</Display>
+        <Fallback>studiocrew</Fallback>
+        <Fallback>maid</Fallback>
+        <Fallback>craft</Fallback>
+    </Type>
+    <Type Name="crystalpurifier">
+        <Display>Crystal Purifier</Display>
+        <Fallback>studiocrew</Fallback>
+    </Type>
+    <Type Name="director">
+        <Display>Director</Display>
+        <Fallback>studiocrew</Fallback>
+        <Fallback>formal</Fallback>
+    </Type>
+    <Type Name="cameramage">
+        <Display>Camera Mage</Display>
+        <Fallback>studiocrew</Fallback>
+    </Type>
+    <Type Name="studiocrew">
+        <Display>Studio Crew</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="cook">
+        <Display>Cook</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="farm">
+        <Display>Farm</Display>
+        <Fallback>herd</Fallback>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="herd">
+        <Display>Herd</Display>
+        <Fallback>farm</Fallback>
+    </Type>
+    <Type Name="advertise">
+        <Display>Advertise</Display>
+        <Pattern>advertise.*</Pattern>
+        <Pattern>sign.*</Pattern>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="escort">
+        <Display>Escort</Display>
+        <Fallback>formal</Fallback>
+    </Type>
+
+    <Type Name="sport">
+        <Display>Sport</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="study">
+        <Display>study</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="teacher">
+        <Display>Teacher</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="combat">
+        <Display>Combat</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="magic">
+        <Display>Magic</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="bed">
+        <Display>Bed</Display>
+        <Fallback Cost="15">profile</Fallback>
+        <Fallback>nude</Fallback>
+    </Type>
+    <Type Name="bath">
+        <Display>bath</Display>
+        <Fallback>nude</Fallback>
+    </Type>
+    <Type Name="swim">
+        <Display>swim</Display>
+        <Fallback>bath</Fallback>
+        <Fallback>nude</Fallback>
+    </Type>
+    <Type Name="shop">
+        <Display>Shopping</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="craft">
+        <Display>Crafting</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+
+    <Type Name="birthhuman">
+        <Display>Birth (Human)</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="birthhumanmultiple">
+        <Display>Birth (Multi)</Display>
+        <Fallback>birthhuman</Fallback>
+    </Type>
+    <Type Name="birthbeast">
+        <Display>Birth (Beast)</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+
+    <Type Name="refuse">
+        <Display>Refuse</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="death">
+        <Display>Death</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="profile">
+        <Display>Profile</Display>
+    </Type>
+    <Type Name="jail">
+        <Display>Jail</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="torture">
+        <Display>Torture</Display>
+        <Fallback>jail</Fallback>
+        <Fallback>sub</Fallback>
+    </Type>
+    <Type Name="formal">
+        <Display>Formal</Display>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="presented">
+        <Display>Presented (Slave Market)</Display>
+        <Fallback Cost="15">profile</Fallback>
+        <Fallback>sub</Fallback>
+    </Type>
+    <Type Name="brand">
+        <Display>Slave Brand</Display>
+        <Fallback>presented</Fallback>
+        <Fallback>sub</Fallback>
+    </Type>
+    <Type Name="puppygirl">
+        <Display>Puppy Girl</Display>
+        <Fallback>ecchi</Fallback>
+        <Fallback>bunny</Fallback>
+    </Type>
+    <Type Name="ponygirl">
+        <Display>Pony Girl</Display>
+        <Fallback>ecchi</Fallback>
+        <Fallback>bunny</Fallback>
+    </Type>
+    <Type Name="catgirl">
+        <Display>Cat Girl</Display>
+        <Fallback>ecchi</Fallback>
+        <Fallback>bunny</Fallback>
+    </Type>
+</ImageTypes>

@@ -17,34 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WM_JOBS_CRAFTING_H
-#define WM_JOBS_CRAFTING_H
+#ifndef WM_SIMAGESPEC_H
+#define WM_SIMAGESPEC_H
 
-#include "SimpleJob.h"
-#include <sstream>
-#include <vector>
-#include "images/sImageSpec.h"
+#include <cstdint>
+#include "ids.h"
 
-
-class GenericCraftingJob : public cSimpleJob {
-public:
-    explicit GenericCraftingJob(JOBS id, const char* xml, Action_Types action, int BaseWages, EBaseImage image) :
-        cSimpleJob(id, xml, {action, BaseWages}) {
-    }
-
-protected:
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
-
-    EBaseImage m_Image;
-
-    // shift processing data
-    int craftpoints;
-private:
-    virtual void performance_msg();
-    virtual void DoWorkEvents(sGirl& girl);
-
-    float DoCrafting(sGirl& girl, int craft_points);
+struct sImageSpec {
+    EBaseImage BasicImage;
+    bool IsPregnant;
+    bool IsVirgin;
+    std::uint64_t Seed;
 };
 
-#endif //WM_JOBS_CRAFTING_H
+#endif //WM_SIMAGESPEC_H

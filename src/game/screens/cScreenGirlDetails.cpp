@@ -112,8 +112,13 @@ void cScreenGirlDetails::set_ids()
     SetSliderCallback(accom_id, [this](int value) { set_accomodation(value); });
 }
 
-void cScreenGirlDetails::UpdateImage(int imagetype) {
-    PrepareImage(girlimage_id, m_SelectedGirl.get(), imagetype, true, ImageNum);
+void cScreenGirlDetails::UpdateImage(EBaseImage imagetype) {
+    if(m_SelectedGirl) {
+        PrepareImage(girlimage_id, *m_SelectedGirl, imagetype);
+        HideWidget(girlimage_id, false);
+    } else {
+        HideWidget(girlimage_id, true);
+    }
 }
 
 void cScreenGirlDetails::init(bool back)
@@ -150,8 +155,8 @@ void cScreenGirlDetails::init(bool back)
     EditTextItem(detail, girldesc_id, true);
 
     /// TODO when do we reset the image?
-    if(!back) {
-        PrepareImage(girlimage_id, m_SelectedGirl.get(), IMGTYPE_PROFILE, true, ImageNum);
+    if(!back && m_SelectedGirl) {
+        PrepareImage(girlimage_id, *m_SelectedGirl, EBaseImage::PROFILE);
     }
 
     SliderRange(houseperc_id, 0, 100, m_SelectedGirl->house(), 10);

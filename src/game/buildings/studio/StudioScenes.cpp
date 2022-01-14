@@ -27,7 +27,7 @@
 
 namespace {
     struct FilmOral : cFilmSceneJob {
-        FilmOral() : cFilmSceneJob(JOB_FILMORAL, "FilmOral.xml", IMGTYPE_ORAL,
+        FilmOral() : cFilmSceneJob(JOB_FILMORAL, "FilmOral.xml", EBaseImage::ORAL,
                                    SceneType::ORAL) {
 
         }
@@ -45,7 +45,7 @@ namespace {
     };
 
     struct FilmThroat : cFilmSceneJob {
-        FilmThroat() : cFilmSceneJob(JOB_FILMFACEFUCK, "FilmFaceFuck.xml", IMGTYPE_ORAL,
+        FilmThroat() : cFilmSceneJob(JOB_FILMFACEFUCK, "FilmFaceFuck.xml", EBaseImage::ORAL,
                                    SceneType::THROAT) {
 
         }
@@ -81,7 +81,7 @@ namespace {
     };
 
     struct FilmBeast : cFilmSceneJob {
-        FilmBeast() : cFilmSceneJob(JOB_FILMBEAST, "FilmBeast.xml",IMGTYPE_BEAST,
+        FilmBeast() : cFilmSceneJob(JOB_FILMBEAST, "FilmBeast.xml",EBaseImage::BEAST,
                                     SceneType::BEAST, cFilmSceneJob::SexAction::MONSTER) {
         }
 
@@ -90,7 +90,7 @@ namespace {
                 // no beasts = no scene
                 if (g_Game->storage().beasts() < 1)
                 {
-                    girl.AddMessage("You have no beasts for this scene, so she had the day off.", IMGTYPE_PROFILE, EVENT_NOWORK);
+                    girl.AddMessage("You have no beasts for this scene, so she had the day off.", EBaseImage::PROFILE, EVENT_NOWORK);
                     return false;
                 }
                 return true;
@@ -100,7 +100,7 @@ namespace {
     };
 
     struct FilmBuk : cFilmSceneJob {
-        FilmBuk() : cFilmSceneJob(JOB_FILMBUKKAKE, "FilmBuk.xml", IMGTYPE_ORAL, SceneType::BUK) {}
+        FilmBuk() : cFilmSceneJob(JOB_FILMBUKKAKE, "FilmBuk.xml", EBaseImage::ORAL, SceneType::BUK) {}
         void Narrate(sGirl& girl) override {
             if(m_IsForced) {
                 PrintForcedSceneEval();
@@ -117,7 +117,7 @@ namespace {
         }
     };
     struct FilmPubBDSM : cFilmSceneJob {
-        FilmPubBDSM() : cFilmSceneJob(JOB_FILMPUBLICBDSM, "FilmPublicBDSM.xml", IMGTYPE_BDSM, SceneType::PUB_BDSM) {}
+        FilmPubBDSM() : cFilmSceneJob(JOB_FILMPUBLICBDSM, "FilmPublicBDSM.xml", EBaseImage::BDSM, SceneType::PUB_BDSM) {}
         void Narrate(sGirl& girl) override {
             if(m_IsForced) {
                 PrintForcedSceneEval();
@@ -130,7 +130,7 @@ namespace {
     };
 
     struct FilmAction : cFilmSceneJob {
-        FilmAction() : cFilmSceneJob(JOB_FILMACTION, "FilmAction.xml", IMGTYPE_COMBAT, SceneType::ACTION) {}
+        FilmAction() : cFilmSceneJob(JOB_FILMACTION, "FilmAction.xml", EBaseImage::COMBAT, SceneType::ACTION) {}
         void Narrate(sGirl& girl) override {
             if (m_Performance >= 350)
             {
@@ -201,7 +201,7 @@ namespace {
                 return mgr.do_job(chosen, girl, SHIFT_NIGHT);
             }
 
-            girl.AddMessage("Could not find a valid scene to film for the random job.", IMGTYPE_PROFILE, EVENT_DEBUG);
+            girl.AddMessage("Could not find a valid scene to film for the random job.", EBaseImage::PROFILE, EVENT_DEBUG);
             return {false, 0, 0, 0};
         }
     };
@@ -210,43 +210,43 @@ namespace {
 // film registry
 void RegisterFilmingJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMTITTY, "FilmTitty.xml",
-                                                     IMGTYPE_TITTY, SceneType::TITTY));
+                                                     EBaseImage::TITTY, SceneType::TITTY));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMHANDJOB, "FilmHand.xml",
-                                                     IMGTYPE_HAND, SceneType::HAND));
+                                                     EBaseImage::HAND, SceneType::HAND));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMFOOTJOB, "FilmFoot.xml",
-                                                     IMGTYPE_FOOT, SceneType::FOOT));
+                                                     EBaseImage::FOOT, SceneType::FOOT));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMMAST, "FilmMast.xml",
-                                                     IMGTYPE_MAST, SceneType::MAST));
+                                                     EBaseImage::MAST, SceneType::MAST));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMANAL, "FilmAnal.xml",
-                                                     IMGTYPE_ANAL, SceneType::ANAL));
+                                                     EBaseImage::ANAL, SceneType::ANAL));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMLESBIAN, "FilmLes.xml",
-                                                     IMGTYPE_LESBIAN, SceneType::LES));
+                                                     EBaseImage::LESBIAN, SceneType::LES));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMSTRIP, "FilmStrip.xml",
-                                                     IMGTYPE_STRIP, SceneType::STRIP));
+                                                     EBaseImage::STRIP, SceneType::STRIP));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMTEASE, "FilmTease.xml",
-                                                     IMGTYPE_ECCHI, SceneType::TEASE));
+                                                     EBaseImage::ECCHI, SceneType::TEASE));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMMUSIC, "FilmMusic.xml",
-                                                     IMGTYPE_SING, SceneType::MUSIC));
+                                                     EBaseImage::SING, SceneType::MUSIC));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMSEX, "FilmSex.xml",
-                                                     IMGTYPE_SEX, SceneType::SEX, cFilmSceneJob::SexAction::HUMAN));
+                                                     EBaseImage::SEX, SceneType::SEX, cFilmSceneJob::SexAction::HUMAN));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMCHEF, "FilmChef.xml",
-                                                     IMGTYPE_COOK, SceneType::CHEF));
+                                                     EBaseImage::COOK, SceneType::CHEF));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMBONDAGE, "FilmBondage.xml",
-                                                     IMGTYPE_BDSM, SceneType::BDSM, cFilmSceneJob::SexAction::HUMAN));
+                                                     EBaseImage::BDSM, SceneType::BDSM, cFilmSceneJob::SexAction::HUMAN));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMGROUP, "FilmGroup.xml",
-                                                     IMGTYPE_GROUP, SceneType::GROUP, cFilmSceneJob::SexAction::HUMAN));
+                                                     EBaseImage::GROUP, SceneType::GROUP, cFilmSceneJob::SexAction::HUMAN));
 
     mgr.register_job(std::make_unique<FilmOral>());
     mgr.register_job(std::make_unique<FilmThroat>());

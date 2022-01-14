@@ -93,5 +93,5 @@ public:
     void    talk();
     void    get_selected_girls(std::vector<int> *sel);
     void    update_image();
-    void UpdateImage(int imagetype) override;
+    void UpdateImage(EBaseImage imagetype) override;
 };

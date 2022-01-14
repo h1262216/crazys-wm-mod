@@ -21,6 +21,7 @@
 #define WM_CGAMEWINDOW_H
 
 #include "interface/cInterfaceWindowXML.h"
+#include "images/sImageSpec.h"
 
 class IBuilding;
 class sGirl;
@@ -31,8 +32,9 @@ public:
 
     /// This function should be overwriden by screens that expect scripts to change an image.
     /// This is not a perfect solution, but will do for now.
-    virtual void UpdateImage(int imagetype) {};
-    void PrepareImage(int girlimage_id, sGirl* selected_girl, int imagetype, bool rand = true, int ImageNum = -1, bool gallery = false, std::string ImageName = "");
+    virtual void UpdateImage(EBaseImage imagetype) {};
+    void PrepareImage(int id, const sGirl& girl, const sImageSpec& spec);
+    void PrepareImage(int id, const sGirl& girl, EBaseImage image);
 protected:
     // active building
     IBuilding& active_building() const;

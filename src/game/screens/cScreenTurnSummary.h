@@ -76,4 +76,7 @@ public:
 
     void Fill_Items_RIVALS();
     void Fill_Events_Rivals();
+
+    void update_image(const sImageSpec& spec);
+    void set_backdrop(const std::string& bd);
 };

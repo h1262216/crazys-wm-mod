@@ -23,6 +23,7 @@
   - [ ] Torturer
   - [ ] PersonalBedWarmer
   - [ ] Free Time
+* [ ] Partially share XML between different jobs
 * [ ] adjustable unique chance for overworld encounters
 
 ## Scripting

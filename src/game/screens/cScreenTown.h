@@ -62,5 +62,5 @@ public:
     void do_walk();
     std::string walk_no_luck();
 
-    void UpdateImage(int imagetype) override;
+    void UpdateImage(EBaseImage imagetype) override;
 };

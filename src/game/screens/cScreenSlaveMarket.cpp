@@ -541,7 +541,7 @@ bool cScreenSlaveMarket::buy_slaves()
     {
         std::stringstream sss;
         sss << "Purchased from the Slave Market for " << g_Game->tariff().slave_buy_price(*girl) << " gold.";
-        girl->AddMessage(sss.str(), IMGTYPE_PROFILE, EVENT_GOODNEWS);
+        girl->AddMessage(sss.str(), EBaseImage::PROFILE, EVENT_GOODNEWS);
         girl->set_default_house_percent();
 
         if(m_TargetBuilding) {
@@ -560,7 +560,6 @@ bool cScreenSlaveMarket::buy_slaves()
 
     // finish it
     m_SelectedGirl = -1;
-    PrepareImage(image_id, nullptr, -1, false, -1, false, "blank");
     HideWidget(image_id, true);        // hide/show image based on whether a girl is selected
     if (m_SelectedGirl < 0)                                // if no girl is selected, clear girl info
     {
@@ -705,7 +704,7 @@ bool cScreenSlaveMarket::change_selected_girl(int selected)
     if (trait_list_id >= 0) ClearListBox(trait_list_id);
     if (trait_list_text_id >= 0) EditTextItem("Traits:", trait_list_text_id);
     if (girl_desc_id >= 0)    EditTextItem("", girl_desc_id);
-    // selection of -1 means nothing selected, so we get to go home early
+    // selection of -1 means nothing selected so we get to go home early
     if (m_SelectedGirl == -1) return true;
     /*
      *    otherwise, we have (potentially) a new girl:
@@ -729,8 +728,7 @@ bool cScreenSlaveMarket::change_selected_girl(int selected)
     ImageNum = -1;                                        // I don't understand where this is used...
 
     preparescreenitems(girl);
-    PrepareImage(image_id, girl, IMGTYPE_PRESENTED, true, ImageNum);
-    HideWidget(image_id, false);
+    PrepareImage(image_id, *girl, EBaseImage::PRESENTED);
 
     return true;
 }

@@ -357,7 +357,7 @@ bool sGirl::calc_pregnancy(int chance, int type, const ICharacter& father)
         break;
     }
 
-    AddMessage(text, IMGTYPE_PREGNANT, EVENT_DANGER);
+    AddMessage(text, EBaseImage::PROFILE, EVENT_DANGER);
     create_pregnancy(*this, 1, type, father);
     return false;
 }
@@ -1459,7 +1459,7 @@ double sGirl::job_performance(JOBS job, bool estimate) const {
     return job_handler->GetPerformance(*this, estimate);
 }
 
-void sGirl::AddMessage(const std::string& message, int nImgType, EventType event) {
+void sGirl::AddMessage(const std::string& message, const sImageSpec& spec, EventType event) {
     m_Events.AddMessage(interpolate_string(message,
                                            [this](const std::string& pattern) -> std::string {
         if(pattern == "name") {
@@ -1472,7 +1472,7 @@ void sGirl::AddMessage(const std::string& message, int nImgType, EventType event
             return this->MiddleName();
         }
         throw std::runtime_error("Invalid pattern " + pattern);
-        }, g_Dice), nImgType, event);
+        }, g_Dice), spec, event);
 }
 
 const DirPath& sGirl::GetImageFolder() const {
@@ -1494,4 +1494,33 @@ FormattedCellData sGirl::GetJobRating(JOBS job) const {
     else if (value >= 70)    return {1, "D"};             // Don't bother
     else                     return {0, "E"};  // Expect Failure
 
+}
+
+sImageSpec sGirl::MakeImageSpec(EBaseImage base) const {
+    // add some variety to profile images.
+    // TODO this does not affect profile when used as fallback, but it should!
+    bool armor = get_num_item_equiped(sInventoryItem::Armor) >= 1;
+    bool dress = get_num_item_equiped(sInventoryItem::Dress) >= 1;
+    bool swim = get_num_item_equiped(sInventoryItem::Swimsuit) >= 1;
+    bool lingerie = get_num_item_equiped(sInventoryItem::Underwear) >= 1;
+    if (base == EBaseImage::PROFILE && g_Dice.percent(10))
+    {
+        if (armor)    { base = EBaseImage::COMBAT; }
+        else if (dress)
+        {
+            if (has_active_trait("Elegant")) base = EBaseImage::FORMAL;
+            else if (has_active_trait("Dominatrix")) base = EBaseImage::DOM;
+            else if (has_active_trait("Maid")) base = EBaseImage::MAID;
+            else if (has_active_trait("Teacher")) base = EBaseImage::TEACHER;
+            else if (has_active_trait("Doctor")) base = EBaseImage::NURSE;
+        }
+        else if (swim)            { base = EBaseImage::SWIM; }
+        else if (lingerie)        { base = EBaseImage::ECCHI; }
+    }
+
+        return sImageSpec{base, is_pregnant(), is_virgin(*this), (std::uint64_t)(g_Dice % 8192)};
+}
+
+void sGirl::AddMessage(const std::string& message, EBaseImage base, EventType event) {
+    return AddMessage(message, MakeImageSpec(base), event);
 }

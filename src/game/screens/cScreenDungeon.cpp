@@ -646,7 +646,7 @@ void cScreenDungeon::update_image()
     }
     else if (selected_girl() && !IsMultiSelected(girllist_id))
     {
-        UpdateImage(selected_girl()->m_Tort ? IMGTYPE_TORTURE : IMGTYPE_JAIL);
+        UpdateImage(selected_girl()->m_Tort ? EBaseImage::TORTURE : EBaseImage::JAIL);
     }
     else
     {
@@ -654,9 +654,13 @@ void cScreenDungeon::update_image()
     }
 }
 
-void cScreenDungeon::UpdateImage(int imagetype) {
-    PrepareImage(girlimage_id, selected_girl().get(), imagetype, true, ImageNum);
-    HideWidget(girlimage_id, false);
+void cScreenDungeon::UpdateImage(EBaseImage imagetype) {
+    if(selected_girl()) {
+        PrepareImage(girlimage_id, *selected_girl(), (EBaseImage) imagetype);
+        HideWidget(girlimage_id, false);
+    } else {
+        HideWidget(girlimage_id, true);
+    }
 }
 
 void cScreenDungeon::get_selected_girls(std::vector<int> *girl_array)

@@ -1,0 +1,56 @@
+/*
+ * Copyright 2009, 2010, The Pink Petal Development Team.
+ * The Pink Petal Devloment Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef WM_CIMAGELOOKUP_H
+#define WM_CIMAGELOOKUP_H
+
+#include "sImageSpec.h"
+
+#include <unordered_map>
+#include <vector>
+#include <boost/optional.hpp>
+#include <random>
+
+class cImageLookup {
+public:
+    cImageLookup(std::string  def_img_path, const std::string& spec_file);
+    std::string find_image(const std::string& base_path, const sImageSpec& spec);
+
+    struct sFallbackData {
+        EBaseImage NewImageType;
+        int Cost = 1;
+    };
+    struct sImgTypeInfo {
+        std::vector<std::string> Patterns;
+        std::vector<sFallbackData> Fallbacks;
+    };
+
+private:
+    const std::vector<std::string>& lookup_files(const std::string& base_path);
+    boost::optional<std::string> find_image_direct(const std::vector<std::string>& haystack, const sImageSpec& spec, std::minstd_rand& rng) const;
+    std::string find_image_internal(const std::string& base_path, const sImageSpec& spec, int max_cost);
+
+    std::unordered_map<std::string, std::vector<std::string>> m_PathCache;
+    std::vector<sImgTypeInfo> m_ImageTypes;
+    std::string m_DefaultPath;
+
+    int m_CostCutoff = 25;   // if the lookup cost exceeds this value, default images will be used
+};
+
+#endif //WM_CIMAGELOOKUP_H

@@ -22,6 +22,7 @@
 
 #include <unordered_map>
 #include "CLog.h"
+#include <cassert>
 
 template<class T>
 using id_lookup_t = std::unordered_map<std::string, T>;

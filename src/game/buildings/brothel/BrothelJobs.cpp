@@ -45,7 +45,7 @@ IGenericJob::eCheckWorkResult cBarJob::CheckWork(sGirl& girl, bool is_night) {
     {
         add_text("event.nympho-nowork");
         girl.upd_temp_stat(STAT_LIBIDO, -20);
-        girl.AddMessage(ss.str(), IMGTYPE_MAST, EVENT_NOWORK);
+        girl.AddMessage(ss.str(), EBaseImage::MAST, EVENT_NOWORK);
         return eCheckWorkResult::REFUSES;
     } else {
         return SimpleRefusalCheck(girl, m_Data.Action);
@@ -54,7 +54,7 @@ IGenericJob::eCheckWorkResult cBarJob::CheckWork(sGirl& girl, bool is_night) {
     {
         ss << "There were no customers in the bar on the " << (is_night ? "night" : "day") << " shift so ${name} just cleaned up a bit.";
         brothel.m_Filthiness -= 20 + girl.service() * 2;
-        girl.AddMessage(ss.str(), IMGTYPE_PROFILE, EVENT_NOWORK);
+        girl.AddMessage(ss.str(), EBaseImage::PROFILE, EVENT_NOWORK);
         return eCheckWorkResult::IMPOSSIBLE;
     }*/
     return eCheckWorkResult::ACCEPTS;
@@ -73,7 +73,7 @@ bool cBarCookJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     int fame = 0;
     m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
 
-    int imagetype = IMGTYPE_COOK;
+    EBaseImage imagetype = EBaseImage::COOK;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //a little pre-game randomness
@@ -112,7 +112,7 @@ bool cBarMaidJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
     m_Earnings = 15 + (int)m_PerformanceToEarnings(float(m_Performance));
     int fame = 0;                // girl
     int Bhappy = 0, Bfame = 0, Bfilth = 0;    // brothel
-    int imagetype = IMGTYPE_WAIT;
+    EBaseImage imagetype = EBaseImage::WAIT;
     int msgtype = is_night;
 
     //    Job Performance            //
@@ -486,7 +486,7 @@ bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
 
     m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
 
-    int imagetype = IMGTYPE_WAIT;
+    EBaseImage imagetype = EBaseImage::WAIT;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
     int HateLove = girl.pclove();
 
@@ -538,13 +538,13 @@ bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
                     {
                         ss << "${name} lifts up her skirt so you can see that she is not wearing underwear. \"I was hoping that you might put your birthday present in my ass,\" she whispers into your ear, deftly opening your pants and lowering herself onto your suddenly and ragingly erect cock. She whimpers briefly as your dick penetrates her, then she spits on her hand and rubs the lubricant onto your tip before impaling herself again. \"You have no idea how often I fantasize about this when dealing with those stodgy customers all day,\" she pants, reveling as you ream her ass. \"Use me like a dirty backstreet whore,\" she continues, wrapping her asshole around you and bouncing up and down. It does not take long to cum for both of you. ${name} smiles";
                         ss << " with fulfillment as she lifts herself off your cock, semen leaking onto the table. \"I guess I'll need to clean that up,\" she comments, before turning back to you. \"Happy birthday to me,\" she grins. \"Let's do it again sometime.\"";
-                        imagetype = IMGTYPE_ANAL;
+                        imagetype = EBaseImage::ANAL;
                         girl.anal(1);
                     }
                     else if (roll_c >= 50)//SEX
                     {
                         ss << "${name} lies flat on her back on the cleared table, hiking up her dress so you have direct access to her wet pussy and placing the cake on her stomach. \"If you want dessert, I think you should come and get it,\" she purrs. You insert your hard-on into her and slowly fuck her as she moans, stopping only for a moment to take a piece of cake. You eat a bite and then feed her the rest as you pump with increasing speed, and as she takes the last bite, you spurt deep inside her. \"Happy birthday to me,\" she smiles.";
-                        imagetype = IMGTYPE_SEX;
+                        imagetype = EBaseImage::SEX;
                         girl.normalsex(1);
                     }
                     else//ORAL
@@ -561,7 +561,7 @@ bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
                         {
                             ss << "${name} kisses you once on the lips, and then once on the chest, and then slowly works her way down to your pants. She gently pulls out your cock and surrounds it with her velvety mouth, sucking gently. The blowjob is not amazing, but it is delivered with such tenderness and love that you find yourself very satisfied regardless.";
                         }
-                        imagetype = IMGTYPE_ORAL;
+                        imagetype = EBaseImage::ORAL;
                         girl.oralsex(1);
                     }
                 }
@@ -614,7 +614,7 @@ bool cBarPianoJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 
     m_Earnings = 20;
     int fame = 0;
-    int imagetype = IMGTYPE_PIANO;
+    EBaseImage imagetype = EBaseImage::PIANO;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //    Job Performance            //
@@ -706,7 +706,7 @@ bool cBarSingerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night
     int roll_a = d100(), roll_b = d100();
 
     int happy = 0, fame = 0;
-    int imagetype = IMGTYPE_SING;
+    EBaseImage imagetype = EBaseImage::SING;
     EventType msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
@@ -774,7 +774,7 @@ bool cDealerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
 
     m_Earnings = 25;
     int fame = 0;
-    int imagetype = IMGTYPE_CARD;
+    EBaseImage imagetype = EBaseImage::CARD;
 
     //    Job Performance            //
 
@@ -953,7 +953,7 @@ bool cEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
 
     m_Earnings = 25;
     int fame = 0;
-    int imagetype = IMGTYPE_BUNNY;
+    EBaseImage imagetype = EBaseImage::BUNNY;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
 #pragma endregion
@@ -1040,7 +1040,7 @@ cXXXEntertainerJob::cXXXEntertainerJob() : cSimpleJob(JOB_XXXENTERTAINMENT, "XXX
 bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     m_Earnings = 25;
     int fame = 0;
-    int imagetype = IMGTYPE_BUNNY;
+    EBaseImage imagetype = EBaseImage::BUNNY;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
      //    Job Performance            //
@@ -1175,7 +1175,7 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = IMGTYPE_MAST;
+                imagetype = EBaseImage::MAST;
             }
                 //Let's see if she has what it takes to do it: Confidence > 65 or Exhibitionist trait, maybe shy girls should be excluded
             else if (!girl.has_active_trait("Cum Addict") && girl.has_active_trait("Exhibitionist") || !girl.has_active_trait(
@@ -1209,7 +1209,7 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = IMGTYPE_MAST;
+                imagetype = EBaseImage::MAST;
             }
             else
             {
@@ -1226,7 +1226,7 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
             // work out the pay between the house and the girl
             m_Earnings += girl.askprice() + 60;
             fame += 1;
-            imagetype = IMGTYPE_MAST;
+            imagetype = EBaseImage::MAST;
         }
     }
 
@@ -1253,7 +1253,7 @@ cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml", {ACTION_
 
 bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     m_Earnings = girl.askprice() + 40;
-    int imageType = IMGTYPE_MASSAGE;
+    EBaseImage imageType = EBaseImage::MASSAGE;
     int fame = 0;
 
     add_performance_text();
@@ -1286,13 +1286,13 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             }
             ss << ", making him very happy.\n";
         }
-        /* */if (n == SKILL_LESBIAN)    imageType = IMGTYPE_LESBIAN;
-        else if (n == SKILL_ORALSEX)    imageType = IMGTYPE_ORAL;
-        else if (n == SKILL_TITTYSEX)    imageType = IMGTYPE_TITTY;
-        else if (n == SKILL_HANDJOB)    imageType = IMGTYPE_HAND;
-        else if (n == SKILL_FOOTJOB)    imageType = IMGTYPE_FOOT;
-        else if (n == SKILL_ANAL)        imageType = IMGTYPE_ANAL;
-        else if (n == SKILL_NORMALSEX)    imageType = IMGTYPE_SEX;
+        /* */if (n == SKILL_LESBIAN)    imageType = EBaseImage::LESBIAN;
+        else if (n == SKILL_ORALSEX)    imageType = EBaseImage::ORAL;
+        else if (n == SKILL_TITTYSEX)    imageType = EBaseImage::TITTY;
+        else if (n == SKILL_HANDJOB)    imageType = EBaseImage::HAND;
+        else if (n == SKILL_FOOTJOB)    imageType = EBaseImage::FOOT;
+        else if (n == SKILL_ANAL)        imageType = EBaseImage::ANAL;
+        else if (n == SKILL_NORMALSEX)    imageType = EBaseImage::SEX;
         if (n == SKILL_NORMALSEX)
         {
             if (girl.lose_trait("Virgin"))
@@ -1355,7 +1355,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     m_Tips = std::max(uniform(-10, 40), 0);
     int fame = 0;
     SKILLS sextype = SKILL_STRIP;
-    int imagetype = IMGTYPE_STRIP;
+    EBaseImage imagetype = EBaseImage::STRIP;
 
     //    Job Performance            //
 
@@ -1423,7 +1423,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = IMGTYPE_MAST;
+                imagetype = EBaseImage::MAST;
             }
                 //Let's see if she has what it takes to do it: Confidence > 65 or Exhibitionist trait, maybe shy girls should be excluded
             else if (!girl.has_active_trait("Cum Addict") && girl.has_active_trait("Exhibitionist") || !girl.has_active_trait(
@@ -1457,7 +1457,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = IMGTYPE_MAST;
+                imagetype = EBaseImage::MAST;
             }
             else
             {
@@ -1475,7 +1475,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             // work out the pay between the house and the girl
             m_Earnings += girl.askprice() + 60;
             fame += 1;
-            imagetype = IMGTYPE_MAST;
+            imagetype = EBaseImage::MAST;
         }
     }
     else if (chance(5))  //glory hole event
@@ -1511,7 +1511,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                                                                      girl.has_active_trait("Succubus") || girl.dignity() < -30) && girl.libido() >= 40) //foot
             {
                 sextype = SKILL_FOOTJOB;
-                imagetype = IMGTYPE_FOOT;
+                imagetype = EBaseImage::FOOT;
                 ss << "decided she would give him a foot job for being so brave.\n";
             }
             else if (brothel.is_sex_type_allowed(SKILL_HANDJOB) && (girl.has_active_trait("Nymphomaniac") ||
@@ -1528,7 +1528,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             /* `J` suggest adding bad stuff,
             else if (girl.has_trait( "Merciless") && girl.has_item("Dagger") != -1 && chance(10))
             {
-            imagetype = IMGTYPE_COMBAT;
+            imagetype = EBaseImage::COMBAT;
             ss << "decided she would teach this guy a lesson and cut his dick off.\n";
             }
             *
@@ -1578,18 +1578,18 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         if (sextips > 0) ss << " and slipped her another " << sextips << " under the table.\n \n";
         else ss << ".\n \n";
 
-        if (imagetype == IMGTYPE_STRIP)
+        if (imagetype == EBaseImage::STRIP)
         {
-            /* */if (sextype == SKILL_ANAL)            imagetype = IMGTYPE_ANAL;
-            else if (sextype == SKILL_BDSM)            imagetype = IMGTYPE_BDSM;
-            else if (sextype == SKILL_NORMALSEX)    imagetype = IMGTYPE_SEX;
-            else if (sextype == SKILL_BEASTIALITY)    imagetype = IMGTYPE_BEAST;
-            else if (sextype == SKILL_GROUP)        imagetype = IMGTYPE_GROUP;
-            else if (sextype == SKILL_LESBIAN)        imagetype = IMGTYPE_LESBIAN;
-            else if (sextype == SKILL_ORALSEX)        imagetype = IMGTYPE_ORAL;
-            else if (sextype == SKILL_TITTYSEX)        imagetype = IMGTYPE_TITTY;
-            else if (sextype == SKILL_HANDJOB)        imagetype = IMGTYPE_HAND;
-            else if (sextype == SKILL_FOOTJOB)        imagetype = IMGTYPE_FOOT;
+            /* */if (sextype == SKILL_ANAL)            imagetype = EBaseImage::ANAL;
+            else if (sextype == SKILL_BDSM)            imagetype = EBaseImage::BDSM;
+            else if (sextype == SKILL_NORMALSEX)    imagetype = EBaseImage::SEX;
+            else if (sextype == SKILL_BEASTIALITY)    imagetype = EBaseImage::BEAST;
+            else if (sextype == SKILL_GROUP)        imagetype = EBaseImage::GROUP;
+            else if (sextype == SKILL_LESBIAN)        imagetype = EBaseImage::LESBIAN;
+            else if (sextype == SKILL_ORALSEX)        imagetype = EBaseImage::ORAL;
+            else if (sextype == SKILL_TITTYSEX)        imagetype = EBaseImage::TITTY;
+            else if (sextype == SKILL_HANDJOB)        imagetype = EBaseImage::HAND;
+            else if (sextype == SKILL_FOOTJOB)        imagetype = EBaseImage::FOOT;
         }
     }
 
@@ -1622,7 +1622,7 @@ cBrothelStripper::cBrothelStripper() : cSimpleJob(JOB_BROTHELSTRIPPER, "BrothelS
 
 bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     int fame = 0;
-    int imagetype = IMGTYPE_STRIP;
+    EBaseImage imagetype = EBaseImage::STRIP;
     m_Earnings = 45;
 
     //    Job Performance            //
@@ -1801,7 +1801,7 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
         if (girl.has_active_trait("Shroud Addict"))            girl.add_item(g_Game->inventory_manager().GetItem("Shroud Mushroom"));
         if (girl.has_active_trait("Fairy Dust Addict"))        girl.add_item(g_Game->inventory_manager().GetItem("Fairy Dust"));
         if (girl.has_active_trait("Viras Blood Addict"))    girl.add_item(g_Game->inventory_manager().GetItem("Vira Blood"));
-        girl.AddMessage(warning, IMGTYPE_ORAL, EVENT_WARNING);
+        girl.AddMessage(warning, EBaseImage::ORAL, EVENT_WARNING);
     }
 
     if (sex)
@@ -1809,7 +1809,7 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
         int n;
         ss << "In one of the private shows, she ended up ";
         brothel.m_Happiness += 100;
-        //int imageType = IMGTYPE_SEX;
+        //int imageType = EBaseImage::SEX;
         if (Cust.m_IsWoman && brothel.is_sex_type_allowed(SKILL_LESBIAN))
         {
             n = SKILL_LESBIAN;
@@ -1828,13 +1828,13 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
             }
             ss << ", making him very happy.\n";
         }
-        /* */if (n == SKILL_LESBIAN)    imagetype = IMGTYPE_LESBIAN;
-        else if (n == SKILL_ORALSEX)    imagetype = IMGTYPE_ORAL;
-        else if (n == SKILL_TITTYSEX)    imagetype = IMGTYPE_TITTY;
-        else if (n == SKILL_HANDJOB)    imagetype = IMGTYPE_HAND;
-        else if (n == SKILL_FOOTJOB)    imagetype = IMGTYPE_FOOT;
-        else if (n == SKILL_ANAL)        imagetype = IMGTYPE_ANAL;
-        else if (n == SKILL_NORMALSEX)    imagetype = IMGTYPE_SEX;
+        /* */if (n == SKILL_LESBIAN)    imagetype = EBaseImage::LESBIAN;
+        else if (n == SKILL_ORALSEX)    imagetype = EBaseImage::ORAL;
+        else if (n == SKILL_TITTYSEX)    imagetype = EBaseImage::TITTY;
+        else if (n == SKILL_HANDJOB)    imagetype = EBaseImage::HAND;
+        else if (n == SKILL_FOOTJOB)    imagetype = EBaseImage::FOOT;
+        else if (n == SKILL_ANAL)        imagetype = EBaseImage::ANAL;
+        else if (n == SKILL_NORMALSEX)    imagetype = EBaseImage::SEX;
         if (n == SKILL_NORMALSEX)
         {
             if (girl.lose_trait("Virgin"))
@@ -1866,8 +1866,8 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
         roll_max /= 4;
         m_Earnings += 50 + uniform(0, roll_max);
         fame += 1;
-        imagetype = IMGTYPE_MAST;
-        //girl.m_Events.AddMessage(ss.str(), IMGTYPE_MAST, Day0Night1);
+        imagetype = EBaseImage::MAST;
+        //girl.m_Events.AddMessage(ss.str(), EBaseImage::MAST, Day0Night1);
     }
     else
     {
@@ -1876,7 +1876,7 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
         int roll_max = (girl.beauty() + girl.charisma());
         roll_max /= 4;
         m_Earnings += 10 + uniform(0, roll_max);
-        //girl.m_Events.AddMessage(ss.str(), IMGTYPE_STRIP, Day0Night1);
+        //girl.m_Events.AddMessage(ss.str(), EBaseImage::STRIP, Day0Night1);
     }
 
     if (girl.is_pregnant())
@@ -1931,7 +1931,7 @@ ClubBarmaid::ClubBarmaid() : cSimpleJob(JOB_SLEAZYBARMAID, "StripBarMaid.xml", {
 
 bool ClubBarmaid::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     int fame = 0;
-    int imagetype = IMGTYPE_ECCHI;
+    EBaseImage imagetype = EBaseImage::ECCHI;
 
     add_performance_text();
     m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
@@ -1968,7 +1968,7 @@ bool ClubBarmaid::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
     if (girl.has_active_trait("Meek") && chance(5) && m_Performance < 125)
     {
         ss << "${name} spilled a drink all over a man's lap. He told her she had to lick it up and forced her to clean him up which she Meekly accepted and went about licking his cock clean.\n";
-        imagetype = IMGTYPE_ORAL;
+        imagetype = EBaseImage::ORAL;
         m_Enjoyment -= 3;
     }
 
@@ -1981,7 +1981,7 @@ bool ClubBarmaid::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
             "Lesbian"))
     {
         add_text("event.nympho");
-        imagetype = IMGTYPE_SEX;
+        imagetype = EBaseImage::SEX;
         girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         girl.normalsex(1);
         sCustomer Cust = g_Game->GetCustomer(*girl.m_Building);
@@ -2005,7 +2005,7 @@ bool ClubBarmaid::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
 
     //gained
     if (m_Performance < 100 && chance(2)) { cGirls::PossiblyGainNewTrait(girl, "Assassin", 10, ACTION_WORKCLUB, "${name}'s lack of skill at mixing drinks has been killing people left and right making her into quite the Assassin.", is_night); }
-    if (chance(25) && girl.dignity() < 0 && (imagetype == IMGTYPE_SEX || imagetype == IMGTYPE_ORAL))
+    if (chance(25) && girl.dignity() < 0 && (imagetype == EBaseImage::SEX || imagetype == EBaseImage::ORAL))
     {
         cGirls::PossiblyGainNewTrait(girl, "Slut", 80, ACTION_SEX, "${name} has turned into quite a slut.", is_night, EVENT_WARNING);
     }
@@ -2025,7 +2025,7 @@ bool ClubStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     int roll_c = d100();
 
     m_Earnings = 30;
-    int imagetype = IMGTYPE_STRIP;
+    EBaseImage imagetype = EBaseImage::STRIP;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     int lapdance = (girl.intelligence() / 2 +
@@ -2142,7 +2142,7 @@ bool ClubStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         if (girl.has_active_trait("Shroud Addict"))            girl.add_item(g_Game->inventory_manager().GetItem("Shroud Mushroom"));
         if (girl.has_active_trait("Fairy Dust Addict"))        girl.add_item(g_Game->inventory_manager().GetItem("Fairy Dust"));
         if (girl.has_active_trait("Viras Blood Addict"))        girl.add_item(g_Game->inventory_manager().GetItem("Vira Blood"));
-        girl.AddMessage(warning, IMGTYPE_ORAL, EVENT_WARNING);
+        girl.AddMessage(warning, EBaseImage::ORAL, EVENT_WARNING);
     }
 
     if (girl.is_pregnant())
@@ -2193,7 +2193,7 @@ ClubWaitress::ClubWaitress() : cSimpleJob(JOB_SLEAZYWAITRESS, "StripWaitress.xml
 bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     m_Earnings = 25;
     int anal = 0, oral = 0, hand = 0, fame = 0;
-    int imagetype = IMGTYPE_ECCHI;
+    EBaseImage imagetype = EBaseImage::ECCHI;
 
     //    Job Performance            //
 
@@ -2213,7 +2213,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         ss << "${name} is addicted to cum, and she cannot serve her shift without taking advantage of a room full of cocks. Since most of your patrons are already sexually primed with all this nubile flesh walking around in skimpy uniforms, she does not need to be very persuasive to convince various men to satisfy her addiction. You see her feet sticking out from under the tables from time to time as a satisfied customer smiles at the ceiling. Her service with the other tables suffers, but her tips are still quite high.\n";
         m_Performance -= 10;
         m_Tips += 40;
-        imagetype = IMGTYPE_ORAL;
+        imagetype = EBaseImage::ORAL;
     }
     else if ((girl.has_active_trait("Shy") || girl.has_active_trait("Nervous")) && chance(20))
     {
@@ -2265,7 +2265,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                       "He jumped at the chance to get to try her ass out and bent "
                       "her over the table and whipping out his " << dick_type_text << " dick.";
                 m_Earnings += girl.askprice() + 50;
-                imagetype = IMGTYPE_ANAL;
+                imagetype = EBaseImage::ANAL;
                 girl.upd_temp_stat(STAT_LIBIDO, -20, true);
                 bool fast_orgasm = girl.has_active_trait("Fast Orgasms");
                 bool slow_orgasm = girl.has_active_trait("Slow Orgasms");
@@ -2411,7 +2411,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     {
         ss << "${name} thought she deserved a short break and disappeared under one of the tables when nobody was looking, in order to give one of the clients a blowjob. Kneeling under the table, she devoured his cock with ease and deepthroated him as he came to make sure she didn't make a mess. The client himself was wasted out of his mind and didn't catch as much as a glimpse of her, but he left the locale with a big tip on the table.\n";
         m_Tips += 50;
-        imagetype = IMGTYPE_ORAL;
+        imagetype = EBaseImage::ORAL;
         oral += 2;
         girl.upd_temp_stat(STAT_LIBIDO, -20, true);
     }
@@ -2422,7 +2422,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     {
         ss << "During her shift, ${name} unnoticeably dove under the table belonging to a lonely-looking fellow, quickly unzipped his pants and started jacking him off enthusiastically. She skillfully wiped herself when he came all over her face. The whole event took no longer than two minutes, but was well worth the time spent on it, since the patron left with a heavy tip.\n";
         m_Tips += 50;
-        imagetype = IMGTYPE_HAND;
+        imagetype = EBaseImage::HAND;
         hand += 2;
         girl.upd_temp_stat(STAT_LIBIDO, -20, true);
     }
@@ -2442,7 +2442,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             girl.upd_skill(SKILL_SERVICE, 2);
             girl.upd_temp_stat(STAT_LIBIDO, -30, true);;
             m_Tips += 30 + (int)(girl.service() * 0.2); // not sure if this will work fine
-            imagetype = IMGTYPE_MAST;
+            imagetype = EBaseImage::MAST;
         }
         else
         {
@@ -2564,8 +2564,8 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         girl.health(-1);
         girl.upd_Enjoyment(ACTION_SEX, -2);
         girl.spirit(-2);
-        imagetype = IMGTYPE_GROUP;
-        girl.AddMessage(ss.str(), IMGTYPE_GROUP, EVENT_DANGER);
+        imagetype = EBaseImage::GROUP;
+        girl.AddMessage(ss.str(), EBaseImage::GROUP, EVENT_DANGER);
         if (girl.lose_trait("Virgin"))
         {
             ss << "\nShe is no longer a virgin.\n";
@@ -2617,7 +2617,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 m_Tips += 15;
             }
             girl.oralsex(2);
-            imagetype = IMGTYPE_ORAL;
+            imagetype = EBaseImage::ORAL;
             girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         }
     }
@@ -2640,7 +2640,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 brothel.m_Happiness += 5;
             }
             girl.handjob(2);
-            imagetype = IMGTYPE_HAND;
+            imagetype = EBaseImage::HAND;
             girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         }
     }
@@ -2674,7 +2674,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                     ss << "The titfuck is not the best, but he�s hardly one to complain. \"I don�t know if I�ll order the special regularly,\" he says to her when she crawls back up and finishes wiping off the cum, \"but it was certainly a bonus for today!\"\n";
                 }
                 girl.tittysex(2);
-                imagetype = IMGTYPE_TITTY;
+                imagetype = EBaseImage::TITTY;
                 girl.upd_temp_stat(STAT_LIBIDO, -20, true);
             }
             m_Tips += 15;
@@ -2737,7 +2737,7 @@ AdvertisingJob::AdvertisingJob() : cSimpleJob(JOB_ADVERTISING, "Advertising.xml"
 bool AdvertisingJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     //    Job setup                //
     int fame = 0;
-    int imagetype = IMGTYPE_SIGN;
+    EBaseImage imagetype = EBaseImage::ADVERTISE;
     auto msgtype = EVENT_SUMMARY;
 
     //    Job Performance            //
@@ -2814,7 +2814,7 @@ bool AdvertisingJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nigh
         if (saysomething > 50)
         {
             girl.AddMessage("${name} comes up to you and asks you to change her job, She does not like advertizing.\n",
-                            IMGTYPE_PROFILE, EVENT_WARNING);
+                            EBaseImage::PROFILE, EVENT_WARNING);
         }
         else if (saysomething > 25)
         {
@@ -2945,7 +2945,7 @@ bool CustServiceJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nigh
         else
         {
             //If there aren't enough customers to take care of, time to quit.
-            girl.AddMessage(girl.FullName() + " ran out of customers to take care of.", IMGTYPE_PROFILE,
+            girl.AddMessage(girl.FullName() + " ran out of customers to take care of.", EBaseImage::PROFILE,
                             is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             break;
         }
@@ -2961,7 +2961,7 @@ bool CustServiceJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nigh
 
     // Bad customer service reps will leave the customer with 2-20 happiness. Bad customer service is at least better than no customer service.
     // Now pay the girl.
-    girl.AddMessage(ss.str(), IMGTYPE_PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), EBaseImage::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     // Raise skills
     HandleGains(girl, 1);
@@ -2986,7 +2986,7 @@ bool BeastCareJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     if (g_Game->storage().beasts() < 1) {
         add_text("no-beasts") << "\n\n";
     }
-    int imagetype = IMGTYPE_FARM;
+    EBaseImage imagetype = EBaseImage::FARM;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //    Job Performance            //
@@ -3097,7 +3097,7 @@ SecurityJob::SecurityJob() : cSimpleJob(JOB_SECURITY, "Security.xml", {ACTION_WO
 
 bool SecurityJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     int roll_a = d100();
-    int imagetype = IMGTYPE_COMBAT;
+    EBaseImage imagetype = EBaseImage::COMBAT;
 
     cGirls::EquipCombat(girl);    // ready armor and weapons!
 
@@ -3195,11 +3195,11 @@ bool SecurityJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
         int l = 0;
         switch (uniform(0, 4))        // `J` just roll for the 4 sex options and flash only if sex is restricted
         {
-            case 1:    if (brothel.is_sex_type_allowed(SKILL_ORALSEX))    { l = 10;    imagetype = IMGTYPE_ORAL;    ss << "She sucked them off";    break; }
-            case 2:    if (brothel.is_sex_type_allowed(SKILL_TITTYSEX))    { l = 7;    imagetype = IMGTYPE_TITTY;    ss << "She used her tits to get them off";    break; }
-            case 3:    if (brothel.is_sex_type_allowed(SKILL_HANDJOB))    { l = 6;    imagetype = IMGTYPE_HAND;    ss << "She jerked them off";    break; }
-            case 4:    if (brothel.is_sex_type_allowed(SKILL_FOOTJOB))    { l = 4;    imagetype = IMGTYPE_FOOT;    ss << "She used her feet to get them off";    break; }
-            default:/*                         */    { l = 2;    imagetype = IMGTYPE_STRIP;    ss << "She flashed them";    break; }
+            case 1:    if (brothel.is_sex_type_allowed(SKILL_ORALSEX))    { l = 10;    imagetype = EBaseImage::ORAL;    ss << "She sucked them off";    break; }
+            case 2:    if (brothel.is_sex_type_allowed(SKILL_TITTYSEX))    { l = 7;    imagetype = EBaseImage::TITTY;    ss << "She used her tits to get them off";    break; }
+            case 3:    if (brothel.is_sex_type_allowed(SKILL_HANDJOB))    { l = 6;    imagetype = EBaseImage::HAND;    ss << "She jerked them off";    break; }
+            case 4:    if (brothel.is_sex_type_allowed(SKILL_FOOTJOB))    { l = 4;    imagetype = EBaseImage::FOOT;    ss << "She used her feet to get them off";    break; }
+            default:/*                         */    { l = 2;    imagetype = EBaseImage::STRIP;    ss << "She flashed them";    break; }
         }
         ss << ".\n \n";
         girl.upd_temp_stat(STAT_LIBIDO, -l, true);
@@ -3350,7 +3350,7 @@ bool CatacombJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
             ss << " That's a hell of a way to lose your virginity; naturally, she's rather distressed by this fact.";
             health -= 1, happy -= 10, spirit -= 2, sex -= 2, combat -= 2, injury += 2;
         }
-        girl.AddMessage(ss.str(), IMGTYPE_DEATH, EVENT_DANGER);
+        girl.AddMessage(ss.str(), EBaseImage::DEATH, EVENT_DANGER);
 
         if (!girl.calc_insemination(cGirls::GetBeast(), 1.0 + (NumMon * 0.5)))
         {
@@ -3404,7 +3404,7 @@ bool CatacombJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
             std::stringstream Umsg;
             ugirl->add_temporary_trait("Kidnapped", uniform(2, 16));
             Umsg << ugirl->FullName() << " was captured in the catacombs by ${name}.\n";
-            ugirl->AddMessage(Umsg.str(), IMGTYPE_PROFILE, EVENT_DUNGEON);
+            ugirl->AddMessage(Umsg.str(), EBaseImage::PROFILE, EVENT_DUNGEON);
             g_Game->dungeon().AddGirl(ugirl, DUNGEON_GIRLCAPTURED);    // Either type of girl goes to the dungeon
         }
     }
@@ -3444,7 +3444,7 @@ bool CatacombJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
 
     if (num_monsters + num_items + gold < 1) ss << "She came out empty handed.";
 
-    girl.AddMessage(ss.str(), IMGTYPE_COMBAT, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), EBaseImage::COMBAT, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     ss.str("");
     if (girl.get_stat(STAT_LIBIDO) > 90 && type_monster_girls + type_unique_monster_girls > 0 && brothel.is_sex_type_allowed(SKILL_LESBIAN))
@@ -3452,14 +3452,14 @@ bool CatacombJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
         ss << "${name} was real horny so she had a little fun with the girl" << (type_monster_girls + type_unique_monster_girls > 1 ? "s" : "") << " she captured.";
         girl.upd_temp_stat(STAT_LIBIDO, -50, true);
         girl.lesbian(type_monster_girls + type_unique_monster_girls);
-        girl.AddMessage(ss.str(), IMGTYPE_LESBIAN, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+        girl.AddMessage(ss.str(), EBaseImage::LESBIAN, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
     else if (girl.get_stat(STAT_LIBIDO) > 90 && type_beasts > 0 && brothel.is_sex_type_allowed(SKILL_BEASTIALITY))
     {
         ss << "${name} was real horny so she had a little fun with the beast" << (type_beasts > 1 ? "s" : "") << " she captured.";
         girl.upd_temp_stat(STAT_LIBIDO, -50, true);
         girl.beastiality(type_beasts);
-        girl.AddMessage(ss.str(), IMGTYPE_BEAST, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+        girl.AddMessage(ss.str(), EBaseImage::BEAST, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
         if (!girl.calc_insemination(cGirls::GetBeast(), 1.0))
         {
             g_Game->push_message(girl.FullName() + " has gotten inseminated", 0);

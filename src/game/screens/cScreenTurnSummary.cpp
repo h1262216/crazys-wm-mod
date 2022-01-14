@@ -40,10 +40,9 @@
 static bool    Item_Change = false;
 static int    Event = -1;
 static int    Image = -1;
-static int    Image_Type = -1;
-static bool    Image_Change = false;
 static int summarysortorder = 0;    // the order girls get sorted in the summary lists
 #pragma endregion
+
 
 const sGirl* find_girl_by_name(IBuilding& source, std::string name)
 {
@@ -164,38 +163,6 @@ void cScreenTurnSummary::process()
     }
 
     EditTextItem(active_building().name(), brothel_id);
-
-    // Draw the image
-    if (m_ActiveCategory == Summary_BUILDINGS)
-    {
-        SetImage(image_id, "Backdrops", active_building().background_image());
-        if (imagename_id >= 0)    EditTextItem("", imagename_id);
-    }
-    else if (m_ActiveCategory == Summary_GANGS)
-    {
-        SetImage(image_id, "Backdrops", active_building().background_image());
-        if (imagename_id >= 0)    EditTextItem("", imagename_id);
-    }
-    else {
-        cImageItem * image_item = GetImage(image_id);
-        if (selected_girl() && Image_Change)
-        {
-            Image_Change = false;
-            PrepareImage(image_id, selected_girl().get(), Image_Type, true, Image);
-            if (imagename_id >= 0)
-            {
-                std::string t;
-                if (image_item) t = image_item->m_Image.GetFileName();
-                EditTextItem(t, imagename_id);
-            }
-        }
-        else if (Image_Change)
-        {
-            SetImage(image_id, "");
-            if (imagename_id >= 0)    EditTextItem("", imagename_id);
-        }
-    }
-
 }
 
 
@@ -244,8 +211,10 @@ void cScreenTurnSummary::change_category(SummaryCategory new_category)
 void cScreenTurnSummary::change_event(int selection)
 {
     Event = selection;
-    if(selection < 0)
+    if(selection < 0 || selection >= GetListBoxSize(event_id)) {
+        set_backdrop("");
         return;
+    }
 
     m_ActiveReport = nullptr;
 
@@ -254,12 +223,13 @@ void cScreenTurnSummary::change_event(int selection)
         if (!selected_girl()->GetEvents().IsEmpty()) {
             const CEvent& event = selected_girl()->GetEvents().GetMessage(selection);
             text       = event.GetMessage();
-            Image_Type = event.GetMessageType();
+            update_image(event.GetImage());
             if(event.IsCombat()) {
                 m_ActiveReport = event.GetReport();
             }
+        } else {
+            set_backdrop("");
         }
-        Image_Change = true;
     } else if (m_ActiveCategory == Summary_GANGS) {
         int active_gang = GetSelectedItemFromList(item_id);
         auto* gang = g_Game->gang_manager().GetGang(active_gang);
@@ -270,6 +240,7 @@ void cScreenTurnSummary::change_event(int selection)
                 m_ActiveReport = event.GetReport();
             }
         }
+        set_backdrop("");
     } else if (m_ActiveCategory == Summary_BUILDINGS) {
         auto building_id = GetSelectedItemFromList(item_id);
         if(building_id < 0 || building_id >= g_Game->buildings().num_buildings())
@@ -279,11 +250,13 @@ void cScreenTurnSummary::change_event(int selection)
             text = brothel->m_Events.GetMessage(selection).GetMessage();
             EditTextItem(brothel->name(), brothel_id);
         }
+        set_backdrop(brothel->background_image());
     } else if (m_ActiveCategory == Summary_RIVALS) {
         if (!g_Game->rivals().GetEvents().IsEmpty()) {
             text = g_Game->rivals().GetEvents().GetMessage(selection).GetMessage();
             EditTextItem("Rival", brothel_id);
         }
+        set_backdrop("");
     }
     EditTextItem(text, labeldesc_id);
 }
@@ -324,9 +297,11 @@ void cScreenTurnSummary::change_item(int selection)
     }
 
     Event = 0;
-    SetSelectedItemInList(event_id, Event);
-    change_event(0);
-    Image_Change = true;
+    if(GetListBoxSize(event_id) > 0) {
+        SetSelectedItemInList(event_id, Event);
+    } else {
+        change_event(-1);
+    }
 }
 
 void cScreenTurnSummary::goto_selected()
@@ -400,9 +375,6 @@ void cScreenTurnSummary::Fill_Items_BUILDINGS()
 void cScreenTurnSummary::Fill_Events(sGirl* girl)
 {
     if (girl == nullptr) return;
-
-    Image_Change = true;
-    Image_Type = IMGTYPE_PROFILE;
     auto& events = girl->GetEvents();
     if (!events.IsEmpty())
     {
@@ -649,4 +621,31 @@ void cScreenTurnSummary::Fill_Events_Rivals() {
         }
     }
     if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
+}
+
+void cScreenTurnSummary::update_image(const sImageSpec& spec) {
+    cImageItem* image_item = GetImage(image_id);
+    if (selected_girl())
+    {
+        PrepareImage(image_id, *selected_girl(), spec);
+        if (imagename_id >= 0)
+        {
+            std::string t;
+            if (image_item) t = image_item->m_Image.GetFileName();
+            EditTextItem(t, imagename_id);
+        }
+    }
+    else
+    {
+        set_backdrop("");
+    }
+}
+
+void cScreenTurnSummary::set_backdrop(const std::string& bd) {
+    if(bd.empty()) {
+        SetImage(image_id, "");
+    } else {
+        SetImage(image_id, "Backdrops", bd);
+    }
+    if (imagename_id >= 0)    EditTextItem("", imagename_id);
 }

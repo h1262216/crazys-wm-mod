@@ -7,7 +7,7 @@
 <Column     Name="Size"                 Header="Size"                    Offset="131"  />
 <Column     Name="Saturation"           Header="Sat"                     Offset="187"  />
 <Column     Name="FavScene"             Header="Fav"                     Offset="224"  />
-<Column     Name="Score"                Header="Quality"                 Offset="299"  />
+<Column     Name="Cost"                Header="Quality"                 Offset="299"  />
 <Column     Name="SpendingPower"        Header="Money"                   Offset="344"  />
 <Column     Name="Desire_Tease"         Header="Tease"                   Offset="389"  />
 <Column     Name="Desire_Soft"          Header="Soft"                    Offset="426"  />
