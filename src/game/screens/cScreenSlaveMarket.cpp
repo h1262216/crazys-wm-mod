@@ -704,7 +704,7 @@ bool cScreenSlaveMarket::change_selected_girl(int selected)
     if (trait_list_id >= 0) ClearListBox(trait_list_id);
     if (trait_list_text_id >= 0) EditTextItem("Traits:", trait_list_text_id);
     if (girl_desc_id >= 0)    EditTextItem("", girl_desc_id);
-    // selection of -1 means nothing selected so we get to go home early
+    // selection of -1 means nothing selected, so we get to go home early
     if (m_SelectedGirl == -1) return true;
     /*
      *    otherwise, we have (potentially) a new girl:
@@ -729,6 +729,7 @@ bool cScreenSlaveMarket::change_selected_girl(int selected)
 
     preparescreenitems(girl);
     PrepareImage(image_id, *girl, EBaseImage::PRESENTED);
+    HideWidget(image_id, false);
 
     return true;
 }

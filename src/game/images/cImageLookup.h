@@ -31,6 +31,7 @@ class cImageLookup {
 public:
     cImageLookup(std::string  def_img_path, const std::string& spec_file);
     std::string find_image(const std::string& base_path, const sImageSpec& spec);
+    std::vector<std::string> find_images(const std::string& base_path, sImageSpec spec, int cutoff=0);
 
     struct sFallbackData {
         EBaseImage NewImageType;
@@ -43,8 +44,12 @@ public:
 
 private:
     const std::vector<std::string>& lookup_files(const std::string& base_path);
-    boost::optional<std::string> find_image_direct(const std::vector<std::string>& haystack, const sImageSpec& spec, std::minstd_rand& rng) const;
     std::string find_image_internal(const std::string& base_path, const sImageSpec& spec, int max_cost);
+
+    template<class T, class U>
+    void find_image_internal_imp(const std::string& base_path, const sImageSpec& spec, int max_cost, T&& callback, U&& stopping);
+    template<class F>
+    void iterate_candidates(const std::vector<std::string>& haystack, const sImageSpec& spec, F&& callback);
 
     std::unordered_map<std::string, std::vector<std::string>> m_PathCache;
     std::vector<sImgTypeInfo> m_ImageTypes;

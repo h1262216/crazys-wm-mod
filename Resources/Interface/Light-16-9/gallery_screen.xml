@@ -2,7 +2,7 @@
 <Window     Name="Gallery"                                  XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
 
 <Text       Name="ImageName"            Text="Image"        XPos="14"       YPos="3"        Width="1110"     Height="34" FontSize="14"  />
-<Image      Name="GirlImage"            File=""             XPos="14"       YPos="42"       Width="1546"     Height="984"    MinWidth="492"     MinHeight="492" />
+<Image      Name="GirlImage"            File=""             XPos="14"       YPos="42"       Width="1546"     Height="900"    MinWidth="492"     MinHeight="492" />
 <Button     Name="PrevButton"           Image="Prev"        XPos="1614"     YPos="914"      Width="101"      Height="45"     Transparency="true" />
 <Button     Name="NextButton"           Image="Next"        XPos="1743"     YPos="914"      Width="101"      Height="45"     Transparency="true" />
 <Button     Name="BackButton"           Image="Back"        XPos="1588"     YPos="970"      Width="281"     Height="56"     Transparency="true"  PushWindow="<back>"/>
@@ -11,4 +11,7 @@
 <Column     Name="Name"                 Header="Image Types"                Offset="0" />
 <Column     Name="All"                  Header="All"                        Offset="141" />
 </ListBox>
+
+<Checkbox   Name="Pregnant"             Text="Pregnant"           XPos="14"      YPos="970"      Width="22"      Height="22"     FontSize="17" LeftOrRight="false" />
+<Slider     Name="CutoffSlider"                                   XPos="250"     YPos="970"      Width="200"     MinValue="0"    MaxValue="10" Value="0" Increment="10" LiveUpdate="true" Hidden="false" Disabled="false"  />
 </Screen>

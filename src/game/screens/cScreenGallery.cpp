@@ -23,60 +23,21 @@
 #include "cGangs.h"
 #include "utils/FileList.h"
 #include "character/sGirl.h"
+#include "IGame.h"
 #include <sstream>
+#include <future>
+#include "images/cImageLookup.h"
+#include "utils/algorithms.hpp"
+#include "utils/string.hpp"
 
-extern    std::string                    pic_types[];
-extern    std::string                    galtxt[];
-
-extern    std::string    numeric;
-
-static int Mode = 0;
-static int Img = 0;    // what image currently drawing
-
+namespace  {
+    constexpr const EnumRange<EBaseImage, EBaseImage(0), EBaseImage::NUM_TYPES> ImageTypeRange = {};
+}
 
 cScreenGallery::cScreenGallery() : cGameWindow("gallery_screen.xml")
 {
 }
 
-/*
-static int numimages[NUM_IMGTYPES];
-std::string galtxt[] =
-        {
-                // `J` When modifying Image types, search for "J-Change-Image-Types"  :  found in >> cImageItem.cpp > galtxt
-                "Anal", "BDSM", "Sex", "Beast", "Group", "Lesbian", "Torture", "Death", "Profile", "Combat",
-                "Oral", "Ecchi", "Strip", "Maid", "Sing", "Wait", "Card", "Bunny", "Nude", "Mast", "Titty", "Milk", "Hand",
-                "Foot", "Bed", "Farm", "Herd", "Cook", "Craft", "Swim", "Bath", "Nurse", "Formal", "Shop", "Magic", "Sign",
-                "Presented", "Dominatrix", "Deepthroat", "Eatout", "Dildo", "Sub", "Strapon", "Les69ing", "Lick",
-                "Balls", "Cowgirl", "Revcowgirl", "Sexdoggy", "Jail", "Puppygirl", "Ponygirl", "Catgirl",
-                "Branding", "Rape", "Beast Rape", "Human Birth", "Human Birth Multiple", "Monster Birth",                    // `J` new .06.03.01 for DarkArk
-                "Impregnate Sex", "Impregnate Group", "Impregnate Bondage", "Impregnate Beast",                             // `J` new .06.03.01 for DarkArk
-                "Virgin Sex", "Virgin Group", "Virgin Bondage", "Virgin Beast",                                                // `J` new .06.03.01 for DarkArk
-                "Escort", "Sport", "Study", "Teacher", "Massage",                                                                        // `J` new .06.03.02 for grishnak
-                "Studio Crew", "Camera Mage", "Director", "Crystal Purifier", "Stage Hand", "Piano",
-                "Music", "Refuse",
-
-                "Pregnant",    // pregnant varients
-                "Pregnant Anal", "Pregnant BDSM", "Pregnant Sex", "Pregnant Beast", "Pregnant Group",
-                "Pregnant Lesbian", "Pregnant Torture", "Pregnant Death", "Pregnant Profile", "Pregnant Combat",
-                "Pregnant Oral", "Pregnant Ecchi", "Pregnant Strip", "Pregnant Maid", "Pregnant Sing", "Pregnant Wait",
-                "Pregnant Card", "Pregnant Bunny", "Pregnant Nude", "Pregnant Mast", "Pregnant Titty", "Pregnant Milk",
-                "Pregnant Hand", "Pregnant Foot", "Pregnant Bed", "Pregnant Farm", "Pregnant Herd", "Pregnant Cook",
-                "Pregnant Craft", "Pregnant Swim", "Pregnant Bath", "Pregnant Nurse", "Pregnant Formal", "Pregnant Shop",
-                "Pregnant Magic", "Pregnant Sign", "Pregnant Presented", "Pregnant Dominatrix", "Pregnant Deepthroat",
-                "Pregnant Eatout", "Pregnant Dildo", "Pregnant Sub", "Pregnant Strapon", "Pregnant Les69ing", "Pregnant Lick",
-                "Pregnant Balls", "Pregnant Cowgirl", "Pregnant Revcowgirl", "Pregnant Sexdoggy", "Pregnant Jail",
-                "Pregnant Puppygirl", "Pregnant Ponygirl", "Pregnant Catgirl",
-                "Pregnant Branding", "Pregnant Rape", "Pregnant Beast Rape",                                                // `J` new .06.03.01 for DarkArk
-                "P Human Birth", "P Human Multi-Birth", "P Monster Birth",                                                    // `J` new .06.03.01 for DarkArk - these are just in here for completion, they probably should not be used
-                "P Impreg Sex", "P Impreg Group", "P Impreg Bondage", "P Impreg Beast",                                        // `J` new .06.03.01 for DarkArk - these are just in here for completion, they probably should not be used
-                "P Virgin Sex", "P Virgin Group", "P Virgin Bondage", "P Virgin Beast",                                        // `J` new .06.03.01 for DarkArk - these are just in here for completion, they probably should not be used
-                "Pregnant Escort", "Pregnant Sport", "Pregnant Study", "Pregnant Teacher",                                    // `J` new .06.03.02 for grishnak
-                "Pregnant Massage", "Pregnant Studio Crew", "Pregnant Camera Mage", "Pregnant Director",
-                "Pregnant Crystal Purifier", "Pregnant Stage Hand", "Pregnant Piano",
-                "Pregnant Music", "Pregnant Refuse"
-        };
-
-*/
 
 void cScreenGallery::set_ids()
 {
@@ -85,47 +46,76 @@ void cScreenGallery::set_ids()
     image_id       = get_id("GirlImage");
     imagename_id   = get_id("ImageName");
     imagelist_id   = get_id("ImageList");
+    pregnant_id    = get_id("Pregnant");
+    slider_id      = get_id("CutoffSlider");
 
     std::vector<std::string> ILColumns{ "ILName", "ILTotal" };
     SortColumns(imagelist_id, ILColumns);
 
-    /*
+    SetCheckBoxCallback(pregnant_id, [this](bool){ determine_images(); });
+    SetSliderCallback(slider_id, [this](int update){
+        determine_images();
+    });
+
+
     SetButtonCallback(prev_id, [this]() {
-        Img--;
-        if (Img < 0) Img = numimages[Mode] - 1;
-        change_image(Mode);
+        m_CurrentImageID--;
+        if (m_CurrentImageID < 0) m_CurrentImageID = m_ImageFiles[(int)m_CurrentType].size() - 1;
+        update_image();
     });
     SetButtonHotKey(prev_id, SDLK_LEFT);
 
     SetButtonCallback(next_id, [this](){
-        Img++;
-        if (Img == numimages[Mode]) Img = 0;
-        change_image(Mode);
+        m_CurrentImageID++;
+        if (m_CurrentImageID == m_ImageFiles[(int)m_CurrentType].size()) m_CurrentImageID = 0;
+        update_image();
     });
     SetButtonHotKey(next_id, SDLK_RIGHT);
 
     SetListBoxSelectionCallback(imagelist_id, [this](int selection) {
         if(selection >= 0) {
-            Mode = selection;
+            m_CurrentType = (EBaseImage)selection;
         }
-        if (Img > numimages[Mode]) Img = 0;
-        change_image(Mode);
+        if (m_CurrentImageID >= m_ImageFiles[(int)m_CurrentType].size()) m_CurrentImageID = 0;
+        update_image();
     });
-    */
 
     SetListBoxHotKeys(imagelist_id, SDLK_UP, SDLK_DOWN);
 }
 
-void cScreenGallery::change_image(int mode)
+void cScreenGallery::update_image()
 {
-    //PrepareImage(image_id, m_SelectedGirl, mode, false, Img, true);
     cImageItem* image_ui = GetImage(image_id);
+    if(m_CurrentImageID >= m_ImageFiles[(int) m_CurrentType].size()) {
+        image_ui->SetHidden(true);
+        EditTextItem("", imagename_id);
+        return;
+    }
+
+    auto found = m_ImageFiles[(int) m_CurrentType].at(m_CurrentImageID);
+    std::string ext = tolower(found.substr(found.find_last_of('.') + 1));
+
+    // this is the list of supported formats found on SDL_image's website
+    // BMP, PNM (PPM/PGM/PBM), XPM, LBM, PCX, GIF, JPEG, PNG, TGA, and TIFF
+
+    DirPath target = m_SelectedGirl->GetImageFolder();
+    found = (target << found).str();
+
+    if(is_in(ext, {"jpg", "jpeg", "png", "bmp", "tga", "tiff"})) {
+        if(!image_ui->SetImage(found, true)) {
+            image_ui->SetAnimation(found);
+        }
+    } else {
+        image_ui->SetAnimation(found);
+    }
+
+    image_ui->SetHidden(false);
     if (image_ui->m_Image)
         EditTextItem(image_ui->m_Image.GetFileName(), imagename_id);
     else if(image_ui->m_AnimatedImage)
         EditTextItem(image_ui->m_AnimatedImage.GetFileName(), imagename_id);
 
-    SetSelectedItemInList(imagelist_id, mode, false);
+    SetSelectedItemInList(imagelist_id, (int)m_CurrentType, false);
 }
 
 void cScreenGallery::init(bool back)
@@ -133,31 +123,58 @@ void cScreenGallery::init(bool back)
     m_SelectedGirl = &active_girl();
 
     Focused();
-    ClearListBox(imagelist_id);
 
-    int startmode = -1;
-    // start with what the config has set
-    DirPath imagedir = m_SelectedGirl->GetImageFolder();
-    FileList testall(imagedir, "*.*");
-    if (testall.size() == 0)
-    {
-        pop_window();
-        push_message(m_SelectedGirl->FullName() + " ( " + m_SelectedGirl->m_Name + " ) has no images.", COLOR_RED);
-    }
-    FileList readall(imagedir, "*.*");
-/*
-    for (int i = 0; i < NUM_IMGTYPES; i++)
-    {
-        FileList testmode1(imagedir, (pic_types[i] + "*").c_str());    numimages[i] = testmode1.size();
-        if (numimages[i] > 0)
-        {
-            if (startmode == -1) startmode = i;
-            std::vector<FormattedCellData> dataP{ mk_text(galtxt[i]), mk_num(numimages[i]) };
-            AddToListBox(imagelist_id, i, std::move(dataP));
+    determine_images();
+}
+
+void cScreenGallery::determine_images() {
+    m_ImageFiles.resize((int)EBaseImage::NUM_TYPES);
+    sImageSpec spec;
+    spec.IsPregnant = IsCheckboxOn(pregnant_id);
+    int cut = SliderValue(slider_id) * 5;
+    auto run_update_in_bg = [this, spec, cut]() mutable {
+        m_ScheduledUpdates.emplace_back([this](){ClearListBox(imagelist_id);});
+        for (auto img: ImageTypeRange) {
+            auto& target = m_ImageFiles[(int) img];
+            spec.BasicImage = img;
+            target = g_Game->image_lookup().find_images(m_SelectedGirl->GetImageFolder().str(), spec, cut);
+            if (!target.empty()) {
+                std::vector<FormattedCellData> dataP{mk_text(get_image_name(img)), mk_num(target.size())};
+                std::lock_guard<std::mutex> lck(m_UpdateMutex);
+                m_ScheduledUpdates.emplace_back([this, img, data = std::move(dataP)]() {
+                    AddToListBox(imagelist_id, (int) img, std::move(data));
+                });
+            }
+            if(m_Cancel) {
+                return;
+            }
         }
-    }*/
-    Mode = startmode;
-    Img = 0;
-    if(Mode != -1)
-        change_image(Mode);
+    };
+
+    // if we have stuff currently running, cancel that
+    if(m_AsyncLoad.joinable()) {
+        m_Cancel = true;
+        m_AsyncLoad.join();
+    }
+    m_Cancel = false;
+    m_AsyncLoad = std::thread(run_update_in_bg);
+
+    m_CurrentImageID = 0;
+    m_CurrentType = EBaseImage::PROFILE;
+    update_image();
+}
+
+void cScreenGallery::process() {
+    std::lock_guard<std::mutex> lck(m_UpdateMutex);
+    while (!m_ScheduledUpdates.empty()) {
+        m_ScheduledUpdates.front()();
+        m_ScheduledUpdates.pop_front();
+    }
+}
+
+cScreenGallery::~cScreenGallery() {
+    m_Cancel = true;
+    if(m_AsyncLoad.joinable()) {
+        m_AsyncLoad.join();
+    }
 }

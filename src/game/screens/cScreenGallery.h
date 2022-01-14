@@ -19,24 +19,40 @@
 #pragma once
 
 #include "cGameWindow.h"
+#include <thread>
+#include <atomic>
+#include <mutex>
 
 class cScreenGallery : public cGameWindow
 {
 private:
-    int        next_id;        // next button
-    int        prev_id;        // prev button
+    int        next_id;         // next button
+    int        prev_id;         // prev button
     int        image_id;        // the image
     int        imagename_id;    // image name
     int        imagelist_id;    // image type list
+    int        pregnant_id;     // pregnant check box
+    int        slider_id;       // cutoff slider
+
+    std::vector<std::vector<std::string>> m_ImageFiles;
+    int m_CurrentImageID = 0;
+    EBaseImage m_CurrentType = EBaseImage::PROFILE;
 
     void set_ids() override;
+    void determine_images();
 
     sGirl* m_SelectedGirl;
+
+    std::mutex m_UpdateMutex;
+    std::deque<std::function<void()>> m_ScheduledUpdates;
+    std::thread m_AsyncLoad;
+    std::atomic<bool> m_Cancel;
 public:
     cScreenGallery();
+    ~cScreenGallery();
 
     void init(bool back) override;
-    void process() override {};
+    void process() override;
 
-    void change_image(int mode);
+    void update_image();
 };

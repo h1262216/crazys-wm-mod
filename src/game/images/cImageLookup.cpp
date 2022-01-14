@@ -55,9 +55,27 @@ namespace {
 }
 
 std::string cImageLookup::find_image_internal(const std::string& base_path, const sImageSpec& spec, int max_cost) {
-    auto& files = lookup_files(base_path);
-
     std::minstd_rand rng(spec.Seed);
+    RandomSelectorV2<std::string> selector;
+    auto inner_callback = [&](auto&& file) {
+        selector.process(rng, file);
+    };
+    auto stop = [&](){
+        return selector.selection().has_value();
+    };
+
+    find_image_internal_imp(base_path, spec, max_cost, inner_callback, stop);
+
+    if(selector.selection()) {
+        return selector.selection().value();
+    }
+
+    return "";
+}
+
+template<class T, class U>
+void cImageLookup::find_image_internal_imp(const std::string& base_path, const sImageSpec& spec, int max_cost, T&& inner_callback, U&& stopping_criterion) {
+    auto& haystack = lookup_files(base_path);
 
     // OK, need to go to the fallbacks. This is a BFS
     std::set<EBaseImage> visited;
@@ -71,22 +89,18 @@ std::string cImageLookup::find_image_internal(const std::string& base_path, cons
         }
     };
 
-    RandomSelectorV2<std::string> selector;
     std::multiset<QueueEntry> queue;
     queue.insert({0, spec});
     g_LogFile.info("image", "Looking for image: ", get_image_name(spec.BasicImage));
     while(!queue.empty()) {
         auto it = queue.begin();
-        g_LogFile.debug("image", "Look up '", get_image_name(it->Value.BasicImage), "' at cost ", it->Cost);
+        g_LogFile.debug("image", "  Look up '", get_image_name(it->Value.BasicImage), "' at cost ", it->Cost);
         if(it->Cost > max_cost) {
             break;
         }
         visited.insert(it->Value.BasicImage);
-        auto found = find_image_direct(files,  it->Value, rng);
-        if(found) {
-            g_LogFile.debug("image", "Found a '", get_image_name(it->Value.BasicImage), "' image");
-            selector.process(rng, found.value());
-        }
+
+        iterate_candidates(haystack, it->Value, inner_callback);
 
         // insert does not invalidate iterators for set, so it is still fine
         for(auto& fbs : m_ImageTypes.at((int)it->Value.BasicImage).Fallbacks) {
@@ -102,20 +116,27 @@ std::string cImageLookup::find_image_internal(const std::string& base_path, cons
         ++next;
         if(next != queue.end()) {
             // if the next trial would be less desired, and we already have found one, stop the search
-            if(next->Cost > it->Cost && selector.selection()) {
-                return selector.selection().value();
+            if(next->Cost > it->Cost && stopping_criterion()) {
+                return;
             }
         }
         queue.erase(it);
     }
-
-    if(selector.selection()) {
-        return selector.selection().value();
-    }
-
-    return "";
 }
 
+
+template<class F>
+void cImageLookup::iterate_candidates(const std::vector<std::string>& haystack, const sImageSpec& spec, F&& callback) {
+    for(auto& base_pattern: m_ImageTypes.at((int)spec.BasicImage).Patterns) {
+        std::string pattern = make_pattern(base_pattern, spec.IsPregnant);
+        std::regex re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
+        for (auto& f: haystack) {
+            if (std::regex_match(f, re)) {
+                callback(f);
+            }
+        }
+    }
+}
 
 cImageLookup::cImageLookup(std::string def_img_path, const std::string& spec_file) :
     m_DefaultPath(std::move(def_img_path))
@@ -151,21 +172,6 @@ cImageLookup::cImageLookup(std::string def_img_path, const std::string& spec_fil
     // check that we have every image?
 }
 
-boost::optional<std::string>
-cImageLookup::find_image_direct(const std::vector<std::string>& haystack, const sImageSpec& spec, std::minstd_rand& rng) const {
-    RandomSelectorV2<std::string> selector;
-    for(auto& base_pattern: m_ImageTypes.at((int)spec.BasicImage).Patterns) {
-        std::string pattern = make_pattern(base_pattern, spec.IsPregnant);
-        std::regex re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
-        for (auto& f: haystack) {
-            if (std::regex_match(f, re)) {
-                selector.process(rng, f);
-            }
-        }
-    }
-    return selector.selection();
-}
-
 std::string cImageLookup::find_image(const std::string& base_path, const sImageSpec& spec) {
     auto result = find_image_internal(base_path, spec, m_CostCutoff);
     // TODO clean up this code!
@@ -184,4 +190,18 @@ std::string cImageLookup::find_image(const std::string& base_path, const sImageS
         path << result;
         return path.str();
     }
+}
+
+std::vector<std::string> cImageLookup::find_images(const std::string& base_path, sImageSpec spec, int cutoff) {
+    auto& files = lookup_files(base_path);
+    std::vector<std::string> result;
+    auto inner_callback = [&](auto&& file) {
+        result.push_back(file);
+    };
+    auto stop = [&](){
+        return !result.empty();
+    };
+    find_image_internal_imp(base_path, spec, cutoff, inner_callback, stop);
+
+    return result;
 }

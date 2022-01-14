@@ -137,7 +137,6 @@ void cGameWindow::PrepareImage(int id, const sGirl& girl, const sImageSpec& spec
     // Clear the old images
     cImageItem* image = GetImage(id);
     if(!image) return;
-    if(!selected_girl()) return;
 
     auto found = g_Game->image_lookup().find_image(girl.GetImageFolder().str(), spec);
     std::string ext = tolower(found.substr(found.find_last_of('.') + 1));
