@@ -516,7 +516,7 @@ void cJewelerJob::DoWorkEvents(sGirl& girl) {
 
 void RegisterCraftingJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BAKER, "Baker.xml", ACTION_WORKCOOKING, 20, EBaseImage::COOK));
+            JOB_BAKER, "Baker.xml", ACTION_WORKCOOKING, 20, EBaseImage::BAKE));
     mgr.register_job(std::make_unique<GenericCraftingJob>(
             JOB_BREWER, "Brewer.xml", ACTION_WORKCOOKING, 20, EBaseImage::COOK));
     mgr.register_job(std::make_unique<GenericCraftingJob>(

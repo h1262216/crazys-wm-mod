@@ -44,14 +44,31 @@
     </Type>
     <Type Name="group">
         <Display>Group Sex</Display>
+        <!-- Cost 0 means that these will be considered immediately.-->
+        <Fallback Cost="0">ffm</Fallback>
+        <Fallback Cost="0">mmf</Fallback>
+        <Fallback Cost="0">orgy</Fallback>
         <Fallback>sex</Fallback>
+    </Type>
+    <Type Name="ffm">
+        <Display>FFM Sex</Display>
+        <Fallback>group</Fallback>
+    </Type>
+    <Type Name="mmf">
+        <Display>MMF Sex</Display>
+        <Fallback>group</Fallback>
+    </Type>
+    <Type Name="orgy">
+        <Display>Orgy</Display>
+        <Fallback>group</Fallback>
     </Type>
     <Type Name="lesbian">
         <Display>Lesbian</Display>
         <Fallback Cost="3">les69</Fallback>
+        <Fallback Cost="3">eatout</Fallback>
+        <Fallback Cost="3">scissor</Fallback>
         <Fallback Cost="5">mast</Fallback>
         <Fallback Cost="9">nude</Fallback>
-        <Fallback Cost="8">eatout</Fallback> <!-- TODO is this eating our or getting eaten out -->
         <Fallback Cost="10">sex</Fallback>
     </Type>
     <Type Name="oral">
@@ -85,6 +102,8 @@
     </Type>
     <Type Name="foot">
         <Display>Footjob</Display>
+        <!-- Note: This includes footjob.* -->
+        <Pattern>foot.*</Pattern>
         <Fallback>oral</Fallback>
         <Fallback>hand</Fallback>
         <Fallback>titty</Fallback>
@@ -110,11 +129,22 @@
     </Type>
     <Type Name="les69">
         <Display>Lesbian 69</Display>
+        <Fallback Cost="8">eatout</Fallback>
+        <Fallback>lesbian</Fallback>
+    </Type>
+    <Type Name="scissor">
+        <Display>Scissor</Display>
         <Fallback>lesbian</Fallback>
     </Type>
     <Type Name="lick">
         <Display>Lick</Display>
-        <Fallback>oral</Fallback>
+        <Fallback>finger</Fallback>
+        <Fallback Cost="20">oral</Fallback>
+    </Type>
+    <Type Name="finger">
+        <Display>Finger</Display>
+        <Fallback>lick</Fallback>
+        <Fallback Cost="20">sex</Fallback>
     </Type>
     <Type Name="suckballs">
         <Display>Suck Balls</Display>
@@ -148,6 +178,7 @@
         <Display>Strip</Display>
         <Fallback>ecchi</Fallback>
         <Fallback>nude</Fallback>
+        <Fallback>dance</Fallback>
     </Type>
     <Type Name="ecchi">
         <Display>Ecchi</Display>
@@ -165,6 +196,8 @@
     </Type>
     <Type Name="massage">
         <Display>Massage</Display>
+        <Pattern>massage.*</Pattern>
+        <Pattern>masseuse.*</Pattern>
         <Fallback>ecchi</Fallback>
     </Type>
     <Type Name="milk">
@@ -207,12 +240,18 @@
         <Display>Piano</Display>
         <Fallback>music</Fallback>
     </Type>
+    <Type Name="dance">
+        <Display>Dance</Display>
+        <Fallback>music</Fallback>
+        <Fallback>formal</Fallback>
+    </Type>
     <Type Name="music">
         <Display>Music</Display>
         <Fallback Cost="1">sing</Fallback>
         <Fallback Cost="1">piano</Fallback>
         <Fallback>profile</Fallback>
         <Fallback Cost="9">formal</Fallback>
+        <Fallback Cost="9">dance</Fallback>
     </Type>
     <Type Name="stagehand">
         <Display>Stage Hand</Display>
@@ -237,8 +276,19 @@
         <Display>Studio Crew</Display>
         <Fallback>profile</Fallback>
     </Type>
+    <Type Name="security">
+        <Display>Security</Display>
+        <Fallback Cost="5">combat</Fallback>
+        <Fallback>profile</Fallback>
+    </Type>
     <Type Name="cook">
         <Display>Cook</Display>
+        <Fallback Cost="5">bake</Fallback>
+        <Fallback>profile</Fallback>
+    </Type>
+    <Type Name="bake">
+        <Display>Cook</Display>
+        <Fallback Cost="5">cook</Fallback>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="farm">
@@ -275,7 +325,8 @@
     </Type>
     <Type Name="combat">
         <Display>Combat</Display>
-        <Fallback>profile</Fallback>
+        <Fallback>security</Fallback>
+        <Fallback Cost="15">profile</Fallback>
     </Type>
     <Type Name="magic">
         <Display>Magic</Display>

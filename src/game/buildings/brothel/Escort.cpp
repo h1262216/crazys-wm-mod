@@ -329,7 +329,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                     {
                         add_text("regular.group.sex") << "\n";
                         fame += skill_to_mod(girl.group());
-                        imagetype = EBaseImage::GROUP;
+                        imagetype = EBaseImage::ORGY;
                         girl.group(2);
                         girl.upd_temp_stat(STAT_LIBIDO, -20, true);
                     }

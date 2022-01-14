@@ -22,16 +22,16 @@
 
 const std::array<const char*, (int)EBaseImage::NUM_TYPES>& get_imgtype_names() {
     static std::array<const char*, (int)EBaseImage::NUM_TYPES> names {
-            "anal", "bdsm", "sex", "beast", "group", "lesbian", "oral", "mast",
+            "anal", "bdsm", "sex", "beast", "group", "ffm", "mmf", "orgy", "lesbian", "oral", "mast",
             "titty", "hand", "foot", "deepthroat", "eatout", "dildo", "strapon",
-            "les69", "lick", "suckballs", "cowgirl", "revcowgirl",
+            "les69", "scissor", "lick", "finger", "suckballs", "cowgirl", "revcowgirl",
             "sexdoggy", "rape", "rapebeast",
             "strip", "ecchi", "nude", "bunny", "escort", "massage", "milk", "dom", "sub",
             "maid", "sing", "wait", "card", "nurse", "piano", "music", "stagehand",
-            "crystalpurifier", "director", "cameramage", "studiocrew", "cook", "farm",
-            "herd", "advertise",
+            "crystalpurifier", "director", "cameramage", "studiocrew", "security", "cook", "bake",
+            "farm", "herd", "advertise",
             "sport", "study", "teacher", "combat", "magic", "bed", "bath", "swim",
-            "shop", "craft",
+            "shop", "craft", "dance",
             "birthhuman", "birthhumanmultiple", "birthbeast",
             "refuse", "death", "profile", "jail", "torture", "formal", "presented",
             "brand", "puppygirl", "ponygirl", "catgirl"

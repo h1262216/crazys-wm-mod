@@ -246,7 +246,7 @@ void RegisterFilmingJobs(cJobManager& mgr) {
                                                      EBaseImage::BDSM, SceneType::BDSM, cFilmSceneJob::SexAction::HUMAN));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMGROUP, "FilmGroup.xml",
-                                                     EBaseImage::GROUP, SceneType::GROUP, cFilmSceneJob::SexAction::HUMAN));
+                                                     EBaseImage::ORGY, SceneType::GROUP, cFilmSceneJob::SexAction::HUMAN));
 
     mgr.register_job(std::make_unique<FilmOral>());
     mgr.register_job(std::make_unique<FilmThroat>());

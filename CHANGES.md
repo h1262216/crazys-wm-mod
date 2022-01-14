@@ -1,3 +1,14 @@
+# Version 7.2.1alpha1
+
+## Gameplay
+* New `group` interactions in her bedroom
+
+## Image Tags
+* added `ffm`, `mmf`, and `orgy` as specialisations of `group`
+* added `scissor` as a specialisation for `lesbian`
+* added `security` for the security job. This is already used in some packs, so we might as well use the name. Fallback is combat.
+* added `bake` for Baker job and as fallback for cook. Many older packs contain `bake` images, so let's use them.
+
 # Version 7.1.2beta1
 
 ## Gameplay changes since 7.1.1

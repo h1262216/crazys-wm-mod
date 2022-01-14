@@ -594,11 +594,12 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
         girl.group(skill);
         ss << "You decide to over see her skill in a gang bang.\n \n";
         ss << "She managed to gain " << skill << " Group Sex.\n \n";
+        auto spec = girl.MakeImageSpec(EBaseImage::ORGY);
         if (girl.lose_trait("Virgin"))
         {
             ss << "She is no longer a virgin.\n";
         }
-        girl.AddMessage(ss.str(), EBaseImage::GROUP, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+        girl.AddMessage(ss.str(), spec, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
         // TODO chance to get pregnant by non-player!
         // TODO if we remove the virgin trait before the pregnancy calculation, it cannot affect preg chance!
         girl.calc_pregnancy(&g_Game->player(), 1.0);

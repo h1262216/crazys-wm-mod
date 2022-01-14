@@ -2564,8 +2564,9 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         girl.health(-1);
         girl.upd_Enjoyment(ACTION_SEX, -2);
         girl.spirit(-2);
+        // TODO what is this doing?
         imagetype = EBaseImage::GROUP;
-        girl.AddMessage(ss.str(), EBaseImage::GROUP, EVENT_DANGER);
+        girl.AddMessage(ss.str(), EBaseImage::ORGY, EVENT_DANGER);
         if (girl.lose_trait("Virgin"))
         {
             ss << "\nShe is no longer a virgin.\n";
@@ -3097,7 +3098,7 @@ SecurityJob::SecurityJob() : cSimpleJob(JOB_SECURITY, "Security.xml", {ACTION_WO
 
 bool SecurityJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     int roll_a = d100();
-    EBaseImage imagetype = EBaseImage::COMBAT;
+    EBaseImage imagetype = EBaseImage::SECURITY;
 
     cGirls::EquipCombat(girl);    // ready armor and weapons!
 

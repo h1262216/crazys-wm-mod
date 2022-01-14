@@ -1266,7 +1266,7 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
                 if (rng.percent(10) && girl.beauty() > 85 && !is_virgin(girl))
                 {
                     ss << "After noticing her great beauty and the fact that she is baked, a group of guys take her off alone somewhere and have their way with her.\n";
-                    imagetype = EBaseImage::GROUP;
+                    imagetype = EBaseImage::ORGY;
                 }
             }
 
@@ -1304,7 +1304,7 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
                         if (girl.libido() >= 50 && !girl.has_active_trait("Lesbian"))
                         {
                             ss << "As she was in the mood and loved the show, she agreed and spent many hours pleasing the band.\n";
-                            imagetype = EBaseImage::GROUP; U_Libido -= 15;
+                            imagetype = EBaseImage::ORGY; U_Libido -= 15;
                             girl.group(1);
                         }
                         else
@@ -1354,7 +1354,7 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
                                     default:       n = SKILL_GROUP;         ss << "whole group.";            break;
                                     }
                                     /* */if (n == SKILL_NORMALSEX)    imagetype = EBaseImage::SEX;
-                                    else if (n == SKILL_GROUP)        imagetype = EBaseImage::GROUP;
+                                    else if (n == SKILL_GROUP)        imagetype = EBaseImage::ORGY;
                                     girl.upd_skill(n, 1);
                                 }
                                 U_Libido -= 10;

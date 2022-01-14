@@ -159,7 +159,7 @@ cImageLookup::cImageLookup(std::string def_img_path, const std::string& spec_fil
                 info.Patterns.push_back(std::string(c.GetText()) + "\\..*");
             } else if (el_name == "Fallback") {
                 info.Fallbacks.push_back({get_image_id(c.GetText()),
-                                          std::max(1, c.IntAttribute("Cost", 10))});
+                                          std::max(0, c.IntAttribute("Cost", 10))});
 
             }
         }

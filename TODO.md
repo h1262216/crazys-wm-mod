@@ -53,6 +53,10 @@
 * [ ] Generic event: girls ask for job change
 * [ ] Choose your job interaction
 
+## Text
+* [ ] MMF/FFM event in bedroom
+* [ ] Training job
+
 ## Bugs
 * [ ] Pregnancies of runaway/prison girls currently don't work
 * [ ] GetRandomRivalToSabotage function is wrong

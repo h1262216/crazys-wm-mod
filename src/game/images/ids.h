@@ -30,6 +30,9 @@ enum class EBaseImage {
     SEX,
     BEAST,
     GROUP,
+    FFM,
+    MMF,
+    ORGY,
     LESBIAN,
     ORAL,
     MAST,
@@ -37,11 +40,13 @@ enum class EBaseImage {
     HAND,
     FOOT,
     DEEPTHROAT,
-    EATOUT,
+    EATOUT,                 // licking the pussy of another girl
     DILDO,
     STRAPON,
     LES69ING,
-    LICK,
+    SCISSOR,
+    LICK,                   // getting her pussy licked
+    FINGER,                 // getting her pussy fingered
     SUCKBALLS,
     COWGIRL,
     REVCOWGIRL,
@@ -73,7 +78,9 @@ enum class EBaseImage {
     DIRECTOR,
     CAMERA_MAGE,
     STUDIO_CREW,
+    SECURITY,                       // Security
     COOK,                           // Cooking
+    BAKE,                           // Baking
     FARM,                           // Generic farm work
     HERD,                           // working with animals
     ADVERTISE,                      // (prvls. SIGN)
@@ -89,6 +96,7 @@ enum class EBaseImage {
     SWIM,                           // going swimming or dressed in a swimsuit
     SHOP,                           // free time going shopping
     CRAFT,                          // creating items
+    DANCE,                          // dancing
 
     BIRTH_HUMAN,                    // Giving birth to a human
     BIRTH_MULTI,                    // Giving birth to (human) twins/triplets/etc
