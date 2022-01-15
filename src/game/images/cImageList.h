@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WM_SIMAGELIST_H
-#define WM_SIMAGELIST_H
+#ifndef WM_CIMAGELIST_H
+#define WM_CIMAGELIST_H
 
 #include <vector>
 #include <string>
@@ -30,17 +30,17 @@ struct sImageRecord {
     bool IsPregnant;
 };
 
-class sImageList {
+class cImageList {
     using records_vector_t = std::vector<sImageRecord>;
 public:
-    explicit sImageList(const std::vector<records_vector_t>& source);
+    explicit cImageList(const std::vector<records_vector_t>& source);
 
     using const_iterator_t = records_vector_t::const_iterator;
 
     const_iterator_t get_begin(EBaseImage image_type) const;
     const_iterator_t get_end(EBaseImage image_type) const;
     struct sImageRange {
-        const sImageList* Target;
+        const cImageList* Target;
         EBaseImage Image;
 
         const_iterator_t begin() const {
@@ -61,4 +61,4 @@ private:
 
 
 
-#endif //WM_SIMAGELIST_H
+#endif //WM_CIMAGELIST_H

@@ -17,17 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "sImageList.h"
+#include "cImageList.h"
 
-auto sImageList::get_begin(EBaseImage image_type) const -> const_iterator_t {
+auto cImageList::get_begin(EBaseImage image_type) const -> const_iterator_t {
     return m_FileNames.cbegin() + m_Offsets.at((int)image_type);
 }
 
-auto sImageList::get_end(EBaseImage image_type) const -> const_iterator_t {
+auto cImageList::get_end(EBaseImage image_type) const -> const_iterator_t {
     return m_FileNames.cbegin() + m_Offsets.at((int)image_type + 1);
 }
 
-sImageList::sImageList(const std::vector<records_vector_t>& source) {
+cImageList::cImageList(const std::vector<records_vector_t>& source) {
     m_Offsets.resize(source.size() + 1);
     m_Offsets[0] = 0;
     // first determine the offsets and the size of the allocation we need to make

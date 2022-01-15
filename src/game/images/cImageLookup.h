@@ -26,7 +26,7 @@
 #include <vector>
 #include <boost/optional.hpp>
 #include <random>
-#include "sImageList.h"
+#include "cImageList.h"
 
 class cImageLookup {
 public:
@@ -44,7 +44,7 @@ public:
     };
 
 private:
-    const sImageList& lookup_files(const std::string& base_path);
+    const cImageList& lookup_files(const std::string& base_path);
     std::string find_image_internal(const std::string& base_path, const sImageSpec& spec, int max_cost);
 
     template<class T, class U>
@@ -52,7 +52,7 @@ private:
     template<class F>
     void iterate_candidates(const std::vector<sImageRecord>& haystack, const sImageSpec& spec, F&& callback);
 
-    std::unordered_map<std::string, sImageList> m_PathCache;
+    std::unordered_map<std::string, cImageList> m_PathCache;
     std::vector<sImgTypeInfo> m_ImageTypes;
     std::string m_DefaultPath;
 

@@ -28,39 +28,73 @@
 #include <set>
 #include <regex>
 #include <utility>
+#include <tinyxml2.h>
+#include "xml/util.h"
+#include "utils/string.hpp"
 
-const sImageList& cImageLookup::lookup_files(const std::string& base_path) {
+namespace {
+    bool parse_preg(const std::string& source) {
+        if(iequals(source, "yes")) {
+            return true;
+        } else if (iequals(source, "no")) {
+            return false;
+        } else {
+            g_LogFile.warning("image", "Expected 'yes' or 'no', got '", source, "'");
+            throw std::invalid_argument("Expected 'yes' or 'no'");
+        }
+    }
+}
+
+const cImageList& cImageLookup::lookup_files(const std::string& base_path) {
     auto lookup = m_PathCache.find(base_path);
     if(lookup != m_PathCache.end()) {
         return lookup->second;
     } else {
-        // first get the list of all files
-        auto result = FileList(base_path.c_str(), "*.*");
-        m_FileNameBuffer.resize(result.size());
-        for(int i = 0; i < result.size(); ++i) {
-            m_FileNameBuffer[i] = result[i].leaf();
-        }
+        // Option 1: The pack as an images.xml file
+        DirPath img;
+        img << base_path << "images.xml";
+        if(img.exists()) {
+            auto doc = LoadXMLDocument(img.str());
+            for(int i = 0; i < (int)EBaseImage::NUM_TYPES; ++i) {
+                m_RecordsBuffer[i].clear();
+            }
+            for(auto& entry : IterateChildElements(*doc->RootElement(), "Image")) {
+                std::string file = GetStringAttribute(entry, "File");
+                std::string type = GetStringAttribute(entry, "Type");
+                std::string preg = GetStringAttribute(entry, "Pregnant");
+                m_RecordsBuffer[(int)get_image_id(type)].push_back(sImageRecord{file, parse_preg(preg)});
+            }
+        } else {
+            g_LogFile.warning("image", "Image folder '", base_path, "' does not provide images.xml");
+            // first get the list of all files
+            auto result = FileList(base_path.c_str(), "*.*");
+            m_FileNameBuffer.resize(result.size());
+            for (int i = 0; i < result.size(); ++i) {
+                m_FileNameBuffer[i] = result[i].leaf();
+            }
 
-        // then match the files against all patterns to sort
-        for(int i = 0; i < (int)EBaseImage::NUM_TYPES; ++i) {
-            m_RecordsBuffer[i].clear();
-            auto& patterns = m_ImageTypes[i].Patterns;
-            for(auto& pattern : patterns) {
-                std::regex base_re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
-                std::regex preg_re("preg" + pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
-                for(auto& file : m_FileNameBuffer) {
-                    if (std::regex_match(file, base_re)) {
-                        m_RecordsBuffer[i].push_back(sImageRecord{file, false});
-                    }
+            // then match the files against all patterns to sort
+            for (int i = 0; i < (int) EBaseImage::NUM_TYPES; ++i) {
+                m_RecordsBuffer[i].clear();
+                auto& patterns = m_ImageTypes[i].Patterns;
+                for (auto& pattern: patterns) {
+                    std::regex base_re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
+                    std::regex preg_re("preg" + pattern,
+                                       std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
+                    for (auto& file: m_FileNameBuffer) {
+                        if (std::regex_match(file, base_re)) {
+                            m_RecordsBuffer[i].push_back(sImageRecord{file, false});
+                        }
 
-                    if(std::regex_match(file, preg_re)) {
-                        m_RecordsBuffer[i].push_back(sImageRecord{file, true});
+                        if (std::regex_match(file, preg_re)) {
+                            m_RecordsBuffer[i].push_back(sImageRecord{file, true});
+                        }
                     }
                 }
             }
         }
 
-        auto inserted = m_PathCache.insert(std::make_pair(base_path, sImageList(m_RecordsBuffer)));
+        auto inserted = m_PathCache.insert(std::make_pair(base_path, cImageList(m_RecordsBuffer)));
         return inserted.first->second;
     }
 }

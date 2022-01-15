@@ -126,7 +126,7 @@ set(SRC cEvents.cpp
         SavesList.cpp
         images/cImageLookup.cpp
         images/ids.cpp
-        images/sImageList.cpp)
+        images/cImageList.cpp)
 
 add_library(WmGameObjects OBJECT ${BUILDINGS_SRC} ${SCREENS_SRC} ${JOBS_SRC} ${CHARACTER_SRC} ${SCRIPTING_SRC} ${MOVIES_SRC} ${SRC})
 target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest)
