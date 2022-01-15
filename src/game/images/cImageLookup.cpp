@@ -63,8 +63,12 @@ const cImageList& cImageLookup::lookup_files(const std::string& base_path) {
                 std::string type = GetStringAttribute(entry, "Type");
                 std::string preg = GetStringAttribute(entry, "Pregnant");
                 std::string fallback = GetDefaultedStringAttribute(entry, "Fallback", "no");
-                m_RecordsBuffer[(int)get_image_id(type)].push_back(sImageRecord{file, parse_preg(preg),
-                                                                                parse_preg(fallback)});
+                try {
+                    m_RecordsBuffer[(int) get_image_id(type)].push_back(sImageRecord{file, parse_preg(preg),
+                                                                                     parse_preg(fallback)});
+                } catch(const std::exception& error) {
+                    g_LogFile.error("image", "Error in image specification in ", img.str(), ": ", error.what());
+                }
             }
         } else {
             g_LogFile.warning("image", "Image folder '", base_path, "' does not provide images.xml");
@@ -187,20 +191,21 @@ cImageLookup::cImageLookup(std::string def_img_path, const std::string& spec_fil
     for(auto& element : IterateChildElements(root, "Type")) {
         std::string base_name = GetStringAttribute(element, "Name");
         EBaseImage img = get_image_id(base_name);
-        boost::optional<std::string> display_name;
         sImgTypeInfo& info = m_ImageTypes.at((int)img);
         for(auto& c : IterateChildElements(element)) {
             std::string el_name = c.Value();
             if(el_name == "Display") {
-                display_name = c.GetText();
+                info.Display = c.GetText();
             } else if (el_name == "Pattern") {
                 info.Patterns.push_back(std::string(c.GetText()) + "\\..*");
             } else if (el_name == "Fallback") {
                 info.Fallbacks.push_back({get_image_id(c.GetText()),
                                           std::max(0, c.IntAttribute("Cost", 10))});
-
             }
         }
+
+        if(info.Display.empty())
+            info.Display = base_name;
 
         if(info.Patterns.empty()) {
             info.Patterns.push_back(base_name + ".*\\..*");
@@ -242,4 +247,8 @@ std::vector<std::string> cImageLookup::find_images(const std::string& base_path,
     find_image_internal_imp(base_path, spec, cutoff, inner_callback, stop);
 
     return result;
+}
+
+const std::string& cImageLookup::get_display_name(EBaseImage image) {
+    return m_ImageTypes.at((int)image).Display;
 }

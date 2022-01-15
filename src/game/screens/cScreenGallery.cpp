@@ -139,7 +139,7 @@ void cScreenGallery::determine_images() {
             spec.BasicImage = img;
             target = g_Game->image_lookup().find_images(m_SelectedGirl->GetImageFolder().str(), spec, cut);
             if (!target.empty()) {
-                std::vector<FormattedCellData> dataP{mk_text(get_image_name(img)), mk_num(target.size())};
+                std::vector<FormattedCellData> dataP{mk_text(g_Game->image_lookup().get_display_name(img)), mk_num(target.size())};
                 std::lock_guard<std::mutex> lck(m_UpdateMutex);
                 m_ScheduledUpdates.emplace_back([this, img, data = std::move(dataP)]() {
                     AddToListBox(imagelist_id, (int) img, std::move(data));

@@ -34,11 +34,14 @@ public:
     std::string find_image(const std::string& base_path, const sImageSpec& spec);
     std::vector<std::string> find_images(const std::string& base_path, sImageSpec spec, int cutoff=0);
 
+    const std::string& get_display_name(EBaseImage image);
+
     struct sFallbackData {
         EBaseImage NewImageType;
         int Cost = 1;
     };
     struct sImgTypeInfo {
+        std::string Display;
         std::vector<std::string> Patterns;
         std::vector<sFallbackData> Fallbacks;
     };
@@ -49,8 +52,6 @@ private:
 
     template<class T, class U>
     void find_image_internal_imp(const std::string& base_path, const sImageSpec& spec, int max_cost, T&& callback, U&& stopping);
-    template<class F>
-    void iterate_candidates(const std::vector<sImageRecord>& haystack, const sImageSpec& spec, F&& callback);
 
     std::unordered_map<std::string, cImageList> m_PathCache;
     std::vector<sImgTypeInfo> m_ImageTypes;
