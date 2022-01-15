@@ -62,7 +62,9 @@ const cImageList& cImageLookup::lookup_files(const std::string& base_path) {
                 std::string file = GetStringAttribute(entry, "File");
                 std::string type = GetStringAttribute(entry, "Type");
                 std::string preg = GetStringAttribute(entry, "Pregnant");
-                m_RecordsBuffer[(int)get_image_id(type)].push_back(sImageRecord{file, parse_preg(preg)});
+                std::string fallback = GetDefaultedStringAttribute(entry, "Fallback", "no");
+                m_RecordsBuffer[(int)get_image_id(type)].push_back(sImageRecord{file, parse_preg(preg),
+                                                                                parse_preg(fallback)});
             }
         } else {
             g_LogFile.warning("image", "Image folder '", base_path, "' does not provide images.xml");
@@ -102,8 +104,8 @@ const cImageList& cImageLookup::lookup_files(const std::string& base_path) {
 std::string cImageLookup::find_image_internal(const std::string& base_path, const sImageSpec& spec, int max_cost) {
     std::minstd_rand rng(spec.Seed);
     RandomSelectorV2<std::string> selector;
-    auto inner_callback = [&](auto&& file) {
-        selector.process(rng, file);
+    auto inner_callback = [&](auto&& file, bool fallback) {
+        selector.process(rng, file, fallback ? -1 : 0);
     };
     auto stop = [&](){
         return selector.selection().has_value();
@@ -147,7 +149,7 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
 
         for(const sImageRecord& image: haystack.iterate(it->Value.BasicImage)) {
             if(image.IsPregnant == it->Value.IsPregnant) {
-                inner_callback(image.FileName);
+                inner_callback(image.FileName, image.IsFallback);
             }
         }
 
@@ -231,7 +233,7 @@ std::string cImageLookup::find_image(const std::string& base_path, const sImageS
 std::vector<std::string> cImageLookup::find_images(const std::string& base_path, sImageSpec spec, int cutoff) {
     auto& files = lookup_files(base_path);
     std::vector<std::string> result;
-    auto inner_callback = [&](auto&& file) {
+    auto inner_callback = [&](auto&& file, bool fallback) {
         result.push_back(file);
     };
     auto stop = [&](){

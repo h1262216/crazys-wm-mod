@@ -27,7 +27,8 @@ enum class EBaseImage;
 
 struct sImageRecord {
     std::string FileName;
-    bool IsPregnant;
+    bool IsPregnant : 1;
+    bool IsFallback : 1;
 };
 
 class cImageList {
