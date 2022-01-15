@@ -29,28 +29,39 @@
 #include <regex>
 #include <utility>
 
-const std::vector<std::string>& cImageLookup::lookup_files(const std::string& base_path) {
+const sImageList& cImageLookup::lookup_files(const std::string& base_path) {
     auto lookup = m_PathCache.find(base_path);
     if(lookup != m_PathCache.end()) {
         return lookup->second;
     } else {
+        // first get the list of all files
         auto result = FileList(base_path.c_str(), "*.*");
-        auto& target = m_PathCache[base_path];
+        m_FileNameBuffer.resize(result.size());
         for(int i = 0; i < result.size(); ++i) {
-            target.push_back(result[i].leaf());
+            m_FileNameBuffer[i] = result[i].leaf();
         }
-        return target;
-    }
-}
 
-namespace {
-    std::string make_pattern(const std::string& base, bool is_pregnant) {
-        std::string pattern;
-        if(is_pregnant) {
-            return "preg" + base;
-        } else {
-            return base;
+        // then match the files against all patterns to sort
+        for(int i = 0; i < (int)EBaseImage::NUM_TYPES; ++i) {
+            m_RecordsBuffer[i].clear();
+            auto& patterns = m_ImageTypes[i].Patterns;
+            for(auto& pattern : patterns) {
+                std::regex base_re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
+                std::regex preg_re("preg" + pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
+                for(auto& file : m_FileNameBuffer) {
+                    if (std::regex_match(file, base_re)) {
+                        m_RecordsBuffer[i].push_back(sImageRecord{file, false});
+                    }
+
+                    if(std::regex_match(file, preg_re)) {
+                        m_RecordsBuffer[i].push_back(sImageRecord{file, true});
+                    }
+                }
+            }
         }
+
+        auto inserted = m_PathCache.insert(std::make_pair(base_path, sImageList(m_RecordsBuffer)));
+        return inserted.first->second;
     }
 }
 
@@ -100,7 +111,11 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
         }
         visited.insert(it->Value.BasicImage);
 
-        iterate_candidates(haystack, it->Value, inner_callback);
+        for(const sImageRecord& image: haystack.iterate(it->Value.BasicImage)) {
+            if(image.IsPregnant == it->Value.IsPregnant) {
+                inner_callback(image.FileName);
+            }
+        }
 
         // insert does not invalidate iterators for set, so it is still fine
         for(auto& fbs : m_ImageTypes.at((int)it->Value.BasicImage).Fallbacks) {
@@ -124,24 +139,11 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
     }
 }
 
-
-template<class F>
-void cImageLookup::iterate_candidates(const std::vector<std::string>& haystack, const sImageSpec& spec, F&& callback) {
-    for(auto& base_pattern: m_ImageTypes.at((int)spec.BasicImage).Patterns) {
-        std::string pattern = make_pattern(base_pattern, spec.IsPregnant);
-        std::regex re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
-        for (auto& f: haystack) {
-            if (std::regex_match(f, re)) {
-                callback(f);
-            }
-        }
-    }
-}
-
 cImageLookup::cImageLookup(std::string def_img_path, const std::string& spec_file) :
     m_DefaultPath(std::move(def_img_path))
 {
     m_ImageTypes.resize((int)EBaseImage::NUM_TYPES);
+    m_RecordsBuffer.resize((int)EBaseImage::NUM_TYPES);
 
     auto doc = LoadXMLDocument(spec_file);
     auto& root = *doc->RootElement();

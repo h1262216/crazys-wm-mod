@@ -26,6 +26,7 @@
 #include <vector>
 #include <boost/optional.hpp>
 #include <random>
+#include "sImageList.h"
 
 class cImageLookup {
 public:
@@ -43,19 +44,23 @@ public:
     };
 
 private:
-    const std::vector<std::string>& lookup_files(const std::string& base_path);
+    const sImageList& lookup_files(const std::string& base_path);
     std::string find_image_internal(const std::string& base_path, const sImageSpec& spec, int max_cost);
 
     template<class T, class U>
     void find_image_internal_imp(const std::string& base_path, const sImageSpec& spec, int max_cost, T&& callback, U&& stopping);
     template<class F>
-    void iterate_candidates(const std::vector<std::string>& haystack, const sImageSpec& spec, F&& callback);
+    void iterate_candidates(const std::vector<sImageRecord>& haystack, const sImageSpec& spec, F&& callback);
 
-    std::unordered_map<std::string, std::vector<std::string>> m_PathCache;
+    std::unordered_map<std::string, sImageList> m_PathCache;
     std::vector<sImgTypeInfo> m_ImageTypes;
     std::string m_DefaultPath;
 
     int m_CostCutoff = 25;   // if the lookup cost exceeds this value, default images will be used
+
+    // cache variables, so we don't need to repeatedly allocate memory
+    std::vector<std::string> m_FileNameBuffer;
+    std::vector<std::vector<sImageRecord>> m_RecordsBuffer;
 };
 
 #endif //WM_CIMAGELOOKUP_H
