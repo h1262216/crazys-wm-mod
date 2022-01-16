@@ -507,7 +507,7 @@ bool child_is_due(sGirl& girl, sChild& child, std::string& summary, bool PlayerC
     *    because we're not interested in watching
     *    little tentacles grow to adulthood
     */
-    if (PlayerControlled) girl.AddMessage(ss.str(), EBaseImage::PROFILE, EVENT_DANGER);
+    if (PlayerControlled) girl.AddMessage(ss.str(), EBaseImage::BIRTH_HUMAN, EVENT_DANGER);
     girl.m_JustGaveBirth = true;
     return true;
 }

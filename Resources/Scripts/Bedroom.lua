@@ -93,6 +93,7 @@ function NormalSex(girl)
     if girl:obey_check(wm.ACTIONS.SEX) then
         HandleNormalSex(girl)
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She refuses to have sex; mumbling some half hearted excuse.")
         return girl:trigger("girl:refuse")
     end
@@ -127,6 +128,7 @@ function LesbianSex(girl)
     if girl:obey_check(wm.ACTIONS.SEX) then
         HandleLesbianSex(girl, RandomGirlName())
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She wrinkles her nose in disgust and refuses.")
         return girl:trigger("girl:refuse")
     end
@@ -212,6 +214,7 @@ function BeastSex(girl)
             wm.TakePlayerGold(wm.Range(50, 75))
         end
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She refuses to have sex with a beast.")
         return girl:trigger("girl:refuse")
     end
@@ -247,6 +250,7 @@ function AnalSex(girl)
             girl:libido(-2)
         end
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She quickly stands up and turns around.  \"I know what your thinking and the answer is NO.\"")
         return girl:trigger("girl:refuse")
     end
@@ -282,6 +286,7 @@ function BDSMSex(girl)
         end
         PlayerFucksGirlUpdate(girl)
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She refuses to let you tie her up.")
         return girl:trigger("girl:refuse")
     end
@@ -319,6 +324,7 @@ function MasturbateSex(girl)
         if girl:has_trait("Meek") then
             Dialog("She blushes to a deep red and pushes you out of the room without ever making eye contact.")
         else
+            wm.UpdateImage(wm.IMG.REFUSE)
             Dialog("She immediately covers herself and demands you leave her room.")
             return girl:trigger("girl:refuse")
         end
@@ -445,6 +451,7 @@ function FFMSex(girl)
         else
             Dialog("She refuses to be have sex with you and the other girl.")
         end
+        wm.UpdateImage(wm.IMG.REFUSE)
         return girl:trigger("girl:refuse")
     end
 end
@@ -612,6 +619,7 @@ function Strip(girl)
                 girl:strip(2)
             end
         else
+            wm.UpdateImage(wm.IMG.REFUSE)
             Dialog("She refuses to perform a striptease for you.")
             return girl:trigger("girl:refuse")
         end
@@ -646,6 +654,7 @@ function Blowjob(girl)
             girl:oralsex(2)
         end
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She closes her mouth tight and turns her head away from your penis.")
         return girl:trigger("girl:refuse")
     end
@@ -676,6 +685,7 @@ function Deepthroat(girl)
             girl:oralsex(1)
         end
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She closes her mouth tight and shakes her head refusingly.")
         return girl:trigger("girl:refuse")
     end
@@ -715,6 +725,7 @@ function Tittyfuck(girl)
             girl:tittysex(3)
         end
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She stands up quickly and turns her back to you defiantly.")
         return girl:trigger("girl:refuse")
     end
@@ -941,6 +952,7 @@ function Fingering(girl)
             end
         end
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She refuses to let you finger her. \"Don't touch me!\"")
         return girl:trigger("girl:refuse")
     end
@@ -951,6 +963,7 @@ function Licking(girl)
         wm.UpdateImage(wm.IMG.LICK)
         Dialog("Not written yet")
     else
+        wm.UpdateImage(wm.IMG.REFUSE)
         Dialog("She refuses to let you lick her pussy. \"Don't touch me!\"")
         return girl:trigger("girl:refuse")
     end

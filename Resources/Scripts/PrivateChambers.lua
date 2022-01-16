@@ -47,10 +47,12 @@ function HerRoom(girl)
     if choice == 0 then
         Dialog("You politely bow slightly and bring her hand to your lips.  \"Good Night, My Dear.  I hope you had a pleasant evening.\"")
         if girl:tiredness() > 70 then
+            wm.UpdateImage(wm.IMG.REST)
             Dialog("Apparently, she was more tired then she let on and she begins to sway on her feet.  You catch her before she hits the ground.  You pick her up and carry her to her bed...")
             return SheIsAsleep(girl)
         else
-            Dialog("She curtseys and smiles \"Good Night, Good Sir.\" She replies in a friendly but mocking tone. She closes the door behind her as she enters the room and  You head back down the hallway to your room alone.")
+            wm.UpdateImage(wm.IMG.BED)
+            Dialog("She curtseys and smiles \"Good Night, Good Sir.\" She replies in a friendly but mocking tone. She closes the door behind her as she enters the room.  You head back down the hallway to your room alone.")
         end
     elseif choice == 1 then
         Dialog("As you lean in to kiss her, you ponder exactly what kind of kiss it should be...")
@@ -83,6 +85,7 @@ end
 
 ---@param girl wm.Girl
 function SheIsAsleep(girl)
+    wm.UpdateImage(wm.IMG.REST)
     local choice = ChoiceBox("", "Gently tuck her in", "Sleep Creep")
     if choice == 0 then
         Dialog("You spend a few moments watching her breath deeply and sleeping soundly.  You grab a nearby blanket and  gently tuck her in.  ")
@@ -100,9 +103,9 @@ function SheIsAsleep(girl)
             Dialog("She awakes with a sudden start and stares wide eyed at your fingers inside her and your erection moving closer.  \"What the fuck!\" She cries \"Get off of me!\"")
             local action = ChoiceBox("", "Hold her down and Fuck her anyway.", "Apologize and Leave")
             if action == 0 then
+                PlayerRapeGirl(girl)
                 Dialog("Grabbing her arms you pin her down. \"I'm afraid I've come too far to stop now, my dear!\"  She tries to fight you off by you are too strong for her.  She cries as you force your penis inside her and pump her forcefully.  You explode while deep inside her and your cum fills her womb.")
                 wm.SetPlayerDisposition(-20)
-                PlayerRapeGirl(girl)
             elseif action == 1 then
                 Dialog("Startled you jump off of her and issue pathetic apologies as you flee the room.")
                 wm.SetPlayerDisposition(-5)

@@ -35,7 +35,7 @@ function PlayerRapeGirl(girl)
     local preg = girl:calc_player_pregnancy(false, 1.0)
     if preg then Dialog(girl:name() .. " has gotten pregnant") end
     -- set image if possible
-    wm.UpdateImage(wm.IMG.SEX)
+    wm.UpdateImage(wm.IMG.RAPE)
 end
 
 ---@param girl wm.Girl
