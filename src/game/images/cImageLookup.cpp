@@ -63,8 +63,10 @@ const cImageList& cImageLookup::lookup_files(const std::string& base_path) {
                 std::string type = GetStringAttribute(entry, "Type");
                 std::string preg = GetStringAttribute(entry, "Pregnant");
                 std::string fallback = GetDefaultedStringAttribute(entry, "Fallback", "no");
+                std::string outfit = GetDefaultedStringAttribute(entry, "Outfit", "none");
                 try {
-                    m_RecordsBuffer[(int) get_image_id(type)].push_back(sImageRecord{file, parse_yesno(preg),
+                    m_RecordsBuffer[(int) get_image_id(type)].push_back(sImageRecord{file, get_outfit_id(outfit),
+                                                                                     parse_yesno(preg),
                                                                                      parse_yesno(fallback)});
                 } catch(const std::exception& error) {
                     g_LogFile.error("image", "Error in image specification in ", img.str(), ": ", error.what());
@@ -98,11 +100,11 @@ void cImageLookup::image_types_from_file_names() {
                                std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
             for (auto& file: m_FileNameBuffer) {
                 if (std::regex_match(file, base_re)) {
-                    m_RecordsBuffer[i].push_back(sImageRecord{file, false});
+                    m_RecordsBuffer[i].push_back(sImageRecord{file, EOutfitType::NONE, false});
                 }
 
                 if (std::regex_match(file, preg_re)) {
-                    m_RecordsBuffer[i].push_back(sImageRecord{file, true});
+                    m_RecordsBuffer[i].push_back(sImageRecord{file, EOutfitType::NONE, true});
                 }
             }
         }
@@ -112,8 +114,8 @@ void cImageLookup::image_types_from_file_names() {
 std::string cImageLookup::find_image_internal(const std::string& base_path, const sImageSpec& spec, int max_cost) {
     std::minstd_rand rng(spec.Seed);
     RandomSelectorV2<std::string> selector;
-    auto inner_callback = [&](auto&& file, bool fallback) {
-        selector.process(rng, file, fallback ? -1 : 0);
+    auto inner_callback = [&](auto&& file, bool fallback, float weight) {
+        selector.process(rng, file, fallback ? -1 : 0, weight);
     };
     auto stop = [&](){
         return selector.selection().has_value();
@@ -147,6 +149,54 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
 
     std::multiset<QueueEntry> queue;
     queue.insert({0, spec.BasicImage, spec.IsPregnant});
+
+    // for profile images, also look up based on outfit.
+    /// TODO this mechanism needs refinement!!!
+    if(spec.BasicImage == EBaseImage::PROFILE) {
+        switch (spec.Outfit) {
+            case EOutfitType::ARMOUR:
+                queue.insert({0, EBaseImage::COMBAT, spec.IsPregnant});
+                break;
+            case EOutfitType::FETISH:
+                queue.insert({0, EBaseImage::DOM, spec.IsPregnant});
+                break;
+            case EOutfitType::MAID:
+                queue.insert({0, EBaseImage::MAID, spec.IsPregnant});
+                break;
+            case EOutfitType::TEACHER:
+                queue.insert({0, EBaseImage::TEACHER, spec.IsPregnant});
+                break;
+            case EOutfitType::NURSE:
+                queue.insert({0, EBaseImage::NURSE, spec.IsPregnant});
+                break;
+            case EOutfitType::FORMAL:
+                queue.insert({0, EBaseImage::FORMAL, spec.IsPregnant});
+                break;
+            case EOutfitType::SWIMWEAR:
+                queue.insert({0, EBaseImage::SWIM, spec.IsPregnant});
+                break;
+            case EOutfitType::LINGERIE:
+                queue.insert({0, EBaseImage::ECCHI, spec.IsPregnant});
+                break;
+            case EOutfitType::FARMER:
+                queue.insert({0, EBaseImage::FARM, spec.IsPregnant});
+                break;
+            case EOutfitType::SORCERESS:
+                queue.insert({0, EBaseImage::MAGIC, spec.IsPregnant});
+                break;
+            case EOutfitType::NUDE:
+                queue.insert({0, EBaseImage::NUDE, spec.IsPregnant});
+                break;
+            case EOutfitType::SCHOOLGIRL:
+            case EOutfitType::SPORTSWEAR:
+            case EOutfitType::RAGS:
+            case EOutfitType::CASUAL:
+            case EOutfitType::NONE:
+            case EOutfitType::NUM_OUTFITS:
+                break;
+        }
+    }
+
     g_LogFile.info("image", "Looking for image: ", get_image_name(spec.BasicImage));
     while(!queue.empty()) {
         auto it = queue.begin();
@@ -158,7 +208,7 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
 
         for(const sImageRecord& image: haystack.iterate(it->BasicImage)) {
             if(image.IsPregnant == it->IsPregnant) {
-                inner_callback(image.FileName, image.IsFallback);
+                inner_callback(image.FileName, image.IsFallback, match_quality(spec, image));
             }
         }
 
@@ -243,7 +293,7 @@ std::string cImageLookup::find_image(const std::string& base_path, const sImageS
 std::vector<std::string> cImageLookup::find_images(const std::string& base_path, sImageSpec spec, int cutoff) {
     auto& files = lookup_files(base_path);
     std::vector<std::string> result;
-    auto inner_callback = [&](auto&& file, bool fallback) {
+    auto inner_callback = [&](auto&& file, bool fallback, float weight) {
         result.push_back(file);
     };
     auto stop = [&](){
@@ -256,4 +306,15 @@ std::vector<std::string> cImageLookup::find_images(const std::string& base_path,
 
 const std::string& cImageLookup::get_display_name(EBaseImage image) {
     return m_ImageTypes.at((int)image).Display;
+}
+
+float cImageLookup::match_quality(const sImageSpec& spec, const sImageRecord& record) const {
+    // don't care about outfits at all, or no outfit set in the image: default weights
+    if(spec.Outfit == EOutfitType::NONE || record.Outfit == EOutfitType::NONE) return 1.f;
+
+    // otherwise, a match gives a 5-fold increase in weight
+    if(spec.Outfit == record.Outfit) return 5.f;
+
+    // and a mismatch halves the weight
+    return 0.5f;
 }

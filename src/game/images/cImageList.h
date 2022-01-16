@@ -22,11 +22,11 @@
 
 #include <vector>
 #include <string>
-
-enum class EBaseImage;
+#include "ids.h"
 
 struct sImageRecord {
     std::string FileName;
+    EOutfitType Outfit;
     bool IsPregnant : 1;
     bool IsFallback : 1;
 };

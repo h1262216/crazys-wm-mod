@@ -64,6 +64,8 @@ private:
     std::vector<std::vector<sImageRecord>> m_RecordsBuffer;
 
     void image_types_from_file_names();
+
+    float match_quality(const sImageSpec& spec, const sImageRecord& record) const;
 };
 
 #endif //WM_CIMAGELOOKUP_H

@@ -23,8 +23,10 @@
 #include <cstdint>
 #include "ids.h"
 
+
 struct sImageSpec {
     EBaseImage BasicImage;
+    EOutfitType Outfit;
     bool IsPregnant;
     bool IsVirgin;
     std::uint64_t Seed;

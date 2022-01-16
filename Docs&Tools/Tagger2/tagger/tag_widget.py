@@ -31,6 +31,12 @@ class TagViewWidget(QWidget):
         self.display_type = QLabel("")
         layout.addWidget(self.display_type)
 
+        layout.addWidget(QLabel("Outfit"))
+        self.outfit = QComboBox()
+        self.outfit.addItems(["Armour", "Fetish", "Maid", "Teacher", "Nurse", "Formal", "Schoolgirl", "Swimwear", "Lingerie",
+                              "Farmer", "Sorceress", "Rags", "Casual", "Nude", "None"])
+        layout.addWidget(self.outfit)
+
         # pregnant variation
         layout.addWidget(QLabel("Flags"))
         self.preg = QCheckBox()
@@ -66,8 +72,10 @@ class TagViewWidget(QWidget):
             self.display_type.setText("ERROR" if resource.type != "" else "<NONE>")
         self.preg.setCheckState(Qt.Checked if resource.pregnant else Qt.Unchecked)
         self.fallback.setCheckState(Qt.Checked if resource.fallback else Qt.Unchecked)
+        self.outfit.setCurrentText(resource.outfit.title())
 
     def write_changes(self, resource: ImageResource):
         resource.type = self.edit.text()
         resource.pregnant = self.preg.checkState() == Qt.Checked
         resource.fallback = self.fallback.checkState() == Qt.Checked
+        resource.outfit = self.outfit.currentText().lower()

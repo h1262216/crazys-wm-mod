@@ -149,6 +149,8 @@
     </Type>
     <Type Name="fisting">
         <Display>Fisting</Display>
+        <Pattern>fisting.*</Pattern>
+        <Pattern>fist.*</Pattern>
         <Fallback>finger</Fallback>
     </Type>
     <Type Name="suckballs">
@@ -318,6 +320,8 @@
 
     <Type Name="sport">
         <Display>Sport</Display>
+        <Pattern>sport.*</Pattern>
+        <Pattern>workout.*</Pattern>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="study">

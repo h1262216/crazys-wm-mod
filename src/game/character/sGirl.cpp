@@ -1499,26 +1499,24 @@ FormattedCellData sGirl::GetJobRating(JOBS job) const {
 sImageSpec sGirl::MakeImageSpec(EBaseImage base) const {
     // add some variety to profile images.
     // TODO this does not affect profile when used as fallback, but it should!
+    EOutfitType outfit = is_slave() ? EOutfitType::RAGS : EOutfitType::CASUAL;
     bool armor = get_num_item_equiped(sInventoryItem::Armor) >= 1;
     bool dress = get_num_item_equiped(sInventoryItem::Dress) >= 1;
     bool swim = get_num_item_equiped(sInventoryItem::Swimsuit) >= 1;
     bool lingerie = get_num_item_equiped(sInventoryItem::Underwear) >= 1;
-    if (base == EBaseImage::PROFILE && g_Dice.percent(10))
+    if (armor)    { outfit = EOutfitType::ARMOUR; }
+    else if (dress)
     {
-        if (armor)    { base = EBaseImage::COMBAT; }
-        else if (dress)
-        {
-            if (has_active_trait("Elegant")) base = EBaseImage::FORMAL;
-            else if (has_active_trait("Dominatrix")) base = EBaseImage::DOM;
-            else if (has_active_trait("Maid")) base = EBaseImage::MAID;
-            else if (has_active_trait("Teacher")) base = EBaseImage::TEACHER;
-            else if (has_active_trait("Doctor")) base = EBaseImage::NURSE;
-        }
-        else if (swim)            { base = EBaseImage::SWIM; }
-        else if (lingerie)        { base = EBaseImage::ECCHI; }
+        if (has_active_trait("Elegant")) outfit = EOutfitType::FORMAL;
+        else if (has_active_trait("Dominatrix")) outfit = EOutfitType::FETISH;
+        else if (has_active_trait("Maid")) outfit = EOutfitType::MAID;
+        else if (has_active_trait("Teacher")) outfit = EOutfitType::TEACHER;
+        else if (has_active_trait("Doctor")) outfit = EOutfitType::NURSE;
     }
+    else if (swim)            { outfit = EOutfitType::SWIMWEAR; }
+    else if (lingerie)        { outfit = EOutfitType::LINGERIE; }
 
-        return sImageSpec{base, is_pregnant(), is_virgin(*this), (std::uint64_t)(g_Dice % 8192)};
+    return sImageSpec{base, outfit, is_pregnant(), is_virgin(*this), (std::uint64_t)(g_Dice % 8192)};
 }
 
 void sGirl::AddMessage(const std::string& message, EBaseImage base, EventType event) {

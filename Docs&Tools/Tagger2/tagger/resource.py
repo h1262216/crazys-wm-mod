@@ -15,6 +15,7 @@ class ImageResource:
     file: str
     type: str
     pregnant: bool
+    outfit: str
     fallback: bool = False
     source: Optional[str] = None
     comment: Optional[str] = None
@@ -64,7 +65,7 @@ def load_image(node) -> ImageResource:
         file=a["File"], type=a["Type"], pregnant=_OPT_TO_BOOL[a["Pregnant"]],
         fallback=_OPT_TO_BOOL[a.get("Fallback", "no")],
         source=a.get("Source", None), comment=a.get("Comment", None),
-        style=a.get("Style", None)
+        style=a.get("Style", None), outfit=a.get("Outfit", "none")
     )
 
 
@@ -89,7 +90,8 @@ def guess_type_by_file_name(file_name: str, tags: dict):
 
 
 def _image_resource_dict(image: ImageResource):
-    d = {"File": image.file, "Type": image.type, "Pregnant": "yes" if image.pregnant else "no"}
+    d = {"File": image.file, "Type": image.type, "Pregnant": "yes" if image.pregnant else "no",
+         "Outfit": image.outfit}
     if image.source is not None:
         d["Source"] = image.source
     if image.comment is not None:

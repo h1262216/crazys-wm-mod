@@ -49,5 +49,27 @@ EBaseImage get_image_id(const std::string& name) {
 }
 
 const char* get_image_name(EBaseImage image) {
-    return get_imgtype_names()[(int)image];
+    return get_imgtype_names().at((int)image);
+}
+
+const std::array<const char*, (int)EOutfitType::NUM_OUTFITS>& get_outfit_names() {
+    static std::array<const char*, (int)EOutfitType::NUM_OUTFITS> names {
+            "armour", "fetish", "maid", "teacher", "nurse", "formal", "schoolgirl",
+            "swimwear", "sportswear", "lingerie", "farmer", "sorceress", "rags",
+            "casual", "nude", "none"
+    };
+    return names;
+}
+
+const id_lookup_t<EOutfitType>& get_outfit_lookup() {
+    static auto lookup = create_lookup_table<EOutfitType>(get_outfit_names());
+    return lookup;
+}
+
+EOutfitType get_outfit_id(const std::string& name) {
+    return lookup_with_error(get_outfit_lookup(), name, "Trying to get invalid Image Type");
+}
+
+const char* get_outfit_name(EOutfitType outfit) {
+    return get_outfit_names().at((int)outfit);
 }

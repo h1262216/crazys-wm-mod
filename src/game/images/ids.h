@@ -142,4 +142,29 @@ IMGTYPE_PETWALK            - "petwalk*."        - "PetWalk"            - petprof
 IMGTYPE_PETLICK            - "petlick*."        - "PetLick"            - lick, oral, petprofile, bdsm, nude, titty
 */
 
+
+enum class EOutfitType {
+    ARMOUR,
+    FETISH,
+    MAID,
+    TEACHER,
+    NURSE,
+    FORMAL,
+    SCHOOLGIRL,
+    SWIMWEAR,
+    SPORTSWEAR,
+    LINGERIE,
+    FARMER,
+    SORCERESS,
+    RAGS,
+    CASUAL,
+    NUDE,
+    NONE,       // not set, or cannot be identified in the given image
+    NUM_OUTFITS
+};
+
+const std::array<const char*, (int)EOutfitType::NUM_OUTFITS>& get_outfit_names();
+EOutfitType get_outfit_id(const std::string& name);
+const char* get_outfit_name(EOutfitType image);
+
 #endif //WM_IMAGE_IDS_H

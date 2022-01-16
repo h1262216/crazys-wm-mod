@@ -131,6 +131,7 @@ void cScreenGallery::determine_images() {
     m_ImageFiles.resize((int)EBaseImage::NUM_TYPES);
     sImageSpec spec;
     spec.IsPregnant = IsCheckboxOn(pregnant_id);
+    spec.Outfit = EOutfitType::NONE;
     int cut = SliderValue(slider_id) * 5;
     auto run_update_in_bg = [this, spec, cut]() mutable {
         m_ScheduledUpdates.emplace_back([this](){ClearListBox(imagelist_id);});
