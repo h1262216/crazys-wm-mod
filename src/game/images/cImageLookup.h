@@ -62,6 +62,8 @@ private:
     // cache variables, so we don't need to repeatedly allocate memory
     std::vector<std::string> m_FileNameBuffer;
     std::vector<std::vector<sImageRecord>> m_RecordsBuffer;
+
+    void image_types_from_file_names();
 };
 
 #endif //WM_CIMAGELOOKUP_H

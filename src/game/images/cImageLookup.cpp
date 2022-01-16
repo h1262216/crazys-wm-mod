@@ -33,7 +33,7 @@
 #include "utils/string.hpp"
 
 namespace {
-    bool parse_preg(const std::string& source) {
+    bool parse_yesno(const std::string& source) {
         if(iequals(source, "yes")) {
             return true;
         } else if (iequals(source, "no")) {
@@ -64,8 +64,8 @@ const cImageList& cImageLookup::lookup_files(const std::string& base_path) {
                 std::string preg = GetStringAttribute(entry, "Pregnant");
                 std::string fallback = GetDefaultedStringAttribute(entry, "Fallback", "no");
                 try {
-                    m_RecordsBuffer[(int) get_image_id(type)].push_back(sImageRecord{file, parse_preg(preg),
-                                                                                     parse_preg(fallback)});
+                    m_RecordsBuffer[(int) get_image_id(type)].push_back(sImageRecord{file, parse_yesno(preg),
+                                                                                     parse_yesno(fallback)});
                 } catch(const std::exception& error) {
                     g_LogFile.error("image", "Error in image specification in ", img.str(), ": ", error.what());
                 }
@@ -80,28 +80,32 @@ const cImageList& cImageLookup::lookup_files(const std::string& base_path) {
             }
 
             // then match the files against all patterns to sort
-            for (int i = 0; i < (int) EBaseImage::NUM_TYPES; ++i) {
-                m_RecordsBuffer[i].clear();
-                auto& patterns = m_ImageTypes[i].Patterns;
-                for (auto& pattern: patterns) {
-                    std::regex base_re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
-                    std::regex preg_re("preg" + pattern,
-                                       std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
-                    for (auto& file: m_FileNameBuffer) {
-                        if (std::regex_match(file, base_re)) {
-                            m_RecordsBuffer[i].push_back(sImageRecord{file, false});
-                        }
-
-                        if (std::regex_match(file, preg_re)) {
-                            m_RecordsBuffer[i].push_back(sImageRecord{file, true});
-                        }
-                    }
-                }
-            }
+            image_types_from_file_names();
         }
 
         auto inserted = m_PathCache.insert(std::make_pair(base_path, cImageList(m_RecordsBuffer)));
         return inserted.first->second;
+    }
+}
+
+void cImageLookup::image_types_from_file_names() {
+    for (int i = 0; i < (int) EBaseImage::NUM_TYPES; ++i) {
+        m_RecordsBuffer[i].clear();
+        auto& patterns = m_ImageTypes[i].Patterns;
+        for (auto& pattern: patterns) {
+            std::regex base_re(pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
+            std::regex preg_re("preg" + pattern,
+                               std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
+            for (auto& file: m_FileNameBuffer) {
+                if (std::regex_match(file, base_re)) {
+                    m_RecordsBuffer[i].push_back(sImageRecord{file, false});
+                }
+
+                if (std::regex_match(file, preg_re)) {
+                    m_RecordsBuffer[i].push_back(sImageRecord{file, true});
+                }
+            }
+        }
     }
 }
 
@@ -134,37 +138,37 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
 
     struct QueueEntry {
         int Cost;
-        sImageSpec Value;
+        EBaseImage BasicImage;
+        bool IsPregnant;
         bool operator<(const QueueEntry& other) const {
             return Cost < other.Cost;
         }
     };
 
     std::multiset<QueueEntry> queue;
-    queue.insert({0, spec});
+    queue.insert({0, spec.BasicImage, spec.IsPregnant});
     g_LogFile.info("image", "Looking for image: ", get_image_name(spec.BasicImage));
     while(!queue.empty()) {
         auto it = queue.begin();
-        g_LogFile.debug("image", "  Look up '", get_image_name(it->Value.BasicImage), "' at cost ", it->Cost);
+        g_LogFile.debug("image", "  Look up '", get_image_name(it->BasicImage), "' at cost ", it->Cost);
         if(it->Cost > max_cost) {
             break;
         }
-        visited.insert(it->Value.BasicImage);
+        visited.insert(it->BasicImage);
 
-        for(const sImageRecord& image: haystack.iterate(it->Value.BasicImage)) {
-            if(image.IsPregnant == it->Value.IsPregnant) {
+        for(const sImageRecord& image: haystack.iterate(it->BasicImage)) {
+            if(image.IsPregnant == it->IsPregnant) {
                 inner_callback(image.FileName, image.IsFallback);
             }
         }
 
         // insert does not invalidate iterators for set, so it is still fine
-        for(auto& fbs : m_ImageTypes.at((int)it->Value.BasicImage).Fallbacks) {
+        for(auto& fbs : m_ImageTypes.at((int)it->BasicImage).Fallbacks) {
             if(visited.count(fbs.NewImageType) > 0) continue;
-            queue.insert({it->Cost + fbs.Cost,
-                          sImageSpec{fbs.NewImageType, spec.IsPregnant, spec.IsVirgin, 0}});
+            queue.insert({it->Cost + fbs.Cost, fbs.NewImageType, spec.IsPregnant});
         }
-        if(it->Value.IsPregnant) {
-            queue.insert({it->Cost + 5, sImageSpec{it->Value.BasicImage, false, it->Value.IsVirgin, 0}});
+        if(it->IsPregnant) {
+            queue.insert({it->Cost + 5, it->BasicImage, false});
         }
 
         auto next = it;
@@ -216,22 +220,23 @@ cImageLookup::cImageLookup(std::string def_img_path, const std::string& spec_fil
 }
 
 std::string cImageLookup::find_image(const std::string& base_path, const sImageSpec& spec) {
+    auto make_path = [](const std::string& file_name, const std::string& directory){
+        DirPath path(directory.c_str());
+        path << file_name;
+        return path.str();
+    };
+
     auto result = find_image_internal(base_path, spec, m_CostCutoff);
-    // TODO clean up this code!
-    if(result.empty()) {
+    if (result.empty()) {
         // still nothing? retry with default images. Here we go to the end with fallbacks.
         result = find_image_internal(m_DefaultPath, spec, std::numeric_limits<int>::max());
-        if(result.empty()) {
+        if (result.empty()) {
             return result;
         } else {
-            DirPath path(m_DefaultPath.c_str());
-            path << result;
-            return path.str();
+            return make_path(result, m_DefaultPath);
         }
     } else {
-        DirPath path(base_path.c_str());
-        path << result;
-        return path.str();
+        return make_path(result, base_path);
     }
 }
 
