@@ -21,6 +21,7 @@
 #define WM_IMAGE_IDS_H
 
 #include <array>
+#include <string>
 
 // This is the data the is submitted to an event when determining an image
 enum class EBaseImage {
