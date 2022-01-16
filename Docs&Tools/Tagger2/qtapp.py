@@ -85,6 +85,12 @@ class MainWindow(QMainWindow):
         action.triggered.connect(self.tagger.prev_image)
         pack_menu.addAction(action)
 
+        stats_menu = self.menuBar().addMenu("&Stats")
+        action = QtGui.QAction('&Missing', self)
+        action.setStatusTip('Display the list of all image types without at least a single image')
+        action.triggered.connect(self.tagger.list_missing_images)
+        stats_menu.addAction(action)
+
     def _load_pack_dlg(self):
         pack_file, _ = QFileDialog.getOpenFileName(self, "Open Pack", ".", "Pack Files (images.xml)")
         if pack_file:
@@ -95,7 +101,7 @@ class MainWindow(QMainWindow):
         image_file, _ = QFileDialog.getOpenFileName(self, "Add Image", str(self.tagger.pack_data.path.parent), "Image (*.jpg *.jpeg *.png *.webp)")
         if image_file:
             from tagger.resource import ImageResource
-            image = ImageResource(file=image_file, type=guess_type_by_file_name(image_file, self.repo), pregnant='')
+            image = ImageResource(file=image_file, type=guess_type_by_file_name(image_file, self.repo), pregnant='', outfit='none')
             self.tagger.add_images([image])
 
     def _add_dir_dlg(self):
@@ -106,7 +112,7 @@ class MainWindow(QMainWindow):
             for file in Path(directory).iterdir():
                 if file.suffix not in [".png", ".jpg", ".jpeg", ".webp", ".gif"]:
                     continue
-                image = ImageResource(file=file, type=guess_type_by_file_name(file, self.repo), pregnant='')
+                image = ImageResource(file=file, type=guess_type_by_file_name(file, self.repo), pregnant='', outfit='none')
                 images.append(image)
             self.tagger.add_images(sorted(images, key=lambda x: x.file))
 

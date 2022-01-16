@@ -33,8 +33,8 @@ class TagViewWidget(QWidget):
 
         layout.addWidget(QLabel("Outfit"))
         self.outfit = QComboBox()
-        self.outfit.addItems(["Armour", "Fetish", "Maid", "Teacher", "Nurse", "Formal", "Schoolgirl", "Swimwear", "Lingerie",
-                              "Farmer", "Sorceress", "Rags", "Casual", "Nude", "None"])
+        self.outfit.addItems(["Armour", "Fetish", "Maid", "Teacher", "Nurse", "Formal", "Schoolgirl", "Swimwear",
+                              "Sportswear", "Lingerie", "Farmer", "Sorceress", "Rags", "Casual", "Nude", "None"])
         layout.addWidget(self.outfit)
 
         # pregnant variation

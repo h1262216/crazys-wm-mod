@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from PySide6.QtGui import QImage, QPixmap, QImageReader
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QListWidget, QFrame, QPushButton, \
-    QListWidgetItem, QGridLayout, QMenuBar, QCheckBox, QComboBox, QLineEdit, QFormLayout
+    QListWidgetItem, QGridLayout, QMenuBar, QCheckBox, QComboBox, QLineEdit, QFormLayout, QMessageBox
 from PySide6.QtCore import Qt
 
 from .resource import ImageResource, ResourcePack
@@ -42,7 +42,9 @@ class MainWidget(QWidget):
         #self.fallback.setTristate(False)
         #image_meta.addWidget(self.fallback)
 
-        image_meta.addRow("Source", QLineEdit(""))
+        self.source_edit = QLineEdit("")
+        self.source_edit.editingFinished.connect(self._update_source)
+        image_meta.addRow("Source", self.source_edit)
 
         self.style = QComboBox()
         self.style.addItem("-")
@@ -88,9 +90,11 @@ class MainWidget(QWidget):
             self.current_image = None
             return
         if self.current_image is not None:
-            self.tag_view.write_changes(self.pack_data.images[self.current_image])
+            active_image = self.pack_data.images[self.current_image]
+            self.tag_view.write_changes(active_image)
         image_data = self.pack_data.images[image]   # type: ImageResource
         self.tag_view.update_resource(image_data)
+        self.source_edit.setText(image_data.source)
         self.set_image_data(str(self.pack_data.path.parent / image_data.file))
         self.current_image = image
         self.pack_list.setCurrentRow(image)
@@ -125,3 +129,21 @@ class MainWidget(QWidget):
         ci = self.current_image
         self.set_pack_data(self.pack_data)
         self.update_image(ci)
+
+    def _update_source(self):
+        active_image = self.pack_data.images[self.current_image]
+        active_image.source = self.source_edit.text()
+
+    def list_missing_images(self):
+        reference = set(self.repo.keys())
+        print(reference)
+
+        all_types = set()
+        for im in self.pack_data.images:  # type: ImageResource
+            all_types.add(im.type)
+            if im.type == "lick": print(im.file)
+
+        missing = reference.difference(all_types)
+        msg = QMessageBox()
+        msg.setText("\n".join(missing))
+        msg.exec()
