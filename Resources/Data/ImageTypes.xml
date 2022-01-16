@@ -144,7 +144,12 @@
     <Type Name="finger">
         <Display>Finger</Display>
         <Fallback>lick</Fallback>
+        <Fallback>fisting</Fallback>
         <Fallback Cost="20">sex</Fallback>
+    </Type>
+    <Type Name="fisting">
+        <Display>Fisting</Display>
+        <Fallback>finger</Fallback>
     </Type>
     <Type Name="suckballs">
         <Display>Suck Balls</Display>
@@ -334,8 +339,14 @@
     </Type>
     <Type Name="bed">
         <Display>Bed</Display>
+        <Fallback Cost="10">rest</Fallback>
         <Fallback Cost="15">profile</Fallback>
         <Fallback>nude</Fallback>
+    </Type>
+    <Type Name="rest">
+        <Display>Resting</Display>
+        <Fallback Cost="5">bed</Fallback>
+        <Fallback Cost="10">profile</Fallback>
     </Type>
     <Type Name="bath">
         <Display>bath</Display>

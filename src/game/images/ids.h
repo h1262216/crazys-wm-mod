@@ -47,6 +47,7 @@ enum class EBaseImage {
     SCISSOR,
     LICK,                   // getting her pussy licked
     FINGER,                 // getting her pussy fingered
+    FISTING,                // getting her pussy fisted
     SUCKBALLS,
     COWGIRL,
     REVCOWGIRL,
@@ -91,7 +92,8 @@ enum class EBaseImage {
     TEACHER,                        // dressed or acting as a teacher
     COMBAT,                         // fighting/with weapons
     MAGIC,                          // performing a spell
-    BED,                            // free time resting
+    BED,                            // On a bed. (Used e.g. for bedroom interactions)
+    REST,                           // free time resting
     BATH,                           // taking a bath
     SWIM,                           // going swimming or dressed in a swimsuit
     SHOP,                           // free time going shopping

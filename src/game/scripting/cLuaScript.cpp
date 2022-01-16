@@ -45,7 +45,8 @@
 
 extern cRng g_Dice;
 extern cNameList g_SurnameList;
-
+extern cNameList g_GirlNameList;
+extern cNameList g_BoysNameList;
 extern "C" {
 #include "lua.h"
 #include "lualib.h"
@@ -93,6 +94,7 @@ static const luaL_Reg funx [] = {
         // rng
         { "Range",                       cLuaScript::Range},
         { "Percent",                     cLuaScript::Percent},
+        { "RandName",                     cLuaScript::RandomName},
         // girl
         {"AcquireGirl",                  sLuaGirl::acquire_girl},
         {"CreateRandomGirl",             sLuaGirl::create_random_girl},
@@ -264,6 +266,19 @@ int cLuaScript::Range(lua_State *state) {
     return 1;
 }
 
+int cLuaScript::RandomName(lua_State* state) {
+    long mode = luaL_checkinteger(state, 1);
+    if(mode == 0) {
+        lua_pushstring(state, g_GirlNameList.random().c_str());
+    } else if (mode == 1) {
+        lua_pushstring(state, g_BoysNameList.random().c_str());
+    } else if (mode == 2) {
+        lua_pushstring(state, g_SurnameList.random().c_str());
+    }
+    return 1;
+}
+
+
 int cLuaScript::UpdateImage(lua_State* state) {
     long image_type = luaL_checkinteger(state, 1);
     auto top_window = window_manager().GetWindow(false);
@@ -413,3 +428,4 @@ void cLuaScript::PushParameter(sLuaParameter param)
 bool cLuaScript::CheckFunction(const std::string& function) const {
     return m_State.has_function(function);
 }
+
