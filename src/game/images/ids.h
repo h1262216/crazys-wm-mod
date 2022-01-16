@@ -68,7 +68,7 @@ enum class EBaseImage {
 
     // Jobs
     MAID,
-    SING,
+    SINGING,                        // for some reason, using the name SING causes an error under windows
     WAIT,
     CARD,
     NURSE,

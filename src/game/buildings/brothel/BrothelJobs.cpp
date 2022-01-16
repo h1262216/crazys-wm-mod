@@ -706,7 +706,7 @@ bool cBarSingerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night
     int roll_a = d100(), roll_b = d100();
 
     int happy = 0, fame = 0;
-    EBaseImage imagetype = EBaseImage::SING;
+    EBaseImage imagetype = EBaseImage::SINGING;
     EventType msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);

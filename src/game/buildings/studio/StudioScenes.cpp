@@ -234,7 +234,7 @@ void RegisterFilmingJobs(cJobManager& mgr) {
                                                      EBaseImage::ECCHI, SceneType::TEASE));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMMUSIC, "FilmMusic.xml",
-                                                     EBaseImage::SING, SceneType::MUSIC));
+                                                     EBaseImage::SINGING, SceneType::MUSIC));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMSEX, "FilmSex.xml",
                                                      EBaseImage::SEX, SceneType::SEX, cFilmSceneJob::SexAction::HUMAN));
