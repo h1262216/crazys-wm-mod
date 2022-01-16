@@ -54,7 +54,7 @@
 * [ ] Choose your job interaction
 
 ## Text
-* [ ] MMF/FFM event in bedroom
+* [x] MMF/FFM event in bedroom
 * [ ] Training job
 
 ## Bugs

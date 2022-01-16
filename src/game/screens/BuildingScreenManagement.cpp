@@ -35,16 +35,14 @@ void IBuildingScreenManagement::update_image()
 {
     if (selected_girl)    // Draw a girls profile picture and description when selected
     {
-        bool Rand = false;
         if (m_LastSelection != selected_girl)
         {
             std::stringstream text;
             text << cGirls::GetGirlMood(*selected_girl) << "\n \n" << selected_girl->m_Desc;
             EditTextItem(text.str(), girldesc_id);
-            Rand = true;
             m_LastSelection = selected_girl;
         }
-        PrepareImage(girlimage_id, *selected_girl, EBaseImage::PROFILE);
+        PrepareImage(girlimage_id, *selected_girl, EBaseImage::PORTRAIT);
         HideWidget(girlimage_id, false);
     }
     else

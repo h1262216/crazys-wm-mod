@@ -33,7 +33,7 @@ const std::array<const char*, (int)EBaseImage::NUM_TYPES>& get_imgtype_names() {
             "sport", "study", "teacher", "combat", "magic", "bed", "rest", "bath", "swim",
             "shop", "craft", "dance",
             "birthhuman", "birthhumanmultiple", "birthbeast",
-            "refuse", "death", "profile", "jail", "torture", "formal", "presented",
+            "refuse", "death", "profile", "portrait", "jail", "torture", "formal", "presented",
             "brand", "puppygirl", "ponygirl", "catgirl"
     };
     return names;

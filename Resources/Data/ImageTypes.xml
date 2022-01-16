@@ -389,6 +389,11 @@
     </Type>
     <Type Name="profile">
         <Display>Profile</Display>
+        <Fallback Cost="5">portrait</Fallback>
+    </Type>
+    <Type Name="portrait">
+        <Display>Portrait</Display>
+        <Fallback Cost="2">profile</Fallback>
     </Type>
     <Type Name="jail">
         <Display>Jail</Display>

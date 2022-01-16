@@ -108,6 +108,7 @@ enum class EBaseImage {
     REFUSE,                         // refuse to do a job
     DEATH,                          // she died
     PROFILE,                        // generic profile image
+    PORTRAIT,                       // portrait-style profile image
     JAIL,                           // In jail or dungeon
     TORTURE,                        // Getting tortured
     FORMAL,                         // wearing formal clothes
