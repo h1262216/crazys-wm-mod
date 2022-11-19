@@ -20,6 +20,7 @@
 * Fixed image selection Turn Summary screen -- no longer reuses wrong images 
 * Fixed stack corruption in lua script handling
 * Run production jobs in arena
+* Back button in interaction @crazy
 
 ## Other
 * Treatment-type jobs (Therapy, Surgery etc.) now have more unified code and some
