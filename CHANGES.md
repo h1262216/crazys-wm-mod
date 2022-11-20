@@ -1,3 +1,8 @@
+# Version 7.2.1alpha6
+## Bugfixes
+* Fixed two bugs reported by big fan of fans
+
+
 # Version 7.2.1alpha5
 
 ## Gameplay:

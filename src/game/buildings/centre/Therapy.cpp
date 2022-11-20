@@ -34,8 +34,8 @@
 extern const char* const CounselingInteractionId;
 
 struct sRemoveTrait {
-    const char* Trait;
-    const char* Message;
+    std::string Trait;
+    std::string Message;
 };
 
 class TherapyJob : public ITreatmentJob {
@@ -136,13 +136,13 @@ void TherapyJob::ReceiveTreatment(sGirl& girl, bool is_night) {
 
         RandomSelector<sRemoveTrait> selector;
         for(auto& t : TraitRemove) {
-            if(girl.has_active_trait(t.Trait)) {
+            if(girl.has_active_trait(t.Trait.c_str())) {
                 selector.process(&t);
             }
         }
 
         if(auto sel = selector.selection()) {
-            if (girl.lose_trait(sel->Trait))
+            if (girl.lose_trait(sel->Trait.c_str()))
             {
                 ss << sel->Message << "\n";
             }
@@ -175,7 +175,7 @@ void TherapyJob::ReceiveTreatment(sGirl& girl, bool is_night) {
 bool TherapyJob::needs_therapy(const sGirl& girl) const {
     return std::any_of(begin(TraitRemove), end(TraitRemove),
      [&](const sRemoveTrait& t){
-         return girl.has_active_trait(t.Trait);
+         return girl.has_active_trait(t.Trait.c_str());
      });
 }
 
@@ -192,7 +192,7 @@ double TherapyJob::GetPerformance(const sGirl& girl, bool estimate) const {
     if(!needs_therapy(girl)) return -1000;
     double p = 100;
     for(auto& t : TraitRemove) {
-        if(girl.has_active_trait(t.Trait)) p += 100;
+        if(girl.has_active_trait(t.Trait.c_str())) p += 100;
     }
     return p;
 }
