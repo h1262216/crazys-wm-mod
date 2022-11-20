@@ -167,11 +167,12 @@ void cGirls::LevelUp(sGirl& girl)
         int addedtrait = girl.level() + 5;
         while (addedtrait > 0)
         {
-            const char* possible_traits[] = {
+            std::array<const char*, 12> possible_traits = {
                traits::AGILE, traits::CHARISMATIC, traits::CHARMING,
                traits::COOL_PERSON, traits::FAKE_ORGASM_EXPERT,
                traits::FLEET_OF_FOOT, traits::GOOD_KISSER, traits::NIMBLE_TONGUE,
-               traits::NYMPHOMANIAC, traits::OPEN_MINDED, traits::SEXY_AIR
+               traits::NYMPHOMANIAC, traits::OPEN_MINDED, traits::SEXY_AIR,
+               nullptr
             };
             int chance = g_Dice % 12;
             const char* trait = possible_traits[chance];
