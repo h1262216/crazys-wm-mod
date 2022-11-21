@@ -176,7 +176,7 @@ void cGirls::LevelUp(sGirl& girl)
             };
             int chance = g_Dice % 12;
             const char* trait = possible_traits[chance];
-            if (girl.gain_trait(trait))
+            if (trait != nullptr && girl.gain_trait(trait))
             {
                 addedtrait = 0;
                 ss << " She has gained the " << trait << " trait.";
