@@ -2413,12 +2413,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     }    //end switch
 
     auto result = girl->CallScriptFunction(event, customer);
-    message += interpolate_string(boost::get<std::string>(result), [girl](const std::string& pattern) -> std::string {
-        if(pattern == "name") {
-            return girl->FullName();
-        }
-        throw std::runtime_error("Invalid pattern " + pattern);
-    }, g_Dice) + '\n';
+    message += girl->Interpolate(boost::get<std::string>(result)) + '\n';
 
 
     message += (SexType == SKILL_GROUP) ? "\nThe customers " : "\nThe customer ";
