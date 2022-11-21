@@ -734,6 +734,9 @@ namespace traits
 
         constexpr const char* DEFAULT_CHANCE_INHERENT = "default:chance:inherent";
         constexpr const char* DEFAULT_CHANCE_DORMANT = "default:chance:dormant";
+
+        constexpr const char* LEVEL_CHANCE_ADD = "level-up:add-chance";
+        constexpr const char* LEVEL_CHANCE_REMOVE = "level-up:remove-chance";
     }
 }
 

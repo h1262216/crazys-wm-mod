@@ -279,6 +279,11 @@ bool cTraitsCollection::has_active_trait(sTraitID id) const {
     return m_ActiveTraits.count(id_to_spec(id));
 }
 
+bool cTraitsCollection::is_trait_blocked(sTraitID trait) const {
+    check_dirty();
+    return m_BlockedTraits.count(id_to_spec(trait)->name());
+}
+
 const std::unordered_set<const ITraitSpec *> &cTraitsCollection::get_active_traits() const {
     check_dirty();
     return m_ActiveTraits;

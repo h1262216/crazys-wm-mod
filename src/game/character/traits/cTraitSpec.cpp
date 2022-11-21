@@ -132,6 +132,12 @@ cTraitProps::cTraitProps() : cSimpleKeyValue("Setting", "Name", "Value") {
 
     // random spawning
     add_setting("random:chance", "Random Chance", sPercent(1), "Chance for this trait to appear in a randomly generated girl if not specified in the template.");
+
+    // level up spawning / de-spawning
+    add_setting(LEVEL_CHANCE_ADD,    "Level-Up Add Chance", sPercent(0),
+                "Chance that this trait will be selected to be added when new traits are generated during levelling.");
+    add_setting(LEVEL_CHANCE_REMOVE, "Level-Up Remove Chance", sPercent(0),
+                "Chance for this trait will be removed during levelling.");
 }
 
 std::unique_ptr<cTraitProps> cTraitProps::clone() const {

@@ -115,6 +115,7 @@ public:
     /// Checks whether the given trait is present in the trait collation, and is not blocked (i.e. it is active).
     virtual bool has_active_trait(sTraitID trait) const = 0;
 
+    virtual bool is_trait_blocked(sTraitID trait) const = 0;
     virtual ETraitState has_inherent_trait(sTraitID trait) const = 0;
     virtual ETraitState has_permanent_trait(sTraitID trait) const = 0;
 

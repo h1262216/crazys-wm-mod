@@ -45,6 +45,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="15" />
+            <Setting Name="level-up:remove-chance" Value="5"/>
         </Properties>
     </Trait>
 

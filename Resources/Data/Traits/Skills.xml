@@ -15,6 +15,9 @@
             <Modifier Name="fetish:Sexy" Value="5" />
             <Modifier Name="fetish:Freak" Value="10" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="10"/>
+        </Properties>
     </Trait>
 
     <Trait InheritChance="5" Name="Brawler" RandomChance="10" Type="Action">
@@ -37,6 +40,9 @@
             <Modifier Name="fetish:Dangerous" Value="10" />
             <Modifier Name="fetish:Sexy" Value="20" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="10"/>
+        </Properties>
     </Trait>
 
     <Trait InheritChance="30" Name="Strong" RandomChance="20" Type="Action">
@@ -53,5 +59,8 @@
             <Modifier Name="fetish:NiceArse" Value="20" />
             <Modifier Name="fetish:Lolita" Value="-5" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="5"/>
+        </Properties>
     </Trait>
 </Traits>

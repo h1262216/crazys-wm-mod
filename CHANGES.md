@@ -1,4 +1,8 @@
 # Version 7.2.1alpha6
+
+## Other
+* Trait xml files now specify which traits are gained / lost on level-up
+
 ## Bugfixes
 * Fixed two bugs reported by big fan of fans
 

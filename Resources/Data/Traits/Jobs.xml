@@ -19,6 +19,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="5" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -36,6 +37,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="1" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -48,6 +50,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="3" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -76,6 +79,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="2" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -93,6 +97,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="2" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -163,12 +168,13 @@
 
         <Properties>
             <Setting Name="random:chance" Value="3" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
 
     <Trait Name="Hunter">
-        <description>This girl is well trained in tracking and capturing or killing wild animals.</description>
+        <description>This girl is well-trained in tracking and capturing or killing wild animals.</description>
         <Modifiers>
             <Modifier Name="skill:AnimalHandling" Value="15" />
             <Modifier Name="skill-cap:AnimalHandling" Value="30" />
@@ -188,6 +194,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="3" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -222,6 +229,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="5" />
+            <Setting Name="level-up:add-chance" Value="5"/>
         </Properties>
     </Trait>
 
@@ -279,6 +287,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="5" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -297,6 +306,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="5" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -334,6 +344,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="1" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
 
         <Excludes>Tone Deaf</Excludes>
@@ -352,6 +363,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="5" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -369,6 +381,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="5" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -387,6 +400,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="20" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 
@@ -406,6 +420,7 @@
 
         <Properties>
             <Setting Name="random:chance" Value="5" />
+            <Setting Name="level-up:add-chance" Value="1"/>
         </Properties>
     </Trait>
 

@@ -19,6 +19,7 @@ public:
     ETraitState has_inherent_trait(sTraitID trait) const override;
     ETraitState has_permanent_trait(sTraitID trait) const override;
     bool has_active_trait(sTraitID trait) const override;
+    bool is_trait_blocked(sTraitID trait) const override;
 
     const std::unordered_set<const ITraitSpec*>& get_active_traits() const override;
 

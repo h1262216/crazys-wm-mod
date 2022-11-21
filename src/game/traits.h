@@ -19,7 +19,7 @@ namespace traits {
     /// real thing, but most guys can't notice. Negates slow orgasms. (+sex ability)
     constexpr const char* FAKE_ORGASM_EXPERT = "Fake Orgasm Expert";
 
-    /// This girl cums faster then a dragon in heat. She always leaves men feeling good
+    /// This girl cums faster than a dragon in heat. She always leaves men feeling good
     /// about themselves and enjoys herself to boot. (+sex skills)
     constexpr const char* FAST_ORGASMS = "Fast Orgasms";
 
@@ -120,7 +120,7 @@ namespace traits {
 
 
     // Social.xml
-    /// Increased Charisma. She is a natural born leader, negotiator, diplomat, and fast
+    /// Increased Charisma. She is a natural-born leader, negotiator, diplomat, and fast
     /// talker. Damn, she's smooth. (+looks)
     constexpr const char* CHARISMATIC = "Charismatic";
 
@@ -393,7 +393,7 @@ namespace traits {
     /// animals.
     constexpr const char* FARMER = "Farmer";
 
-    /// This girl is well trained in tracking and capturing or killing wild animals.
+    /// This girl is well-trained in tracking and capturing or killing wild animals.
     constexpr const char* HUNTER = "Hunter";
 
     /// This girl used to hold an elected office.

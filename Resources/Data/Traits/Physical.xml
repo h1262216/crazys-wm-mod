@@ -62,6 +62,7 @@
         <Properties>
             <Setting Name="random:chance" Value="5" />
             <Setting Name="inherit:chance:from_acquired" Value="15" />
+            <Setting Name="level-up:add-chance" Value="5"/>
         </Properties>
     </Trait>
 
@@ -623,6 +624,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="10" />
+            <Setting Name="level-up:remove-chance" Value="10"/>
         </Properties>
         <Excludes>Tough</Excludes>
     </Trait>
@@ -637,6 +639,9 @@
             <Modifier Name="fetish:Nerd" Value="-5" />
             <Modifier Name="fetish:Elegant" Value="-5" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="5"/>
+        </Properties>
         <Excludes>Fragile</Excludes>
     </Trait>
 
@@ -664,6 +669,9 @@
             <Modifier Name="fetish:Nerd" Value="20" />
             <Modifier Name="fetish:Freak" Value="5" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:remove-chance" Value="15"/>
+        </Properties>
     </Trait>
 
 
@@ -677,6 +685,9 @@
             <Modifier Name="fetish:Lolita" Value="10" />
             <Modifier Name="skill-cap:Combat" Value="-8" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:remove-chance" Value="5"/>
+        </Properties>
     </Trait>
 
     <Trait InheritChance="50" Name="Exotic" RandomChance="10" Type="Appearance">

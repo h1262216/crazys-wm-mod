@@ -43,11 +43,14 @@
             <Modifier Name="fetish:Sexy" Value="5" />
             <Modifier Name="sex:*" Value="20" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="10"/>
+        </Properties>
     </Trait>
 
 
     <Trait InheritChance="10" Name="Fast Orgasms" RandomChance="5" Type="Sexual">
-        <description>This girl cums faster then a dragon in heat. She always leaves men feeling good about themselves and enjoys herself to boot. (+sex skills)</description>
+        <description>This girl cums faster than a dragon in heat. She always leaves men feeling good about themselves and enjoys herself to boot. (+sex skills)</description>
         <Modifiers>
             <Modifier Name="stat:Libido" Value="10" />
             <Modifier Name="skill:Anal" Value="5" />
@@ -131,6 +134,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="15" />
+            <Setting Name="level-up:add-chance" Value="5"/>
         </Properties>
 
         <Excludes>Chaste</Excludes>
@@ -217,6 +221,9 @@
             <Modifier Name="fetish:Freak" Value="15" />
             <Modifier Name="fetish:Lolita" Value="-5" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="5"/>
+        </Properties>
     </Trait>
 
     <Trait InheritChance="10" Name="Strong Gag Reflex" RandomChance="5" Type="Sexual">
@@ -229,6 +236,9 @@
             <Modifier Name="fetish:Freak" Value="5" />
             <Modifier Name="fetish:Lolita" Value="20" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:remove-chance" Value="10"/>
+        </Properties>
     </Trait>
 
     <Trait InheritChance="10" Name="Gag Reflex" RandomChance="5" Type="Sexual">
@@ -241,6 +251,9 @@
             <Modifier Name="fetish:Freak" Value="0" />
             <Modifier Name="fetish:Lolita" Value="10" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:remove-chance" Value="5"/>
+        </Properties>
     </Trait>
 
     <Trait InheritChance="1" Name="Deep Throat" RandomChance="10" Type="Sexual">
@@ -253,6 +266,9 @@
             <Modifier Name="fetish:Freak" Value="30" />
             <Modifier Name="fetish:Lolita" Value="-10" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="1"/>
+        </Properties>
     </Trait>
 
     <Trait InheritChance="70" Name="Broodmother" RandomChance="1" Type="Sexual">
@@ -298,6 +314,7 @@
 
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="33" />
+            <Setting Name="level-up:add-chance" Value="15"/>
         </Properties>
     </Trait>
 

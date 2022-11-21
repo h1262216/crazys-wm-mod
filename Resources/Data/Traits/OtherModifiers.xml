@@ -569,7 +569,6 @@
         <Trait Name="Blind" Value="-2" />                   <!-- She can't see her partner to time it right -->
         <Trait Name="Deaf" Value="-2" />                    <!-- She can't hear what she sounds like -->
         <Trait Name="Botox Treatment" Value="-2" />         <!-- Is she faking it? can't tell by her face -->
-
     </Modifier>
 </TraitMods>
 

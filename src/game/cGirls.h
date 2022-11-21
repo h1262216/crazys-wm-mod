@@ -83,6 +83,7 @@ public:
 
     static void LevelUp(sGirl& girl);    // advances a girls level
     static void LevelUpStats(sGirl& girl); // Functionalized stat increase for LevelUp
+    static void LevelUpTraits(sGirl& girl);
     static int GetRequiredXP(const sGirl& girl);
 
     /// Changes to the girl's stats when you enslave her

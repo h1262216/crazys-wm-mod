@@ -23,6 +23,7 @@
         <Excludes>Meek</Excludes>
         <Properties>
             <Setting Name="incest:chance" Value="5" />
+            <Setting Name="level-up:remove-chance" Value="10"/>
         </Properties>
     </Trait>
 
@@ -81,6 +82,7 @@
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="5" />
             <Setting Name="incest:chance" Value="2" />
+            <Setting Name="level-up:remove-chance" Value="10"/>
         </Properties>
     </Trait>
 
@@ -108,6 +110,7 @@
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="25" />
             <Setting Name="incest:chance" Value="5" />
+            <Setting Name="level-up:remove-chance" Value="10"/>
         </Properties>
     </Trait>
 
@@ -226,6 +229,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="5" />
+            <Setting Name="level-up:remove-chance" Value="10"/>
         </Properties>
         <Excludes>Aggressive</Excludes>
         <Excludes>Fearless</Excludes>
@@ -270,6 +274,7 @@
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="5" />
             <Setting Name="incest:chance" Value="5" />
+            <Setting Name="level-up:remove-chance" Value="5"/>
         </Properties>
     </Trait>
 
@@ -290,6 +295,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="5" />
+            <Setting Name="level-up:remove-chance" Value="10"/>
         </Properties>
         <Excludes>Fearless</Excludes>
         <Excludes>Audacity</Excludes>
@@ -302,6 +308,9 @@
             <Modifier Name="fetish:Elegant" Value="5" />
             <Modifier Name="skill-cap:Performance" Value="3" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:add-chance" Value="5"/>
+        </Properties>
         <Excludes>Pessimist</Excludes>
     </Trait>
 
@@ -313,6 +322,9 @@
             <Modifier Name="fetish:Elegant" Value="-5" />
             <Modifier Name="skill-cap:Performance" Value="-3" />
         </Modifiers>
+        <Properties>
+            <Setting Name="level-up:remove-chance" Value="5"/>
+        </Properties>
         <Excludes>Optimist</Excludes>
     </Trait>
 
@@ -325,6 +337,7 @@
         <Excludes>Slow Learner</Excludes>
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="0" />
+            <Setting Name="level-up:add-chance" Value="10"/>
         </Properties>
     </Trait>
 
@@ -353,6 +366,7 @@
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="0" />
             <Setting Name="incest:chance" Value="5" />
+            <Setting Name="level-up:remove-chance" Value="15"/>
         </Properties>
         <Excludes>Quick Learner</Excludes>
     </Trait>
@@ -443,6 +457,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="0" />
+            <Setting Name="level-up:add-chance" Value="15"/>
         </Properties>
     </Trait>
 
@@ -458,6 +473,7 @@
         </Modifiers>
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="0" />
+            <Setting Name="level-up:add-chance" Value="10"/>
         </Properties>
     </Trait>
 </Traits>

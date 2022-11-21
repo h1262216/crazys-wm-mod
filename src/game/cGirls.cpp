@@ -43,6 +43,7 @@
 #include "character/traits/ITraitSpec.h"
 #include "Inventory.h"
 #include "character/traits/ITraitsCollection.h"
+#include "character/traits/ITraitsManager.h"
 #include "character/predicates.h"
 #include "character/cPlayer.h"
 #include "character/pregnancy.h"
@@ -156,51 +157,88 @@ void cGirls::LevelUp(sGirl& girl)
     if (girl.level() <= 20)    LevelUpStats(girl);
 
     stringstream ss;
-    ss << "${name} levelled up to " << girl.level() << ".";
+    ss << "${name} has reached level " << girl.level() << ".";
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_LEVELUP);
-    ss.str("");
 
     // add traits
     // MYR: One chance to get a new trait every five levels.
     if (girl.level() % 5 == 0)
     {
-        int addedtrait = girl.level() + 5;
-        while (addedtrait > 0)
-        {
-            std::array<const char*, 12> possible_traits = {
-               traits::AGILE, traits::CHARISMATIC, traits::CHARMING,
-               traits::COOL_PERSON, traits::FAKE_ORGASM_EXPERT,
-               traits::FLEET_OF_FOOT, traits::GOOD_KISSER, traits::NIMBLE_TONGUE,
-               traits::NYMPHOMANIAC, traits::OPEN_MINDED, traits::SEXY_AIR,
-               nullptr
-            };
-            int chance = g_Dice % 12;
-            const char* trait = possible_traits[chance];
-            if (trait != nullptr && girl.gain_trait(trait))
-            {
-                addedtrait = 0;
-                ss << " She has gained the " << trait << " trait.";
-                girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
-            }
-            addedtrait--;
-        }
+        LevelUpTraits(girl);
     }
 
     // check if the girl managed to jump a level.
     LevelUp(girl);
 }
 
+void cGirls::LevelUpTraits(sGirl& girl) {
+    RandomSelectorV2<std::string> trait_selector;
+    std::mt19937 rng(g_Dice.random(0xffffff));
+
+    // First, we potentially remove existing traits
+    for(auto& trait : girl.raw_traits().get_trait_info()) {
+        // is it a non-dynamic active trait
+        if(trait.active && trait.type != sTraitInfo::DYNAMIC) {
+            sPercent chance = trait.trait->get_properties().get_percent(traits::properties::LEVEL_CHANCE_REMOVE);
+            if(chance.as_ratio() > 0 && g_Dice.percent(chance)) {
+                trait_selector.process(rng, trait.trait->name());
+            }
+        }
+    }
+
+    if(trait_selector.selection().has_value()) {
+        std::string trait = trait_selector.selection().value();
+        if(girl.lose_trait(trait.c_str(), false)) {
+            std::stringstream ss;
+            ss << " She has lost the " << trait << " trait.";
+            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
+            return;
+        }
+    }
+
+    // found nothing to remove, so we may add
+    trait_selector.reset();
+
+    g_Game->traits().iterate([&](const ITraitSpec& spec) {
+        sPercent add_chance = spec.get_properties().get_percent(traits::properties::LEVEL_CHANCE_ADD);
+        if(add_chance.as_ratio() == 0) {return;}
+
+        // if the trait is already active, or currently blocked, don't consider it
+        if(girl.has_active_trait(spec.name().c_str())) { return; }
+        if(girl.raw_traits().is_trait_blocked(spec.name().c_str())) { return; }
+
+        int prio = 0;
+        // if the trait is dormant, it is always considered and has priority in selection
+        if(girl.has_dormant_trait(spec.name().c_str())) {
+            prio = 1;
+            add_chance = sPercent(1.f);
+        }
+
+        if(g_Dice.percent(add_chance)) {
+            trait_selector.process(rng, spec.name(), prio);
+        }
+    });
+
+    if(trait_selector.selection().has_value()) {
+        std::string trait = trait_selector.selection().value();
+        if(girl.gain_trait(trait.c_str())) {
+            std::stringstream ss;
+            ss << " She has gained the " << trait << " trait.";
+            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
+            return;
+        }
+    }
+}
+
 void cGirls::LevelUpStats(sGirl& girl)
 {
     int DiceSize = 3;
-    if (girl.has_active_trait(traits::QUICK_LEARNER)) DiceSize = 4;
-    else if (girl.has_active_trait(traits::SLOW_LEARNER)) DiceSize = 2;
 
-    // level up stats (only first 8 advance in levelups)
-    for (int i = 0; i < 8; i++) girl.upd_base_stat((STATS)i, g_Dice % DiceSize);
-
+    for(auto stat : {STAT_CHARISMA, STAT_CONSTITUTION, STAT_INTELLIGENCE, STAT_CONFIDENCE, STAT_AGILITY, STAT_STRENGTH}) {
+        girl.upd_base_stat(stat, g_Dice % DiceSize);
+    }
     // level up skills
-    for (int i = 0; i < NUM_SKILLS; i++)    girl.upd_skill(i, g_Dice%DiceSize);
+    for (auto skill : SkillsRange) girl.upd_skill(skill, g_Dice%DiceSize);
 }
 
 /*
