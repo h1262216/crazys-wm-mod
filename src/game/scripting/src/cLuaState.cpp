@@ -84,6 +84,9 @@ int cLuaState::get_top() const {
     return lua_gettop(m_State);
 }
 
+void cLuaState::pop(int n) {
+    lua_pop(m_State, n);
+}
 
 sScriptValue scripting::get_value(lua_State* interpreter, int index) {
     if(lua_isnumber(interpreter, index)) {
@@ -131,6 +134,9 @@ sLuaThread* sLuaThread::create(lua_State* L) {
     // _threads[t] = sLuaThread
     g_LogFile.info("lua", "Creating thread ", thread_interpreter);
 
+    // clean up stack again
+    lua_pop(L, 1);
+
     // now construct the new thread
     new(thread) sLuaThread;
     thread->InterpreterState = thread_interpreter;
@@ -159,9 +165,13 @@ void sLuaThread::resume(int num_params) {
         // thread is finished -- signal the continuation
         int top = lua_gettop(InterpreterState);
         if(top > 0 && DoneHandler) {
-            DoneHandler(get_value(InterpreterState, top));
+            auto ret_val = get_value(InterpreterState, top);
+            lua_pop(InterpreterState, top);
+            DoneHandler(ret_val);
         } else if (DoneHandler) {
             DoneHandler(boost::blank{});
+        } else {
+            lua_pop(InterpreterState, top);
         }
 
         // clean up the thread
@@ -176,6 +186,7 @@ void sLuaThread::destroy() {
     lua_pushthread(InterpreterState);
     lua_pushnil(InterpreterState);
     lua_rawset(InterpreterState, -3);
+    lua_pop(InterpreterState, 1);
 
     g_LogFile.info("lua", "Deleting thread #", InterpreterState);
 

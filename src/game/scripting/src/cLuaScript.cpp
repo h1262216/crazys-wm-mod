@@ -193,8 +193,8 @@ cLuaScript::cLuaScript()
 sLuaThread* cLuaScript::RunAsync(const std::string& event_name, std::initializer_list<sLuaParameter> params) {
     g_LogFile.info("lua", "Running function '", event_name, "'");
 
-    if(lua_gettop(m_State.get_state()) != 0) {
-        g_LogFile.error("scripting", "Lua stack is not empty! Found ", lua_gettop(m_State.get_state()), " entries.",
+    if(m_State.get_top() != 0) {
+        g_LogFile.error("scripting", "Lua stack is not empty! Found ", m_State.get_top(), " entries.",
                         " Element at the top is of type ", lua_typename(m_State.get_state(), 0));
     }
 
