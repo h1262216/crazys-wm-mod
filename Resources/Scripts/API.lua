@@ -272,7 +272,7 @@ end
 --- This function temporarily decreases the libido stat, unless the girl is multi-orgasmic. It also adjusts happiness and tiredness.
 function SheJustCame(girl, amount)
     if not girl:has_trait(wm.TRAITS.NYMPHOMANIAC) then
-        girl:stat(wm.STATS.LIBIDO, -amount, true)
+        girl:lust(-amount)
         girl:tiredness(amount // 2)
     else
         girl:tiredness(amount // 4)

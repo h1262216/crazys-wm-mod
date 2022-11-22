@@ -544,41 +544,6 @@ bool ICharacter::any_active_trait(const std::initializer_list<const char*> trait
     return std::any_of(begin(trait_names), end(trait_names), [&](const char* tn){ return this->has_active_trait(tn); });
 }
 
-void ICharacter::lust_make_horny(int amount) {
-    if(amount < 0) return;
-
-    // extra lust gains for nymphos
-    if(has_active_trait(traits::NYMPHOMANIAC)) {
-        amount = (amount * 15) / 10;
-    }
-    // less lust for chaste
-    if(has_active_trait(traits::CHASTE)) {
-        amount = (amount * 5) / 10;
-    }
-
-    int lib = libido();
-
-    amount = amount * (90 + lib / 5) / 100;
-
-    // lust gain depends on current libido
-    int direct_value = lust() + amount;
-    int overflow = direct_value - (lib + 33);
-    if(overflow > 0) {
-        // if all is above target, all gets reduced by 40%
-        if(overflow > amount) {
-            amount = (amount * 6) / 10;
-        } else {
-            // otherwise, reduce only the surplus
-            amount = amount - (overflow * 4) / 10;
-        }
-    }
-    if(direct_value < lib) {
-        amount = (amount * 12) / 10;
-    }
-
-    lust(amount);
-}
-
 void ICharacter::lust_achieve_release(int amount) {
     int tired = 0;
     // much less lust decrease for multi-orgasmic girls

@@ -893,7 +893,7 @@ bool cDealerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     m_Earnings += uniform(10, (girl.beauty() + girl.charisma()) / 4 + 10);
 
     // Improve girl
-    if (likes_women(girl))    { girl.lust_make_horny(std::min(3, brothel.num_girls_on_job(JOB_XXXENTERTAINMENT, false))); }
+    if (likes_women(girl))    { make_horny(girl, std::min(3, brothel.num_girls_on_job(JOB_XXXENTERTAINMENT, false))); }
     HandleGains(girl, fame);
 
     return false;
@@ -2429,12 +2429,12 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             if (girl.has_active_trait(traits::PIERCED_NIPPLES))
             {
                 m_Tips += 3;
-                girl.lust_make_horny(2);
+                make_horny(girl, 2);
                 ss << "Her nipple piercings were a pleasant surprise to her, and she \n";
             }
             else ss << "She";
             ss << "slipped a small tip between her tits afterwards.\n";
-            girl.lust_make_horny(3);
+            make_horny(girl, 3);
             m_Tips += 15;
             if (girl.dignity() > 30)
             {
@@ -2447,12 +2447,12 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             if (girl.has_active_trait(traits::PIERCED_NIPPLES))
             {
                 m_Tips += 3;
-                girl.lust_make_horny(2);
+                make_horny(girl, 2);
                 ss << "Her nipple piercings were a pleasant surprise to him, and he \n";
             }
             else ss << "He";
             ss << "slipped a small tip between her tits afterwards.\n";
-            girl.lust_make_horny(3);
+            make_horny(girl, 3);
             m_Tips += 15;
             if (girl.dignity() > 30)
             {
@@ -2643,7 +2643,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     HandleGains(girl, fame);
 
     if (likes_women(girl))    {
-        girl.lust_make_horny(std::min(3, brothel.num_girls_on_job(JOB_BARSTRIPPER, false)));
+        make_horny(girl, std::min(3, brothel.num_girls_on_job(JOB_BARSTRIPPER, false)));
     }
 
     //gained traits

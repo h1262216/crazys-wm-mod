@@ -1314,7 +1314,7 @@ void IBuilding::do_daily_items(sGirl& girl)
             if (girl.has_active_trait(traits::NYMPHOMANIAC))
             {
                 ss << "She spent the day at the Library looking at porn making her become horny.\n \n";
-                girl.lust_make_horny(15);
+                make_horny(girl, 15);
             }
             else
             {
@@ -1577,7 +1577,7 @@ void IBuilding::do_daily_items(sGirl& girl)
             else
             {
                 ss << "She spent the day on her Computer looking at porn making her become horny.\n \n";
-                girl.lust_make_horny(15);
+                make_horny(girl, 15);
             }
         }
         else

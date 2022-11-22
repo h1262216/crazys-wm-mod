@@ -3517,7 +3517,7 @@ void cGirls::updateGirlTurnStats(sGirl& girl)
     }
 
     // Lust
-    update_lust(girl);
+    handle_weekly_lust(girl);
 
     // LOVE love is updated only if happiness is >= 100 or < 50
     if (girl.happiness() >= 100)

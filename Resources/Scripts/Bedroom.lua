@@ -141,6 +141,7 @@ function HandleNormalSex(girl)
         Dialog("Many positions and orgasms later you both lie next to each other completely exhausted and satisfied.")
         girl:happiness(1)
         girl:normalsex(1)
+        SheJustCame(girl, 20)
         PlayerFucksGirlUpdate(girl)
     else
         Dialog("You begin with slow thrusts hoping for a long night of pleasure.")
@@ -149,6 +150,7 @@ function HandleNormalSex(girl)
         girl:normalsex(2)
         girl:tiredness(3)
         girl:libido(-1)
+        SheJustCame(girl, 10)
         PlayerFucksGirlUpdate(girl)
     end
 end

@@ -23,10 +23,11 @@
 #include "predicates.h"
 #include "sGirl.h"
 #include "buildings/IBuilding.h"
+#include "CLog.h"
 
 extern cRng g_Dice;
 
-int get_lust_change(const ICharacter& character) {
+int get_weekly_lust_change(const ICharacter& character) {
     // increases faster with more libido
     int lib = character.libido();
     int lust_gain = 1 + lib / 8;
@@ -85,36 +86,88 @@ int get_lust_change(const ICharacter& character) {
     return lust_gain;
 }
 
-void update_lust(ICharacter& character) {
-    int lust_gain = get_lust_change(character);
+void handle_weekly_lust(sGirl& girl) {
+    int lust_gain = get_weekly_lust_change(girl);
 
     if(lust_gain > 0) {
-        character.lust_make_horny(lust_gain);
+        make_horny(girl, lust_gain);
     } else if (lust_gain < 0) {
-        character.lust(lust_gain);
+        girl.lust(lust_gain);
     }
 
     // if she is horny but does not get (enough) sex, her libido slowly decreases
-    if(character.lust() > character.libido() + 33) {
-        character.libido(-1);
-        character.happiness(-1);
+    if(girl.lust() > girl.libido() + 33) {
+        girl.libido(-1);
+        girl.happiness(-2);
     }
 
-    if(character.lust() > 80 && character.has_active_trait(traits::CHASTE)) {
-        character.happiness(-1);
+    if(girl.lust() > 80 && girl.has_active_trait(traits::CHASTE)) {
+        girl.happiness(-2);
+        if(g_Dice.percent(10) && girl.happiness() > 25) {
+            girl.happiness(-5);
+            girl.AddMessage("${name} wants to be pure and Chaste, but is extremely horny.\n"
+                            "These conflicting feelings will decrease her happiness.", EImageBaseType::PROFILE, EventType::EVENT_WARNING);
+        }
     }
 
-    if(character.lust() > 90 && character.has_active_trait(traits::SUCCUBUS) && character.health() > 50) {
-        character.health(-1);
+    if(girl.lust() > 90 && girl.has_active_trait(traits::SUCCUBUS) && girl.health() > 50) {
+        girl.health(-1);
+        girl.happiness(-2);
+        if(g_Dice.percent(10) && girl.health() > 25) {
+            girl.health(-5);
+            girl.happiness(-5);
+            girl.AddMessage("Succubus ${name} needs to have sex.\n"
+                            "No, really, her health is declining due to unfulfilled Lust.", EImageBaseType::PROFILE, EventType::EVENT_WARNING);
+        }
     }
 
     // if she is very unhappy, her libido decreases
-    if(character.health() < 10) {
-        character.libido(-1);
-    } else if (character.health() > 90 && character.libido() < 20 && g_Dice.percent(50)) {
-        character.libido(1);
+    if(girl.health() < 10) {
+        girl.libido(-1);
+    } else if (girl.health() > 90 && girl.libido() < 20 && g_Dice.percent(50)) {
+        girl.libido(1);
     }
 }
+
+int modulate_lust_change(const ICharacter& character, int amount) {
+    if(amount < 0) return 0;
+
+    // extra lust gains for nymphos
+    if(character.has_active_trait(traits::NYMPHOMANIAC)) {
+        amount = (amount * 15) / 10;
+    }
+    // less lust for chaste
+    if(character.has_active_trait(traits::CHASTE)) {
+        amount = (amount * 5) / 10;
+    }
+
+    int lib = character.libido();
+
+    amount = amount * (90 + lib / 5) / 100;
+
+    // lust gain depends on current libido
+    int direct_value = character.lust() + amount;
+    int overflow = direct_value - (lib + 33);
+    if(overflow > 0) {
+        // if all is above target, all gets reduced by 40%
+        if(overflow > amount) {
+            amount = (amount * 6) / 10;
+        } else {
+            // otherwise, reduce only the surplus
+            amount = amount - (overflow * 4) / 10;
+        }
+    }
+    if(direct_value < lib) {
+        amount = (amount * 12) / 10;
+    }
+
+    return amount;
+}
+
+void make_horny(ICharacter& character, int amount) {
+    character.lust(modulate_lust_change(character, amount));
+}
+
 
 namespace {
     int skill_based_adjustment(const ICharacter& character, SKILLS action) {
@@ -232,7 +285,7 @@ sPercent chance_horny_private(const ICharacter& character, ESexParticipants part
         threshold = 25;
     }
 
-    return sPercent(std::min(100, 2*std::max(lust - 25, 0)));
+    return sPercent(std::min(100, 2*std::max(lust - threshold, 0)));
 }
 
 bool will_masturbate(const ICharacter& character, bool init, sPercent base_chance) {
@@ -246,6 +299,13 @@ sPercent chance_horny_public(const ICharacter& character, ESexParticipants partn
     } else if(character.any_active_trait({traits::WHORE, traits::SLUT, traits::BIMBO, traits::CUM_ADDICT})) {
         lust += 10;
     }
+
+    // broken-willed does not initiate herself, but is much more likely to say yes.
+    if(character.has_active_trait(traits::BROKEN_WILL)) {
+        if(init) lust -= 50;
+        else     lust += 33;
+    }
+
     if(character.has_active_trait(traits::CHASTE)) {
         lust -= 33;
     }
@@ -274,7 +334,8 @@ sPercent chance_horny_public(const ICharacter& character, ESexParticipants partn
         }
     }
 
-    lust += skill_based_adjustment(character, action);
+    int skill_based = skill_based_adjustment(character, action);
+    lust += skill_based;
 
     if(character.has_active_trait(traits::EXHIBITIONIST)) {
         lust += 10;

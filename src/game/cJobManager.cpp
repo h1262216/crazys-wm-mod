@@ -41,6 +41,7 @@
 #include "buildings/cBuildingManager.h"
 #include "cGirlGangFight.h"
 #include "cShop.h"
+#include "character/lust.h"
 
 extern cRng g_Dice;
 
@@ -782,7 +783,7 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
     {
         SecGuard->combat(1);
         SecGuard->magic(1);
-        SecGuard->lust_make_horny(num);  // There's nothing like killin ta make ya horny!
+        make_horny(*SecGuard, num);  // There's nothing like killin ta make ya horny!
         SecGuard->confidence(num);
         SecGuard->fame(num);
         girl.upd_Enjoyment(ACTION_COMBAT, num);
@@ -1014,7 +1015,7 @@ bool cJobManager::girl_fights_rape(sGirl& girl, sGang *enemy_gang, int day_night
         girl.combat(1);
         girl.magic(1);
         girl.agility(1);
-        girl.lust_make_horny(num);  // There's nothing like killin ta make ya horny!
+        make_horny(girl, num);  // There's nothing like killin ta make ya horny!
         girl.confidence(num);
         girl.fame(num);
 

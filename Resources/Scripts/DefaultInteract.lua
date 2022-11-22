@@ -146,7 +146,7 @@ function DungeonInteractChoice(girl)
                 "To join in with a group session", "Go Back")
         if choice == 0 then
             PlayerRapeGirl(girl)
-            Dialog("She stuggles to no avail as you force yourself inside her, you fuck her roughly until you unload yourself into her.")
+            Dialog("She struggles to no avail as you force yourself inside her, you fuck her roughly until you unload yourself into her.")
         elseif choice == 1 then
             wm.UpdateImage(wm.IMG.LESBIAN)
             Dialog("You call a female customer who fuck the poor girl with dildo.")

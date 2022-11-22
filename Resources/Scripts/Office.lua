@@ -84,7 +84,7 @@ function InteractOffice(girl)
                 Dialog("She eagerly removes her clothing and stands before you.")
                 girl:happiness(1)
                 girl:make_horny(1)
-            elseif girl:strip() < 40 or girl:has_trait(wm.TRAITS.CHASTE) then
+            elseif girl:strip() < 40 or girl:has_trait(wm.TRAITS.CHASTE, wm.TRAITS.SHY) then
                 Dialog("She removes her clothing and stands nervously before you.")
             else
                 Dialog("She removes her clothing and stands before you.")
@@ -92,6 +92,8 @@ function InteractOffice(girl)
 
             if girl:has_trait(wm.TRAITS.FUTANARI) then
                 Dialog("Oh! Hmm...I didn't realize you were a dick girl...")
+            elseif girl:lust() > 90 then
+                Dialog("${firstname} stiff nipples and glistening pussy indicate that this girl is desperate for some sexual release.")
             end
 
             if girl:beauty() >= 50 then

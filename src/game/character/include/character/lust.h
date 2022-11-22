@@ -27,11 +27,17 @@
 class ICharacter;
 class sGirl;
 
+/// Calculate the lust change taking traits and other things into account
+int modulate_lust_change(const ICharacter& character, int amount);
+
+/// A character is made horny by the given amount of lust
+void make_horny(ICharacter& character, int amount);
+
 /// Calculate the amount by which Lust regularly changes
-int get_lust_change(const ICharacter& character);
+int get_weekly_lust_change(const ICharacter& character);
 
 /// Perform the weekly update of Lust and Libido
-void update_lust(ICharacter& character);
+void handle_weekly_lust(sGirl& girl);
 
 
 /*

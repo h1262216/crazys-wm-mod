@@ -31,6 +31,7 @@
 #include "buildings/cDungeon.h"
 #include "buildings/IBuilding.h"
 #include "buildings/cBuildingManager.h"
+#include "character/lust.h"
 
 namespace settings {
     extern const char* SLAVE_MARKET_UNIQUE_CHANCE;
@@ -1178,7 +1179,7 @@ bool cFarmJobGetMilked::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_n
         {
             ss << ", who massaged ${name}'s breasts thoroughly and was careful to thoroughly arouse the nipple with her tongue before attaching the cup. This helped with milking.";
             volume += (volume / 10);
-            girl.lust_make_horny(5);
+            make_horny(girl, 5);
         }
         else if (girl.has_active_trait(traits::CLUMSY) && chance(40))
         {

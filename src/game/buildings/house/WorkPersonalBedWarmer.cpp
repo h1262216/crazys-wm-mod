@@ -25,6 +25,7 @@
 #include "character/predicates.h"
 #include "character/cPlayer.h"
 #include "cGirls.h"
+#include "character/lust.h"
 
 // `J` Job House - General
 sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
@@ -96,7 +97,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << headName << " suddenly stops, leaving ${name} on your bed, wet, frustrated, horny as hell and begging to be fucked.";
 
                     girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
-                    girl.lust_make_horny(10);
+                    make_horny(girl, 10);
                     headGirl->lesbian(+4);
                 }
 
@@ -160,7 +161,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     girl.spirit(-1);
                     girl.health(-1);
                     g_Game->gold().misc_debit(20); //drug/spell money
-                    girl.lust_make_horny(2);
+                    make_horny(girl, 2);
                     girl.pclove(-5); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }
@@ -201,7 +202,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     {
                         ss << ". " << headName << " quickly drives her wild, bringing her right to the brink of orgasm, but never quite letting her come. ";
                         ss << headName << " suddenly stops, leaving ${name} on your bed, wet, frustrated, horny as hell and begging to be fucked.\n";
-                        girl.lust_make_horny(10);
+                        make_horny(girl, 10);
                         headGirl->lesbian(+4);
                     }
                 }
@@ -317,7 +318,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << "and that her choice to defy you, led to your choice to drug her.\nShe smiles dreamily, rubbing her breasts against you as you strip away her clothes."
                         << "\nYour drug delivers the perfect blend of horniness and suggestibility. ${name} will participate. Fully.\n";
                     g_Game->gold().misc_debit(100); //drug money
-                    girl.lust_make_horny(10);
+                    make_horny(girl, 10);
                     girl.pclove(-10); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }
@@ -374,7 +375,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     girl.spirit(-1);
                     girl.health(-1);
                     g_Game->gold().misc_debit(20); //drug/spell money
-                    girl.lust_make_horny(2);
+                    make_horny(girl, 2);
                     girl.pclove(-5); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }
@@ -435,7 +436,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << "\nShe smiles dreamily, rubbing her nipples against you as you strip away her clothes."
                         << "\nYour drug delivers a perfect blend of horniness and suggestibility. ${name} will now participate. Fully.\n";
                     g_Game->gold().misc_debit(100); //drug money
-                    girl.lust_make_horny(10);
+                    make_horny(girl, 10);
                     girl.pclove(-20); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }

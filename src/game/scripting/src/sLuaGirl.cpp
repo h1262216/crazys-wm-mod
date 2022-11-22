@@ -42,6 +42,7 @@ extern "C" {
 
 // to get the currently active building
 #include "interface/cWindowManager.h"
+#include "character/lust.h"
 
 namespace {
     template<class T>
@@ -296,7 +297,7 @@ int sLuaGirl::remove_trait(lua_State *L) {
 int sLuaGirl::make_horny(lua_State *L) {
     auto& girl = check_type(L, 1);
     int amount = luaL_checkinteger(L, 2);
-    girl.lust_make_horny(amount);
+    ::make_horny(girl, amount);
     return 0;
 }
 
