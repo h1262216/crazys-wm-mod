@@ -221,7 +221,8 @@ bool FightBeasts::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
         {
             ss << " So as punishment you allow the beast to have its way with her.";
             enjoy -= 5;
-            girl.upd_temp_stat(STAT_LIBIDO, -50, true);
+            girl.libido(-2);
+            girl.lust_release_spent();
             girl.beastiality(2);
             girl.AddMessage(ss.str(), EImageBaseType::RAPE_BEAST, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             if (!girl.calc_insemination(cGirls::GetBeast(), 1.0))
@@ -694,7 +695,6 @@ bool FightTraining::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night
     else if (girl.has_active_trait(traits::SLOW_LEARNER))    { xp -= 2; }
 
     girl.exp(uniform(1, xp));
-    girl.upd_temp_stat(STAT_LIBIDO, int(skill / 2));
 
     return false;
 }

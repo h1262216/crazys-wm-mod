@@ -165,9 +165,7 @@ void SurgeryJob::ReceiveTreatment(sGirl& girl, bool is_night) {
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, msgtype);
 
     // Improve girl
-    int libido = 0;
-    if (girl.has_active_trait(traits::MASOCHIST)) libido += 1;
-    girl.upd_temp_stat(STAT_LIBIDO, libido);
+    if (girl.has_active_trait(traits::MASOCHIST)) girl.lust(1);
 
     if (chance(10.f)) {
         // `J` she watched what the doctors and nurses were doing
@@ -826,9 +824,8 @@ void Abortion::ReceiveTreatment(sGirl& girl, bool is_night) {
 
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, msgtype);
 
-    // Improve girl
-    int libido = -8;
-    girl.upd_temp_stat(STAT_LIBIDO, libido);
+    girl.libido(-2);
+    girl.lust_turn_off(10);
 }
 
 double Abortion::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -885,7 +882,6 @@ void Healing::ReceiveTreatment(sGirl& girl, bool is_night) {
     int tiredness = uniform(10, 30);    // build up as positive then apply as negative
     int happy = uniform(10, 20);
     int mana = 5 + (girl.magic() / 5);
-    int libido = (girl.has_active_trait(traits::NYMPHOMANIAC) ? 15 : 4);
 
     if (doctor)
     {
@@ -913,7 +909,6 @@ void Healing::ReceiveTreatment(sGirl& girl, bool is_night) {
     girl.upd_base_stat(STAT_TIREDNESS, -tiredness, false);
     girl.happiness(happy);
     girl.mana(mana);
-    girl.upd_temp_stat(STAT_LIBIDO, libido);
 
     // send her to the waiting room when she is healthy
     if (girl.health() > 90 && girl.tiredness() < 10)

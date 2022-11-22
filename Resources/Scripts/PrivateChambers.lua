@@ -38,7 +38,7 @@ function Drinks(girl, dinner_already)
         end
         what = what + 10
         girl:tiredness(5)
-        AdjustLust(girl, 25)
+        girl:make_horny(25)
     elseif mix == 3 then
         Dialog("When ${firstname} is momentarily distracted, you add a few drops of a strong sedative to her " .. cocktail)
         girl:stat(wm.STATS.TIREDNESS, 10, true)
@@ -56,7 +56,7 @@ function Drinks(girl, dinner_already)
                 "However, she overdoes it and before long she passes out on the couch.")
         return SheIsAsleep(girl)
     elseif what > 70 then
-        AdjustLust(girl, 10)
+        girl:make_horny(10)
         Dialog("She opens up more and more with each drink. Her words become slurred and the topics of conversation become more racy. " ..
                 "There can be no doubt that this girl is completely drunk.")
         local choice = ChoiceBox("", "Take Advantage of her intoxication.", "Lead her back to her room")
@@ -64,7 +64,7 @@ function Drinks(girl, dinner_already)
             wm.UpdateImage(wm.IMG.FONDLE, {participants=wm.IMG_PART.HETERO})
             Dialog("You sense an opportunity in her inebriated state.  You start rubbing her shoulders and back. " ..
                     "Soon your hands are roaming towards her breasts...")
-            if wm.Percent(50 + girl:libido() / 2) or girl:pclove() > 66 then
+            if wm.Percent(50 + girl:lust() / 2) or girl:pclove() > 66 then
                 wm.UpdateImage(wm.IMG.FINGER, {participants=wm.IMG_PART.HETERO})
                 Dialog("She lets out a soft moan as your fingers caress her nipples thru the fabric of her top. Your other hand sneaks along her inner thigh;  meeting no resistance your fingers slide easily under her panties and your stimulate her clitoris.")
                 Dialog("Before long you are both kissing and probing each other...having lost all sense of time you come to your senses panting and gasping on the floor by your couch.  You look down to see that she her breathing heavily and deeply in an exhausted sleep.")
@@ -115,7 +115,7 @@ function HerRoom(girl)
             wm.UpdateImage(wm.IMG.REST)
             Dialog("Apparently, she was more tired then she let on and she begins to sway on her feet.  You catch her before she hits the ground.  You pick her up and carry her to her bed...")
             return SheIsAsleep(girl)
-        elseif girl:libido() > 80 then
+        elseif girl:lust() > 80 then
             Dialog("Before you can turn around and go, she presses her lips to yours.")
             FrenchKiss(girl)
         else
@@ -129,7 +129,7 @@ function HerRoom(girl)
             FrenchKiss(girl)
         else
             Dialog("You decide to not try using your tongue and your lips come together in a kiss...")
-            if girl:libido() >= 65 then
+            if girl:lust() >= 65 then
                 wm.UpdateImage(wm.IMG.KISS, {participants=wm.IMG_PART.HETERO})
                 Dialog("A moment later you find her tongue sliding past your lips and you reciprocate passionately...")
                 wm.UpdateImage(wm.IMG.FONDLE, {participants=wm.IMG_PART.HETERO})
@@ -151,7 +151,7 @@ end
 function FrenchKiss(girl)
     wm.UpdateImage(wm.IMG.KISS, {participants=wm.IMG_PART.HETERO})
     Dialog("As your lips come together you slide your tongue into her mouth...")
-    if girl:libido() >= 45 then
+    if girl:lust() >= 45 then
         Dialog("Her tongue meets yours and they begin a swirling dance back and forth. After several seconds the kiss ends with her gently biting your bottom lip as you separate.")
         wm.UpdateImage(wm.IMG.BED)
         Dialog("She takes your hands and leads you silently inside her room and toward her bed.")
@@ -178,7 +178,7 @@ function SheIsAsleep(girl)
         Dialog("Growing bolder, you begin to pull down her top to expose her breasts.  You give each nipple a little kiss.  Her breathing changes slightly and you freeze, but she is sleeping soundly. You stroke your cock as you move to slowly pull down her panties.")
         wm.UpdateImage(wm.IMG.FINGER)
         Dialog("You pulse quickens as her panties slowly slide down.  Halfway down her ass....her upper thighs...her knees...calves...you stop and leave them at her ankles and begin to slide your fingers into her vagina as you stroke your cock.")
-        AdjustLust(girl, 5)
+        girl:make_horny(5)
         -- she does not wake up; chance increases with tiredness
         if wm.Percent(30 + girl:tiredness() / 5) then
             wm.UpdateImage(wm.IMG.SEX)
@@ -188,7 +188,7 @@ function SheIsAsleep(girl)
             girl:oralsex(2)
         else
             -- OK, she wakes up. Now she either accepts her fate, participates, or gets angry
-            if girl:pclove() + girl:libido() > 150 then
+            if girl:pclove() + girl:lust() > 150 then
                 Dialog(girl:firstname() .. " lets out a soft moan and whispers \"Whatever you're doing, don't stop\". Not needing to be encouraged twice, you intensify your stimulation.")
                 Dialog("Her moaning grows louder, and soon you feel her warm juices squiring over your fingers. \"Well, I'm awake now, \" she announces, then points at your rock-hard erection. \"Might as well take care of that.\"")
                 SheJustCame(girl, 10)
@@ -203,7 +203,7 @@ function SheIsAsleep(girl)
                 local action = ChoiceBox("", "Carry On", "Stop and Leave")
                 if action == 0 then
                     wm.SetPlayerDisposition(-5)
-                    if girl:libido() + girl:pclove() / 10 > 50 then
+                    if girl:lust() + girl:pclove() / 10 > 50 then
                         Dialog("After some time, you notice that she starts rolling your hips with your motions. Her breathing turns into soft moans that grow louder.")
                         action = ChoiceBox("Let her cum?", "Yes", "No")
                         if action == 0 then
@@ -216,7 +216,7 @@ function SheIsAsleep(girl)
                             "\"You'll cum only if I say so,\" you admonish her. \"And for trying to cheat me just now, you won't cum tonight.\"")
                             wm.UpdateImage(wm.IMG.CHASTITY)
                             Dialog("You call in one of your subordinates. \"See to it that she cannot cum tonight.\" With that, you leave her.")
-                            AdjustLust(girl, 15)
+                            girl:make_horny(15)
                             girl:happiness(-5)
                             girl:tiredness(5)
                             wm.SetPlayerDisposition(-3)
@@ -264,12 +264,12 @@ function Dinner(girl, drinks_already)
         return
     elseif what > 69 then
         Dialog("Your personal chef has prepared a succulent feast of delicious and suggestive food.  As you lock eyes across the table, each bite becomes a seductive tease.  To finish the meal she sucks a long strand of pasta slowly into her mouth,  licking her lips, and flashing a coy smile.")
-        AdjustLust(girl, 10)
+        girl:make_horny(10)
     elseif what >= 30 then
         Dialog("You both look hungrily at the bounty laid before you.  Your Chef has prepared a wonderful assortment of exotic foods.  You both  spend the meal sampling the variety and conversing easily.")
     else
         Dialog("Although the meal before you is delectable beyond compare, both of you struggle to find topics of common interest and the meal passes quietly.")
-        AdjustLust(girl, -10)
+        girl:make_horny(-10)
     end
     local choice
     if drinks_already then
@@ -280,7 +280,7 @@ function Dinner(girl, drinks_already)
 
     if choice == 0 then
         Dialog("You call for the chef to bring out the dessert course.")
-        if girl:libido() > 80 then
+        if girl:lust() > 80 then
             Dialog("The Creme Brulee this evening is exquisite. You become lost in each others eyes,  in fact, you become so distracted that you accidentally drop a spoonful of the sweet substance in your lap.  You apologize and move to clean it up, but she stops you saying \"Let me get that for you.\"")
             wm.UpdateImage(wm.IMG.ORAL)
             Dialog("She kneels beside you and moves her face very close to your lap.  She begins to lick the creme from your crotch hungrily.  After a few moments your pants are clean, but she looks up at you poutingly \"Is that all there was?  I want more cream.\"")
@@ -289,7 +289,7 @@ function Dinner(girl, drinks_already)
             girl:oralsex(2)
             girl:happiness(3)
             girl:pclove(4)
-        elseif girl:has_trait(wm.TRAITS.NYMPHOMANIAC) or (girl:libido() > 90 and wm.Percent(50)) then
+        elseif girl:has_trait(wm.TRAITS.NYMPHOMANIAC) or (girl:lust() > 90 and wm.Percent(50)) then
             Dialog("\"Wait\" She says \"I want to make you a dessert myself.\"  She excuses herself to the kitchen for a few moments.")
             Dialog("You nearly fall out of your chair when she returns wearing nothing but whipped cream lingerie with cherries over her nipples. \"I wanted to make you a banana split, but I couldn't find a good banana in the kitchen.\" she smiles coyly \"Do you know where I can find a banana?\"")
             Dialog("\"I think I can help you out with that\" you reply as you approach her.  You spend the rest of the evening applying and removing whipped cream from each others bodies.")
@@ -318,7 +318,7 @@ function AfterDinner(girl)
         return HerRoom(girl)
     elseif choice == 1 then
         Dialog("\"What now my dear?  Shall we continue this evening in the bedroom?\"")
-        if girl:tiredness() > 40 and girl:libido() < 75 then
+        if girl:tiredness() > 40 and girl:lust() < 75 then
             Dialog("She yawns and apologizes. \"I'm sorry, but I think it might be best to call it a night.\"")
             return HerRoom(girl)
         elseif girl:pclove() < -50 then
@@ -327,7 +327,7 @@ function AfterDinner(girl)
         elseif girl:pclove() > 50 then
             Dialog("She looks deep into your eyes. \"Of course, my love, I have to properly thank you for this lovely evening...\"")
             PlayerFucksGirl(girl)
-        elseif girl:libido() > 60 then
+        elseif girl:lust() > 60 then
             Dialog("She giggles a bit as she looks up at you.  \"I've always wondered what the Master's bedroom looks like.\"")
             Dialog("She adds with a wink \"Perhaps we could both enjoy some tossed salad on your bed.\"")
             wm.UpdateImage(wm.IMG.ANAL)

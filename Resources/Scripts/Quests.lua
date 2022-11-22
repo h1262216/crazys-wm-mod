@@ -416,7 +416,7 @@ function ChurchQuest(girl)
                 Dialog("hurch. Young Paladin. nympho. she discovers that the boy was being passed around the barracks as a toy. She helps him flee, but is caught in the process.. the other knights spend hours passing her around the room instead.")
                 -- TODO group sex
                 girl:happiness(-20)
-                AdjustLust(girl, -60)
+                girl:make_horny(-60)
                 girl:health(-20)
             end
         elseif girl:has_trait(wm.TRAITS.LESBIAN) then
@@ -792,7 +792,7 @@ function StreetsQuest(girl)
                 Dialog("Street. Underground. nympho.  magical sex devices trap her for hours but they absorb her youth.")
                 -- TODO bondage sex
                 girl:age(20)
-            elseif wm.Percent(girl:libido()) then
+            elseif wm.Percent(girl:lust()) then
                 Dialog("Streets. UNderground. Nympho. Win.  she uses the devices for hours and gains knowledge of sex skills.")
                 -- TODO normal sex
                 girl:normalsex(5)
@@ -808,7 +808,7 @@ function StreetsQuest(girl)
             else
                 Dialog("Streets. underground. nympho.  fail.  She pleasures her self with the machines for hours but gains nothing but some happiness and a satisfied libido.")
                 girl:happiness(20)
-                AdjustLust(girl, -30)
+                girl:make_horny(-30)
                 -- TODO anal sex
             end
         elseif girl:has_trait(wm.TRAITS.CONSTRUCT) then

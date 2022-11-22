@@ -164,6 +164,8 @@ public:
     int happiness(int n)                            { return upd_base_stat(STATS::STAT_HAPPINESS, n, true); }
     int libido() const                              { return get_stat(STATS::STAT_LIBIDO); }
     int libido(int n)                               { return upd_base_stat(STATS::STAT_LIBIDO, n, true); }
+    int lust() const                                { return get_stat(STATS::STAT_LUST); }
+    int lust(int n)                                 { return upd_base_stat(STATS::STAT_LUST, n, true); }
     int constitution() const                        { return get_stat(STATS::STAT_CONSTITUTION); }
     int constitution(int n)                         { return upd_base_stat(STATS::STAT_CONSTITUTION, n, true); }
     int intelligence() const                        { return get_stat(STATS::STAT_INTELLIGENCE); }
@@ -272,6 +274,19 @@ public:
     int animalhandling(int n)                       { return upd_skill(SKILL_ANIMALHANDLING, n, true); }
     int cooking() const                             { return get_skill(SKILL_COOKING); }
     int cooking(int n)                              { return upd_skill(SKILL_COOKING, n, true); }
+
+    // Lust handling
+    void lust_make_horny(int amount);
+    void lust_achieve_release(int amount);
+    /// These come in standard sizes
+    /// Regular: She masturbates; normal sex, and similar
+    void lust_release_regular() { lust_achieve_release(15); }
+    /// She has a strong orgasm: Very good sex, or similar
+    void lust_release_strong() { lust_achieve_release(33); }
+    /// We're completely overwhelming this girl with orgasm.
+    void lust_release_spent() { lust_achieve_release(66); }
+
+    void lust_turn_off(int amount);
 
     // Stat Changes: Stat/Skill values from last week
     std::unordered_map<STATS,  int> m_last_stats;

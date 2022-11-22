@@ -175,6 +175,9 @@ function g:obedience(change) end
 function g:libido(change) end
 ---@overload fun(change: number): number
 ---@overload fun(): number
+function g:lust(change) end
+---@overload fun(change: number): number
+---@overload fun(): number
 function g:confidence(change) end
 ---@overload fun(change: number): number
 ---@overload fun(): number

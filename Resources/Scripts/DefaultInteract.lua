@@ -187,7 +187,7 @@ function DungeonInteractChoice(girl)
             return DungeonInteractChoice(girl)
         end
         girl:happiness(-4)
-        AdjustLust(girl, 1)
+        girl:make_horny(1)
         girl:confidence(-1)
         girl:obedience(1)
         girl:spirit(-1)

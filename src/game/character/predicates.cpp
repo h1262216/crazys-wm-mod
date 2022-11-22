@@ -54,7 +54,7 @@ bool is_futa(const ICharacter& character) {
 
 int get_sex_openness(const ICharacter& character) {
     int trait = character.get_trait_modifier(traits::modifiers::SEX_OPENNESS);
-    int open = trait + character.libido() / 2 - std::max(0, character.dignity() / 3);
+    int open = trait + character.lust() / 2 - std::max(0, character.dignity() / 3);
     // specific modifiers
     // very high dignity or very low confidence
     if(character.dignity() > 80)  open -= 5;
@@ -64,7 +64,7 @@ int get_sex_openness(const ICharacter& character) {
         open += 10;
     }
     // virgin and sick of it
-    if(is_virgin(character) && (character.libido() > 80 || character.age() > 22)) {
+    if(is_virgin(character) && (character.lust() > 80 || character.age() > 22)) {
         open += 10;
     }
     // unhappy or unhealthy or too tired

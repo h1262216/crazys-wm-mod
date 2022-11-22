@@ -377,7 +377,6 @@ void CleanBrothel::DoneEarly(sGirl& girl) {
         default:
             ss << "${name} finished her cleaning early so ";
             ss << "she hung out around the brothel a bit.";
-            girl.upd_temp_stat(STAT_LIBIDO, uniform(1, 3), true);
             girl.happiness(uniform(1, 3));
             break;
     }

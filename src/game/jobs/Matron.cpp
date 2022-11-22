@@ -113,12 +113,10 @@ sWorkJobResult MatronJob::DoWork(sGirl& girl, bool is_night) {
 
 int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
     int numgirls = girl.m_Building->num_girls();
-    int xp = numgirls / 10, libido = 0, skill = 3;
+    int xp = numgirls / 10,  skill = 3;
 
     if (girl.has_active_trait(traits::QUICK_LEARNER))        { skill += 1; xp += 5; }
     else if (girl.has_active_trait(traits::SLOW_LEARNER))    { skill -= 1; xp -= 5; }
-    // TODO these constants should depend on where the girl is.
-    if (likes_women(girl)) libido += numgirls / 10;
     int stat_sum = girl.get_skill(SKILL_SERVICE) + girl.get_stat(STAT_CHARISMA) + girl.get_stat(STAT_INTELLIGENCE) +
                    girl.get_stat(STAT_CONFIDENCE) + girl.get_skill(SKILL_MEDICINE);
     int wages = int((100.f + (stat_sum / 50.f + 1) * numgirls));
@@ -129,7 +127,6 @@ int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
     girl.exp(uniform(5, 5+xp));
     girl.medicine(uniform(0, skill));
     girl.service(uniform(2, skill + 2));
-    girl.upd_temp_stat(STAT_LIBIDO, uniform(0, libido));
 
     cGirls::PossiblyGainNewTrait(girl, traits::CHARISMATIC, 30, ACTION_WORKMATRON, "She has worked as a matron long enough that she has learned to be more Charismatic.", Day0Night1);
     cGirls::PossiblyGainNewTrait(girl, traits::PSYCHIC, 60, ACTION_WORKMATRON, "She has learned to handle the girls so well that you'd almost think she was Psychic.", Day0Night1);
@@ -256,7 +253,7 @@ sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
         // 'Mute' End  Change
         if (girl.has_active_trait(traits::CUM_ADDICT))
             method = 4;
-        else if (girl.has_active_trait(traits::NYMPHOMANIAC) && girl.libido() > 50)
+        else if (girl.has_active_trait(traits::NYMPHOMANIAC) && girl.lust() > 50)
             method = 3;
         else if (cost < girl.m_Money && chance(girl.morality()))        // pay out of pocket
             method = 1;

@@ -961,7 +961,7 @@ function GroupStreets(girl, dangerLev)
         Dialog("She grins. \"Good! I am not only hungry, I am horny as hell. Hard for a beggar girl to get dates, you know! You got a new hire, guv'nor!\"")
         wm.AcquireGirl(girl)
         girl:add_trait(wm.TRAITS.OPTIMIST)
-        girl:libido(75)
+        girl:lust(75)
     elseif beggar == 2 then
         Dialog("You throw her a 50 gold piece. \"Don\'t spend it all in one place!\"")
         Dialog("She gawks at the coin. \"Bless you, sir!\"")

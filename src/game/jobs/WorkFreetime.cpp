@@ -97,6 +97,7 @@ const char* event_from_ft(freetimechoice choice) {
 sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
 {
     auto brothel = girl.m_Building;
+    girl.exp(100);
 
     std::stringstream ss;
 
@@ -104,7 +105,6 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
     int U_Health = 10 + (girl.constitution() / 10);
     int U_Happiness = 10 + rng % 11;
     int U_Mana = 5 + girl.magic() / 5;
-    int U_Libido = (girl.has_active_trait(traits::NYMPHOMANIAC) ? 15 : 5);
     int U_EXP = 1;    // Just because!
     int U_Beauty = 0;
     int U_Money = 0;
@@ -1348,7 +1348,6 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
 
     // update stats and skills
     girl.mana(U_Mana);
-    girl.upd_temp_stat(STAT_LIBIDO, U_Libido);
     girl.exp(U_EXP);
     girl.upd_temp_stat(STAT_BEAUTY, U_Beauty);
     girl.morality(U_Morality);

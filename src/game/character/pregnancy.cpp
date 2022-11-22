@@ -115,7 +115,7 @@ int fertility(const sGirl& girl) {
         return 0;
     }
 
-    int chance = 100.f * g_Game->settings().get_percent(settings::PREG_CHANCE_GIRL);
+    int chance = g_Game->settings().get_percent(settings::PREG_CHANCE_GIRL).as_percentage();
     chance += girl.get_trait_modifier(traits::modifiers::FERTILITY);
     g_LogFile.debug("pregnancy", girl.FullName(), "'s fertility: ", chance);
     return chance;
@@ -281,7 +281,7 @@ bool child_is_due(sGirl& girl, sChild& child, std::string& summary, bool PlayerC
             {
                 c = (unbornbabies > child.m_GirlsBorn ? 1 : 0);
                 t++;
-                if (g_Dice.percent(100.f * g_Game->settings().get_percent(settings::PREG_MISS_HUMAN)            // the baby dies
+                if (g_Dice.percent(g_Game->settings().get_percent(settings::PREG_MISS_HUMAN).as_percentage()            // the baby dies
                                    + child.m_MultiBirth))                                        // more likely for multiple births
                 {
                     m++; girl.m_ChildrenCount[CHILD08_MISCARRIAGES]++;            // add to miscarriage count
@@ -390,7 +390,7 @@ bool child_is_due(sGirl& girl, sChild& child, std::string& summary, bool PlayerC
         int died = 0; int add = 0; int sell = 0; long gold = 0;
         for (int i = 0; i < number; i++)
         {
-            if (g_Dice.percent(100.f * g_Game->settings().get_percent(settings::PREG_MISS_MONSTER) + number - 1))    died++;        // some may die
+            if (g_Dice.percent(g_Game->settings().get_percent(settings::PREG_MISS_MONSTER).as_percentage() + number - 1))    died++;        // some may die
             else if (g_Dice.percent(child.m_Stats[STAT_BEAUTY]))                    add++;        // keep the good looking ones
             else if (g_Dice.percent(child.m_Stats[STAT_CONSTITUTION]))                add++;        // and the realy healthy ones
             else sell++;                                                                        // sell the rest

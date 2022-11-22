@@ -215,7 +215,7 @@ function OrgySex(girl)
             Dialog("She slips and slides among the group, escaping holds to be caught by others. Before long everyone is panting and slippery. " ..
                     "She arranges you all laying on the floor and slides her body along the group taking turns and stopping at each man to ride his throbbing erection. " ..
                     "She expertly times each individual session and doesn't leave anyone wanting. The Sun breaks through the window and you awake on her floor with her laying on top of the group.")
-            AdjustLust(girl, 5)
+            girl:make_horny(5)
             girl:happiness(2)
             girl:tiredness(6)
             girl:group(1)

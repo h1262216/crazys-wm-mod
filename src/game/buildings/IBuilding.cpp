@@ -33,6 +33,7 @@
 #include "cGirls.h"
 #include "utils/algorithms.hpp"
 #include "CLog.h"
+#include "character/lust.h"
 
 namespace settings{
     extern const char* PREG_COOL_DOWN;
@@ -264,11 +265,6 @@ void IBuilding::EndShift(bool Day0Night1)
         cGirls::LevelUp(current);
         if(Day0Night1)
             end_of_week_update(current);
-
-        // list increase (moved here from jobs)
-        int libido = 1;
-        if (current.has_active_trait(traits::NYMPHOMANIAC))    { libido += 2; }
-        current.upd_temp_stat(STAT_LIBIDO, (g_Dice % libido) + 1, false);
 
         JOBS sw = current.get_job(Day0Night1);
         if (current.happiness()< 40)
@@ -1318,7 +1314,7 @@ void IBuilding::do_daily_items(sGirl& girl)
             if (girl.has_active_trait(traits::NYMPHOMANIAC))
             {
                 ss << "She spent the day at the Library looking at porn making her become horny.\n \n";
-                girl.upd_temp_stat(STAT_LIBIDO, 15);
+                girl.lust_make_horny(15);
             }
             else
             {
@@ -1534,10 +1530,10 @@ void IBuilding::do_daily_items(sGirl& girl)
     }
     if (girl.has_item("Compelling Dildo"))
     {
-        if (girl.libido() > 65 && girl.is_resting())
+        if (girl.is_resting() && will_masturbate(girl))
         {
             ss << girlName << "'s lust got the better of her and she spent the day using her Compelling Dildo.\n \n";
-            girl.upd_temp_stat(STAT_LIBIDO, -20);
+            girl.lust_release_regular();
             mast = true;
         }
     }
@@ -1572,16 +1568,16 @@ void IBuilding::do_daily_items(sGirl& girl)
     {
         if (girl.has_active_trait(traits::NYMPHOMANIAC))
         {
-            if (girl.libido() > 65)
+            if (will_masturbate(girl))
             {
                 ss << girlName << "'s lust got the better of her while she was on the her Computer looking at porn.\n \n";
-                girl.upd_temp_stat(STAT_LIBIDO, -20);
+                girl.lust_release_regular();
                 mast = true;
             }
             else
             {
                 ss << "She spent the day on her Computer looking at porn making her become horny.\n \n";
-                girl.upd_temp_stat(STAT_LIBIDO, 15);
+                girl.lust_make_horny(15);
             }
         }
         else

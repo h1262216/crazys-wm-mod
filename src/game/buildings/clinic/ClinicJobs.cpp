@@ -206,7 +206,7 @@ bool NurseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     if (chance(30) && !is_virgin(girl) && likes_men(girl)
         && (is_sex_crazy(girl) || girl.has_active_trait(traits::BIMBO)))
     {
-        if (girl.libido() > 65 && (brothel.is_sex_type_allowed(SKILL_NORMALSEX) || brothel.is_sex_type_allowed(SKILL_ANAL)))
+        if (girl.lust() > 65 && (brothel.is_sex_type_allowed(SKILL_NORMALSEX) || brothel.is_sex_type_allowed(SKILL_ANAL)))
         {
             m_Tips += 50;
             sex = true;
@@ -220,7 +220,7 @@ bool NurseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     }
 
     if (likes_women(girl) && girl.has_active_trait(traits::AGGRESSIVE) &&
-        girl.libido() > 65 && chance(10))
+        girl.lust() > 65 && chance(10))
     {
         les = true;
         m_Enjoyment += 1;
@@ -268,7 +268,7 @@ bool NurseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
             girl.anal(2);
         }
         brothel.m_Happiness += 100;
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+        girl.lust_release_regular();
         girl.upd_Enjoyment(ACTION_SEX, +3);
     }
     else if (hand)
@@ -449,7 +449,6 @@ sWorkJobResult InternJob::DoWork(sGirl& girl, bool is_night) {
 
     int exp_start = girl.exp();
     girl.exp(uniform(1, xp));
-    girl.upd_temp_stat(STAT_LIBIDO, skill / 2);
 
     auto get_update = [&](StatSkill target, int amount){
         int before = girl.get_attribute(target);

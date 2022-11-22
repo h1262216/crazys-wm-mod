@@ -63,6 +63,8 @@ struct sLuaGirl : public sCharacter<sLuaGirl>{
     static int set_status(lua_State* L);
     static int has_status(lua_State* L);
 
+    static int make_horny(lua_State* L);
+
     static int get_name(lua_State* L);
     static int get_first_name(lua_State* L);
     static int is_slave(lua_State* L);

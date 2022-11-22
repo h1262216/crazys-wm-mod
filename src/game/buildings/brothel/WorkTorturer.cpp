@@ -158,7 +158,6 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
     girl.exp(xp);
     girl.morality(-2);
     girl.bdsm(skill);
-    girl.upd_temp_stat(STAT_LIBIDO, 4);
 
     // WD: Update flag
     g_Game->dungeon().SetTortureDone();

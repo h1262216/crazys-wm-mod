@@ -106,7 +106,7 @@ float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) {
         numitems++;
 
         // add item sell worth to wages
-        item_worth += std::min(g_Game->settings().get_percent(settings::MONEY_SELL_ITEM) * item->m_Cost, 100.f);
+        item_worth += std::min(g_Game->settings().get_percent(settings::MONEY_SELL_ITEM).as_ratio() * item->m_Cost, 100.f);
     }
     return item_worth;
 }

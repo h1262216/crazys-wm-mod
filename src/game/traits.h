@@ -27,6 +27,9 @@ namespace traits {
     /// rounds with her. (negated by the fast orgasms trait) (-sex skills)
     constexpr const char* SLOW_ORGASMS = "Slow Orgasms";
 
+    /// This girl can achieve many orgasms in rapid succession.
+    constexpr const char* MULTI_ORGASMIC = "Multi-Orgasmic";
+
     /// This girl has never had sex before.
     constexpr const char* VIRGIN = "Virgin";
 

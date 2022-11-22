@@ -96,7 +96,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << headName << " suddenly stops, leaving ${name} on your bed, wet, frustrated, horny as hell and begging to be fucked.";
 
                     girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
-                    girl.upd_temp_stat(STAT_LIBIDO, +10, true);
+                    girl.lust_make_horny(10);
                     headGirl->lesbian(+4);
                 }
 
@@ -160,7 +160,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     girl.spirit(-1);
                     girl.health(-1);
                     g_Game->gold().misc_debit(20); //drug/spell money
-                    girl.upd_temp_stat(STAT_LIBIDO, 2, true);
+                    girl.lust_make_horny(2);
                     girl.pclove(-5); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }
@@ -201,7 +201,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     {
                         ss << ". " << headName << " quickly drives her wild, bringing her right to the brink of orgasm, but never quite letting her come. ";
                         ss << headName << " suddenly stops, leaving ${name} on your bed, wet, frustrated, horny as hell and begging to be fucked.\n";
-                        girl.upd_temp_stat(STAT_LIBIDO, +10, true);
+                        girl.lust_make_horny(10);
                         headGirl->lesbian(+4);
                     }
                 }
@@ -317,7 +317,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << "and that her choice to defy you, led to your choice to drug her.\nShe smiles dreamily, rubbing her breasts against you as you strip away her clothes."
                         << "\nYour drug delivers the perfect blend of horniness and suggestibility. ${name} will participate. Fully.\n";
                     g_Game->gold().misc_debit(100); //drug money
-                    girl.upd_temp_stat(STAT_LIBIDO, 10, true);
+                    girl.lust_make_horny(10);
                     girl.pclove(-10); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }
@@ -374,7 +374,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     girl.spirit(-1);
                     girl.health(-1);
                     g_Game->gold().misc_debit(20); //drug/spell money
-                    girl.upd_temp_stat(STAT_LIBIDO, 2, true);
+                    girl.lust_make_horny(2);
                     girl.pclove(-5); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }
@@ -435,7 +435,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << "\nShe smiles dreamily, rubbing her nipples against you as you strip away her clothes."
                         << "\nYour drug delivers a perfect blend of horniness and suggestibility. ${name} will now participate. Fully.\n";
                     g_Game->gold().misc_debit(100); //drug money
-                    girl.upd_temp_stat(STAT_LIBIDO, 10, true);
+                    girl.lust_make_horny(10);
                     girl.pclove(-20); //she'll hate you later
                     HateLove = 50;  //probably best fit for next bit...
                 }
@@ -717,9 +717,6 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
         girl.lesbian(+(harem.size() / 2));
         girl.performance(+(harem.size() / 4));
         girl.tiredness(+(harem.size() / 2));
-        int libido = (girl.has_active_trait(traits::NYMPHOMANIAC)) ? 4 : 2;
-        girl.upd_temp_stat(STAT_LIBIDO, libido);
-        girl.upd_Enjoyment(ACTION_WORKHAREM, libido);
 
         // now you get involved...
         if (is_virgin(girl))
@@ -942,7 +939,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                 else                { ss << "but for whatever reason she agrees so she ";    roll_d = 77; } // normal sex
             }
             else ss << "She don't like you at all so she ";
-            roll_d = girl.libido() > 60 ? 88 : 100;
+            roll_d = girl.lust() > 60 ? 88 : 100;
         }
         else                                            //cant stand the site of u
         {
@@ -953,7 +950,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             }
             else
                 ss << "She can't stand the sight of you so she ";
-            roll_d = girl.libido() > 60 ? 88 : 100;
+            roll_d = girl.lust() > 60 ? 88 : 100;
         }
 
 
@@ -1039,7 +1036,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                 ss << "was horny so she just Masturbated.\n \n";
             }
             girl.upd_Enjoyment(ACTION_SEX, +1);
-            girl.upd_temp_stat(STAT_LIBIDO, -15, true);
+            girl.lust_release_regular();
             imagetype = EImagePresets::MASTURBATE;
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::MAST, Day0Night1);
         }
@@ -1221,7 +1218,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             ss << "was horney so she just Masturbated.\n \n";
         }
         girl.upd_Enjoyment(ACTION_SEX, +1);
-        girl.upd_temp_stat(STAT_LIBIDO, -15, true);
+        girl.lust_release_regular();
         girl.AddMessage(ss.str(), EBaseImage::MAST, Day0Night1);
     }
     else
@@ -1313,7 +1310,6 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
     else if (girl.has_active_trait(traits::RETARDED))        { xp -= 5; }
 
     girl.exp(xp);
-    girl.upd_temp_stat(STAT_LIBIDO, 2);
     girl.AddMessage(ss.str(), imagetype, msgtype);
     return {false, std::max(0, tips), 0, wages};
 }

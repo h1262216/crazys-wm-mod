@@ -202,7 +202,6 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
     int get_stat(STATS stat_id) const override;
     void set_stat(STATS stat, int amount) override;
 
-    void upd_temp_stat(STATS stat_id, int amount, bool usetraits=false) override;
     int upd_base_stat(STATS stat_id, int amount, bool usetraits = true) override;
 
     int upd_temp_Enjoyment(Action_Types stat_id, int amount);

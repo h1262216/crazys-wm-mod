@@ -29,6 +29,7 @@ const std::array<sAttribute, NUM_STATS>& get_all_stats () {
             sAttribute{"Charisma",     "Cha", ""},
             sAttribute{"Happiness",    "Hap", "", 0, 100, 100,},
             sAttribute{"Libido",       "Lib", ""},
+            sAttribute{"Lust",         "Lst", ""},
             sAttribute{"Constitution", "Con", ""},
             sAttribute{"Intelligence", "Int", ""},
             sAttribute{"Confidence",   "Cfd", ""},

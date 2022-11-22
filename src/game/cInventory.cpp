@@ -448,7 +448,7 @@ void cInventory::Equip(sGirl& girl, const sInventoryItem* item, bool force)
                         pregmsg << " (not implemented yet).";
 
                     }
-                    else if (girl.m_WeeksPreg < 3 && g_Dice.percent(100 * g_Game->settings().get_percent(settings::PREG_MULTI_CHANCE)*pregadd * 2))    // fairly new pregnancy
+                    else if (girl.m_WeeksPreg < 3 && g_Dice.percent(g_Game->settings().get_percent(settings::PREG_MULTI_CHANCE).as_percentage()*pregadd * 2))    // fairly new pregnancy
                     {
                         pregmsg << " and the new implantation" << (pregadd > 1 ? "s" : "") << " seemed to cause it to multiply instead of create a new pregnancy.";
                         // zzzzzz - Add in the effects

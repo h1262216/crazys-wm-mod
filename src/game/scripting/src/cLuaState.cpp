@@ -38,6 +38,12 @@ void cLuaState::load(const std::string &file) {
     if (pcall(0, 0)) {
         throw std::runtime_error("Error running lua file " + file + ": " + get_error());
     }
+
+    if(lua_gettop(m_State) != 0) {
+        g_LogFile.error("scripting", "Lua stack is not empty! Found ", lua_gettop(m_State), " entries.",
+                        " Element at the top is of type ", lua_typename(m_State, 0));
+
+    }
 }
 
 int cLuaState::pcall(int nargs, int nresults) {

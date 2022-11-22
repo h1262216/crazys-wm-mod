@@ -63,6 +63,7 @@ enum STATS {
     STAT_CHARISMA        = 0    ,    //
     STAT_HAPPINESS            ,    //
     STAT_LIBIDO                ,    //
+    STAT_LUST,
     STAT_CONSTITUTION        ,    //
     STAT_INTELLIGENCE        ,    //
     STAT_CONFIDENCE            ,    //

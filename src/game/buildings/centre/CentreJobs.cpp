@@ -25,6 +25,7 @@
 #include "cGirls.h"
 #include "IGame.h"
 #include "character/cPlayer.h"
+#include "character/lust.h"
 
 extern const char* const CounselingInteractionId;
 
@@ -66,15 +67,13 @@ bool CommunityService::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
     int dispo = changes[get_performance_class(m_Performance)];
 
     //try and add randomness here
-    if (girl.has_active_trait(traits::NYMPHOMANIAC) && chance(30) && !is_virgin(girl)
-        && likes_men(girl) && girl.libido() > 75
-        && (brothel.is_sex_type_allowed(SKILL_NORMALSEX) || brothel.is_sex_type_allowed(SKILL_ANAL)))
+    if (!is_virgin(girl) && check_public_sex(girl, ESexParticipants::HETERO, SKILL_NORMALSEX, sPercent{30}, true))
     {
         sex = true;
-        ss << "Her Nymphomania got the better of her today and she decided the best way to serve her community was on her back!\n \n";
+        ss << "Her Lust got the better of her today and she decided the best way to serve her community was on her back!\n \n";
     }
 
-    if (chance(30) && girl.intelligence() < 55)//didnt put a check on this one as we could use some randomness and its an intel check... guess we can if people keep bitching
+    if (chance(30) && girl.intelligence() < 55)//didn't put a check on this one as we could use some randomness and it's an intel check... guess we can if people keep bitching
     {
         blow = true;
         ss << "An elderly fellow managed to convince ${name} that the best way to serve her community was on her knees. She ended up giving him a blow job!\n \n";
@@ -105,7 +104,7 @@ bool CommunityService::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
             m_ImageType = EImageBaseType::ANAL;
         }
         brothel.m_Happiness += 100;
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+        girl.lust_release_regular();
         girl.upd_Enjoyment(ACTION_SEX, +3);
         fame += 1;
         dispo += 6;
@@ -170,12 +169,10 @@ bool FeedPoor::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
         blow = true;    ss << "An elderly fellow managed to convince ${name} that he was full and didn't need anymore food but that she did. He told her his cock gave a special treat if she would suck on it long enough. Which she did man she isn't very smart.\n \n";
     }
 
-    if (girl.has_active_trait(traits::NYMPHOMANIAC) && chance(30) && girl.libido() > 75
-        && likes_men(girl) && !is_virgin(girl)
-        && (brothel.is_sex_type_allowed(SKILL_NORMALSEX) || brothel.is_sex_type_allowed(SKILL_ANAL)))
+    if (!is_virgin(girl) && check_public_sex(girl, ESexParticipants::HETERO, SKILL_NORMALSEX, sPercent{30}, true))
     {
         sex = true;
-        ss << "Her Nymphomania got the better of her today and she decided to let them eat her pussy!  After a few minutes they started fucking her.\n";
+        ss << "Her Lust got the better of her today and she decided to let them eat her pussy!  After a few minutes they started fucking her.\n";
     }
 
     if (girl.is_slave())
@@ -214,7 +211,7 @@ bool FeedPoor::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
             girl.anal(2);
         }
         brothel.m_Happiness += 100;
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+        girl.lust_release_regular();
         girl.upd_Enjoyment(ACTION_SEX, +3);
         fame += 1;
         dispo += 6;

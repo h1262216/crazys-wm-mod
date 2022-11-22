@@ -38,13 +38,13 @@ function HandleLesBDSM(girl, other_name)
         end
         Dialog(other_name .. " starts to tie up ${firstname}. During the process, ${firstname}" ..
                 " and " .. other_name .. " are chatting amicably" .. suggest)
-        if girl:libido() > 85 then
+        if girl:lust() > 85 then
             Dialog("A dark spot appears on ${firstname}'s panties. \"Wow, you are already soaking wet\", " ..
             other_name .. " comments. \"Today, you have to earn your orgasms, though!\"")
             wm.UpdateImage(wm.IMG.SPANKING, ImageOptions.LESBIAN)
             Dialog("And with that she pulls ${firstname}'s panties down and starts thoroughly spanking her ass.")
             if girl:has_trait(wm.TRAITS.MASOCHIST) and wm.Percent(50) then
-                AdjustLust(girl, 10)
+                girl:make_horny(10)
                 SheJustCame(girl, 10)
                 Dialog("Being such a pain slut, this is enough to make ${firstname} cum. " .. other_name ..
                         "looks a bit put-off, apparently this is not what she intended. \"You like that, huh? Well, there is plenty more where that came from.\"" ..
@@ -133,7 +133,7 @@ function HandleLesBDSM(girl, other_name)
                     return
                 end -- all branches returned
             end -- all branches returned
-        elseif girl:libido() > 33 then
+        elseif girl:lust() > 33 then
             -- at least a little horny
             wm.UpdateImage(wm.IMG.BED, ImageOptions.LESBIAN + ImageOptions.TIED_UP)
             local breast_text = ""
@@ -146,7 +146,7 @@ function HandleLesBDSM(girl, other_name)
             )
             local maso_text = ""
             if girl:has_trait(wm.TRAITS.MASOCHIST) and wm.Percent(50) then
-                AdjustLust(girl, 10)
+                girl:make_horny(10)
                 maso_text = " Clearly, ${firstname} is getting off on this."
             end
             wm.UpdateImage(wm.IMG.BDSM, ImageOptions.LESBIAN + ImageOptions.TIED_UP)
@@ -164,7 +164,7 @@ function HandleLesBDSM(girl, other_name)
                 wm.UpdateImage(wm.IMG.FINGER, ImageOptions.LESBIAN + ImageOptions.TIED_UP)
                 Dialog(other_name .. " nods and puts away the flogger. She stars caressing ${firstname}'s " ..
                         "lower lips, then inserts a finger, positioning herself in such a way that she doesn't block your view of the action." )
-                if girl:libido() > 66 and wm.Percent(50) then
+                if girl:lust() > 66 and wm.Percent(50) then
                     Dialog("Soon, she has ${firstname} screaming in the throngs of passion.")
                     SheJustCame(girl, 5)
                 else
@@ -181,7 +181,7 @@ function HandleLesBDSM(girl, other_name)
                 end
 
                 if girl:has_trait(wm.TRAITS.MASOCHIST) and wm.Percent(50) then
-                    AdjustLust(girl, 5)
+                    girl:make_horny(5)
                 end
 
                 if girl:constitution() < 40 or girl:health() < 40 then
@@ -206,7 +206,7 @@ function HandleLesBDSM(girl, other_name)
                 end
                 Dialog("\"As you wish!\" " .. other_name .. " shrugs, then picks up a whip from your crate.")
                 if girl:has_trait(wm.TRAITS.MASOCHIST) and wm.Percent(50) then
-                    AdjustLust(girl, 10)
+                    girl:make_horny(10)
                 end
                 Dialog("Each loud crack announces another welt appearing on ${firstname}'s skin. She is " ..
                         "crying and begging now: \"Please, " .. PlayerTitleFor(girl) .. ", please make her stop.\"")
@@ -275,11 +275,11 @@ function HandleLesBDSM(girl, other_name)
             wm.UpdateImage(wm.IMG.BDSM, ImageOptions.LESBIAN)
             Dialog("This time, she is too distracted to really notice. It's only when she bucks under her next orgasm that the ropes " ..
             " become apparent, constraining her movements. ")
-            if girl:libido() > 33 then
+            if girl:lust() > 33 then
                 Dialog("\"This was awesome\", ${firstname} \"can we do that again?\"\n" ..
                 "You take out a blindfold. \"If you wear this, you can go as many rounds as you like.\"\n" ..
                 "You can see conflicting emotions warring on ${firstname}'s face.")
-                if girl:libido() > 66 then
+                if girl:lust() > 66 then
                     Dialog("\"OK, lets do it,\" she finally says. You proceed to place the blindfold over her eyes " ..
                     "and nod to " .. other_name ". As she gets to work take out your cock and start stroking. Just as " ..
                     girl:firstname() .. " reaches her next climax, you spurt your load all over her belly. With " .. other_name ..

@@ -2,7 +2,7 @@
 
 ---@param girl wm.Girl
 function is_horny(girl)
-    return girl:libido() > 70 or (girl:has_trait(wm.TRAITS.NYMPHOMANIAC) and girl:libido() > 30)
+    return girl:lust() > 70 or (girl:has_trait(wm.TRAITS.NYMPHOMANIAC) and girl:lust() > 30)
 end
 
 function mast_tool(girl)
@@ -618,7 +618,7 @@ end
 ---@param result wm.EventResult
 function Hobby(girl, result)
     result:add_text("${name} decided to do something she really enjoys so she ")
-    if girl:has_trait(wm.TRAITS.NYMPHOMANIAC) and girl:libido() > 80 and not girl:is_virgin() then
+    if girl:has_trait(wm.TRAITS.NYMPHOMANIAC) and girl:lust() > 80 and not girl:is_virgin() then
         result:add_text("went out looking to get laid.")
         result:next_para()
         if wm.Percent(35) then -- finds someone
@@ -729,7 +729,7 @@ function Movie(girl, result)
             result:add_para("${name} loves everything to do with sex, so this is her type of movie.")
             girl:stat(wm.STATS.LIBIDO, 5, true)
             enjoy = 96
-            if girl:libido() >= 70 then
+            if girl:lust() >= 70 then
                 result:add_text("The movie started to turn her on so she started to pleasure herself.")
                 if wm.Percent(20) then
                     result:add_text("A man noticed and approached her, asking if she wanted the real thing instead of her fingers.")
@@ -740,12 +740,12 @@ function Movie(girl, result)
                     elseif girl:dislikes_men() then
                         result:add_para("She informs him she is a Lesbian and that she doesn't have sex with guys.")
                         result:set_image(wm.IMG.MASTURBATE)
-                    elseif girl:pclove() >= 80 and girl:libido() > 99 then
+                    elseif girl:pclove() >= 80 and girl:lust() > 99 then
                         result:add_para("Despite the fact that she is in love with you," ..
                                 " she couldn't help herself her lust is to great and she agrees.")
                         result:set_image(wm.IMG.SEX)
                         girl:normalsex(1)
-                    elseif girl:pclove() >= 80 and girl:libido() <= 99 then
+                    elseif girl:pclove() >= 80 and girl:lust() <= 99 then
                         result:add_para("She tells him she is in love and that he can't compare to her love. " ..
                                 "She finishes herself off then leaves with a smile on her face.")
                         result:set_image(wm.IMG.MASTURBATE)

@@ -228,7 +228,7 @@ function GoOnMission(girl)
                 Dialog("Regular Combat Critical Failure")
                 -- TODO Bondage Sex
                 if girl:has_trait(wm.TRAITS.NYMPHOMANIAC) then
-                    AdjustLust(girl, 15)
+                    girl:make_horny(15)
                 end
                 Dialog("Stealing Critical fail")
                 girl:health(-5)

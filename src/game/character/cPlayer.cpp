@@ -648,19 +648,19 @@ void cPlayer::apply_items(sGirl& girl) {
     // Libido - ordered big to small
 
     // Succubus Milk [100 pts]
-    if (girl.libido() < 5)  // Lower threshold
-        AutomaticFoodItemUse(girl, "Succubus Milk", "Used succubus milk to restore 100 libido.");
+    if (girl.lust() < 5)  // Lower threshold
+        AutomaticFoodItemUse(girl, "Succubus Milk", "Used succubus milk to restore 100 Lust.");
 
     // Sinspice [75 pts]
-    if (girl.libido() < 10)
-        AutomaticFoodItemUse(girl, "Sinspice", "Used sinspice to restore 75 libido.");
+    if (girl.lust() < 10)
+        AutomaticFoodItemUse(girl, "Sinspice", "Used sinspice to restore 75 Lust.");
 
     //Empress' New Clothes [50 pts] (Piece of equipment)  (This is a tossup between charisma & libido)
     if (girl.libido() <= 10)
         AutomaticItemUse(girl, "Empress' New Clothes", "You had her put on the empress' new clothes to get her libido up.");
 
     // Red Rose Extravaganza [50 pts?]
-    if (girl.libido() < 10)
+    if (girl.lust() < 10)
         AutomaticFoodItemUse(girl, "Red Rose Extravaganza", "Gave her a red rose extravaganza to get her libido going again.");
 
     // Ring of the Horndog [50 pts] (Piece of equipment)

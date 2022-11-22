@@ -544,3 +544,77 @@ bool ICharacter::any_active_trait(const std::initializer_list<const char*> trait
     return std::any_of(begin(trait_names), end(trait_names), [&](const char* tn){ return this->has_active_trait(tn); });
 }
 
+void ICharacter::lust_make_horny(int amount) {
+    if(amount < 0) return;
+
+    // extra lust gains for nymphos
+    if(has_active_trait(traits::NYMPHOMANIAC)) {
+        amount = (amount * 15) / 10;
+    }
+    // less lust for chaste
+    if(has_active_trait(traits::CHASTE)) {
+        amount = (amount * 5) / 10;
+    }
+
+    int lib = libido();
+
+    amount = amount * (90 + lib / 5) / 100;
+
+    // lust gain depends on current libido
+    int direct_value = lust() + amount;
+    int overflow = direct_value - (lib + 33);
+    if(overflow > 0) {
+        // if all is above target, all gets reduced by 40%
+        if(overflow > amount) {
+            amount = (amount * 6) / 10;
+        } else {
+            // otherwise, reduce only the surplus
+            amount = amount - (overflow * 4) / 10;
+        }
+    }
+    if(direct_value < lib) {
+        amount = (amount * 12) / 10;
+    }
+
+    lust(amount);
+}
+
+void ICharacter::lust_achieve_release(int amount) {
+    int tired = 0;
+    // much less lust decrease for multi-orgasmic girls
+    if(has_active_trait(traits::MULTI_ORGASMIC)) {
+        amount = (amount + 1) / 2;
+        tired += amount / 10;
+    // a little less lust loss for nymphos. These effects do not stack.
+    } else if(has_active_trait(traits::NYMPHOMANIAC)) {
+        amount = (amount * 8) / 10;
+        tired += amount / 8;
+    } else {
+        tired += amount / 5;
+    }
+
+    tiredness(std::min(10, tired));
+    happiness(amount / 10);
+    libido(1);
+
+    int lib = libido();
+    // if her libido is over 50, reduce the lust decrease
+    int bonus_lib = std::max(0, lib - 50);
+    amount = (50 + amount * (100 - bonus_lib)) / 100;
+
+    int underflow = (lib - 33) - (lust() - amount);
+    if(underflow > 0) {
+        if(underflow > amount) {
+            amount = (amount * 6) / 10;
+        } else {
+            amount = amount - (underflow * 4) / 10;
+        }
+    }
+
+    lust(amount);
+}
+
+void ICharacter::lust_turn_off(int amount) {
+    lust(-amount);
+    libido(-amount / 10);
+}

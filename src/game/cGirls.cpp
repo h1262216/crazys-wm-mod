@@ -45,6 +45,7 @@
 #include "character/traits/ITraitsCollection.h"
 #include "character/traits/ITraitsManager.h"
 #include "character/predicates.h"
+#include "character/lust.h"
 #include "character/cPlayer.h"
 #include "character/pregnancy.h"
 #include "character/cGirlPool.h"
@@ -293,16 +294,6 @@ void cGirls::EndDayGirls(IBuilding& brothel, sGirl& girl)
     else if (girl.has_active_trait(traits::POWERFUL_MAGIC)) E_mana = girl.magic() / 2;        // max 50 per day
     else /*                                 */    E_mana = girl.magic() / 10;    // max 10 per day
     girl.mana(E_mana);
-
-
-    // `J` update the girls base libido
-    int total_libido = girl.libido();                // total_libido
-    int base_libido = girl.libido();    // base_libido
-    if (total_libido > (base_libido*1.5)) E_libido++;
-    if (total_libido > 90)    E_libido++;
-    if (total_libido < 10)    E_libido--;
-    if (total_libido < (base_libido / 3)) E_libido--;
-    girl.libido(E_libido);
 
 
     /* `J` lactation is not really thought out fully
@@ -588,10 +579,10 @@ string cGirls::GetMoreDetailsString(const sGirl& girl, bool purchase)
 
     // `J` When modifying Stats or Skills, search for "J-Change-Stats-Skills"  :  found in >> cGirls.cpp > GetMoreDetailsString
     ss << "STATS";
-    const int statnum[] = { STAT_CHARISMA, STAT_BEAUTY, STAT_LIBIDO, STAT_MANA, STAT_INTELLIGENCE, STAT_CONFIDENCE, STAT_OBEDIENCE,
+    const int statnum[] = { STAT_CHARISMA, STAT_BEAUTY, STAT_LIBIDO, STAT_LUST, STAT_MANA, STAT_INTELLIGENCE, STAT_CONFIDENCE, STAT_OBEDIENCE,
                             STAT_SPIRIT, STAT_AGILITY, STAT_STRENGTH, STAT_FAME, STAT_LACTATION ,STAT_PCFEAR, STAT_PCLOVE };
     const int statnumsize = 15;
-    const string statstr[] = { "Charisma : \t", "Beauty : \t", "Libido : \t", "Mana : \t", "Intelligence : \t", "Confidence : \t",
+    const string statstr[] = { "Charisma : \t", "Beauty : \t", "Libido : \t", "Lust : \t", "Mana : \t", "Intelligence : \t", "Confidence : \t",
                          "Obedience : \t", "Spirit : \t", "Agility : \t", "Strength : \t", "Fame : \t", "Lactation : \t",
                          "PCFear : \t", "PCLove : \t", "Gold : \t" };
 
@@ -955,8 +946,8 @@ string cGirls::GetSimpleDetails(const sGirl& girl)
     int skillnum[] = { SKILL_MAGIC, SKILL_COMBAT, SKILL_SERVICE, SKILL_MEDICINE, SKILL_PERFORMANCE, SKILL_CRAFTING, SKILL_HERBALISM, SKILL_FARMING, SKILL_BREWING, SKILL_ANIMALHANDLING, SKILL_COOKING, SKILL_ANAL, SKILL_BDSM, SKILL_NORMALSEX, SKILL_BEASTIALITY, SKILL_GROUP, SKILL_LESBIAN, SKILL_ORALSEX, SKILL_TITTYSEX, SKILL_HANDJOB, SKILL_STRIP, SKILL_FOOTJOB };
     string skillstr[] = { "Magic : \t", "Combat : \t", "Service : \t", "Medicine : \t", "Performance : \t", "Crafting : \t", "Herbalism : \t", "Farming : \t", "Brewing : \t", "Animal Handling : \t", "Cooking : \t", "Anal : \t", "BDSM : \t", "Normal : \t", "Bestiality : \t", "Group : \t", "Lesbian : \t", "Oral : \t", "Titty : \t", "Hand Job : \t", "Stripping : \t", "Foot Job : \t" };
     int skillcount = 22;
-    STATS statnum[] = { STAT_CHARISMA, STAT_BEAUTY, STAT_LIBIDO, STAT_MANA, STAT_INTELLIGENCE, STAT_CONFIDENCE, STAT_OBEDIENCE, STAT_SPIRIT, STAT_AGILITY, STAT_STRENGTH, STAT_FAME, STAT_LACTATION };
-    string statstr[] = { "Charisma : \t", "Beauty : \t", "Libido : \t", "Mana : \t", "Intelligence : \t", "Confidence : \t", "Obedience : \t", "Spirit : \t", "Agility : \t", "Strength : \t", "Fame : \t", "Lactation : \t" };
+    STATS statnum[] = { STAT_CHARISMA, STAT_BEAUTY, STAT_LIBIDO, STAT_LUST, STAT_MANA, STAT_INTELLIGENCE, STAT_CONFIDENCE, STAT_OBEDIENCE, STAT_SPIRIT, STAT_AGILITY, STAT_STRENGTH, STAT_FAME, STAT_LACTATION };
+    string statstr[] = { "Charisma : \t", "Beauty : \t", "Libido : \t", "Lust : \t", "Mana : \t", "Intelligence : \t", "Confidence : \t", "Obedience : \t", "Spirit : \t", "Agility : \t", "Strength : \t", "Fame : \t", "Lactation : \t" };
     int statcount = 12;
 
     ss << basestr[9];
@@ -1866,7 +1857,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
             girl->lose_trait(traits::OPTIMIST);
             girl->upd_base_stat(STAT_HEALTH, -5);
             girl->upd_base_stat(STAT_SPIRIT, -5);
-            girl->upd_temp_stat(STAT_LIBIDO, -50, true);
+            girl->lust_turn_off(50);
             girl->upd_skill(SKILL_NORMALSEX, 5);
         }
         else if (harm > 15)  //10% chance
@@ -1950,7 +1941,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     string introtext = girlName;
     // `J` not sure if all of the options will come up in appropriate order but it is a good start.
     int intro = g_Dice % 15;
-    intro += girl->libido() / 20;
+    intro += girl->lust() / 20;
     intro += check / 20;
 
     bool z = false;
@@ -2476,14 +2467,14 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         girl->health(10);//Idk where I should put this really but succubus gain live force or whatever from sex
         girl->happiness(5);
     }
-    else if (girl->libido() > 5)
+    else if (girl->lust() > 50)
     {
         /* */if (check < 20)    message += "\nThough she had a tough time with it, she was horny and still managed to gain some little enjoyment.";
         else if (check < 40)    message += "\nShe considered it a learning experience and enjoyed it a bit.";
         else if (check < 60)    message += "\nShe enjoyed it a lot and wanted more.";
         else if (check < 80)    message += "\nIt was nothing new for her, but she really does appreciate such work.";//girl->upd_stat(STAT_SANITY, 1);
         else /*           */    message += "\nIt seems that she lives for this sort of thing.";//girl->upd_stat(STAT_SANITY, 2);
-        girl->happiness(girl->libido() / 5);
+        girl->happiness(girl->lust() / 10);
     }
     else
     {
@@ -2517,15 +2508,20 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         }
         if (check <= 20)    // if unexperienced then will get hurt
         {
-            if (g_Dice.percent(30)) message += "\nHer inexperience hurt her a little.";
-            else /*              */    message += "\nHer inexperience hurt her. It's now quite painful to sit down.";
-                  girl->happiness(-3);
-                  girl->confidence(-1);
-                  girl->spirit(-3);
-                  girl->health(-3);
+            if (g_Dice.percent(30)) { message += "\nHer inexperience hurt her a little."; }
+            else {
+                message += "\nHer inexperience hurt her. It's now quite painful to sit down.";
+                girl->happiness(-3);
+                girl->confidence(-1);
+                girl->spirit(-3);
+                girl->health(-3);
+            }
+
             //girl->upd_stat(STAT_SANITY, -3);
+            girl->libido(-2);
+            girl->lust_turn_off(5);
         }
-        girl->upd_temp_stat(STAT_LIBIDO, -10, true);
+        girl->lust_release_regular();
         girl->upd_base_stat(STAT_SPIRIT, -1);
         STDchance += 30;
 
@@ -2567,11 +2563,15 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         if (check <= 30)    // if unexperienced then will get hurt
         {
             if (g_Dice.percent(30)) message += "\nHer inexperience hurt her a little.";
-            else /*              */    message += "\nHer inexperience hurt her a little. She's not used to having pain in those places.";
-                  girl->upd_base_stat(STAT_HAPPINESS, -2);
-                  girl->upd_base_stat(STAT_SPIRIT, -3);
-                  girl->upd_base_stat(STAT_CONFIDENCE, -1);
-                  girl->upd_base_stat(STAT_HEALTH, -3);
+            else {
+                message += "\nHer inexperience hurt her a little. She's not used to having pain in those places.";
+                girl->upd_base_stat(STAT_HAPPINESS, -2);
+                girl->upd_base_stat(STAT_SPIRIT, -3);
+                girl->upd_base_stat(STAT_CONFIDENCE, -1);
+                girl->upd_base_stat(STAT_HEALTH, -3);
+            }
+            girl->libido(-3);
+            girl->lust_turn_off(5);
             //girl->upd_stat(STAT_SANITY, -5);
         }
         if (!customer->m_IsWoman)
@@ -2580,8 +2580,8 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
             STDchance += (contraception ? 2 : 20);
         }
 
-        girl->upd_temp_stat(STAT_LIBIDO, -5, true);
-          girl->upd_base_stat(STAT_SPIRIT, -1);
+        girl->lust_release_regular();
+        girl->upd_base_stat(STAT_SPIRIT, -1);
 
      //SIN - GIFT DROP
         if (g_Dice.percent(5) && customer->happiness() > 75)
@@ -2620,11 +2620,15 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         if (check < 15)
         {
             if (g_Dice.percent(30)) message += "\nHer inexperience hurt her a little.";
-            else /*              */    message += "\nShe's inexperienced and got poked in the eye.";/*Wouldnt this work better in oral? CRAZY*/
-                  girl->upd_base_stat(STAT_HAPPINESS, -2);
-                  girl->upd_base_stat(STAT_SPIRIT, -3);
-                  girl->upd_base_stat(STAT_CONFIDENCE, -1);
-                  girl->upd_base_stat(STAT_HEALTH, -3);
+            else {
+                message += "\nShe's inexperienced and got poked in the eye.";/*Wouldnt this work better in oral? CRAZY*/
+                girl->upd_base_stat(STAT_HAPPINESS, -2);
+                girl->upd_base_stat(STAT_SPIRIT, -3);
+                girl->upd_base_stat(STAT_CONFIDENCE, -1);
+                girl->upd_base_stat(STAT_HEALTH, -3);
+            }
+            girl->libido(-2);
+            girl->lust_turn_off(5);
             //girl->upd_stat(STAT_SANITY, -2);
         }
         if (girl->has_active_trait(traits::STERILE))
@@ -2634,7 +2638,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         }
         //Trait modifications
         else if (girl->has_active_trait(traits::CUM_ADDICT) && girl->m_UseAntiPreg &&
-                 g_Dice.percent(girl->libido()) && !g_Dice.percent(girl->intelligence()))
+                 g_Dice.percent(girl->lust()) && !g_Dice.percent(girl->intelligence()))
         {
             message += "\n \nShe got over-excited by her desire for cum, and failed to use her anti-preg. ";
             girl->m_UseAntiPreg = false;    // turn off anti
@@ -2649,7 +2653,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
             contraception = girl->calc_pregnancy(*customer);
             STDchance += (contraception ? 4 : 40);
         }
-        girl->upd_temp_stat(STAT_LIBIDO, -15, true);
+        girl->lust_release_regular();
 
      //SIN - GIFT DROP
         if (g_Dice.percent(5) && customer->happiness() > 75)
@@ -2687,6 +2691,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         }
         if (girl->get_skill(SexType) <= 20)    // if unexperienced then will get hurt
         {
+            girl->lust_turn_off(5);
             if (girl->any_active_trait({traits::GAG_REFLEX, traits::STRONG_GAG_REFLEX}))
             {
                 message += "\nHer throat is raw from gagging on the customer's cock. She was nearly sick.";
@@ -2699,15 +2704,16 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
             else
             {
                 if (g_Dice.percent(40)) message += "\nHer inexperience caused her some embarrassment."; // Changed... being new at oral doesn't hurt, but can be embarrasing. --PP
-                else /*              */    message += "\nShe's inexperienced and got poked in the eye.";/*CRAZY*/
-                          girl->upd_base_stat(STAT_HAPPINESS, -2);
-                          girl->upd_base_stat(STAT_SPIRIT, -3);
-                          girl->upd_base_stat(STAT_CONFIDENCE, -1);
+                else {
+                    message += "\nShe's inexperienced and got poked in the eye.";/*CRAZY*/
+                    girl->upd_base_stat(STAT_HAPPINESS, -2);
+                    girl->upd_base_stat(STAT_SPIRIT, -3);
+                    girl->upd_base_stat(STAT_CONFIDENCE, -1);
+                }
                 //girl->upd_stat(STAT_SANITY, -1);
             }
         }
         STDchance += 10;
-        girl->upd_temp_stat(STAT_LIBIDO, -2, true);
 
      //SIN - GIFT DROP
         if (g_Dice.percent(5) && customer->happiness() > 75)
@@ -2731,10 +2737,10 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
                   girl->upd_base_stat(STAT_HAPPINESS, -2);
                   girl->upd_base_stat(STAT_SPIRIT, -3);
                   girl->upd_base_stat(STAT_CONFIDENCE, -1);
+            girl->lust_turn_off(5);
             //girl->upd_stat(STAT_SANITY, -1);
         }
         STDchance += 1;
-        girl->upd_temp_stat(STAT_LIBIDO, -2, true);
     }break;
 
     case SKILL_HANDJOB:
@@ -2747,12 +2753,12 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         if (check <= 20)    // if unexperienced then will get hurt
         {
             message += "\nHer inexperience caused her some embarrassment.";    // Changed... being new at handjob doesn't hurt, but can be embarrasing. --PP
-                  girl->upd_base_stat(STAT_HAPPINESS, -2);
-                  girl->upd_base_stat(STAT_SPIRIT, -3);
-                  girl->upd_base_stat(STAT_CONFIDENCE, -1);
+            girl->upd_base_stat(STAT_HAPPINESS, -2);
+            girl->upd_base_stat(STAT_SPIRIT, -3);
+            girl->upd_base_stat(STAT_CONFIDENCE, -1);
+            girl->lust_turn_off(5);
         }
         STDchance += 1;
-        girl->upd_temp_stat(STAT_LIBIDO, -1, true);
     }break;
 
     case SKILL_FOOTJOB:
@@ -2765,12 +2771,11 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         if (check <= 20)    // if unexperienced then will get hurt
         {
             message += "\nHer inexperience caused her some embarrassment.";    // Changed... being new at footjob doesn't hurt, but can be embarrasing. --PP
-                  girl->upd_base_stat(STAT_HAPPINESS, -2);
-                  girl->upd_base_stat(STAT_SPIRIT, -3);
-                  girl->upd_base_stat(STAT_CONFIDENCE, -1);
+            girl->upd_base_stat(STAT_HAPPINESS, -2);
+            girl->upd_base_stat(STAT_SPIRIT, -3);
+            girl->upd_base_stat(STAT_CONFIDENCE, -1);
         }
         STDchance += 1;
-        girl->upd_temp_stat(STAT_LIBIDO, -1, true);
     }break;
 
     case SKILL_BEASTIALITY:
@@ -2789,14 +2794,14 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
                   girl->upd_base_stat(STAT_HEALTH, -3);
             //girl->upd_stat(STAT_SANITY, -4);
         }
-          girl->upd_base_stat(STAT_SPIRIT, -1);    // is pretty degrading
+        girl->upd_base_stat(STAT_SPIRIT, -1);    // is pretty degrading
         // mod: added check for number of beasts owned; otherwise, fake beasts could somehow inseminate the girl
         if (g_Game->storage().beasts() > 0)
         {
             contraception = girl->calc_insemination(GetBeast());
             STDchance += (contraception ? 2 : 20);
         }
-        girl->upd_temp_stat(STAT_LIBIDO, -10, true);
+        girl->lust_release_regular();
 
     //SIN - GIFT DROP
         if (g_Dice.percent(5) && customer->happiness() > 50)
@@ -2844,7 +2849,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         }
         //trait variation
         else if (girl->has_active_trait(traits::CUM_ADDICT) && girl->m_UseAntiPreg &&
-                 g_Dice.percent(girl->libido()) && !g_Dice.percent(girl->intelligence()))
+                 g_Dice.percent(girl->lust()) && !g_Dice.percent(girl->intelligence()))
         {
             message += "\n \nShe got over-excited by her desire for cum, and failed to use her anti-preg. ";
             girl->m_UseAntiPreg = false;    // turn off anti
@@ -2891,7 +2896,11 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
                 message += "\n \nWorryingly, as she tidied up she found a Herpes Cure dropped under the bed. It's hers now.";
             }
         }
-        girl->upd_temp_stat(STAT_LIBIDO, -20, true);
+        if(check > 60) {
+            girl->lust_release_spent();
+        } else {
+            girl->lust_release_regular();
+        }
     }break;
 
     case SKILL_LESBIAN:
@@ -2904,13 +2913,14 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         if (check <= 20)    // if unexperienced then will get hurt
         {
             message += "\nHer inexperience caused her some embarrassment.";    // Changed... being new at lesbian doesn't hurt, but can be embarrasing. --PP
-                  girl->upd_base_stat(STAT_HAPPINESS, -2);
-                  girl->upd_base_stat(STAT_SPIRIT, -3);
-                  girl->upd_base_stat(STAT_CONFIDENCE, -1);
+            girl->upd_base_stat(STAT_HAPPINESS, -2);
+            girl->upd_base_stat(STAT_SPIRIT, -3);
+            girl->upd_base_stat(STAT_CONFIDENCE, -1);
+            girl->lust_turn_off(5);
             //girl->upd_stat(STAT_SANITY, -1);
         }
         STDchance += 5;
-        girl->upd_temp_stat(STAT_LIBIDO, -10, true);
+        girl->lust_release_regular();
 
      //SIN - GIFT DROP
         if (g_Dice.percent(5) && customer->happiness() > 75)
@@ -2950,13 +2960,13 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         if (check <= 20)    // if inexperienced then will get hurt
         {
             message += "\nShe got tangled in her clothes and fell on her face.";
-                  girl->upd_base_stat(STAT_HAPPINESS, -2);
-                  girl->upd_base_stat(STAT_SPIRIT, -3);
-                  girl->upd_base_stat(STAT_CONFIDENCE, -1);
-                  girl->upd_base_stat(STAT_HEALTH, -3);
+            girl->upd_base_stat(STAT_HAPPINESS, -2);
+            girl->upd_base_stat(STAT_SPIRIT, -3);
+            girl->upd_base_stat(STAT_CONFIDENCE, -1);
+            girl->upd_base_stat(STAT_HEALTH, -3);
+            girl->lust_turn_off(3);
         }
         STDchance += 0;
-        girl->upd_temp_stat(STAT_LIBIDO, 0, true);
     }break;
     }    // end switch
 
@@ -3065,7 +3075,6 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     int enjoy = 1;
     if (girl->has_active_trait(traits::NYMPHOMANIAC))
     {
-        girl->upd_temp_stat(STAT_LIBIDO, 15);        // she just had sex and she wants more
         switch (SexType)
         {
         case SKILL_GROUP:            enjoy += 3; break;
@@ -3504,9 +3513,11 @@ void cGirls::updateGirlTurnStats(sGirl& girl)
             girl.health(2);
         }
 
-        girl.libido(-1);
         girl.happiness(-1);
     }
+
+    // Lust
+    update_lust(girl);
 
     // LOVE love is updated only if happiness is >= 100 or < 50
     if (girl.happiness() >= 100)
@@ -3707,7 +3718,7 @@ bool cGirls::detect_disease_in_customer(IBuilding * brothel, sGirl& girl, sCusto
     detectdisease += girl.medicine() / 2.0;                                // +50 medicine
     detectdisease += girl.intelligence() / 5.0;                            // +20 intelligence
     detectdisease += girl.magic() / 5.0;                                    // +20 magic
-    detectdisease -= girl.libido() / 2.0;                                    // -50 libido
+    detectdisease -= girl.lust() / 2.0;                                    // -50 lust
 
     if (has_disease(girl))                        detectdisease += 20;    // has it so know what to look for
     detectdisease += girl.get_trait_modifier(traits::modifiers::DETECT_DISEASE);

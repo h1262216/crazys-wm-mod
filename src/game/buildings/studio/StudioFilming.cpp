@@ -114,7 +114,7 @@ namespace {
         // the 0.09 makes the curve a bit smoother
         skill_factor = std::sqrt(0.09f + skill_factor) / std::sqrt(1.09f);
 
-        float lib_value = girl.libido() * (data.Factor + data.BaseValue) * skill_factor;
+        float lib_value = girl.lust() * (data.Factor + data.BaseValue) * skill_factor;
         return lib_value / 100 - data.BaseValue;
     }
 }

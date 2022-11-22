@@ -187,19 +187,19 @@ end
 
 function PleaseHer_Neutral(girl, kind)
     local horny_text = ""
-    if girl:libido() < 40 then
+    if girl:lust() < 40 then
         horny_text = "She doesn't seem overly " ..
                 " excited, so you start by placing soft kisses on her stomach, then on her breasts and inner thighs."
     end
     wm.UpdateImage(wm.IMG.FONDLE, ImageOptions.HETERO)
     Dialog("You ask ${firstname} to undress and lie on her back. " .. horny_text)
-    AdjustLust(girl, 3)
+    girl:make_horny(3)
     wm.UpdateImage(PleaseData.image[kind], ImageOptions.HETERO)
     Dialog(girl:format(PleaseData.neural_action_first[kind]))
     Dialog(girl:format(PleaseData.neural_action_second[kind]))
     if girl:pclove() > 60 then
         Dialog("\"That was amazing\". You smile. \"Want to go for round two?\"")
-        AdjustLust(girl, 3)
+        girl:make_horny(3)
         girl:happiness(4)
         girl:tiredness(4)
         girl:pcfear(-1)
@@ -275,7 +275,7 @@ function PleaseHer_HornyNeutral(girl, kind)
     wm.UpdateImage(PleaseData.image[kind], ImageOptions.HETERO)
     Dialog(girl:format(PleaseData.horny_neutral_action[kind]))
     -- if she really needed it, and doesn't hate you too much, the effect is positive
-    if girl:pclove() > -33 and girl:libido() > 80 then
+    if girl:pclove() > -33 and girl:lust() > 80 then
         girl:pclove(1)
         girl:happiness(1)
     else
@@ -325,10 +325,10 @@ function PleaseHer(girl, action)
         girl:experience(4)
         girl:tiredness(1)
         wm.UpdateImage(wm.IMG.BED)
-        if girl:libido() >= 65 and girl:pclove() >= 50 then
+        if girl:lust() >= 65 and girl:pclove() >= 50 then
             -- she is horny and likes you
             PleaseHer_Horny(girl, action)
-        elseif girl:libido() < 65 and girl:pclove() > 0 then
+        elseif girl:lust() < 65 and girl:pclove() > 0 then
             -- she isn't horny and doesn't hate you
             PleaseHer_Neutral(girl, action)
         else
@@ -342,12 +342,12 @@ function PleaseHer(girl, action)
             Dialog("You order ${firstname} to undress and lie on her back. " .. pclove_text ..
                     "\"Let's get you in the mood, shall we,\" you proclaim as you start suckling on her breasts. At the same time, you move your hands between her " ..
                     "legs and start caressing her lower lips.")
-            if girl:libido() > 50 and ((girl:pclove() < -33 and wm.GetPlayerDisposition() < -33) or girl:pclove() < - 66)  then
+            if girl:lust() > 50 and ((girl:pclove() < -33 and wm.GetPlayerDisposition() < -33) or girl:pclove() < - 66)  then
                 -- she is horny but hates you, and your aren't a nice person, or she just really hates you
                 PleaseHer_HornyHate(girl, action)
-            elseif girl:libido() > 50 then
+            elseif girl:lust() > 50 then
                 PleaseHer_HornyNeutral(girl, action)
-            elseif girl:libido() < 20 then
+            elseif girl:lust() < 20 then
                 -- she doesn't like you and isn't horny
                 PleaseHer_NoHornyEvil(girl, action)
             else

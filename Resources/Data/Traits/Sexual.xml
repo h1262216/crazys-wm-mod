@@ -102,6 +102,16 @@
         <Excludes>Fast Orgasms</Excludes>
     </Trait>
 
+    <Trait Name="Multi-Orgasmic" Type="Sexual">
+        <description>This girl can achieve many orgasms in rapid succession.</description>
+        <Modifiers>
+            <Modifier Name="skill:Group" Value="2" />
+            <Modifier Name="skill-cap:Group" Value="5" />
+            <Modifier Name="enjoy:SEX" Value="5" />
+            <Modifier Name="stat:Libido" Value="10" />
+        </Modifiers>
+    </Trait>
+
     <Trait InheritChance="0" Name="Virgin" RandomChance="50" Type="Sexual">
         <description>This girl has never had sex before.</description>
         <Modifiers>

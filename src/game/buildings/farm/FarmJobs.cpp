@@ -215,7 +215,7 @@ bool cFarmJobMarketer::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
     {
         std::shared_ptr<sGirl> ugirl = nullptr;
         int cost = 10000;
-        if (ForSale_Food >= 15000 && chance( 100.f * g_Game->settings().get_percent( settings::SLAVE_MARKET_UNIQUE_CHANCE ) ))
+        if (ForSale_Food >= 15000 && chance( g_Game->settings().get_percent( settings::SLAVE_MARKET_UNIQUE_CHANCE ).as_percentage() ))
         {
             cost = 15000;
             ugirl = g_Game->GetRandomUniqueGirl(true);                // Unique girl type
@@ -850,7 +850,7 @@ bool cFarmJobBeastCapture::JobProcessing(sGirl& girl, IBuilding& brothel, bool i
         switch (uniform(0, 9))
         {
             case 0:
-                if (girl.has_active_trait(traits::TWISTED) && girl.has_active_trait(traits::NYMPHOMANIAC) && (girl.libido() >= 80))
+                if (girl.has_active_trait(traits::TWISTED) && girl.has_active_trait(traits::NYMPHOMANIAC) && girl.lust() >= 80)
                 {
                     ss << "Being a horny, twisted nymphomaniac, ${name} had some fun with the beasts before she handed them over.\n";
                     girl.beastiality(uniform(0, gain));
@@ -859,7 +859,7 @@ bool cFarmJobBeastCapture::JobProcessing(sGirl& girl, IBuilding& brothel, bool i
                     break;
                 }
             case 1:
-                if (girl.has_active_trait(traits::PSYCHIC) && (girl.libido() >= 90) && chance(gain * 5))
+                if (girl.has_active_trait(traits::PSYCHIC) && (girl.lust() >= 90) && chance(gain * 5))
                 {
                     ss << "${name}'s Psychic sensitivity caused her mind be overwhelmed by the creatures' lusts";
                     if (is_virgin(girl))
@@ -1178,7 +1178,7 @@ bool cFarmJobGetMilked::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_n
         {
             ss << ", who massaged ${name}'s breasts thoroughly and was careful to thoroughly arouse the nipple with her tongue before attaching the cup. This helped with milking.";
             volume += (volume / 10);
-            girl.upd_temp_stat(STAT_LIBIDO, 5, true);
+            girl.lust_make_horny(5);
         }
         else if (girl.has_active_trait(traits::CLUMSY) && chance(40))
         {
@@ -1798,7 +1798,6 @@ bool cFarmJobResearch::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
     else if (girl.has_active_trait(traits::SLOW_LEARNER))    { xp -= 2; }
 
     girl.exp(uniform(1, xp) );
-    girl.upd_temp_stat(STAT_LIBIDO, skill / 2);
 
     return false;
 }

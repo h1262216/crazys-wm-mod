@@ -171,7 +171,7 @@ function PunishGirl(girl)
         wm.SetPlayerDisposition(-40)
         Dialog("Now you'll really hate me girl. 'Cuz I'm gonna fuck you, and you won't enjoy it.")
         Dialog("She tries to crawl away but you're quickly on top of her.  You pull out your throbbing cock and thrust it violently into her cunt. ")
-        if girl:libido() > 75 then
+        if girl:lust() > 75 then
             Dialog("Despite your words she moans with pleasure as you continually ram her tight pussy.  She shakes with a massive orgasm as you release your semen into her.")
             girl:happiness(30)
         else
@@ -187,7 +187,7 @@ function PunishGirl(girl)
         Dialog("For the grand finale you all stand around her and spray her with load after load of cum.")
         if girl:has_trait(wm.TRAITS.NYMPHOMANIAC) then
             Dialog("She lies on the floor breathing heavily from the marathon of orgasms; both the group's and her's.")
-            AdjustLust(girl, 5)
+            girl:make_horny(5)
             girl:libido(1)
             girl:happiness(2)
             girl:tiredness(10)
@@ -267,14 +267,6 @@ function PlayerTitleFor(girl)
         return "Sir"
     end
 end
-
----@param girl wm.Girl
---- This function adjusts the libido stat in a temporary way. Until we get a separated LUST stat, this is the way
---- to adjust lust levels of the girl, without changing her libido over the long run.
-function AdjustLust(girl, amount)
-    girl:stat(wm.STATS.LIBIDO, amount, true)
-end
-
 
 ---@param girl wm.Girl
 --- This function temporarily decreases the libido stat, unless the girl is multi-orgasmic. It also adjusts happiness and tiredness.

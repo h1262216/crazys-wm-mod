@@ -100,7 +100,7 @@ void cScreenGameConfig::init(bool back) {
                 std::stringstream conv;
                 conv.precision(1);
                 conv.imbue(std::locale(""));
-                conv << std::fixed << (raw * 100.0) << "%";
+                conv << std::fixed << raw.as_percentage() << "%";
                 value = conv.str();
                 break;
             }

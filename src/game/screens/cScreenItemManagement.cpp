@@ -401,7 +401,7 @@ void cScreenItemManagement::write_item_text(const sInventoryItem* item, int owne
     else
     {
         iCost << item->m_Cost << " gold";
-        iSell << int(((float)item->m_Cost) * g_Game->settings().get_percent(settings::MONEY_SELL_ITEM)) << " gold";
+        iSell << int(((float)item->m_Cost) * g_Game->settings().get_percent(settings::MONEY_SELL_ITEM).as_ratio()) << " gold";
         iType << item->m_Type;
     }
     ss << "Item Name:      " << item->m_Name;

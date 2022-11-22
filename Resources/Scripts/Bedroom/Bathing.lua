@@ -9,7 +9,7 @@ function Bathing(girl)
     if girl:obey_check(wm.ACTIONS.WORKSTRIP) then
         Dialog("You lead ${name} to you private chambers, and into your personal bathroom. One of your personal slaves " ..
                 "has already drawn a steaming hot bath.")
-        local wants_to_please = girl:pclove() > 80 or girl:has_trait(wm.TRAITS.EXHIBITIONIST) or girl:libido() > 75
+        local wants_to_please = girl:pclove() > 80 or girl:has_trait(wm.TRAITS.EXHIBITIONIST) or girl:lust() > 75
         if wants_to_please and girl:skill_check(wm.SKILLS.STRIP, 50) then
             wm.UpdateImage(wm.IMG.STRIP)
             Dialog("${name} begins to undress, slowly and sensually, making sure you get a good view.")
@@ -103,7 +103,7 @@ function Bathing(girl)
             if choice == 0 then
                 Dialog("Seeing her naked form, you decide to join her. She looks up in surprise when you enter the tub. Apparently, she did not notice you undressing.")
                 wm.UpdateImage(wm.IMG.BATH, ImageOptions.HETERO)
-                if girl:handjob() < 33 or girl:pclove() < 0 or girl:libido() < 25 or girl:has_trait(wm.TRAITS.CHASTE) then
+                if girl:handjob() < 33 or girl:pclove() < 0 or girl:lust() < 25 or girl:has_trait(wm.TRAITS.CHASTE) then
                     Dialog("You instruct ${name} to wash you. She start diligently, lathering up your hair, back and chest, then continues to scrub your legs. ")
                     Dialog("\"Haven't you forgotten something\", you ask, pointing to your erect member.")
                     wm.UpdateImage(wm.IMG.HAND)

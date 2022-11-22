@@ -50,14 +50,14 @@ double cTariff::slave_base_price(sGirl& girl) const
 
 int cTariff::slave_buy_price(sGirl& girl) const
 {
-    return int(slave_base_price(girl) * g_Game->settings().get_percent(settings::MONEY_BUY_SLAVE));
+    return int(slave_base_price(girl) * g_Game->settings().get_percent(settings::MONEY_BUY_SLAVE).as_ratio());
 }
 
 int cTariff::slave_sell_price(sGirl& girl) const
 {
 
     double cost = slave_base_price(girl);
-    return int(cost * g_Game->settings().get_percent(settings::MONEY_SELL_SLAVE));    // multiply by the config factor for selling slaves
+    return int(cost * g_Game->settings().get_percent(settings::MONEY_SELL_SLAVE).as_ratio());    // multiply by the config factor for selling slaves
 }
 
 int cTariff::empty_room_cost(IBuilding& brothel)

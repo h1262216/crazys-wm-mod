@@ -782,7 +782,7 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
     {
         SecGuard->combat(1);
         SecGuard->magic(1);
-        SecGuard->upd_temp_stat(STAT_LIBIDO, num, true);  // There's nothing like killin ta make ya horny!
+        SecGuard->lust_make_horny(num);  // There's nothing like killin ta make ya horny!
         SecGuard->confidence(num);
         SecGuard->fame(num);
         girl.upd_Enjoyment(ACTION_COMBAT, num);
@@ -916,8 +916,7 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
         SecGuard->confidence(-40);
         SecGuard->obedience(-10);
         SecGuard->spirit(-40);
-        SecGuard->libido(-4);
-        SecGuard->upd_temp_stat(STAT_LIBIDO, -40, true);
+        SecGuard->lust_turn_off(40);
         SecGuard->tiredness(60);
         SecGuard->pcfear(20);
         SecGuard->pclove(-40);
@@ -1015,7 +1014,7 @@ bool cJobManager::girl_fights_rape(sGirl& girl, sGang *enemy_gang, int day_night
         girl.combat(1);
         girl.magic(1);
         girl.agility(1);
-        girl.upd_temp_stat(STAT_LIBIDO, num, true);  // There's nothing like killin ta make ya horny!
+        girl.lust_make_horny(num);  // There's nothing like killin ta make ya horny!
         girl.confidence(num);
         girl.fame(num);
 
@@ -1067,8 +1066,7 @@ void cJobManager::customer_rape(sGirl& girl, int numberofattackers)
     girl.confidence(-40);
     girl.obedience(-10);
     girl.spirit(-40);
-    girl.libido(-4);
-    girl.upd_temp_stat(STAT_LIBIDO, -40, true);
+    girl.lust_turn_off(40);
     girl.tiredness(60);
     girl.pcfear(20);
     girl.pclove(-40);

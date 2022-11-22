@@ -79,6 +79,7 @@ set(CHARACTER_SRC
         character/traits/cTraitSpec.cpp
         character/predicates.cpp
         character/pregnancy.cpp
+        character/lust.cpp
         character/cGirlPool.cpp
         )
 

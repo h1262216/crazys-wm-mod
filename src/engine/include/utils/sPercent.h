@@ -29,7 +29,7 @@ struct sPercent {
         }
     }
 
-    explicit sPercent(int v) : sPercent(v / 100.f) {};
+    explicit sPercent(int v) : sPercent(float(v) / 100.f) {};
 
     explicit operator float() const { return value; }
 
@@ -39,7 +39,6 @@ private:
     float value;
 };
 
-inline float operator*(sPercent a, float b) { return (float)a * b; }
-inline float operator*(float b, sPercent a) { return (float)a * b; }
+inline sPercent operator*(sPercent a, sPercent b) { return sPercent{a.as_ratio() * b.as_ratio()}; }
 
 #endif //WM_SPERCENT_H

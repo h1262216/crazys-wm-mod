@@ -179,7 +179,7 @@
                     ${name}'s lack of BDSM experience, ${mistress} decides to take it easy. She lets ${name}
                     beg for a few more minutes, but then puts the flogger away.
                 </Text>
-                <Text Condition="Nymphomaniac|stat:Libido>90">
+                <Text Condition="Nymphomaniac|stat:Lust>90">
                     "I really don't like pain, but just the thought of getting fucked while tied up makes me wet",
                     ${name} proclaims as ${mistress} announces that they will do some BDSM training today.
                     "I can arrange that", she smirks, and five minutes later ${name} is cuffed to the bed and a

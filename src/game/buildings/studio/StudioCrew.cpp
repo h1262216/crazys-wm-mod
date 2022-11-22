@@ -258,7 +258,6 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     if (!filming && brothel->m_Filthiness < CleanAmt / 2) // `J` needs more variation
     {
         ss << "\n \n${name} finished her cleaning early so she hung out around the Studio a bit.";
-        girl.upd_temp_stat(STAT_LIBIDO, uniform(1, 3), true);
         girl.happiness(uniform(1, 3));
     }
 

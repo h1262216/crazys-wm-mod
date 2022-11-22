@@ -35,16 +35,17 @@
 #include "buildings/cDungeon.h"
 #include "cGangs.h"
 #include "cGangManager.hpp"
+#include "character/lust.h"
 
 namespace settings {
     extern const char* WORLD_CATACOMB_UNIQUE;
 }
 
 IGenericJob::eCheckWorkResult cBarJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.libido() >= 90 && girl.has_active_trait(traits::NYMPHOMANIAC) && chance(20))
+    if (girl.lust() >= 90 && girl.has_active_trait(traits::NYMPHOMANIAC) && chance(20))
     {
         add_text("event.nympho-nowork");
-        girl.upd_temp_stat(STAT_LIBIDO, -20);
+        girl.lust_release_regular();
         girl.AddMessage(ss.str(), EImagePresets::MASTURBATE, EVENT_NOWORK);
         return eCheckWorkResult::REFUSES;
     } else {
@@ -457,7 +458,7 @@ bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
     m_Tips += (int)(((10 + m_Performance / 22) * m_Earnings) / 100);
 
     //try and add randomness here
-    if (girl.libido() > 90 && is_sex_crazy(girl))
+    if (check_public_sex(girl, ESexParticipants::ANY, SKILL_STRIP, sPercent(50), true))
     {
         ss << "During her shift, ${name} couldn't help but instinctively and excessively rub her ass against the crotches of the clients whenever she got the chance. Her slutty behavior earned her some extra tips, as a couple of patrons noticed her intentional butt grinding.\n";
         m_Tips += 30;
@@ -486,7 +487,15 @@ bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
         {
             if (HateLove >= 80)
             {
-                if (girl.libido() >= 60)
+                SKILLS target_action;
+                if(roll_c >= 80) {
+                    target_action = SKILL_ANAL;
+                } else if (roll_c >= 50) {
+                    target_action = SKILL_NORMALSEX;
+                } else {
+                    target_action = SKILL_ORALSEX;
+                }
+                if (g_Dice.percent(chance_horny_private(girl, ESexParticipants::HETERO, target_action, true)))
                 {
                     ss << "${name} has barely finished her shift before she is changed into her sexiest dress and standing before you. \"I have a little birthday wish,\" she whispers, drawing closer to you. \"I thought maybe, as your gift to me, you would allow me to serve you alone tonight. I asked " << cookname << " to cook all your favorite dishes, and I've prepared the upper dining area so it will just be the two of us.\" She leads you upstairs and seats you before disappearing for a moment and returning with the first course. ${name} feeds you with her own hands, giggling with every few bites. \"We have a cake, of course,\" she smiles as you finish everything, \"but that isn't the only dessert.\"\n";
                     if (roll_c >= 80)//ANAL
@@ -747,7 +756,7 @@ bool cDealerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
             ss << " ${name}'s strange eyes were somehow hypnotic, giving her some advantage.";
             m_Performance += 15;
         }
-        if (girl.has_active_trait(traits::NYMPHOMANIAC) && girl.libido() > 75)
+        if (girl.has_active_trait(traits::NYMPHOMANIAC) && girl.lust() > 75)
         {
             ss << " ${name} had very high libido, making it hard for her to concentrate.";
             m_Performance -= 10;
@@ -851,7 +860,7 @@ bool cDealerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
         {
             if (likes_women(girl))
             {
-                if (girl.libido() > 90)
+                if (girl.lust() > 90)
                 {
                     ss << "${name} found herself looking at " << xxxentername << "'s performance often, losing more times than usual.\n";
                     m_Earnings = int(m_Earnings * 0.9);
@@ -884,7 +893,7 @@ bool cDealerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     m_Earnings += uniform(10, (girl.beauty() + girl.charisma()) / 4 + 10);
 
     // Improve girl
-    if (likes_women(girl))    { girl.upd_temp_stat(STAT_LIBIDO, std::min(3, brothel.num_girls_on_job(JOB_XXXENTERTAINMENT, false))); }
+    if (likes_women(girl))    { girl.lust_make_horny(std::min(3, brothel.num_girls_on_job(JOB_XXXENTERTAINMENT, false))); }
     HandleGains(girl, fame);
 
     return false;
@@ -1008,7 +1017,7 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
             ss << "${name} was very tired. This affected her performance. ";
             m_Performance -= 10;
         }
-        else if (girl.libido() > 30)
+        else if (girl.lust() > 40)
         {
             ss << "${name}'s horniness improved her performance. ";
             m_Performance += 10;
@@ -1101,7 +1110,7 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
         }
     }
 
-    if (girl.libido() > 90)
+    if (girl.lust() > 90)
     {
         if (girl.has_active_trait(traits::FUTANARI))
         {
@@ -1126,7 +1135,7 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
                 }
                 cJobManager::GetMiscCustomer(brothel);
                 brothel.m_Happiness += 100;
-                girl.upd_temp_stat(STAT_LIBIDO, -30, true);
+                girl.lust_release_spent();
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
@@ -1160,7 +1169,7 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
                 }
                 cJobManager::GetMiscCustomer(brothel);
                 brothel.m_Happiness += 100;
-                girl.upd_temp_stat(STAT_LIBIDO, -30, true);
+                girl.lust_release_spent();
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
@@ -1171,13 +1180,13 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
                 ss << "There was a noticeable bulge in ${name}'s panties but she didn't have enough confidence to masturbate in public.";
             }
         }
-            //regular masturbation code by Crazy tweaked to exclude futas and keep the original Libido > 90 requirement
-        else if (!girl.has_active_trait(traits::FUTANARI) && girl.libido() > 90)
+            //regular masturbation code by Crazy tweaked to exclude futas
+        else if (!girl.has_active_trait(traits::FUTANARI) && will_masturbate_public(girl, sPercent(50)))
         {
             ss << "She was horny and ended up masturbating for the customers making them very happy.";
             cJobManager::GetMiscCustomer(brothel);
             brothel.m_Happiness += 100;
-            girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+            girl.lust_release_regular();
             // work out the pay between the house and the girl
             m_Earnings += girl.askprice() + 60;
             fame += 1;
@@ -1217,38 +1226,64 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     //base tips, aprox 5-30% of base wages
     m_Tips += (int)(((5 + m_Performance / 8) * m_Earnings) / 100);
 
-    if (girl.libido() > 90)
+    // check for potential sex
+    SKILLS target_sex = SKILL_NORMALSEX;
+    ESexParticipants target_part = ESexParticipants::HETERO;
+    switch (uniform(0, 10))
+    {
+        case 0: target_sex = SKILL_ORALSEX;  break;
+        case 1: target_sex = SKILL_TITTYSEX; break;
+        case 2: target_sex = SKILL_HANDJOB;  break;
+        case 3: target_sex = SKILL_ANAL;     break;
+        case 4: target_sex = SKILL_FOOTJOB;  break;
+    }
+
+    sCustomer Cust = g_Game->GetCustomer(brothel);
+    if (Cust.m_IsWoman && brothel.is_sex_type_allowed(SKILL_LESBIAN)) {
+        target_sex = SKILL_LESBIAN;
+        target_part = ESexParticipants::LESBIAN;
+    }
+
+
+    if (g_Dice.percent(chance_horny_public(girl, target_part, target_sex, true)))
         //ANON: TODO: sanity check: not gonna give 'perks' to the cust she just banned for wanting perks!
     {
-        int n;
         ss << "Because she was quite horny, she ended up ";
-        sCustomer Cust = g_Game->GetCustomer(brothel);
+
         brothel.m_Happiness += 100;
-        if (Cust.m_IsWoman && brothel.is_sex_type_allowed(SKILL_LESBIAN))
-        {
-            n = SKILL_LESBIAN, ss << "intensely licking the female customer's clit until she got off, making the lady very happy.\n";
+        switch (target_sex) {
+            case SKILL_LESBIAN:
+                ss << "intensely licking the female customer's clit until she got off, making the lady very happy.\n";
+                imageType = EImagePresets::LESBIAN;
+                break;
+            case SKILL_ORALSEX:
+                ss << "massaging the customer's cock with her tongue, making him very happy.\n";
+                imageType = EImagePresets::BLOWJOB;
+                break;
+            case SKILL_TITTYSEX:
+                ss << "using her tits to get the customer off, making him very happy.\n";
+                imageType = EImageBaseType::TITTY;
+                break;
+            case SKILL_HANDJOB:
+                ss << "giving him a cock-rub as well, making him very happy.\n";
+                imageType = EImageBaseType::HAND;
+                break;
+            case SKILL_FOOTJOB:
+                ss << "using her feet to get the customer off, making him very happy.\n";
+                imageType = EImageBaseType::FOOT;
+                break;
+            case SKILL_ANAL:
+                ss << "oiling the customer's cock and massaging it with her asshole.\n";
+                imageType = EImageBaseType::ANAL;
+                break;
+            case SKILL_NORMALSEX:
+                ss << "covered in massage oil and riding the customer's cock, making him very happy.\n";
+                imageType = EImageBaseType::VAGINAL;
+                break;
+            default:
+                break;
         }
-        else
-        {
-            switch (uniform(0, 10))
-            {
-                case 0:        n = SKILL_ORALSEX;   ss << "massaging the customer's cock with her tongue";                    break;
-                case 1:        n = SKILL_TITTYSEX;  ss << "using her tits to get the customer off";                            break;
-                case 2:        n = SKILL_HANDJOB;   ss << "giving him a cock-rub as well";                                    break;
-                case 3:        n = SKILL_ANAL;      ss << "oiling the customer's cock and massaging it with her asshole.";    break;
-                case 4:        n = SKILL_FOOTJOB;   ss << "using her feet to get the customer off";                            break;
-                default:       n = SKILL_NORMALSEX; ss << "covered in massage oil and riding the customer's cock";            break;
-            }
-            ss << ", making him very happy.\n";
-        }
-        /* */if (n == SKILL_LESBIAN)    imageType = EImagePresets::LESBIAN;
-        else if (n == SKILL_ORALSEX)    imageType = EImagePresets::BLOWJOB;
-        else if (n == SKILL_TITTYSEX)    imageType = EImageBaseType::TITTY;
-        else if (n == SKILL_HANDJOB)    imageType = EImageBaseType::HAND;
-        else if (n == SKILL_FOOTJOB)    imageType = EImageBaseType::FOOT;
-        else if (n == SKILL_ANAL)        imageType = EImageBaseType::ANAL;
-        else if (n == SKILL_NORMALSEX)    imageType = EImageBaseType::VAGINAL;
-        if (n == SKILL_NORMALSEX)
+        if (target_sex == SKILL_NORMALSEX)
         {
             if (girl.lose_trait(traits::VIRGIN))
             {
@@ -1259,10 +1294,10 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
             }
         }
-        girl.upd_skill(n, 2);
-        girl.upd_temp_stat(STAT_LIBIDO, -25, true);
+        girl.upd_skill(target_sex, 2);
+        girl.lust_release_regular();
         m_Earnings += 225;
-        m_Tips += 30 + girl.get_skill(n) / 5;
+        m_Tips += 30 + girl.get_skill(target_sex) / 5;
         girl.upd_Enjoyment(ACTION_SEX, +1);
         fame += 1;
         girl.m_NumCusts++;
@@ -1319,7 +1354,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     add_performance_text();
 
     //try and add randomness here
-    if (girl.libido() > 80)
+    if (girl.lust() > 80)
     {
         if(is_sex_crazy(girl)) {
             if (likes_women(girl) && (!likes_men(girl) || roll_c < 50))
@@ -1357,7 +1392,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 }
                 cJobManager::GetMiscCustomer(brothel);
                 brothel.m_Happiness += 100;
-                girl.upd_temp_stat(STAT_LIBIDO, -30, true);
+                girl.lust_release_spent();
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
@@ -1391,7 +1426,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 }
                 cJobManager::GetMiscCustomer(brothel);
                 brothel.m_Happiness += 100;
-                girl.upd_temp_stat(STAT_LIBIDO, -30, true);
+                girl.lust_release_spent();
                 // work out the pay between the house and the girl
                 m_Earnings += girl.askprice() + 60;
                 fame += 1;
@@ -1409,7 +1444,7 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             ss << "\nShe was horny and ended up masturbating for the customers, making them very happy.";
             cJobManager::GetMiscCustomer(brothel);
             brothel.m_Happiness += 100;
-            girl.upd_temp_stat(STAT_LIBIDO, -30, true);
+            girl.lust_release_regular();
             // work out the pay between the house and the girl
             m_Earnings += girl.askprice() + 60;
             fame += 1;
@@ -1418,8 +1453,9 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     }
     else if (chance(5))  //glory hole event
     {
-        ss << "A man managed to cut a hole out from his booth and made himself a glory hole, ${name} saw his cock sticking out and ";
+        ss << "A man managed to cut a hole out from his booth and made himself a glory hole. ${name} saw his cock sticking out and ";
         {
+
             if (girl.any_active_trait({traits::MEEK, traits::SHY}))
             {
                 m_Enjoyment -= 5;
@@ -1428,31 +1464,26 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             else if (!likes_men(girl))
             {
                 m_Enjoyment -= 2;
-                girl.upd_temp_stat(STAT_LIBIDO, -10, true);
+                girl.lust_turn_off(5);
                 ss << "she doesn't understand the appeal of them, which turned her off.\n";
             }
-            else if (brothel.is_sex_type_allowed(SKILL_NORMALSEX) && !is_virgin(girl) && (
-                    girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS})) && girl.libido() >= 80) //sex
+            else if (!is_virgin(girl) && check_public_sex(girl, ESexParticipants::HETERO, SKILL_NORMALSEX, sPercent(90), false)) //sex
             {
                 sextype = SKILL_NORMALSEX;
                 ss << "decided she needed to use it for her own entertainment.\n";
             }
-            else if (brothel.is_sex_type_allowed(SKILL_ORALSEX) && (
-                    girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS, traits::CUM_ADDICT})) &&
-                    girl.libido() >= 60) //oral
+            else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_ORALSEX, sPercent(90), false)) //oral
             {
                 sextype = SKILL_ORALSEX;
                 ss << "decided she needed to taste it.\n";
             }
-            else if (brothel.is_sex_type_allowed(SKILL_FOOTJOB) && (
-                    girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS}) || girl.dignity() < -30) && girl.libido() >= 40) //foot
+            else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_FOOTJOB, sPercent(90), false)) //foot
             {
                 sextype = SKILL_FOOTJOB;
                 imagetype = EImageBaseType::FOOT;
                 ss << "decided she would give him a foot job for being so brave.\n";
             }
-            else if (brothel.is_sex_type_allowed(SKILL_HANDJOB) && (
-                    girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS}) || girl.dignity() < -30))    //hand job
+            else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_HANDJOB, sPercent(90), false))    //hand job
             {
                 sextype = SKILL_HANDJOB;
                 ss << "decided she would give him a hand job for being so brave.\n";
@@ -1498,11 +1529,6 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         cGirls::GirlFucks(&girl, is_night, &Cust, false, message, sextype, true);
         ss.str(""); ss << message;
         brothel.m_Happiness += Cust.happiness();
-
-        /* `J` cGirls::GirlFucks handles libido and customer happiness
-        Cust.m_Stats[STAT_HAPPINESS] = max(100, Cust.m_Stats[STAT_HAPPINESS] + 50);
-        girl.upd_temp_stat(STAT_LIBIDO, -20);
-        //*/
 
         int sexwages = std::min(uniform(0, Cust.m_Money / 4) + girl.askprice(), int(Cust.m_Money));
         Cust.m_Money -= sexwages;
@@ -1631,10 +1657,10 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
         {
             ss << "She sold a shower dance.\n";
             m_Tips += 125;
-            if (girl.libido() > 70)
+            if (will_masturbate_public(girl, sPercent(50)))
             {
                 ss << "She was in the mood so she put on quite a show, taking herself to orgasm right in front of the customer.";
-                girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+                girl.lust_release_regular();
                 m_Earnings += 50;
                 mast = true;
             }
@@ -1664,10 +1690,10 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
         {
             ss << "She convinced a patron to buy a shower dance.\n";
             m_Tips += 75;
-            if (girl.libido() > 70)
+            if (will_masturbate_public(girl, sPercent(50)))
             {
                 ss << "She was in the mood so she put on quite a show, taking herself to orgasm right in front of the customer.";
-                girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+                girl.lust_release_regular();
                 m_Tips += 50;
                 mast = true;
             }
@@ -1784,7 +1810,7 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
             }
         }
         girl.upd_skill(n, 2);
-        girl.upd_temp_stat(STAT_LIBIDO, -25, true);
+        girl.lust_release_regular();
         girl.upd_Enjoyment(ACTION_SEX, +1);
         // work out the pay between the house and the girl
         m_Earnings += girl.askprice();
@@ -1914,12 +1940,12 @@ bool ClubBarmaid::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
         add_text("event.grab-boob");
     }
 
-    if ((girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS})) && girl.libido() > 80 && chance(20) &&
+    if ((girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS})) && girl.lust() > 80 && chance(20) &&
     !is_virgin(girl) && likes_men(girl))
     {
         add_text("event.nympho");
         imagetype = EImageBaseType::VAGINAL;
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+        girl.lust_release_regular();
         girl.normalsex(1);
         sCustomer Cust = g_Game->GetCustomer(*girl.m_Building);
         Cust.m_Amount = 1;
@@ -2191,7 +2217,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         if (m_Performance >= 185) //great
         {
             ss << "A patron reached out to grab her ass. But she skillfully avoided it";
-            if (girl.libido() > 70 && likes_men(girl))
+            if (girl.lust() > 70 && likes_men(girl))
             {
                 int roll_c = d100();
                 std::string dick_type_text = "normal sized";
@@ -2203,7 +2229,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                       "her over the table and whipping out his " << dick_type_text << " dick.";
                 m_Earnings += girl.askprice() + 50;
                 imagetype = EImageBaseType::ANAL;
-                girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+                girl.lust_release_regular();
                 bool fast_orgasm = girl.has_active_trait(traits::FAST_ORGASMS);
                 bool slow_orgasm = girl.has_active_trait(traits::SLOW_ORGASMS);
                 // this construct is used many times below, so we write it out here once.
@@ -2342,26 +2368,18 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         m_Enjoyment -= 5;
     }
 
-    if (girl.libido() > 90 && chance(25) && likes_men(girl) && (girl.has_active_trait(
-            traits::NYMPHOMANIAC) || girl.has_active_trait(traits::SUCCUBUS)) && (girl.oralsex() > 80 ||
-                                                                      girl.has_active_trait(traits::CUM_ADDICT)))
+    if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_ORALSEX, sPercent(25), true) && girl.oralsex() > 80)
     {
         ss << "${name} thought she deserved a short break and disappeared under one of the tables when nobody was looking, in order to give one of the clients a blowjob. Kneeling under the table, she devoured his cock with ease and deepthroated him as he came to make sure she didn't make a mess. The client himself was wasted out of his mind and didn't catch as much as a glimpse of her, but he left the locale with a big tip on the table.\n";
         m_Tips += 50;
         imagetype = EImagePresets::BLOWJOB;
         oral += 2;
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
-    }
-
-    if (girl.libido() > 90 && chance(25) && likes_men(girl) && (girl.has_active_trait(
-            traits::NYMPHOMANIAC) || girl.has_active_trait(traits::SUCCUBUS)) && (girl.oralsex() > 80 ||
-                                                                      girl.has_active_trait(traits::CUM_ADDICT)))
+    } else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_HANDJOB, sPercent(25), true) && girl.handjob() > 50)
     {
         ss << "During her shift, ${name} unnoticeably dove under the table belonging to a lonely-looking fellow, quickly unzipped his pants and started jacking him off enthusiastically. She skillfully wiped herself when he came all over her face. The whole event took no longer than two minutes, but was well worth the time spent on it, since the patron left with a heavy tip.\n";
         m_Tips += 50;
         imagetype = EImageBaseType::HAND;
         hand += 2;
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
     }
 
 
@@ -2370,13 +2388,13 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         ss << "A drunk patron \"accidentally\" fell onto ${name} and buried his face between her breasts. To his joy and surprise, ${name} flirtatiously encouraged him to motorboat them for awhile, which he gladly did, before slipping some cash between the titties and staggering out on his way.\n"; m_Tips += 40;
     }
 
-    if (girl.has_active_trait(traits::FUTANARI) && girl.libido() > 80 && chance(5))
+    if (girl.has_active_trait(traits::FUTANARI) && girl.lust() > 80 && chance(5))
     {
         if (get_sex_openness(girl) > 66)
         {
             ss << "Noticing the bulge under her skirt one of the customers asked for a very special service: He wanted some \"cream\" in his drink. ${name} took her already hard cock out and sprinkled the drink with some of her jizz. The customer thanked her and slipped a good tip under her panties.\n";
             girl.upd_skill(SKILL_SERVICE, 2);
-            girl.upd_temp_stat(STAT_LIBIDO, -30, true);;
+            girl.lust_release_regular();
             m_Tips += 30 + (int)(girl.service() * 0.2); // not sure if this will work fine
             imagetype = EImagePresets::MASTURBATE;
         }
@@ -2414,18 +2432,18 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             else  ss << "gigantic";
             ss << " tip.\n";
         }
-        else if (chance(20) && likes_women(girl) && (is_sex_crazy(girl) || girl.libido() > 60))
+        else if (chance(20) && likes_women(girl) && (is_sex_crazy(girl) || girl.lust() > 60))
         {
             ss << "A female patron was staring obviously at her large breasts, so she grabbed her hand, slipped it under her clothes and let her play with her boobs. ";
             if (girl.has_active_trait(traits::PIERCED_NIPPLES))
             {
                 m_Tips += 3;
-                girl.upd_temp_stat(STAT_LIBIDO, 1, true);
+                girl.lust_make_horny(2);
                 ss << "Her nipple piercings were a pleasant surprise to her, and she \n";
             }
             else ss << "She";
             ss << "slipped a small tip between her tits afterwards.\n";
-            girl.upd_temp_stat(STAT_LIBIDO, 2, true);
+            girl.lust_make_horny(3);
             m_Tips += 15;
             if (girl.dignity() > 30)
             {
@@ -2438,12 +2456,12 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             if (girl.has_active_trait(traits::PIERCED_NIPPLES))
             {
                 m_Tips += 3;
-                girl.upd_temp_stat(STAT_LIBIDO, 1, true);
+                girl.lust_make_horny(2);
                 ss << "Her nipple piercings were a pleasant surprise to him, and he \n";
             }
             else ss << "He";
             ss << "slipped a small tip between her tits afterwards.\n";
-            girl.upd_temp_stat(STAT_LIBIDO, 2, true);
+            girl.lust_make_horny(3);
             m_Tips += 15;
             if (girl.dignity() > 30)
             {
@@ -2477,7 +2495,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         ss << "${name} couldn't resist the offer of some patrons who invited her for a drink. And another one. And another one... When she came back to her senses she was lying on the floor half naked and covered in cum...\n";
         m_Tips -= 10;
         m_Wages -= 50;
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+        girl.lust_release_spent();
         girl.anal(uniform(1, 4));
         girl.bdsm(uniform(0, 3));
         girl.normalsex(uniform(1, 4));
@@ -2524,7 +2542,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     if (girl.has_active_trait(traits::DOJIKKO) && chance(35))
     {
         ss << "${name}  is clumsy in the most adorable way, and when she trips and falls face-first into a patron's lap, spilling a tray all over the floor, he just laughs and asks if there is anything he can do to help.\n";
-        if (girl.dignity() >= 50 || girl.libido() <= 50)
+        if (girl.dignity() >= 50 || girl.lust() <= 50)
         {
             ss << "${name} gives him a nervous smile as she gets back up and dusts herself off. \"I'm so sorry, sir,\" she mutters, and he waves the whole thing away as if nothing happened. \"I'm happy to wait for another drink, for you, cutie,\" he says.\n";
         }
@@ -2544,14 +2562,13 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             }
             girl.oralsex(2);
             imagetype = EImagePresets::BLOWJOB;
-            girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         }
     }
 
     if (girl.has_active_trait(traits::SEXY_AIR) && chance(35))
     {
         ss << "Customers enjoy watching ${name} work. Her sexy body and her indefinably attractive way of carrying herself draw attention, whether she likes it or not. It is uncanny how many drinks the customers accidentally spill on their laps, and they would all like her help drying themselves off.\n";
-        if (girl.dignity() <= 0 || girl.libido() >= 60)
+        if (girl.dignity() <= 0 || girl.lust() >= 60)
         {
             ss << "\"What a terrible spill,\" she cries in mock indignation as she kneels down beside one of them. \"Maybe I can deal with all of this.. wetness..\" she continues, quickly working her hand down his pants, stroking vigorously and using the spilled drink as lubrication.\n";
             if (girl.handjob() >= 50)
@@ -2567,7 +2584,6 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
             }
             girl.handjob(2);
             imagetype = EImageBaseType::HAND;
-            girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         }
     }
 
@@ -2587,7 +2603,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         else if (girl.dignity() <= 0)
         {
             ss << "${name} has been blessed with great tits and the wisdom to know it. She leans deep over the tables to give customers a good view down her cleavage as she takes their orders. When a customer \"accidentally\" grabs her left tit instead of his glass, she pushes the tit deeper into his hands, stares into his eyes, and smiles. \"These aren�t on the menu,\" she purrs.\n";
-            if (girl.libido() >= 60)
+            if (girl.lust() >= 60)
             {
                 ss << "\"But they could be the daily special,\" she continues, grinding the breast against his hand. The customer grins and places a handful of coins on the table. \"That looks about right,\" ${name} says as she gets down on the floor and crawls under the table. He is laughing and high-fiving his buddies in no time as she wraps his dick around her tits and starts mashing them together for his pleasure.\n";
                 if (girl.tittysex() >= 50)
@@ -2597,11 +2613,10 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
                 }
                 else
                 {
-                    ss << "The titfuck is not the best, but he�s hardly one to complain. \"I don�t know if I�ll order the special regularly,\" he says to her when she crawls back up and finishes wiping off the cum, \"but it was certainly a bonus for today!\"\n";
+                    ss << "The titfuck is not the best, but he's hardly one to complain. \"I don't know if I'll order the special regularly,\" he says to her when she crawls back up and finishes wiping off the cum, \"but it was certainly a bonus for today!\"\n";
                 }
                 girl.tittysex(2);
                 imagetype = EImageBaseType::TITTY;
-                girl.upd_temp_stat(STAT_LIBIDO, -20, true);
             }
             m_Tips += 15;
         }
@@ -2637,7 +2652,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     HandleGains(girl, fame);
 
     if (likes_women(girl))    {
-        girl.upd_temp_stat(STAT_LIBIDO, std::min(3, brothel.num_girls_on_job(JOB_BARSTRIPPER, false)));
+        girl.lust_make_horny(std::min(3, brothel.num_girls_on_job(JOB_BARSTRIPPER, false)));
     }
 
     //gained traits
@@ -3093,7 +3108,7 @@ bool SecurityJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
     }
     ss << "\n \n";
 
-    if (girl.libido() >= 70 && chance(20))
+    if (girl.lust() >= 70 && chance(20))
     {
         int choice = uniform(0, 1);
         ss << "Her libido caused her to get distracted while watching ";
@@ -3115,20 +3130,19 @@ bool SecurityJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
 
     }
 
-    if ((girl.libido() > 50 && chance(girl.libido() / 5)) || (girl.has_active_trait(traits::NYMPHOMANIAC) && chance(20)))
+    if ((girl.lust() > 50 && chance(girl.lust() / 5)) || (girl.has_active_trait(traits::NYMPHOMANIAC) && chance(20)))
     {
         ss <<"\nGave some bonus service to the well behaved patrons, ";
         int l = 0;
         switch (uniform(0, 4))        // `J` just roll for the 4 sex options and flash only if sex is restricted
         {
-            case 1:    if (brothel.is_sex_type_allowed(SKILL_ORALSEX))    { l = 10;    imagetype = EImagePresets::BLOWJOB;    ss << "She sucked them off";    break; }
-            case 2:    if (brothel.is_sex_type_allowed(SKILL_TITTYSEX))    { l = 7;    imagetype = EImageBaseType::TITTY;    ss << "She used her tits to get them off";    break; }
-            case 3:    if (brothel.is_sex_type_allowed(SKILL_HANDJOB))    { l = 6;    imagetype = EImageBaseType::HAND;    ss << "She jerked them off";    break; }
-            case 4:    if (brothel.is_sex_type_allowed(SKILL_FOOTJOB))    { l = 4;    imagetype = EImageBaseType::FOOT;    ss << "She used her feet to get them off";    break; }
-            default:/*                         */    { l = 2;    imagetype = EImageBaseType::STRIP;    ss << "She flashed them";    break; }
+            case 1:    if (brothel.is_sex_type_allowed(SKILL_ORALSEX))    { imagetype = EImagePresets::BLOWJOB;    ss << "She sucked them off";    break; }
+            case 2:    if (brothel.is_sex_type_allowed(SKILL_TITTYSEX))    { imagetype = EImageBaseType::TITTY;    ss << "She used her tits to get them off";    break; }
+            case 3:    if (brothel.is_sex_type_allowed(SKILL_HANDJOB))    { imagetype = EImageBaseType::HAND;    ss << "She jerked them off";    break; }
+            case 4:    if (brothel.is_sex_type_allowed(SKILL_FOOTJOB))    { imagetype = EImageBaseType::FOOT;    ss << "She used her feet to get them off";    break; }
+            default:/*                         */    { imagetype = EImageBaseType::STRIP;    ss << "She flashed them";    break; }
         }
         ss << ".\n \n";
-        girl.upd_temp_stat(STAT_LIBIDO, -l, true);
     }
 
     if (SecLev < 10) SecLev = 10;
@@ -3373,17 +3387,17 @@ bool CatacombJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
     girl.AddMessage(ss.str(), EImageBaseType::COMBAT, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     ss.str("");
-    if (girl.get_stat(STAT_LIBIDO) > 90 && type_monster_girls + type_unique_monster_girls > 0 && brothel.is_sex_type_allowed(SKILL_LESBIAN))
+    if (girl.lust() > 90 && type_monster_girls + type_unique_monster_girls > 0 && brothel.is_sex_type_allowed(SKILL_LESBIAN))
     {
         ss << "${name} was real horny so she had a little fun with the girl" << (type_monster_girls + type_unique_monster_girls > 1 ? "s" : "") << " she captured.";
-        girl.upd_temp_stat(STAT_LIBIDO, -50, true);
+        girl.lust_release_regular();
         girl.lesbian(type_monster_girls + type_unique_monster_girls);
         girl.AddMessage(ss.str(), EImagePresets::LESBIAN, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (girl.get_stat(STAT_LIBIDO) > 90 && type_beasts > 0 && brothel.is_sex_type_allowed(SKILL_BEASTIALITY))
+    else if (girl.lust() > 90 && type_beasts > 0 && brothel.is_sex_type_allowed(SKILL_BEASTIALITY))
     {
         ss << "${name} was real horny so she had a little fun with the beast" << (type_beasts > 1 ? "s" : "") << " she captured.";
-        girl.upd_temp_stat(STAT_LIBIDO, -50, true);
+        girl.lust_release_regular();
         girl.beastiality(type_beasts);
         girl.AddMessage(ss.str(), EImageBaseType::BEAST, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
         if (!girl.calc_insemination(cGirls::GetBeast(), 1.0))

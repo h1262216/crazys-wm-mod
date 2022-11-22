@@ -103,6 +103,8 @@ void sLuaGirl::init(lua_State* L) {
             {"is_slave", sLuaGirl::is_slave},
             {"is_sex_type_allowed", sLuaGirl::is_sex_type_allowed},
 
+            {"make_horny", sLuaGirl::make_horny},
+
             {"is_addict", lp::is_addict},
             {"has_disease", lp::has_disease},
             {"is_futa", lp::is_futa},
@@ -288,6 +290,13 @@ int sLuaGirl::remove_trait(lua_State *L) {
     auto& girl = check_type(L, 1);
     const char* trait = luaL_checkstring(L, 2);
     girl.lose_trait(trait);
+    return 0;
+}
+
+int sLuaGirl::make_horny(lua_State *L) {
+    auto& girl = check_type(L, 1);
+    int amount = luaL_checkinteger(L, 2);
+    girl.lust_make_horny(amount);
     return 0;
 }
 

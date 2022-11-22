@@ -445,7 +445,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, IBuilding& brothel, bool is_night) {
                         << " right there in the waiting room. The customer quickly chooses her.\n \n";
             acceptsGirl = true;
         }
-        else if (Cust.libido() >= 80)
+        else if (Cust.lust() >= 80)
         {
             m_FuckMessage << "Customer chooses her because they are very horny.\n \n";
             acceptsGirl = true;

@@ -233,7 +233,7 @@ sWorkJobResult HousePet::DoWork(sGirl& girl, bool is_night) {
                     ss << " it's large red cock into her welcoming cunt. \"Should we do something?\" someone on stage asked, more out of fascination rather";
                     ss << " than actual desire. Almost certainly the cameras were still rolling at this point. \"No, he deserves his reward.\"";
                     ss << " you reply, smiling as the dog plowed heavily into ${name}, and her tits began to sway violent, her tongue panting like a good dog.";
-                    girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+                    girl.lust_release_regular();
                     girl.beastiality(2);
                     image_spec.BasicImage = EImageBaseType::BEAST;
                     if (!girl.calc_insemination(cGirls::GetBeast(), 1.0))

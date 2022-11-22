@@ -161,7 +161,7 @@ bool sGirl::disobey_check(Action_Types action, JOBS job)
         break;
     case ACTION_SEX:
         // Let's do the same thing here
-        diff = libido();
+        diff = lust();
         diff /= 5;
         chance_to_obey += diff;
         break;
@@ -818,7 +818,7 @@ sChild::sChild(bool is_players, Gender gender, int MultiBirth)
     m_MultiBirth = MultiBirth;
 
     int trycount = 1;
-    double multichance = 100.f * g_Game->settings().get_percent(settings::PREG_MULTI_CHANCE);
+    double multichance = g_Game->settings().get_percent(settings::PREG_MULTI_CHANCE).as_percentage();
     while (g_Dice.percent(multichance) && m_MultiBirth < 5)
     {
         m_MultiBirth++;
@@ -837,7 +837,7 @@ bool sGirl::calc_pregnancy(cPlayer *player, double factor, bool nomessage)
 {
     float girl_chance = fertility(*this);
     sPercent guy_chance = g_Game->settings().get_percent(settings::PREG_CHANCE_PLAYER);
-    float chance = girl_chance * guy_chance * factor;
+    float chance = girl_chance * guy_chance.as_percentage() * factor;
     //    now do the calculation
     bool result = calc_pregnancy(int(chance), STATUS_PREGNANT_BY_PLAYER, *player);
     if(!result && !nomessage) {
@@ -977,6 +977,7 @@ FormattedCellData sGirl::GetDetail(const std::string& detailName) const
     else if (detailName == "Health")   return mk_health(get_stat(STAT_HEALTH));
     else if (detailName == "Age")      return mk_age(get_stat(STAT_AGE));
     else if (detailName == "Libido")   return mk_num(libido());
+    else if (detailName == "Lust")     return mk_num(lust());
     else if (detailName == "Rebel")    return mk_num(rebel());
     else if (detailName == "Looks")
     {
@@ -1215,20 +1216,6 @@ bool sGirl::FixFreeTimeJobs()
     }
 
     return fixedD || fixedN;
-}
-
-void sGirl::upd_temp_stat(STATS stat_id, int amount, bool usetraits)
-{
-    if (usetraits)
-    {
-        if (stat_id == STAT_LIBIDO)
-        {
-            if (has_active_trait(traits::NYMPHOMANIAC))    { amount = int((double)amount * (amount > 0 ? 1.5 : 0.5));    if (amount == 0) amount = 1; }
-            else if (has_active_trait(traits::CHASTE))        { amount = int((double)amount * (amount > 0 ? 0.5 : 1.5));    if (amount == 0) amount = -1; }
-        }
-    }
-
-    ICharacter::upd_temp_stat(stat_id, amount, false);
 }
 
 int sGirl::upd_temp_Enjoyment(Action_Types stat_id, int amount)

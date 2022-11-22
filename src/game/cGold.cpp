@@ -63,7 +63,7 @@ void cGoldBase::reset()
 // for stuff sold in the marketplace - goes straight into the PC's pocket
 void cGoldBase::item_sales(double income)
 {
-    income = g_Game->settings().get_percent(settings::MONEY_SELL_ITEM) * income;
+    income = g_Game->settings().get_percent(settings::MONEY_SELL_ITEM).as_ratio() * income;
 
     m_value += income;
     m_cash_in += income;

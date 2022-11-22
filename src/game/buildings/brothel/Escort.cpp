@@ -306,7 +306,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                     add_text("regular.group.moral");
                     sex_offer = true;
                 }
-                else if (girl.libido() <= 50)
+                else if (girl.lust() <= 50)
                 {
                     add_text("regular.group.no-lust");
                 }
@@ -318,7 +318,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                         fame += skill_to_mod(girl.lesbian());
                         imagetype = EImagePresets::LESBIAN;
                         girl.lesbian(2);
-                        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+                        girl.lust_release_regular();
                     }
                     else
                     {
@@ -326,7 +326,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                         fame += skill_to_mod(girl.group());
                         imagetype = EImagePresets::ORGY;
                         girl.group(2);
-                        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+                        girl.lust_release_regular();
                     }
                     add_text("regular.group.after-sex") << "\n";
                 }
@@ -337,7 +337,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                 if (girl.morality() >= 50) {
                     add_text("regular.client.moral") << "\n";
                     client.SexOffer = SexType::ORAL;
-                } else if (girl.libido() <= 50) {
+                } else if (girl.lust() <= 50) {
                     add_text("regular.client.no-lust") << "\n";
                 } else {
                     client.SexOffer = SexType::ANY;
@@ -415,7 +415,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                 {
                     add_text("commoner.sex.moral") << "\n";
                 }
-                else if (girl.libido() <= 50)
+                else if (girl.lust() <= 50)
                 {
                     add_text("commoner.sex.no-lust") << "\n";
                 }
@@ -451,7 +451,6 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
             if (girl.has_active_trait(traits::ALCOHOLIC) && chance(50))
             {
                 add_text("deadbeat.alcoholic") << "\n";
-                girl.upd_temp_stat(STAT_LIBIDO, +20, true);
             }
 
             //RESULTS PHASE (POINT CHECK)
@@ -487,7 +486,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                 {
                     add_text("deadbeat.sex.moral");
                 }
-                else if (girl.libido() <= 50)
+                else if (girl.lust() <= 50)
                 {
                     add_text("deadbeat.sex.no-lust");
                 }
@@ -551,7 +550,7 @@ sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl&
         add_text(prefix + ".normal-sex.outro");
         fame += skill_to_mod(girl.normalsex());
         girl.normalsex(2);
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+        girl.lust_release_regular();
         return EImageBaseType::VAGINAL;
     break;
     case SexType::ANAL:
@@ -569,7 +568,7 @@ sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl&
         add_text("client.anal-sex") << "\n";
         add_text(prefix + ".anal-sex.outro");
         girl.anal(2);
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
+        girl.lust_release_regular();
         return EImageBaseType::ANAL;
     break;
     case SexType::HAND:
@@ -577,7 +576,6 @@ sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl&
         add_text("client.handjob") << "\n";
         add_text(prefix + ".handjob.outro");
         girl.handjob(2);
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         return EImageBaseType::HAND;
     break;
     case SexType::TITTY:
@@ -586,7 +584,6 @@ sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl&
         add_text("client.titty-sex") << "\n";
         add_text(prefix + ".titty-sex.outro");
         girl.tittysex(2);
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         return EImageBaseType::TITTY;
     break;
     case SexType::ORAL:
@@ -602,7 +599,6 @@ sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl&
         add_text(prefix + ".oral-sex.outro");
 
         girl.oralsex(2);
-        girl.upd_temp_stat(STAT_LIBIDO, -20, true);
         if(girl.oralsex() > 60 && chance(25)) {
             return EImageBaseType::SUCKBALLS;
         }
