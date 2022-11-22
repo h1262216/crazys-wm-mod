@@ -503,10 +503,10 @@ function Concert(girl, result)
 end
 
 function Concert_FuckBand(girl, result, enjoy)
-    local min_libido = 100 - enjoy / 2
+    local min_lust = 100 - enjoy / 2
 
 
-    if girl:libido() > min_libido then
+    if girl:lust() > min_lust then
         if enjoy > 90 then
             result:add_text("As she was in the mood and loved the show, she agreed and spent many hours pleasing the ")
         else

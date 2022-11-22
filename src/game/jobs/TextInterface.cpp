@@ -65,6 +65,10 @@ void cJobTextInterface::RegisterVariable(std::string name, int& value) {
 
 void cJobTextInterface::RegisterVariable(std::string name, sImagePreset& value) {
     m_MappedStringValues[std::move(name)] = [&value](std::string new_value) {
-        value = get_image_id(new_value);
+        try {
+            value = get_image_id(new_value);
+        } catch (std::out_of_range& ) {
+            value = get_image_preset_id(new_value);
+        }
     };
 }

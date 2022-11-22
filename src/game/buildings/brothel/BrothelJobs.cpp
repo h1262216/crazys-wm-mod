@@ -1212,12 +1212,11 @@ public:
     bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
 };
 
-cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml", {ACTION_WORKMASSEUSE}) {
+cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml", {ACTION_WORKMASSEUSE, 0, EImageBaseType::MASSAGE}) {
 }
 
 bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     m_Earnings = girl.askprice() + 40;
-    sImagePreset imageType = EImageBaseType::MASSAGE;
     int fame = 0;
 
     add_performance_text();
@@ -1248,41 +1247,33 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     if (g_Dice.percent(chance_horny_public(girl, target_part, target_sex, true)))
         //ANON: TODO: sanity check: not gonna give 'perks' to the cust she just banned for wanting perks!
     {
-        ss << "Because she was quite horny, she ended up ";
-
         brothel.m_Happiness += 100;
         switch (target_sex) {
             case SKILL_LESBIAN:
-                ss << "intensely licking the female customer's clit until she got off, making the lady very happy.\n";
-                imageType = EImagePresets::LESBIAN;
+                add_text("horny.les");
                 break;
             case SKILL_ORALSEX:
-                ss << "massaging the customer's cock with her tongue, making him very happy.\n";
-                imageType = EImagePresets::BLOWJOB;
+                add_text("horny.oral");
                 break;
             case SKILL_TITTYSEX:
-                ss << "using her tits to get the customer off, making him very happy.\n";
-                imageType = EImageBaseType::TITTY;
+                add_text("horny.titty");
                 break;
             case SKILL_HANDJOB:
-                ss << "giving him a cock-rub as well, making him very happy.\n";
-                imageType = EImageBaseType::HAND;
+                add_text("horny.handjob");
                 break;
             case SKILL_FOOTJOB:
-                ss << "using her feet to get the customer off, making him very happy.\n";
-                imageType = EImageBaseType::FOOT;
+                add_text("horny.footjob");
                 break;
             case SKILL_ANAL:
-                ss << "oiling the customer's cock and massaging it with her asshole.\n";
-                imageType = EImageBaseType::ANAL;
+                add_text("horny.anal");
                 break;
             case SKILL_NORMALSEX:
-                ss << "covered in massage oil and riding the customer's cock, making him very happy.\n";
-                imageType = EImageBaseType::VAGINAL;
+                add_text("horny.vaginal");
                 break;
             default:
                 break;
         }
+        ss << "\n";
         if (target_sex == SKILL_NORMALSEX)
         {
             if (girl.lose_trait(traits::VIRGIN))
@@ -1302,7 +1293,7 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
         fame += 1;
         girl.m_NumCusts++;
         //girl.m_Events.AddMessage(ss.str(), imageType, Day0Night1);
-    } //SIN - bit more spice - roll_c doesn't seem to be used anywhere else so ok here
+    } //SIN - bit more spice
     else if (girl.has_active_trait(traits::DOCTOR) && chance(5))
     {
         ss << "Due to ${name}'s training as a Doctor, she was able to discover an undetected medical condition in her client during the massage. ";
@@ -1326,7 +1317,7 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     shift_enjoyment();
     HandleGains(girl, fame);
 
-    girl.AddMessage(ss.str(), imageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     return false;
 }
 
