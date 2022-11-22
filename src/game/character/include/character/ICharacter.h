@@ -29,6 +29,8 @@
 #include <boost/variant.hpp>
 #include <unordered_map>
 
+#include "traits/fwd.h"
+
 namespace tinyxml2 {
     class XMLElement;
 }
@@ -37,8 +39,6 @@ using StatSkill = boost::variant<STATS, SKILLS>;
 
 class Inventory;
 class sInventoryItem;
-class sTraitInfo;
-class ITraitsCollection;
 
 /*!
  * \brief base class for all characters. Characters are girls, customers, the player, children.

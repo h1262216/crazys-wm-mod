@@ -1,3 +1,4 @@
+add_subdirectory(character)
 add_subdirectory(scripting)
 
 
@@ -65,24 +66,6 @@ set(BUILDINGS_SRC
         buildings/house/House.cpp
 )
 
-
-
-set(CHARACTER_SRC
-        character/cCustomers.cpp
-        character/cPlayer.cpp
-        character/ICharacter.cpp
-        character/sAttribute.cpp
-        character/cSkillCap.cpp
-        character/sGirl.cpp
-        character/traits/cTraitsCollection.cpp
-        character/traits/cTraitsManager.cpp
-        character/traits/cTraitSpec.cpp
-        character/predicates.cpp
-        character/pregnancy.cpp
-        character/lust.cpp
-        character/cGirlPool.cpp
-        )
-
 set(MOVIES_SRC
         buildings/studio/manager.cpp
         buildings/studio/data.cpp
@@ -125,8 +108,8 @@ set(SRC cEvents.cpp
         images/sImageSpec.cpp
         )
 
-add_library(WmGameObjects OBJECT ${BUILDINGS_SRC} ${SCREENS_SRC} ${JOBS_SRC} ${CHARACTER_SRC} ${SCRIPTING_SRC} ${MOVIES_SRC} ${SRC})
-target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects)
+add_library(WmGameObjects OBJECT ${BUILDINGS_SRC} ${SCREENS_SRC} ${JOBS_SRC} ${CHARACTER_SRC} ${MOVIES_SRC} ${SRC})
+target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects)
 set_target_properties(WmGameObjects PROPERTIES CXX_STANDARD 14)
 target_include_directories(WmGameObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -134,7 +117,7 @@ target_include_directories(WmGameObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(Python3)
 set(SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../codegen/traits.py)
 set(TRAITS_DIR ${RESOURCE_DIR}/Data/Traits)
-set(TRAITS_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/traits.h)
+set(TRAITS_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/character/include/traits/ids.h)
 set(LUA_DOC_FILE ${RESOURCE_DIR}/Scripts/_traits.lua)
 file(GLOB TRAIT_XML_FILES ${TRAITS_DIR}/*.xml)
 
@@ -165,7 +148,7 @@ if (UNIX)
     target_compile_definitions(WmGameObjects PUBLIC LINUX=1)
 endif(UNIX)
 
-set(AllWmObjects $<TARGET_OBJECTS:WmGameObjects> $<TARGET_OBJECTS:WmScriptingObjects> $<TARGET_OBJECTS:WMEngineObjects>)
+set(AllWmObjects $<TARGET_OBJECTS:WmGameObjects> $<TARGET_OBJECTS:WmScriptingObjects> $<TARGET_OBJECTS:WmCharacterObjects> $<TARGET_OBJECTS:WMEngineObjects>)
 
 add_executable(WhoreMaster ${AllWmObjects} main.cpp)
 target_link_libraries(WhoreMaster PUBLIC WmGameObjects)

@@ -19,7 +19,7 @@
 #pragma once
 
 #include "cGameWindow.h"
-#include "character/traits/ITraitsCollection.h"
+#include "traits/ITraitsCollection.h"
 
 class cScreenGirlDetails : public cGameWindow
 {

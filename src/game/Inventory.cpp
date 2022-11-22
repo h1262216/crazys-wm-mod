@@ -25,7 +25,7 @@
 #include "xml/util.h"
 #include "xml/getattr.h"
 #include "character/ICharacter.h"
-#include "character/traits/ITraitsCollection.h"
+#include "traits/ITraitsCollection.h"
 
 
 int Inventory::add_item(const sInventoryItem *item, int count) {

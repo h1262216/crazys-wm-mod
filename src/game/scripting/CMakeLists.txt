@@ -8,10 +8,12 @@ set(SCRIPTING_SRC
         src/sLuaEventResult.cpp
         )
 
+add_library(WmScriptingInterface INTERFACE)
+target_include_directories(WmScriptingInterface INTERFACE include)
 
 add_library(WmScriptingObjects OBJECT ${SCRIPTING_SRC})
-target_link_libraries(WmScriptingObjects PRIVATE WMEngineObjects lua::lua)
-target_include_directories(WmScriptingObjects PUBLIC include)
+target_link_libraries(WmScriptingObjects PRIVATE WMEngineObjects lua::lua WmCharacterObjects WmScriptingInterface)
+target_link_libraries(WmScriptingObjects PUBLIC WmScriptingInterface)
 target_include_directories(WmScriptingObjects PRIVATE include/scripting)
 # TODO Fix includes!
 target_include_directories(WmScriptingObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)

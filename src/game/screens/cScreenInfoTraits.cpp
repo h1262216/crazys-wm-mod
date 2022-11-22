@@ -19,9 +19,9 @@
 
 #include "cScreenInfoTraits.h"
 #include "IGame.h"
-#include "character/traits/ITraitsManager.h"
-#include "character/traits/ITraitSpec.h"
-#include "character/traits/ITraitsCollection.h"
+#include "traits/ITraitsManager.h"
+#include "traits/ITraitSpec.h"
+#include "traits/ITraitsCollection.h"
 #include <algorithm>
 #include "utils/string.hpp"
 #include "interface/cWindowManager.h"

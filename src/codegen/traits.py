@@ -118,7 +118,7 @@ def main():
 
     out_text += "    }\n}\n"
     # only write to the file if anything actually changes.
-    if result_path.read_text() != out_text:
+    if not result_path.exists() or result_path.read_text() != out_text:
         result_path.write_text(out_text)
 
     # for some reason, this helps to improve the autocomplete

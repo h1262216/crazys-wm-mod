@@ -20,7 +20,7 @@
 #include "buildings/IBuilding.h"
 #include "IGame.h"
 #include <sstream>
-#include "character/traits/ITraitsCollection.h"
+#include "traits/ITraitsCollection.h"
 extern cRng g_Dice;
 
 // constructors + destructors

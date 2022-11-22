@@ -5,8 +5,10 @@
 #include <utils/cKeyValueStore.h>
 #include "CLog.h"
 #include <boost/algorithm/string.hpp>
+#include "Constants.h"
 #include <regex>
 
+using namespace traits;
 
 TraitEffect TraitEffect::from_xml(const tinyxml2::XMLElement& el)
 {

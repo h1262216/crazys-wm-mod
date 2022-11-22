@@ -11,6 +11,8 @@
 #include "hDynamicTraitHandle.h"
 
 
+using namespace traits;
+
 bool cTraitsCollection::_add_inherent_trait(sTraitID id, bool active) {
     const ITraitSpec* trait = id_to_spec(id);
 

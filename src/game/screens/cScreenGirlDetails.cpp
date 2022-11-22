@@ -25,7 +25,7 @@
 #include "cGangs.h"
 #include "IGame.h"
 #include "CLog.h"
-#include "character/traits/ITraitSpec.h"
+#include "traits/ITraitSpec.h"
 
 extern bool g_AllTogle;
 

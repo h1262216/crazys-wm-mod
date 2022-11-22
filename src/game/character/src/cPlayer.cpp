@@ -27,7 +27,7 @@
 #include "character/sGirl.h"
 #include "xml/util.h"
 #include "ICharacter.h"
-#include "character/traits/ITraitsCollection.h"
+#include "traits/ITraitsCollection.h"
 
 
 namespace settings {

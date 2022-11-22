@@ -23,7 +23,7 @@
 #include <string>
 #include <boost/variant.hpp>
 #include "utils/enum.h"
-#include "traits.h"
+#include "traits/ids.h"
 
 class sAttribute;
 

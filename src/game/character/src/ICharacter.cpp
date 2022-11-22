@@ -429,7 +429,7 @@ bool ICharacter::has_dormant_trait(const char *trait_name) const {
     return inh == ITraitsCollection::TRAIT_INACTIVE || per == ITraitsCollection::TRAIT_INACTIVE;
 }
 
-std::vector<sTraitInfo> ICharacter::get_trait_info() const {
+std::vector<traits::sTraitInfo> ICharacter::get_trait_info() const {
     return m_Traits->get_trait_info();
 }
 

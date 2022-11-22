@@ -19,7 +19,7 @@
 
 #include "BasicJob.h"
 #include "xml/util.h"
-#include "character/traits/ITraitsManager.h"
+#include "traits/ITraitsManager.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 #include "CLog.h"

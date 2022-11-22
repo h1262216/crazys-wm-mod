@@ -27,9 +27,9 @@
 #include "cTariff.h"
 #include "sStorage.h"
 #include "CLog.h"
-#include "character/traits/ITraitsCollection.h"
-#include "character/traits/ITraitSpec.h"
-#include "character/traits/ITraitsManager.h"
+#include "traits/ITraitsCollection.h"
+#include "traits/ITraitSpec.h"
+#include "traits/ITraitsManager.h"
 #include "cGangs.h"
 #include "cGangManager.hpp"
 #include "buildings/cDungeon.h"
@@ -606,7 +606,7 @@ std::shared_ptr<sGirl> create_daughter(sGirl& mom, bool player_dad) {
     return base;
 }
 
-void inherit_inherent(sGirl& target, sTraitInfo& info) {
+void inherit_inherent(sGirl& target, traits::sTraitInfo& info) {
     const char* source = info.active ? traits::properties::INHERIT_CHANCE_FROM_ACTIVE : traits::properties::INHERIT_CHANCE_FROM_DORMANT;
     sPercent chance = info.trait->get_properties().get_percent(source);
     // Does she inherit the trait?

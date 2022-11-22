@@ -11,7 +11,8 @@
 #include "character/cCustomers.h"
 #include "buildings/cBuildingManager.h"
 #include "cInventory.h"
-#include "character/traits/cTraitsManager.h"
+#include "traits/ITraitsManager.h"
+#include "traits/ITraitsCollection.h"
 #include "utils/FileList.h"
 #include "cTariff.h"
 #include "cShop.h"
@@ -19,7 +20,6 @@
 #include "scripting/IScriptManager.h"
 #include "events.h"
 #include "xml/util.h"
-#include "character/traits/ITraitsCollection.h"
 #include "character/cGirlPool.h"
 #include "buildings/studio/manager.h"
 #include <sstream>
@@ -52,7 +52,7 @@ IGame::IGame() :
     m_Customers(new cCustomers()),
     m_InvManager(new cInventory()),
     m_Girls(new cGirls()),
-    m_Traits( std::make_unique<cTraitsManager>() ),
+    m_Traits( ITraitsManager::createTraitsManager() ),
     m_Shop( new cShop(NUM_SHOPITEMS) ),
     m_ScriptManager( scripting::IScriptManager::createScriptManager() ),
     m_GameSettings(new cGameSettings()),

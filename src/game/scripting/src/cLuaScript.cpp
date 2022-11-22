@@ -35,7 +35,7 @@
 
 #include "character/cPlayer.h"
 #include "character/sGirl.h"
-#include "character/traits/ITraitsManager.h"
+#include "traits/ITraitsManager.h"
 #include "buildings/cDungeon.h"
 #include "images/cImageLookup.h"
 

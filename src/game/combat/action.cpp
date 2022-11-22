@@ -22,7 +22,7 @@
 #include "combat.h"
 #include "combatant.h"
 #include "cRng.h"
-#include "traits.h"
+#include "traits/ids.h"
 #include <cmath>
 
 ICombatAction::ICombatAction(Combat* c, const char* n) : m_Combat(c), m_Name(n) {

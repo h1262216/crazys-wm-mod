@@ -8,6 +8,8 @@
 #include <xml/getattr.h>
 #include "xml/util.h"
 
+using namespace traits;
+
 std::unique_ptr<ITraitsCollection> cTraitsManager::create_collection() const {
     return std::make_unique<cTraitsCollection>(this);
 }
@@ -133,4 +135,8 @@ std::size_t CaseInsensitiveHash::operator()(const std::string& name) const {
 
 bool CaseInsensitiveHash::operator()(const std::string& a, const std::string& b) const {
     return iequals(a, b);
+}
+
+std::unique_ptr<ITraitsManager> ITraitsManager::createTraitsManager() {
+    return std::make_unique<cTraitsManager>();
 }

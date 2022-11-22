@@ -24,7 +24,7 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "character/traits/hDynamicTraitHandle.h"
+#include "traits/hDynamicTraitHandle.h"
 
 namespace tinyxml2 {
     class XMLElement;
@@ -88,7 +88,7 @@ private:
 
     struct sEquipRecord {
         const sInventoryItem* item;
-        std::vector<hDynamicTraitHandle> traits;
+        std::vector<traits::hDynamicTraitHandle> traits;
     };
 
     std::vector<sEquipRecord> m_EquippedItems;

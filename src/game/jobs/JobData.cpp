@@ -25,7 +25,7 @@
 #include "cRng.h"
 #include "cGirls.h"
 #include "IGame.h"
-#include "character/traits/ITraitsManager.h"
+#include "traits/ITraitsManager.h"
 
 extern cRng g_Dice;
 

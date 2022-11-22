@@ -31,6 +31,8 @@
 #include "interface/constants.h"
 #include "IKeyValueStore.h"
 
+#include "traits/fwd.h"
+
 class sGirl;
 class cGirls;
 class cBuildingManager;
@@ -50,8 +52,6 @@ class cCustomers;
 class sCustomer;
 class cInventory;
 class IBuilding;
-class ITraitsManager;
-class ITraitsCollection;
 class cTariff;
 class cShop;
 class cGirlPool;

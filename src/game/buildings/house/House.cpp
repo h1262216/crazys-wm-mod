@@ -22,7 +22,7 @@
 #include "character/cPlayer.h"
 #include "character/cCustomers.h"
 #include "character/predicates.h"
-#include "character/traits/ITraitsCollection.h"
+#include "traits/ITraitsCollection.h"
 #include "buildings/cBuildingManager.h"
 #include "buildings/cDungeon.h"
 #include "cGirls.h"

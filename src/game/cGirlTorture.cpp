@@ -24,7 +24,7 @@
 #include "character/cPlayer.h"
 #include "cGirlGangFight.h"
 #include "IGame.h"
-#include "character/traits/ITraitsCollection.h"
+#include "traits/ITraitsCollection.h"
 
 extern    cRng            g_Dice;
 
