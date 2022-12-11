@@ -357,11 +357,11 @@
                     But she skillfully avoided it with a laugh and told him that her ass wasn't on the menu.
                     He laughed so hard he increased her tip.
                 </Text>
-                <Text Condition="Performance>=135&amp;Performance<185">
+                <Text Condition="Performance>=135^Performance<185">
                     A patron reached out and grabbed her ass.
                     She's use to this and skilled enough so she didn't drop anything.
                 </Text>
-                <Text Condition="Performance>=85&amp;Performance<135" Updates="Wages-=10">
+                <Text Condition="Performance>=85^Performance<135" Updates="Wages-=10">
                     A patron reached out and grabbed her ass.
                     She was startled and ended up dropping half an order.
                 </Text>

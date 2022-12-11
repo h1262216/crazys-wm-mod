@@ -113,10 +113,10 @@
 
         <Message Name="song-quality">
             <Text Condition="Performance>=235">perfectly</Text>
-            <Text Condition="Performance>=175&amp;Performance<255">great</Text>
-            <Text Condition="Performance>=135&amp;Performance<195">good</Text>
-            <Text Condition="Performance>=90&amp;Performance<155">decently</Text>
-            <Text Condition="Performance>=50&amp;Performance<110">poorly</Text>
+            <Text Condition="Performance>=175^Performance<255">great</Text>
+            <Text Condition="Performance>=135^Performance<195">good</Text>
+            <Text Condition="Performance>=90^Performance<155">decently</Text>
+            <Text Condition="Performance>=50^Performance<110">poorly</Text>
             <Text Condition="Performance<70">very poorly</Text>
         </Message>
 
