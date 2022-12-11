@@ -53,6 +53,14 @@ namespace traits {
 
         virtual void iterate(std::function<void(const ITraitSpec&)> callback) const = 0;
 
+        // Trait groups
+        /// Gets the level within this group of the the (sole) active trait of this group in the given
+        /// collection.
+        virtual int get_group_level(const char* group, const ITraitsCollection&) const   = 0;
+
+        /// Gets the trait at the given level in the group.
+        virtual const ITraitSpec* get_group_at_level(const char* group, int level) const = 0;
+
         static std::unique_ptr<ITraitsManager> createTraitsManager();
     };
 }

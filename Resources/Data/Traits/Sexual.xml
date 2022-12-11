@@ -339,22 +339,24 @@
         </Modifiers>
     </Trait>
 
-    <MutexGroup>
-        <Trait>Bisexual</Trait>
-        <Trait>Lesbian</Trait>
-        <Trait>Straight</Trait>
-    </MutexGroup>
+    <TraitGroup>
+        <Entry>Bisexual</Entry>
+        <Entry>Lesbian</Entry>
+        <Entry>Straight</Entry>
+    </TraitGroup>
 
-    <MutexGroup>
-        <Trait>Broodmother</Trait>
-        <Trait>Fertile</Trait>
-        <Trait>Sterile</Trait>
-    </MutexGroup>
+    <TraitGroup Name="Fertility">
+        <Entry>Sterile</Entry>
+        <Entry />
+        <Entry>Fertile</Entry>
+        <Entry>Broodmother</Entry>
+    </TraitGroup>
 
-    <MutexGroup>
-        <Trait>No Gag Reflex</Trait>
-        <Trait>Gag Reflex</Trait>
-        <Trait>Strong Gag Reflex</Trait>
-        <Trait>Deep Throat</Trait>
-    </MutexGroup>
+    <TraitGroup Name="GagReflex">
+        <Entry>Strong Gag Reflex</Entry>
+        <Entry>Gag Reflex</Entry>
+        <Entry />
+        <Entry>No Gag Reflex</Entry>
+        <Entry>Deep Throat</Entry>
+    </TraitGroup>
 </Traits>

@@ -352,9 +352,9 @@
         </Properties>
     </Trait>
 
-    <MutexGroup>
-        <Trait>Queen</Trait>
-        <Trait>Princess</Trait>
-        <Trait>Noble</Trait>
-    </MutexGroup>
+    <TraitGroup>
+        <Entry>Queen</Entry>
+        <Entry>Princess</Entry>
+        <Entry>Noble</Entry>
+    </TraitGroup>
 </Traits>

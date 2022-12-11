@@ -121,14 +121,14 @@ set(TRAITS_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/character/include/traits/ids.h)
 set(LUA_DOC_FILE ${RESOURCE_DIR}/Scripts/_traits.lua)
 file(GLOB TRAIT_XML_FILES ${TRAITS_DIR}/*.xml)
 
-
 add_custom_command(
-        COMMAND Python3::Interpreter ${SCRIPT_FILE} ${TRAITS_DIR} ${TRAITS_HEADER} ${LUA_DOC_FILE}
+        COMMAND Python3::Interpreter "${SCRIPT_FILE}" "${TRAITS_DIR}" "${TRAITS_HEADER}" "${LUA_DOC_FILE}"
         DEPENDS ${SCRIPT_FILE} ${TRAIT_XML_FILES}
-        OUTPUT ${TRAITS_HEADER}
-        BYPRODUCTS ${LUA_DOC_FILE}
+        OUTPUT "${TRAITS_HEADER}"
+        BYPRODUCTS "${LUA_DOC_FILE}"
         COMMENT "Generating traits header ${TRAITS_HEADER}."
 )
+add_custom_target(generate_traits_ids DEPENDS "${TRAITS_HEADER}")
 
 set(SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../codegen/events.py)
 set(EVENTS_DIR ${RESOURCE_DIR}/Scripts)
@@ -142,7 +142,7 @@ add_custom_command(
 )
 
 
-target_sources(WmGameObjects PUBLIC ${TRAITS_HEADER} ${EVENTS_HEADER})
+target_sources(WmGameObjects PUBLIC ${EVENTS_HEADER})
 
 if (UNIX)
     target_compile_definitions(WmGameObjects PUBLIC LINUX=1)

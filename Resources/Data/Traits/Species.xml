@@ -551,26 +551,26 @@
     </Trait>
 
 
-    <MutexGroup>
-        <Trait>Zombie</Trait>
-        <Trait>Skeleton</Trait>
-        <Trait>Vampire</Trait>
-        <Trait>Angel</Trait>
-        <Trait>Canine</Trait>
-        <Trait>Cat Girl</Trait>
-        <Trait>Cow Girl</Trait>
-        <Trait>Construct</Trait>
-        <Trait>Demon</Trait>
-        <Trait>Egg Layer</Trait>
-        <Trait>Elf</Trait>
-        <Trait>Equine</Trait>
-        <Trait>Fallen Goddess</Trait>
-        <Trait>Furry</Trait>
-        <Trait>Goddess</Trait>
-        <Trait>Reptilian</Trait>
-        <Trait>Shape Shifter</Trait>
-        <Trait>Slitherer</Trait>
-        <Trait>Succubus</Trait>
-        <Trait>Cyclops</Trait>
-    </MutexGroup>
+    <TraitGroup>
+        <Entry>Zombie</Entry>
+        <Entry>Skeleton</Entry>
+        <Entry>Vampire</Entry>
+        <Entry>Angel</Entry>
+        <Entry>Canine</Entry>
+        <Entry>Cat Girl</Entry>
+        <Entry>Cow Girl</Entry>
+        <Entry>Construct</Entry>
+        <Entry>Demon</Entry>
+        <Entry>Egg Layer</Entry>
+        <Entry>Elf</Entry>
+        <Entry>Equine</Entry>
+        <Entry>Fallen Goddess</Entry>
+        <Entry>Furry</Entry>
+        <Entry>Goddess</Entry>
+        <Entry>Reptilian</Entry>
+        <Entry>Shape Shifter</Entry>
+        <Entry>Slitherer</Entry>
+        <Entry>Succubus</Entry>
+        <Entry>Cyclops</Entry>
+    </TraitGroup>
 </Traits>

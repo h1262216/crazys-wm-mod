@@ -199,17 +199,18 @@
         </Properties>
     </Trait>
 
-    <MutexGroup>
-        <Trait>Great Figure</Trait>
-        <Trait>Hourglass Figure</Trait>
-        <Trait>Plump</Trait>
-        <Trait>Fat</Trait>
-    </MutexGroup>
+    <TraitGroup>
+        <Entry>Great Figure</Entry>
+        <Entry>Hourglass Figure</Entry>
+        <Entry>Plump</Entry>
+        <Entry>Fat</Entry>
+    </TraitGroup>
 
-    <MutexGroup>
-        <Trait>Giant</Trait>
-        <Trait>Short</Trait>
-        <Trait>Tall</Trait>
-        <Trait>Dwarf</Trait>
-    </MutexGroup>
+    <TraitGroup Name="Tallness">
+        <Entry>Giant</Entry>
+        <Entry>Tall</Entry>
+        <Entry/>
+        <Entry>Short</Entry>
+        <Entry>Dwarf</Entry>
+    </TraitGroup>
 </Traits>

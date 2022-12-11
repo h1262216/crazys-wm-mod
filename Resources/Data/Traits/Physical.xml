@@ -550,12 +550,12 @@
         <Excludes>No Nipples</Excludes>
     </Trait>
 
-    <MutexGroup>
+    <TraitGroup>
         <Trait>Cow Tits</Trait>
         <Trait>Dry Milk</Trait>
         <Trait>Scarce Lactation</Trait>
         <Trait>Abundant Lactation</Trait>
-    </MutexGroup>
+    </TraitGroup>
 
     <!-- AGE -->
     <Trait InheritChance="0" Name="Lolita" RandomChance="20">
@@ -702,32 +702,33 @@
     </Trait>
 
 
-    <MutexGroup>
-        <Trait>Flat Chest</Trait>
-        <Trait>Petite Breasts</Trait>
-        <Trait>Small Boobs</Trait>
-        <Trait>Busty Boobs</Trait>
-        <Trait>Big Boobs</Trait>
-        <Trait>Giant Juggs</Trait>
-        <Trait>Massive Melons</Trait>
-        <Trait>Abnormally Large Boobs</Trait>
-        <Trait>Titanic Tits</Trait>
-    </MutexGroup>
+    <TraitGroup Name="BoobSize">
+        <Entry>Flat Chest</Entry>
+        <Entry>Petite Breasts</Entry>
+        <Entry>Small Boobs</Entry>
+        <Entry />
+        <Entry>Busty Boobs</Entry>
+        <Entry>Big Boobs</Entry>
+        <Entry>Giant Juggs</Entry>
+        <Entry>Massive Melons</Entry>
+        <Entry>Abnormally Large Boobs</Entry>
+        <Entry>Titanic Tits</Entry>
+    </TraitGroup>
 
-    <MutexGroup>
-        <Trait>Flat Ass</Trait>
-        <Trait>Tight Butt</Trait>
-        <Trait>Plump Tush</Trait>
-        <Trait>Great Arse</Trait>
-        <Trait>Phat Booty</Trait>
-        <Trait>Wide Bottom</Trait>
-        <Trait>Deluxe Derriere</Trait>
-    </MutexGroup>
+    <TraitGroup>
+        <Entry>Flat Ass</Entry>
+        <Entry>Tight Butt</Entry>
+        <Entry>Plump Tush</Entry>
+        <Entry>Great Arse</Entry>
+        <Entry>Phat Booty</Entry>
+        <Entry>Wide Bottom</Entry>
+        <Entry>Deluxe Derriere</Entry>
+    </TraitGroup>
 
-    <MutexGroup>
-        <Trait>Lolita</Trait>
-        <Trait>MILF</Trait>
-        <Trait>Middle Aged</Trait>
-        <Trait>Old</Trait>
-    </MutexGroup>
+    <TraitGroup>
+        <Entry>Lolita</Entry>
+        <Entry>MILF</Entry>
+        <Entry>Middle Aged</Entry>
+        <Entry>Old</Entry>
+    </TraitGroup>
 </Traits>

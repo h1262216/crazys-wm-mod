@@ -914,4 +914,12 @@ namespace traits {
         constexpr const char* WORK_STRIPPER = "work.stripper";
         constexpr const char* WORK_TORTURER = "work.torturer";
     }
+    namespace groups {
+        constexpr const char* BOOBSIZE = "BoobSize";
+        constexpr const char* FERTILITY = "Fertility";
+        constexpr const char* GAGREFLEX = "GagReflex";
+        constexpr const char* MAGIC = "Magic";
+        constexpr const char* TALLNESS = "Tallness";
+        constexpr const char* TATTOOS = "Tattoos";
+    }
 }

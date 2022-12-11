@@ -208,9 +208,10 @@
         </Properties>
     </Trait>
 
-    <MutexGroup>
-        <Trait>Small Tattoos</Trait>
-        <Trait>Tattooed</Trait>
-        <Trait>Heavily Tattooed</Trait>
-    </MutexGroup>
+    <TraitGroup Name="Tattoos">
+        <Entry />
+        <Entry>Small Tattoos</Entry>
+        <Entry>Tattooed</Entry>
+        <Entry>Heavily Tattooed</Entry>
+    </TraitGroup>
 </Traits>

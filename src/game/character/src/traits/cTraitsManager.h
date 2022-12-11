@@ -43,6 +43,8 @@ namespace traits {
 
         void iterate(std::function<void(const ITraitSpec&)> callback) const override;
 
+        int get_group_level(const char* group, const ITraitsCollection&) const override;
+        const ITraitSpec* get_group_at_level(const char* group, int level) const override;
     private:
         // helper functions
         void add_trait(std::unique_ptr<cTraitSpec> spec);
@@ -53,6 +55,8 @@ namespace traits {
         // The actual trait data
         std::unordered_map<std::string, std::unique_ptr<cTraitSpec>, CaseInsensitiveHash, CaseInsensitiveHash> m_Traits;
 
+        // Trait Groups
+        std::unordered_map<std::string, std::vector<const ITraitSpec*>, CaseInsensitiveHash, CaseInsensitiveHash> m_Groups;
     };
 }
 

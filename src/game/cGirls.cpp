@@ -1626,49 +1626,35 @@ bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, string Trait, int Threshold,
     return false;
 }
 
-// `J` When adding new traits, search for "J-Add-New-Traits"  :  found in >> cGirls.cpp > AdjustTraitGroup
-
-std::string AdjustTraitGroup(sGirl& girl, int adjustment, std::initializer_list<const char*> traits, bool event,
+std::string AdjustTraitGroup(sGirl& girl, int adjustment, std::string group, bool event,
         const char* lose_message, const char* gain_message, const char* notrait_name=nullptr) {
-    int group = -1;
-    int count = 0;
-    const char* lost = nullptr;
-    for(auto t : traits) {
-        // nullptr == no-trait
-        if(!t) {
-            group = count;
-            count += 1;
-            continue;
-        }
-        if (girl.has_active_trait(t)) {
-            group = count;
-            lost = t;
-            break;
-        }
-        count += 1;
-    }
+    if (adjustment == 0) return "";
 
-    int new_group = std::min(std::max(0, group + adjustment), (int)traits.size() - 1);
-    if(group == new_group)
-        return "";
+    /// TODO this will produce wrong results if the active trait comes from a dynamic trait.
+    int current_level = g_Game->traits().get_group_level(group.c_str(), girl.raw_traits());
+    int new_level = current_level + adjustment;
+    auto lost = g_Game->traits().get_group_at_level(group.c_str(), current_level);
+    auto gained = g_Game->traits().get_group_at_level(group.c_str(), new_level);
+
+    if(lost == gained) {
+        return {};
+    }
 
     std::stringstream ss;
 
     ss << girl.FullName();
     const char* lose_name = notrait_name;
     if(lost) {
-        girl.lose_trait(lost);
-        lose_name = lost;
+        girl.lose_trait(lost->name().c_str());
+        lose_name = lost->name().c_str();
     }
     if(lose_name)
         ss << lose_message << " '" << lose_name << "'";
 
-    auto gained = begin(traits);
-    std::advance(gained, new_group);
     const char* gain_name = notrait_name;
-    if(*gained) {
-        gain_name = *gained;
-        girl.gain_trait(*gained);
+    if(gained) {
+        gain_name = gained->name().c_str();
+        girl.gain_trait(gained->name().c_str());
     }
 
     if(gain_name)
@@ -1683,26 +1669,19 @@ std::string AdjustTraitGroup(sGirl& girl, int adjustment, std::initializer_list<
 // `J` adding these to allow single step adjustment of linked traits
 string cGirls::AdjustTraitGroupGagReflex(sGirl& girl, int adjustment, bool showmessage)
 {
-    if (adjustment == 0) return "";    // no girl or not changing anything so quit
-    return AdjustTraitGroup(girl, adjustment,
-            {traits::STRONG_GAG_REFLEX, traits::GAG_REFLEX, nullptr, traits::NO_GAG_REFLEX, traits::DEEP_THROAT}, showmessage,
+    return AdjustTraitGroup(girl, adjustment, traits::groups::GAGREFLEX, showmessage,
             " has lost the trait", " has gained the trait");
 }
 
 string cGirls::AdjustTraitGroupBreastSize(sGirl& girl, int adjustment, bool showmessage)
 {
-    if (adjustment == 0) return "";    // no girl or not changing anything so quit
-    return AdjustTraitGroup(girl, adjustment,
-                            {traits::FLAT_CHEST, traits::PETITE_BREASTS, traits::SMALL_BOOBS, nullptr, traits::BUSTY_BOOBS, traits::BIG_BOOBS, traits::GIANT_JUGGS,
-                             traits::MASSIVE_MELONS, traits::ABNORMALLY_LARGE_BOOBS, traits::TITANIC_TITS}, showmessage,
+    return AdjustTraitGroup(girl, adjustment, traits::groups::BOOBSIZE, showmessage,
                             "'s breast size has changed from", " to", "Average");
 }
 
 string cGirls::AdjustTraitGroupFertility(sGirl& girl, int steps, bool showmessage)
 {
-    if (steps == 0) return "";    // not changing anything so quit
-    return AdjustTraitGroup(girl, steps,
-                            {traits::STERILE, nullptr, traits::FERTILE, traits::BROODMOTHER}, showmessage,
+    return AdjustTraitGroup(girl, steps, traits::groups::FERTILITY, showmessage,
                             " has lost the trait", " has gained the trait");
 }
 
@@ -1766,6 +1745,116 @@ void cGirls::updateHappyTraits(sGirl& girl)
 
 // ----- Sex
 
+void girl_fucks_runaway(sGirl* girl, sCustomer* customer) {
+    stringstream runawaymsg;
+    if (is_your_daughter(*girl)) runawaymsg << "Your daughter ";
+    runawaymsg << girl->FullName() << " ran away with your rival!\nExploiting her desperate drug cravings, he claimed to be ";
+
+    //the con
+    runawaymsg << g_Dice.select_text({"her true love, ", "a Prince, ", "the Spy who Loves her, ",
+                                      "her long-lost brother, ", "a Priest, ", "her old school friend, "});
+    runawaymsg << "promising her a better life and everything she needs if she escaped with him.\nShe did. By now she will probably be ";
+
+    //speculate
+    runawaymsg << g_Dice.select_text({"tied over a park-bench being gang-raped by ",
+                                      "chained to a rack being ram-raided by ",
+                                      "tied up in a dumpster giving blowjobs to ",
+                                      "folded over a fence being 'used' by ",
+                                      "naked in the town arena being 'conquered' by ",
+                                      "stripped and locked in the town's public-stocks, being 'punished' by "
+                                     });
+
+    runawaymsg << g_Dice.select_text({"rival gang-members.", "bums.", "horny street kids.", "mistreated slaves.",
+                                      "wild animals.", "pumped-up gladiators.", "the town's gentlemen.", "aristocrats."});
+    runawaymsg << '\n';
+
+    //What do you do...
+    /* */if (g_Game->player().disposition() < -33) runawaymsg << "She's where she deserves. Why waste a gang's time going to fetch her? Unless you want to punish personally?";
+    else if (g_Game->player().disposition() < 33) runawaymsg << "You could send a gang to retrieve her. Or you could leave her. No hurry.";
+    else runawaymsg << "You should send a gang right away to rescue the poor girl.";
+
+    runawaymsg << " (When you find her, she may be... changed.)";
+
+    //If she was a virgin, she won't be now...
+    girl->lose_trait(traits::VIRGIN);
+
+    //What damage?
+    int harm = g_Dice.d100();
+    if (harm > 95) //5% multi STDS
+    {
+        harm = g_Dice.d100();
+        if (harm == 100)    girl->gain_trait(traits::AIDS),        girl->gain_trait(traits::SYPHILIS), girl->gain_trait(traits::HERPES), girl->gain_trait(traits::CHLAMYDIA);
+        else if (harm > 95) girl->gain_trait(traits::AIDS),        girl->gain_trait(traits::SYPHILIS);
+        else if (harm > 85) girl->gain_trait(traits::AIDS),        girl->gain_trait(traits::HERPES);
+        else if (harm > 70) girl->gain_trait(traits::SYPHILIS),    girl->gain_trait(traits::HERPES);
+        else if (harm > 50) girl->gain_trait(traits::SYPHILIS),    girl->gain_trait(traits::CHLAMYDIA);
+        else                girl->gain_trait(traits::HERPES),      girl->gain_trait(traits::CHLAMYDIA);
+    }
+    else if (harm > 90)  //5% an STD
+    {
+        harm = g_Dice.d100();
+        if (harm > 95)      girl->gain_trait(traits::AIDS);
+        else if (harm > 80) girl->gain_trait(traits::SYPHILIS);
+        else if (harm > 50) girl->gain_trait(traits::HERPES);
+        else                girl->gain_trait(traits::CHLAMYDIA);
+    }
+    else if (harm > 85)  //10% scars
+    {
+        if (!girl->has_active_trait(traits::SMALL_SCARS) && !girl->has_active_trait(traits::COOL_SCARS) && !girl->has_active_trait(
+                traits::HORRIFIC_SCARS)) girl->gain_trait(traits::SMALL_SCARS);
+        else if (girl->has_active_trait(traits::SMALL_SCARS)) girl->gain_trait(traits::COOL_SCARS);
+        else if (girl->has_active_trait(traits::COOL_SCARS)) girl->gain_trait(traits::HORRIFIC_SCARS);
+    }
+    else if (harm > 75)  //10% traumatised
+    {
+        girl->gain_trait(traits::MIND_FUCKED);
+    }
+    else if (harm > 50)  //25% chance
+    {
+        //overused face
+        girl->gain_trait(traits::MISSING_TEETH);
+        cGirls::AdjustTraitGroupGagReflex(*girl, +1);
+
+        girl->lose_trait(traits::OPTIMIST);
+        girl->upd_base_stat(STAT_DIGNITY, -10);
+        girl->upd_base_stat(STAT_SPIRIT, -10);
+        girl->upd_skill(SKILL_ORALSEX, 5);
+    }
+    else if (harm > 25)  //25% chance
+    {
+        //overused behind
+        girl->gain_trait(traits::WHORE);
+
+        girl->lose_trait(traits::OPTIMIST);
+        girl->upd_base_stat(STAT_HEALTH, -5);
+        girl->upd_base_stat(STAT_SPIRIT, -5);
+        girl->lust_turn_off(50);
+        girl->upd_skill(SKILL_NORMALSEX, 5);
+    }
+    else if (harm > 15)  //10% chance
+    {
+        girl->gain_trait(traits::BROKEN_WILL);
+        girl->gain_trait(traits::BRANDED_ON_THE_ASS);
+    }
+    else //15% no damage
+    {
+
+    }
+
+
+    //does she get knocked up?
+    bool antiPregStatus = girl->m_UseAntiPreg;
+    girl->m_UseAntiPreg = false;                    //won't have access to this
+    girl->calc_group_pregnancy(*customer, 2);
+    girl->m_UseAntiPreg = antiPregStatus;            //afterwards she'll go back to normal
+
+    // player has 6 weeks to retrieve
+    girl->run_away();
+
+    //Warn the user
+    g_Game->push_message(runawaymsg.str(), COLOR_WARNING);
+}
+
 void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool group, string& message, SKILLS &SexType, bool first)
 {
     int check = girl->get_skill(SexType);
@@ -1775,113 +1864,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     if (g_Dice.percent(33) && (girl->happiness() < 40) && (girl->intelligence() < 50)
         && is_addict(*girl, true))
     {
-        stringstream runawaymsg;
-        if (is_your_daughter(*girl)) runawaymsg << "Your daughter ";
-        runawaymsg << girlName << " ran away with your rival!\nExploiting her desperate drug cravings, he claimed to be ";
-
-        //the con
-        runawaymsg << g_Dice.select_text({"her true love, ", "a Prince, ", "the Spy who Loves her, ",
-                                          "her long-lost brother, ", "a Priest, ", "her old school friend, "});
-        runawaymsg << "promising her a better life and everything she needs if she escaped with him.\nShe did. By now she will probably be ";
-
-        //speculate
-        runawaymsg << g_Dice.select_text({"tied over a park-bench being gang-raped by ",
-                                          "chained to a rack being ram-raided by ",
-                                          "tied up in a dumpster giving blowjobs to ",
-                                          "folded over a fence being 'used' by ",
-                                          "naked in the town arena being 'conquered' by ",
-                                          "stripped and locked in the town's public-stocks, being 'punished' by "
-                                          });
-
-        runawaymsg << g_Dice.select_text({"rival gang-members.", "bums.", "horny street kids.", "mistreated slaves.",
-                                          "wild animals.", "pumped-up gladiators.", "the town's gentlemen.", "aristocrats."});
-        runawaymsg << '\n';
-
-        //What do you do...
-        /* */if (g_Game->player().disposition() < -33) runawaymsg << "She's where she deserves. Why waste a gang's time going to fetch her? Unless you want to punish personally?";
-        else if (g_Game->player().disposition() < 33) runawaymsg << "You could send a gang to retrieve her. Or you could leave her. No hurry.";
-        else runawaymsg << "You should send a gang right away to rescue the poor girl.";
-
-        runawaymsg << " (When you find her, she may be... changed.)";
-
-        //If she was a virgin, she won't be now...
-        girl->lose_trait(traits::VIRGIN);
-
-        //What damage?
-        int harm = g_Dice.d100();
-        if (harm > 95) //5% multi STDS
-        {
-            harm = g_Dice.d100();
-            if (harm == 100)    girl->gain_trait(traits::AIDS),        girl->gain_trait(traits::SYPHILIS), girl->gain_trait(traits::HERPES), girl->gain_trait(traits::CHLAMYDIA);
-            else if (harm > 95) girl->gain_trait(traits::AIDS),        girl->gain_trait(traits::SYPHILIS);
-            else if (harm > 85) girl->gain_trait(traits::AIDS),        girl->gain_trait(traits::HERPES);
-            else if (harm > 70) girl->gain_trait(traits::SYPHILIS),    girl->gain_trait(traits::HERPES);
-            else if (harm > 50) girl->gain_trait(traits::SYPHILIS),    girl->gain_trait(traits::CHLAMYDIA);
-            else                girl->gain_trait(traits::HERPES),      girl->gain_trait(traits::CHLAMYDIA);
-        }
-        else if (harm > 90)  //5% an STD
-        {
-            harm = g_Dice.d100();
-            if (harm > 95)      girl->gain_trait(traits::AIDS);
-            else if (harm > 80) girl->gain_trait(traits::SYPHILIS);
-            else if (harm > 50) girl->gain_trait(traits::HERPES);
-            else                girl->gain_trait(traits::CHLAMYDIA);
-        }
-        else if (harm > 85)  //10% scars
-        {
-            if (!girl->has_active_trait(traits::SMALL_SCARS) && !girl->has_active_trait(traits::COOL_SCARS) && !girl->has_active_trait(
-                    traits::HORRIFIC_SCARS)) girl->gain_trait(traits::SMALL_SCARS);
-            else if (girl->has_active_trait(traits::SMALL_SCARS)) girl->gain_trait(traits::COOL_SCARS);
-            else if (girl->has_active_trait(traits::COOL_SCARS)) girl->gain_trait(traits::HORRIFIC_SCARS);
-        }
-        else if (harm > 75)  //10% traumatised
-        {
-            girl->gain_trait(traits::MIND_FUCKED);
-        }
-        else if (harm > 50)  //25% chance
-        {
-            //overused face
-            girl->gain_trait(traits::MISSING_TEETH);
-            AdjustTraitGroupGagReflex(*girl, +1);
-
-            girl->lose_trait(traits::OPTIMIST);
-            girl->upd_base_stat(STAT_DIGNITY, -10);
-            girl->upd_base_stat(STAT_SPIRIT, -10);
-            girl->upd_skill(SKILL_ORALSEX, 5);
-        }
-        else if (harm > 25)  //25% chance
-        {
-            //overused behind
-            girl->gain_trait(traits::WHORE);
-
-            girl->lose_trait(traits::OPTIMIST);
-            girl->upd_base_stat(STAT_HEALTH, -5);
-            girl->upd_base_stat(STAT_SPIRIT, -5);
-            girl->lust_turn_off(50);
-            girl->upd_skill(SKILL_NORMALSEX, 5);
-        }
-        else if (harm > 15)  //10% chance
-        {
-            girl->gain_trait(traits::BROKEN_WILL);
-            girl->gain_trait(traits::BRANDED_ON_THE_ASS);
-        }
-        else //15% no damage
-        {
-
-        }
-
-
-        //does she get knocked up?
-        bool antiPregStatus = girl->m_UseAntiPreg;
-        girl->m_UseAntiPreg = false;                    //won't have access to this
-        girl->calc_group_pregnancy(*customer, 2);
-        girl->m_UseAntiPreg = antiPregStatus;            //afterwards she'll go back to normal
-
-        // player has 6 weeks to retrieve
-        girl->run_away();
-
-        //Warn the user
-        g_Game->push_message(runawaymsg.str(), COLOR_WARNING);
+        girl_fucks_runaway(girl, customer);
         return;
     }
 
@@ -1959,9 +1942,9 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         intro += girl->get_trait_modifier(traits::modifiers::SEX_EAGERNESS);
 
         //SIN: Fix ordering and wording - delete old if this okay
-        /* */if (intro < 2)        introtext += " reluctantly leads";
-        else if (intro < 4)        introtext += " hesitantly leads";
-        else if (intro < 8)        introtext += " leads";
+        if (intro < 2)          introtext += " reluctantly leads";
+        else if (intro < 4)     introtext += " hesitantly leads";
+        else if (intro < 8)     introtext += " leads";
         else if (intro < 12)    introtext += " quickly leads";
         else if (intro < 18)    introtext += " eagerly leads";
         else if (intro < 22)    introtext += " excitedly leads";

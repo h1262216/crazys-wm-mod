@@ -44,6 +44,7 @@
             <Modifier Name="fetish:Nerd" Value="5" />
         </Modifiers>
         <Properties>
+            <Setting Name="random:chance" Value="10" />
             <Setting Name="incest:chance" Value="15" />
             <Setting Name="level-up:remove-chance" Value="5"/>
         </Properties>
@@ -51,27 +52,31 @@
 
 
     <Trait Name="Weak Magic">
-    <description>This girl has very little magical power within her.</description>
-    <Modifiers>
-        <Modifier Name="skill-cap:Magic" Value="-20" />
-        <Modifier Name="stat:Mana" Value="-20" />
-        <Modifier Name="fetish:Dangerous" Value="5" />
-        <Modifier Name="fetish:Freak" Value="5" />
-    </Modifiers>
+        <description>This girl has very little magical power within her.</description>
+        <Modifiers>
+            <Modifier Name="skill-cap:Magic" Value="-20" />
+            <Modifier Name="stat:Mana" Value="-20" />
+            <Modifier Name="fetish:Dangerous" Value="5" />
+            <Modifier Name="fetish:Freak" Value="5" />
+        </Modifiers>
+        <Properties>
+            <Setting Name="random:chance" Value="10" />
+            <Setting Name="level-up:remove-chance" Value="2"/>
+        </Properties>
     </Trait>
 
 
     <Trait Name="Strong Magic">
-    <description>This girl has strong power within her. Be careful you don't give her too much trouble.</description>
-    <Modifiers>
-        <Modifier Name="skill:Magic" Value="10" />
-        <Modifier Name="skill-cap:Magic" Value="20" />
-        <Modifier Name="stat:Mana" Value="20" />
-        <Modifier Name="fetish:Dangerous" Value="20" />
-        <Modifier Name="fetish:Nerd" Value="5" />
-        <Modifier Name="fetish:NonHuman" Value="5" />
-        <Modifier Name="fetish:Freak" Value="20" />
-    </Modifiers>
+        <description>This girl has strong power within her. Be careful you don't give her too much trouble.</description>
+        <Modifiers>
+            <Modifier Name="skill:Magic" Value="10" />
+            <Modifier Name="skill-cap:Magic" Value="20" />
+            <Modifier Name="stat:Mana" Value="20" />
+            <Modifier Name="fetish:Dangerous" Value="20" />
+            <Modifier Name="fetish:Nerd" Value="5" />
+            <Modifier Name="fetish:NonHuman" Value="5" />
+            <Modifier Name="fetish:Freak" Value="20" />
+        </Modifiers>
     </Trait>
 
 
@@ -101,10 +106,11 @@
     </Trait>
 
 
-    <MutexGroup>
-        <Trait>Powerful Magic</Trait>
-        <Trait>Strong Magic</Trait>
-        <Trait>Weak Magic</Trait>
-        <Trait>Muggle</Trait>
-    </MutexGroup>
+    <TraitGroup Name="Magic">
+        <Entry>Powerful Magic</Entry>
+        <Entry>Strong Magic</Entry>
+        <Entry />
+        <Entry>Weak Magic</Entry>
+        <Entry>Muggle</Entry>
+    </TraitGroup>
 </Traits>

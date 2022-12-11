@@ -1,4 +1,4 @@
-<!ELEMENT Traits (Default, Trait*, MutexGroup*)>
+<!ELEMENT Traits (Default, Trait*, TraitGroup*)>
 
 
 <!ELEMENT Default (Setting*)>
@@ -16,4 +16,7 @@
 <!ELEMENT Setting EMPTY>
 <!ATTLIST Setting Name CDATA #REQUIRED Value CDATA #REQUIRED>
 
-<!ELEMENT MutexGroup (Trait*)>
+<!ELEMENT TraitGroup (Entry*)>
+<!ATTLIST TraitGroup Name CDATA #IMPLIED>
+
+<!ELEMENT Entry (#PCDATA)>

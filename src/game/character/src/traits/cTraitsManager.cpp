@@ -34,20 +34,32 @@ void cTraitsManager::load_traits(const tinyxml2::XMLElement& root) {
         add_trait(cTraitSpec::from_xml(el, def.get()));
     }
 
-    // check exclusion groups
-    for (auto& el : IterateChildElements(root, "MutexGroup"))
+    // trait groups
+    for (auto& el : IterateChildElements(root, "TraitGroup"))
     {
-        std::vector<std::string> mutex_group;
-        for(auto& t : IterateChildElements(el, "Trait")) {
-            mutex_group.emplace_back(t.GetText());
+        std::string group_name = GetDefaultedStringAttribute(el, "Name", "");
+        std::vector<ITraitSpec*> trait_group;
+        for(auto& t : IterateChildElements(el, "Entry")) {
+            const char* trait = t.GetText();
+            if(trait == nullptr) {
+                trait_group.emplace_back( nullptr );
+            } else {
+                trait_group.emplace_back( m_Traits.at(trait).get() );
+            }
         }
-        for(int i = 0; i < mutex_group.size(); ++i) {
-            for(int j = 0; j < mutex_group.size(); ++j) {
-                if(i != j) {
-                    dynamic_cast<cTraitSpec*>(m_Traits.at(mutex_group[i]).get())->add_exclude(mutex_group[j]);
-                    dynamic_cast<cTraitSpec*>(m_Traits.at(mutex_group[j]).get())->add_exclude(mutex_group[i]);
+
+        for(int i = 0; i < trait_group.size(); ++i) {
+            for(int j = 0; j < trait_group.size(); ++j) {
+                if(i != j && trait_group[i] != nullptr && trait_group[j] != nullptr) {
+                    dynamic_cast<cTraitSpec*>(trait_group[i])->add_exclude(trait_group[j]->name());
+                    dynamic_cast<cTraitSpec*>(trait_group[j])->add_exclude(trait_group[i]->name());
                 }
             }
+        }
+
+        if(!group_name.empty()) {
+            m_Groups[group_name].resize(trait_group.size());
+            std::copy(trait_group.begin(), trait_group.end(), m_Groups.at(group_name).begin());
         }
     }
 }
@@ -123,6 +135,32 @@ void cTraitsManager::iterate(std::function<void(const ITraitSpec&)> callback) co
     for(const auto& trait : m_Traits) {
         callback(*trait.second);
     }
+}
+
+int cTraitsManager::get_group_level(const char* group, const ITraitsCollection& collection) const {
+    auto group_data = m_Groups.at(group);
+    const auto& all_traits = collection.get_active_traits();
+    int index = -1;
+    int notfound = -1;
+    for(int i = 0; i < group_data.size(); ++i) {
+        if (group_data[i] != nullptr) {
+            if (all_traits.count(group_data[i]) > 0) {
+                index = i;
+            }
+        } else {
+            notfound = i;
+        }
+    }
+    if(index == -1 && notfound != -1) {
+        index = notfound;
+    }
+    return index;
+}
+
+const ITraitSpec* cTraitsManager::get_group_at_level(const char* group, int level) const {
+    auto& group_data = m_Groups.at(group);
+    level = std::max(0, std::min(level, (int)group_data.size() - 1));
+    return group_data.at(level);
 }
 
 cTraitsManager::cTraitsManager() = default;
