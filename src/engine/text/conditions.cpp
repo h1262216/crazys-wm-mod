@@ -22,8 +22,8 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cctype>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <utility>
@@ -48,7 +48,12 @@ namespace {
         int num_candidate = std::strtol(source.c_str(), &endptr, 10);
         if(endptr == source.c_str()) {
             assert(num_candidate == 0);
+            if(!std::isalpha(source.front())) {
+                throw std::runtime_error("invalid value: " + source);
+            }
             return source;
+        } else if(endptr - source.data() != source.size()) {
+            throw std::runtime_error("invalid value: " + source);
         } else {
             return num_candidate;
         }

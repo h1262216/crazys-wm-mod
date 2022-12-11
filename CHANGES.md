@@ -5,7 +5,7 @@
 
 ## Bugfixes
 * Fixed two bugs reported by big fan of fans
-
+* Fixed some text conditions for `Waitress` and `Singer`
 
 # Version 7.2.1alpha5
 
