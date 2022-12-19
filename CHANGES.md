@@ -3,6 +3,9 @@
 ## Other
 * Trait xml files now specify which traits are gained / lost on level-up
 
+## Tagger
+* Prefer game `ImageFiles.xml` over bundled one, allowing for user overrides
+
 ## Bugfixes
 * Fixed two bugs reported by big fan of fans
 * Fixed some text conditions for `Waitress` and `Singer`

@@ -14,14 +14,24 @@ from tagger.dialogs import VisualizeFallbackDlg, ShowAllTags, PackMetaDlg
 app = QApplication([])
 
 
+def _find_path(path: Path, sub: str):
+    if (path / sub).exists():
+        return path / sub
+    if path.root == path:
+        return None
+    return _find_path(path.parent, sub)
+
+
 # ensures that we can package everything into a single exe
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
-    if hasattr(sys, "_MEIPASS"):
+    base_path = Path(os.path.abspath("."))
+    res_path = _find_path(base_path, "Resources")
+    if (res_path / "Data").exists():
+        base_path = res_path / "Data"
+    elif hasattr(sys, "_MEIPASS"):
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
 
     return Path(os.path.join(base_path, relative_path))
 
