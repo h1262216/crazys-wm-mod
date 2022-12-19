@@ -85,7 +85,7 @@
 
 
     <Trait Name="Shroud Addict">
-        <description>A girl addicted to the gas emmited from the rare Shroud Mushroom. (drug) (+happiness) (-looks)</description>
+        <description>A girl addicted to the gas emitted from the rare Shroud Mushroom. (drug) (+happiness) (-looks)</description>
         <Modifiers>
             <Modifier Name="stat:Confidence" Value="-5" />
             <Modifier Name="stat:Obedience" Value="5" />

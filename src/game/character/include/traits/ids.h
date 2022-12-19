@@ -5,180 +5,283 @@
 namespace traits {
 
 
-    // Sexual.xml
-    /// She has no problems sleeping with guys or gals.
-    constexpr const char* BISEXUAL = "Bisexual";
+    // Addiction.xml
+    /// This girl is addicted to alcohol.
+    constexpr const char* ALCOHOLIC = "Alcoholic";
 
-    /// This girl considers herself a lesbian. (+Lesbian)
-    constexpr const char* LESBIAN = "Lesbian";
+    /// This girl is addicted to the taste of semen and will even trick her customers to
+    /// taste their delicious cum.
+    constexpr const char* CUM_ADDICT = "Cum Addict";
 
-    /// She prefers to have sex with members of the opposite sex.
-    constexpr const char* STRAIGHT = "Straight";
+    /// This girl is addicted to the mellow fairy dust. (drug) (+happiness) (-looks)
+    constexpr const char* FAIRY_DUST_ADDICT = "Fairy Dust Addict";
 
-    /// If the guy isn't satisfying her she can make him think he is. Not as good as the
-    /// real thing, but most guys can't notice. Negates slow orgasms. (+sex ability)
-    constexpr const char* FAKE_ORGASM_EXPERT = "Fake Orgasm Expert";
+    /// A girl addicted to the gas emitted from the rare Shroud Mushroom. (drug)
+    /// (+happiness) (-looks)
+    constexpr const char* SHROUD_ADDICT = "Shroud Addict";
 
-    /// This girl cums faster than a dragon in heat. She always leaves men feeling good
-    /// about themselves and enjoys herself to boot. (+sex skills)
-    constexpr const char* FAST_ORGASMS = "Fast Orgasms";
+    /// This girl is addicted to nicotine.
+    constexpr const char* SMOKER = "Smoker";
 
-    /// The poor girl just can't get herself off. Guys feel like they are just doing the
-    /// rounds with her. (negated by the fast orgasms trait) (-sex skills)
-    constexpr const char* SLOW_ORGASMS = "Slow Orgasms";
+    /// This girl is addicted to the blood of the sex crazed plant Viras. (drug)
+    /// (+happiness) (-looks)
+    constexpr const char* VIRAS_BLOOD_ADDICT = "Viras Blood Addict";
 
-    /// This girl can achieve many orgasms in rapid succession.
-    constexpr const char* MULTI_ORGASMIC = "Multi-Orgasmic";
-
-    /// This girl has never had sex before.
-    constexpr const char* VIRGIN = "Virgin";
-
-    /// This girl loves the sex, but will have to learn to let the guy have his moment.
-    /// (+libedo)
-    constexpr const char* NYMPHOMANIAC = "Nymphomaniac";
-
-    /// This girl has no interest in sex, her libido does not increase very fast.
-    /// (-libedo)
-    constexpr const char* CHASTE = "Chaste";
-
-    /// Putting things down her mouth is no big deal for her. Just not too much and not
-    /// too fast.
-    constexpr const char* NO_GAG_REFLEX = "No Gag Reflex";
-
-    /// This girl just isn't used to sticking things down her throat.
-    constexpr const char* STRONG_GAG_REFLEX = "Strong Gag Reflex";
-
-    /// She can't handle dicks in her mouth.
-    constexpr const char* GAG_REFLEX = "Gag Reflex";
-
-    /// She can really handle big dicks in her mouth.
-    constexpr const char* DEEP_THROAT = "Deep Throat";
-
-    /// Unusually fertile, this girl is capable of giving birth to multiple children.
-    constexpr const char* BROODMOTHER = "Broodmother";
-
-    /// This girl gets pregnant very easily.
-    constexpr const char* FERTILE = "Fertile";
-
-    /// This girl has lost the ability to give birth. (can't get pregnant)
-    constexpr const char* STERILE = "Sterile";
-
-    /// She has no problems trying different things sexually and will accept anything
-    /// as-is.
-    constexpr const char* OPEN_MINDED = "Open Minded";
-
-    /// Her lips are gorgeously full and they look even better when they're sucking on
-    /// something.
-    constexpr const char* DICK_SUCKING_LIPS = "Dick-Sucking Lips";
+    /// This girl has had an addiction in the past.
+    constexpr const char* FORMER_ADDICT = "Former Addict";
 
 
 
-    // TattoosPiercings.xml
-    /// Normally the slave brand goes on the shoulder, but for some reason hers was
-    /// placed on her ass.
-    constexpr const char* BRANDED_ON_THE_ASS = "Branded on the Ass";
+    // Defects.xml
+    /// This girl has a huge scar where her nipple used to be.
+    constexpr const char* MISSING_NIPPLE = "Missing Nipple";
 
-    /// Normally the slave brand goes on the shoulder, but for some reason hers was
-    /// placed on her forehead.
-    constexpr const char* BRANDED_ON_THE_FOREHEAD = "Branded on the Forehead";
+    /// This girl is missing a finger.
+    constexpr const char* MISSING_FINGER = "Missing Finger";
 
-    /// She has some type of image tattooed on her body, be it a bird, a heart, or the
-    /// name of an old lover.
-    constexpr const char* TATTOOED = "Tattooed";
+    /// This girl is missing several fingers.
+    constexpr const char* MISSING_FINGERS = "Missing Fingers";
 
-    /// She has some small tattoos on her body. If you ask nicely, she may show you.
-    constexpr const char* SMALL_TATTOOS = "Small Tattoos";
+    /// This girl is missing a couple of teeth.
+    constexpr const char* MISSING_TEETH = "Missing Teeth";
 
-    /// This poor girl has small scars. (-looks)
-    constexpr const char* SMALL_SCARS = "Small Scars";
+    /// This girl is missing a toe.
+    constexpr const char* MISSING_TOE = "Missing Toe";
 
-    /// This girl has some scars that look kinda cool and dangerous.
-    constexpr const char* COOL_SCARS = "Cool Scars";
+    /// This girl is missing several toes.
+    constexpr const char* MISSING_TOES = "Missing Toes";
 
-    /// She has her tongue pierced.
-    constexpr const char* PIERCED_TONGUE = "Pierced Tongue";
+    /// This girl is deformed in some way.
+    constexpr const char* MALFORMED = "Malformed";
 
-    /// This girl has a pierced nose.
-    constexpr const char* PIERCED_NOSE = "Pierced Nose";
+    /// This girl has no arms.
+    constexpr const char* NO_ARMS = "No Arms";
 
-    /// This girl has a pierced navel.
-    constexpr const char* PIERCED_NAVEL = "Pierced Navel";
+    /// This girl no longer has a clit. This was probably done to help her concentrate
+    /// on her work.
+    constexpr const char* NO_CLIT = "No Clit";
 
-    /// She has had her nipples pierced.
-    constexpr const char* PIERCED_NIPPLES = "Pierced Nipples";
+    /// This girl has legs but nothing on the ends.
+    constexpr const char* NO_FEET = "No Feet";
 
-    /// She has tattoos over most of her body. It is very hard for her to cover them
-    /// all.
-    constexpr const char* HEAVILY_TATTOOED = "Heavily Tattooed";
+    /// This girl has arms but nothing on the ends.
+    constexpr const char* NO_HANDS = "No Hands";
 
-    /// The poor girl has some horrid scars on her body. (-looks)
-    constexpr const char* HORRIFIC_SCARS = "Horrific Scars";
+    /// This girl has no legs.
+    constexpr const char* NO_LEGS = "No Legs";
 
-    /// This girl has bruises all over her body.
-    constexpr const char* BRUISES = "Bruises";
+    /// ???
+    constexpr const char* CLIPPED_TENDONS = "Clipped Tendons";
 
-    /// She has had her clit pierced.
-    constexpr const char* PIERCED_CLIT = "Pierced Clit";
+    /// This girl was born without nipples.
+    constexpr const char* NO_NIPPLES = "No Nipples";
+
+    /// This girl no longer has any teeth. Customers need not fear any 'accidents' and
+    /// are willing to use her more roughly. (-looks)
+    constexpr const char* NO_TEETH = "No Teeth";
+
+    /// This girl has only one arm.
+    constexpr const char* ONE_ARM = "One Arm";
+
+    /// This girl has lost an eye somewhere along the way.
+    constexpr const char* ONE_EYE = "One Eye";
+
+    /// This girl has legs but one is missing the foot.
+    constexpr const char* ONE_FOOT = "One Foot";
+
+    /// This girl has arms but one is missing the hand.
+    constexpr const char* ONE_HAND = "One Hand";
+
+    /// This girl has only one leg.
+    constexpr const char* ONE_LEG = "One Leg";
+
+    /// This girl has no tongue.
+    constexpr const char* NO_TONGUE = "No Tongue";
+
+    /// This girl is blind and cannot see.
+    constexpr const char* BLIND = "Blind";
+
+    /// This girl needs glasses to see; without them, she is almost blind.
+    constexpr const char* BAD_EYESIGHT = "Bad Eyesight";
+
+    /// This girl is deaf and cannot hear.
+    constexpr const char* DEAF = "Deaf";
+
+    /// This girl is mute and cannot speak.
+    constexpr const char* MUTE = "Mute";
+
+    /// She thinks she can sing, but no one else does.
+    constexpr const char* TONE_DEAF = "Tone Deaf";
+
+    /// This girl is mentaly retarded.
+    constexpr const char* RETARDED = "Retarded";
 
 
 
-    // Social.xml
-    /// Increased Charisma. She is a natural-born leader, negotiator, diplomat, and fast
-    /// talker. Damn, she's smooth. (+looks)
-    constexpr const char* CHARISMATIC = "Charismatic";
+    // Diseases.xml
+    /// She has AIDS, a fatal disease. If you can't track down a cure, she'll likely
+    /// die. (disease)
+    constexpr const char* AIDS = "AIDS";
 
-    /// This girl has a lot of natural appealing wit on her side, in a non-sexual sort
-    /// of way. Higher Charisma, and Natural Looks. (+looks)
-    constexpr const char* CHARMING = "Charming";
+    /// This nasty disease will cause pain for both her and the customers during
+    /// urination. (disease)
+    constexpr const char* CHLAMYDIA = "Chlamydia";
 
-    /// She's got style and flair. (+looks)
-    constexpr const char* ELEGANT = "Elegant";
+    /// She has contracted herpes. Customers will not be happy if she gives it to them.
+    /// (disease)
+    constexpr const char* HERPES = "Herpes";
 
-    /// She loves to show her body.
-    constexpr const char* EXHIBITIONIST = "Exhibitionist";
+    /// This disease can cause death if left untreated. The sores are just the early
+    /// symptoms. (disease)
+    constexpr const char* SYPHILIS = "Syphilis";
 
-    /// This girl has trouble interacting with people she does not know.
-    constexpr const char* SHY = "Shy";
 
-    /// This girl has gathered quite the following.
-    constexpr const char* IDOL = "Idol";
 
-    /// This blue-blooded girl comes from an aristocratic, high-class background.
-    constexpr const char* NOBLE = "Noble";
+    // Figure.xml
+    /// She is a very heavy girl.
+    constexpr const char* FAT = "Fat";
 
-    /// She is a princess.
-    constexpr const char* PRINCESS = "Princess";
+    /// This girl has more than a few soft bits. Plenty of supple flesh to squeeze and
+    /// pinch.
+    constexpr const char* PLUMP = "Plump";
 
-    /// She is a queen.
-    constexpr const char* QUEEN = "Queen";
+    /// This girl has a really good figure.
+    constexpr const char* GREAT_FIGURE = "Great Figure";
 
-    /// Something about this girl is just so sexy, everything she does is hot.
-    /// (+customer attraction)
-    constexpr const char* SEXY_AIR = "Sexy Air";
+    /// Her body has the highly desirable shape of an hourglass - big tits, thin waist,
+    /// wide hips and ass.
+    constexpr const char* HOURGLASS_FIGURE = "Hourglass Figure";
 
-    /// She definitely wouldn't make a good wife. A good whore on the other hand...
-    constexpr const char* SLUT = "Slut";
+    /// This girl has an athletic, well-toned body with visible muscles. She definitely
+    /// works out.
+    constexpr const char* MUSCULAR = "Muscular";
 
-    /// This girl knows how to handle her alcohol.
-    constexpr const char* SOCIAL_DRINKER = "Social Drinker";
+    /// This girl is tall. Her height might be a bit intimidating...
+    constexpr const char* GIANT = "Giant";
 
-    /// This person is just cool to be with. (+looks)
-    constexpr const char* COOL_PERSON = "Cool Person";
+    /// This girl is short.
+    constexpr const char* SHORT = "Short";
 
-    /// This girl is just very cute.
-    constexpr const char* CUTE = "Cute";
+    /// This girl is considered tall.
+    constexpr const char* TALL = "Tall";
 
-    /// This girl is a klutz, but somehow, that just makes her more attractive.
-    constexpr const char* DOJIKKO = "Dojikko";
+    /// This girl is extremly short.
+    constexpr const char* DWARF = "Dwarf";
 
-    /// Bookish and clumsy but kinda cute all the same. (+brains)
-    constexpr const char* NERD = "Nerd";
+    /// A girl no longer, this woman's lascivious body is a fruit ripe for the picking.
+    constexpr const char* MATURE_BODY = "Mature Body";
 
-    /// She has a boyfriend.
-    constexpr const char* HAS_BOY_FRIEND = "Has Boy Friend";
+    /// This girl has really large hips.
+    constexpr const char* LARGE_HIPS = "Large Hips";
 
-    /// She has a girlfriend.
-    constexpr const char* HAS_GIRL_FRIEND = "Has Girl Friend";
+    /// The legs on this girl go all the way to heaven.
+    constexpr const char* LONG_LEGS = "Long Legs";
+
+
+
+    // JobModifiers.xml
+
+
+    // Jobs.xml
+    /// She is a born actress, ready for whatever the director throws at her.
+    constexpr const char* ACTRESS = "Actress";
+
+    /// She's starred in so many movies that almost every man in the country knows her
+    /// name.
+    constexpr const char* PORN_STAR = "Porn Star";
+
+    /// This girl either cooked professionally or for personal reasons. Either way, she
+    /// is a master in the kitchen.
+    constexpr const char* CHEF = "Chef";
+
+    /// This girl spent a lot of time in the country and knows plants and animals.
+    constexpr const char* COUNTRY_GAL = "Country Gal";
+
+    /// She has a knack for getting people to do things her way.
+    constexpr const char* DIRECTOR = "Director";
+
+    /// She has already had extensive medical training.
+    constexpr const char* DOCTOR = "Doctor";
+
+    /// She grew up on the family farm.
+    constexpr const char* FARMERS_DAUGHTER = "Farmers Daughter";
+
+    /// This girl has lived in big cities most of her life.
+    constexpr const char* CITY_GIRL = "City Girl";
+
+    /// This girl has worked on a farm most of her life, and is great with plants and
+    /// animals.
+    constexpr const char* FARMER = "Farmer";
+
+    /// This girl is well-trained in tracking and capturing or killing wild animals.
+    constexpr const char* HUNTER = "Hunter";
+
+    /// This girl used to hold an elected office.
+    constexpr const char* FORMER_OFFICIAL = "Former Official";
+
+    /// This girl can fix anything. Duct tape and paperclips are her favorite tools.
+    constexpr const char* HANDYMAN = "Handyman";
+
+    /// This girl was a vigilante out for justice or revenge.
+    constexpr const char* HEROINE = "Heroine";
+
+    /// This girl used to be homeless, living on the streets.
+    constexpr const char* HOMELESS = "Homeless";
+
+    /// This girl has either worked or has been trained as a maid.
+    constexpr const char* MAID = "Maid";
+
+    /// This girl knows how to blend drinks to her customer's taste.
+    constexpr const char* MIXOLOGIST = "Mixologist";
+
+    /// She used to live a life of simple purity and devotion.
+    constexpr const char* PRIESTESS = "Priestess";
+
+    /// She can sing really well and move customers with just her voice.
+    constexpr const char* SINGER = "Singer";
+
+    /// This girl used to be a teacher at a neighborhood school.
+    constexpr const char* TEACHER = "Teacher";
+
+    /// This girl has worked in the service industry in the past.
+    constexpr const char* WAITRESS = "Waitress";
+
+    /// This girl loves adventure. (+combat skills/stats)
+    constexpr const char* ADVENTURER = "Adventurer";
+
+    /// This girl has been trained to kill, if the price is right. (+combat
+    /// skills/stats)
+    constexpr const char* ASSASSIN = "Assassin";
+
+    /// This girl has serviced thousands of customers, willingly or unwillingly. That
+    /// has put a toll on her body.
+    constexpr const char* WHORE = "Whore";
+
+
+
+    // Magic.xml
+    /// This girl can fly.
+    constexpr const char* FLIGHT = "Flight";
+
+    /// The girl emits her own special scent to draw in customers.
+    constexpr const char* NATURAL_PHEROMONES = "Natural Pheromones";
+
+    /// This girl can barely use magic, if at all.
+    constexpr const char* MUGGLE = "Muggle";
+
+    /// This girl has very little magical power within her.
+    constexpr const char* WEAK_MAGIC = "Weak Magic";
+
+    /// This girl has strong power within her. Be careful you don't give her too much
+    /// trouble.
+    constexpr const char* STRONG_MAGIC = "Strong Magic";
+
+    /// This girl has great power within her. She may become too powerful for you to
+    /// handle.
+    constexpr const char* POWERFUL_MAGIC = "Powerful Magic";
+
+    /// This girl always seems to know what a guy wants. (+magic skills/stats)
+    constexpr const char* PSYCHIC = "Psychic";
 
 
 
@@ -279,387 +382,43 @@ namespace traits {
 
 
 
-    // Defects.xml
-    /// This girl has a huge scar where her nipple used to be.
-    constexpr const char* MISSING_NIPPLE = "Missing Nipple";
+    // Other.xml
+    /// This girl is a child of your loins.
+    constexpr const char* YOUR_DAUGHTER = "Your Daughter";
 
-    /// This girl is missing a finger.
-    constexpr const char* MISSING_FINGER = "Missing Finger";
+    /// This girl is one of your wives.
+    constexpr const char* YOUR_WIFE = "Your Wife";
 
-    /// This girl is missing several fingers.
-    constexpr const char* MISSING_FINGERS = "Missing Fingers";
+    /// She recently got out of surgery and should be resting.
+    constexpr const char* OUT_PATIENT_SURGERY = "Out-Patient Surgery";
 
-    /// This girl is missing a couple of teeth.
-    constexpr const char* MISSING_TEETH = "Missing Teeth";
+    /// Her body is currently being physically possessed by an evil spirit.
+    constexpr const char* SPIRIT_POSSESSED = "Spirit Possessed";
 
-    /// This girl is missing a toe.
-    constexpr const char* MISSING_TOE = "Missing Toe";
+    /// She recently had Botox injected into her face. If she is happy about it, no one
+    /// can tell.
+    constexpr const char* BOTOX_TREATMENT = "Botox Treatment";
 
-    /// This girl is missing several toes.
-    constexpr const char* MISSING_TOES = "Missing Toes";
+    /// Her body is currently being physically possessed by a demon.
+    constexpr const char* DEMON_POSSESSED = "Demon Possessed";
 
-    /// This girl is deformed in some way.
-    constexpr const char* MALFORMED = "Malformed";
+    /// This girl was taken from her family.
+    constexpr const char* KIDNAPPED = "Kidnapped";
 
-    /// This girl has no arms.
-    constexpr const char* NO_ARMS = "No Arms";
+    /// This girl was was a customer but broke the law in some way, allowing you to take
+    /// her as a slave.
+    constexpr const char* EMPRISONED_CUSTOMER = "Emprisoned Customer";
 
-    /// This girl no longer has a clit. This was probably done to help her concentrate
-    /// on her work.
-    constexpr const char* NO_CLIT = "No Clit";
+    /// You have recently punished this girl. Her fear and obedience are increased.
+    constexpr const char* RECENTLY_PUNISHED = "Recently Punished";
 
-    /// This girl has legs but nothing on the ends.
-    constexpr const char* NO_FEET = "No Feet";
+    /// You have recently scolded this girl. Her fear and obedience are increased.
+    /// Scolding her again will be less effective.
+    constexpr const char* RECENTLY_SCOLDED = "Recently Scolded";
 
-    /// This girl has arms but nothing on the ends.
-    constexpr const char* NO_HANDS = "No Hands";
 
-    /// This girl has no legs.
-    constexpr const char* NO_LEGS = "No Legs";
 
-    /// ???
-    constexpr const char* CLIPPED_TENDONS = "Clipped Tendons";
-
-    /// This girl was born without nipples.
-    constexpr const char* NO_NIPPLES = "No Nipples";
-
-    /// This girl no longer has any teeth. Customers need not fear any 'accidents' and
-    /// are willing to use her more roughly. (-looks)
-    constexpr const char* NO_TEETH = "No Teeth";
-
-    /// This girl has only one arm.
-    constexpr const char* ONE_ARM = "One Arm";
-
-    /// This girl has lost an eye somewhere along the way.
-    constexpr const char* ONE_EYE = "One Eye";
-
-    /// This girl has legs but one is missing the foot.
-    constexpr const char* ONE_FOOT = "One Foot";
-
-    /// This girl has arms but one is missing the hand.
-    constexpr const char* ONE_HAND = "One Hand";
-
-    /// This girl has only one leg.
-    constexpr const char* ONE_LEG = "One Leg";
-
-    /// This girl has no tongue.
-    constexpr const char* NO_TONGUE = "No Tongue";
-
-    /// This girl is blind and cannot see.
-    constexpr const char* BLIND = "Blind";
-
-    /// This girl needs glasses to see; without them, she is almost blind.
-    constexpr const char* BAD_EYESIGHT = "Bad Eyesight";
-
-    /// This girl is deaf and cannot hear.
-    constexpr const char* DEAF = "Deaf";
-
-    /// This girl is mute and cannot speak.
-    constexpr const char* MUTE = "Mute";
-
-    /// She thinks she can sing, but no one else does.
-    constexpr const char* TONE_DEAF = "Tone Deaf";
-
-    /// This girl is mentaly retarded.
-    constexpr const char* RETARDED = "Retarded";
-
-
-
-    // Jobs.xml
-    /// She is a born actress, ready for whatever the director throws at her.
-    constexpr const char* ACTRESS = "Actress";
-
-    /// She's starred in so many movies that almost every man in the country knows her
-    /// name.
-    constexpr const char* PORN_STAR = "Porn Star";
-
-    /// This girl either cooked professionally or for personal reasons. Either way, she
-    /// is a master in the kitchen.
-    constexpr const char* CHEF = "Chef";
-
-    /// This girl spent a lot of time in the country and knows plants and animals.
-    constexpr const char* COUNTRY_GAL = "Country Gal";
-
-    /// She has a knack for getting people to do things her way.
-    constexpr const char* DIRECTOR = "Director";
-
-    /// She has already had extensive medical training.
-    constexpr const char* DOCTOR = "Doctor";
-
-    /// She grew up on the family farm.
-    constexpr const char* FARMERS_DAUGHTER = "Farmers Daughter";
-
-    /// This girl has lived in big cities most of her life.
-    constexpr const char* CITY_GIRL = "City Girl";
-
-    /// This girl has worked on a farm most of her life, and is great with plants and
-    /// animals.
-    constexpr const char* FARMER = "Farmer";
-
-    /// This girl is well-trained in tracking and capturing or killing wild animals.
-    constexpr const char* HUNTER = "Hunter";
-
-    /// This girl used to hold an elected office.
-    constexpr const char* FORMER_OFFICIAL = "Former Official";
-
-    /// This girl can fix anything. Duct tape and paperclips are her favorite tools.
-    constexpr const char* HANDYMAN = "Handyman";
-
-    /// This girl was a vigilante out for justice or revenge.
-    constexpr const char* HEROINE = "Heroine";
-
-    /// This girl used to be homeless, living on the streets.
-    constexpr const char* HOMELESS = "Homeless";
-
-    /// This girl has either worked or has been trained as a maid.
-    constexpr const char* MAID = "Maid";
-
-    /// This girl knows how to blend drinks to her customer's taste.
-    constexpr const char* MIXOLOGIST = "Mixologist";
-
-    /// She used to live a life of simple purity and devotion.
-    constexpr const char* PRIESTESS = "Priestess";
-
-    /// She can sing really well and move customers with just her voice.
-    constexpr const char* SINGER = "Singer";
-
-    /// This girl used to be a teacher at a neighborhood school.
-    constexpr const char* TEACHER = "Teacher";
-
-    /// This girl has worked in the service industry in the past.
-    constexpr const char* WAITRESS = "Waitress";
-
-    /// This girl loves adventure. (+combat skills/stats)
-    constexpr const char* ADVENTURER = "Adventurer";
-
-    /// This girl has been trained to kill, if the price is right. (+combat
-    /// skills/stats)
-    constexpr const char* ASSASSIN = "Assassin";
-
-    /// This girl has serviced thousands of customers, willingly or unwillingly. That
-    /// has put a toll on her body.
-    constexpr const char* WHORE = "Whore";
-
-
-
-    // JobModifiers.xml
-
-
-    // Figure.xml
-    /// She is a very heavy girl.
-    constexpr const char* FAT = "Fat";
-
-    /// This girl has more than a few soft bits. Plenty of supple flesh to squeeze and
-    /// pinch.
-    constexpr const char* PLUMP = "Plump";
-
-    /// This girl has a really good figure.
-    constexpr const char* GREAT_FIGURE = "Great Figure";
-
-    /// Her body has the highly desirable shape of an hourglass - big tits, thin waist,
-    /// wide hips and ass.
-    constexpr const char* HOURGLASS_FIGURE = "Hourglass Figure";
-
-    /// This girl has an athletic, well-toned body with visible muscles. She definitely
-    /// works out.
-    constexpr const char* MUSCULAR = "Muscular";
-
-    /// This girl is tall. Her height might be a bit intimidating...
-    constexpr const char* GIANT = "Giant";
-
-    /// This girl is short.
-    constexpr const char* SHORT = "Short";
-
-    /// This girl is considered tall.
-    constexpr const char* TALL = "Tall";
-
-    /// This girl is extremly short.
-    constexpr const char* DWARF = "Dwarf";
-
-    /// A girl no longer, this woman's lascivious body is a fruit ripe for the picking.
-    constexpr const char* MATURE_BODY = "Mature Body";
-
-    /// This girl has really large hips.
-    constexpr const char* LARGE_HIPS = "Large Hips";
-
-    /// The legs on this girl go all the way to heaven.
-    constexpr const char* LONG_LEGS = "Long Legs";
-
-
-
-    // Species.xml
-    /// This girl is technically alive, but not in a medical sense.
-    constexpr const char* UNDEAD = "Undead";
-
-    /// This girl died, but she got better... or did she?
-    constexpr const char* ZOMBIE = "Zombie";
-
-    /// This girl is dead, nothing but bones held together by a magical force. Her
-    /// spirit is strong but her flesh is gone.
-    constexpr const char* SKELETON = "Skeleton";
-
-    /// This girl is an undead blood sucker.
-    constexpr const char* VAMPIRE = "Vampire";
-
-    /// She is an angel from above.
-    constexpr const char* ANGEL = "Angel";
-
-    /// She keeps going and going and going... She can never get tired, but she can get
-    /// hurt or sad.
-    constexpr const char* BATTERY_OPERATED = "Battery Operated";
-
-    /// This girl is a dog, literally.
-    constexpr const char* CANINE = "Canine";
-
-    /// This girl is part feline.
-    constexpr const char* CAT_GIRL = "Cat Girl";
-
-    /// This girl is not alive or real - she's a machine or has been created with magic.
-    /// Her health doesn't go down or up quickly. (hard to hurt)
-    constexpr const char* CONSTRUCT = "Construct";
-
-    /// This girl is part cow.
-    constexpr const char* COW_GIRL = "Cow Girl";
-
-    /// This girl comes from the abyss.
-    constexpr const char* DEMON = "Demon";
-
-    /// This girl has a plant-like body.
-    constexpr const char* DRYAD = "Dryad";
-
-    /// This girl gives birth to eggs instead of live young.
-    constexpr const char* EGG_LAYER = "Egg Layer";
-
-    /// This girl grew up in the woodlands and has pointy ears.
-    constexpr const char* ELF = "Elf";
-
-    /// This girl has the body of a horse.
-    constexpr const char* EQUINE = "Equine";
-
-    /// She used to be a goddess, until she was stripped of her powers and thrown to the
-    /// slavers.
-    constexpr const char* FALLEN_GODDESS = "Fallen Goddess";
-
-    /// This girl has short soft fur covering most of her body.
-    constexpr const char* FURRY = "Furry";
-
-    /// This girl is a hermaphrodite, by magic or birth. Only a few guys will sleep with
-    /// her.
-    constexpr const char* FUTANARI = "Futanari";
-
-    /// She's a goddess from above.
-    constexpr const char* GODDESS = "Goddess";
-
-    /// This girl is half human and half... something else.
-    constexpr const char* HALF_BREED = "Half-Breed";
-
-    /// This girl has lost a limb, and has a machine or magically animated replacement
-    /// one. (hard to hurt)
-    constexpr const char* HALF_CONSTRUCT = "Half-Construct";
-
-    /// This girl never gets tired or loses health. (can't get tired or hurt)
-    constexpr const char* INCORPOREAL = "Incorporeal";
-
-    /// This girl is not human, which may appeal to some customers.
-    constexpr const char* NOT_HUMAN = "Not Human";
-
-    /// This girl has a Reptilian body.
-    constexpr const char* REPTILIAN = "Reptilian";
-
-    /// This girl can change her shape to anything.
-    constexpr const char* SHAPE_SHIFTER = "Shape Shifter";
-
-    /// This girl has a tail-like appendage instead of legs.
-    constexpr const char* SLITHERER = "Slitherer";
-
-    /// She needs direct sunlight for a lengthy period to survive.
-    constexpr const char* SOLAR_POWERED = "Solar Powered";
-
-    /// She is a demon who feeds on sexual energies.
-    constexpr const char* SUCCUBUS = "Succubus";
-
-    /// This girl was born with only one eye.
-    constexpr const char* CYCLOPS = "Cyclops";
-
-    /// This girl has a tail that she can't control.
-    constexpr const char* PLAYFUL_TAIL = "Playful Tail";
-
-    /// This girl has a tail that she can use like a third hand.
-    constexpr const char* PREHENSILE_TAIL = "Prehensile Tail";
-
-    /// This girl has wings.
-    constexpr const char* WINGS = "Wings";
-
-
-
-    // Addiction.xml
-    /// This girl is addicted to alcohol.
-    constexpr const char* ALCOHOLIC = "Alcoholic";
-
-    /// This girl is addicted to the taste of semen and will even trick her customers to
-    /// taste their delicious cum.
-    constexpr const char* CUM_ADDICT = "Cum Addict";
-
-    /// This girl is addicted to the mellow fairy dust. (drug) (+happiness) (-looks)
-    constexpr const char* FAIRY_DUST_ADDICT = "Fairy Dust Addict";
-
-    /// A girl addicted to the gas emmited from the rare Shroud Mushroom. (drug)
-    /// (+happiness) (-looks)
-    constexpr const char* SHROUD_ADDICT = "Shroud Addict";
-
-    /// This girl is addicted to nicotine.
-    constexpr const char* SMOKER = "Smoker";
-
-    /// This girl is addicted to the blood of the sex crazed plant Viras. (drug)
-    /// (+happiness) (-looks)
-    constexpr const char* VIRAS_BLOOD_ADDICT = "Viras Blood Addict";
-
-    /// This girl has had an addiction in the past.
-    constexpr const char* FORMER_ADDICT = "Former Addict";
-
-
-
-    // Magic.xml
-    /// This girl can fly.
-    constexpr const char* FLIGHT = "Flight";
-
-    /// The girl emits her own special scent to draw in customers.
-    constexpr const char* NATURAL_PHEROMONES = "Natural Pheromones";
-
-    /// This girl can barely use magic, if at all.
-    constexpr const char* MUGGLE = "Muggle";
-
-    /// This girl has very little magical power within her.
-    constexpr const char* WEAK_MAGIC = "Weak Magic";
-
-    /// This girl has strong power within her. Be careful you don't give her too much
-    /// trouble.
-    constexpr const char* STRONG_MAGIC = "Strong Magic";
-
-    /// This girl has great power within her. She may become too powerful for you to
-    /// handle.
-    constexpr const char* POWERFUL_MAGIC = "Powerful Magic";
-
-    /// This girl always seems to know what a guy wants. (+magic skills/stats)
-    constexpr const char* PSYCHIC = "Psychic";
-
-
-
-    // Skills.xml
-    /// This girl is quick on her feet and swift with her hands. She has natural gift of
-    /// dexterity.
-    constexpr const char* AGILE = "Agile";
-
-    /// This girl knows how to whoop asses when necessary.
-    constexpr const char* BRAWLER = "Brawler";
-
-    /// This girl is quick on her feet. She can usually outrun her enemies if she can't
-    /// beat them.
-    constexpr const char* FLEET_OF_FOOT = "Fleet of Foot";
-
-    /// This girl can fight well and is tough. (+combat skills/stats)
-    constexpr const char* STRONG = "Strong";
-
+    // OtherModifiers.xml
 
 
     // Physical.xml
@@ -800,62 +559,303 @@ namespace traits {
 
 
 
-    // Diseases.xml
-    /// She has AIDS, a fatal disease. If you can't track down a cure, she'll likely
-    /// die. (disease)
-    constexpr const char* AIDS = "AIDS";
+    // Sexual.xml
+    /// She has no problems sleeping with guys or gals.
+    constexpr const char* BISEXUAL = "Bisexual";
 
-    /// This nasty disease will cause pain for both her and the customers during
-    /// urination. (disease)
-    constexpr const char* CHLAMYDIA = "Chlamydia";
+    /// This girl considers herself a lesbian. (+Lesbian)
+    constexpr const char* LESBIAN = "Lesbian";
 
-    /// She has contracted herpes. Customers will not be happy if she gives it to them.
-    /// (disease)
-    constexpr const char* HERPES = "Herpes";
+    /// She prefers to have sex with members of the opposite sex.
+    constexpr const char* STRAIGHT = "Straight";
 
-    /// This disease can cause death if left untreated. The sores are just the early
-    /// symptoms. (disease)
-    constexpr const char* SYPHILIS = "Syphilis";
+    /// If the guy isn't satisfying her she can make him think he is. Not as good as the
+    /// real thing, but most guys can't notice. Negates slow orgasms. (+sex ability)
+    constexpr const char* FAKE_ORGASM_EXPERT = "Fake Orgasm Expert";
+
+    /// This girl cums faster than a dragon in heat. She always leaves men feeling good
+    /// about themselves and enjoys herself to boot. (+sex skills)
+    constexpr const char* FAST_ORGASMS = "Fast Orgasms";
+
+    /// The poor girl just can't get herself off. Guys feel like they are just doing the
+    /// rounds with her. (negated by the fast orgasms trait) (-sex skills)
+    constexpr const char* SLOW_ORGASMS = "Slow Orgasms";
+
+    /// This girl can achieve many orgasms in rapid succession.
+    constexpr const char* MULTI_ORGASMIC = "Multi-Orgasmic";
+
+    /// This girl has never had sex before.
+    constexpr const char* VIRGIN = "Virgin";
+
+    /// This girl loves the sex, but will have to learn to let the guy have his moment.
+    /// (+libedo)
+    constexpr const char* NYMPHOMANIAC = "Nymphomaniac";
+
+    /// This girl has no interest in sex, her libido does not increase very fast.
+    /// (-libedo)
+    constexpr const char* CHASTE = "Chaste";
+
+    /// Putting things down her mouth is no big deal for her. Just not too much and not
+    /// too fast.
+    constexpr const char* NO_GAG_REFLEX = "No Gag Reflex";
+
+    /// This girl just isn't used to sticking things down her throat.
+    constexpr const char* STRONG_GAG_REFLEX = "Strong Gag Reflex";
+
+    /// She can't handle dicks in her mouth.
+    constexpr const char* GAG_REFLEX = "Gag Reflex";
+
+    /// She can really handle big dicks in her mouth.
+    constexpr const char* DEEP_THROAT = "Deep Throat";
+
+    /// Unusually fertile, this girl is capable of giving birth to multiple children.
+    constexpr const char* BROODMOTHER = "Broodmother";
+
+    /// This girl gets pregnant very easily.
+    constexpr const char* FERTILE = "Fertile";
+
+    /// This girl has lost the ability to give birth. (can't get pregnant)
+    constexpr const char* STERILE = "Sterile";
+
+    /// She has no problems trying different things sexually and will accept anything
+    /// as-is.
+    constexpr const char* OPEN_MINDED = "Open Minded";
+
+    /// Her lips are gorgeously full and they look even better when they're sucking on
+    /// something.
+    constexpr const char* DICK_SUCKING_LIPS = "Dick-Sucking Lips";
 
 
 
-    // Other.xml
-    /// This girl is a child of your loins.
-    constexpr const char* YOUR_DAUGHTER = "Your Daughter";
+    // Skills.xml
+    /// This girl is quick on her feet and swift with her hands. She has natural gift of
+    /// dexterity.
+    constexpr const char* AGILE = "Agile";
 
-    /// This girl is one of your wives.
-    constexpr const char* YOUR_WIFE = "Your Wife";
+    /// This girl knows how to whoop asses when necessary.
+    constexpr const char* BRAWLER = "Brawler";
 
-    /// She recently got out of surgery and should be resting.
-    constexpr const char* OUT_PATIENT_SURGERY = "Out-Patient Surgery";
+    /// This girl is quick on her feet. She can usually outrun her enemies if she can't
+    /// beat them.
+    constexpr const char* FLEET_OF_FOOT = "Fleet of Foot";
 
-    /// Her body is currently being physically possessed by an evil spirit.
-    constexpr const char* SPIRIT_POSSESSED = "Spirit Possessed";
-
-    /// She recently had Botox injected into her face. If she is happy about it, no one
-    /// can tell.
-    constexpr const char* BOTOX_TREATMENT = "Botox Treatment";
-
-    /// Her body is currently being physically possessed by a demon.
-    constexpr const char* DEMON_POSSESSED = "Demon Possessed";
-
-    /// This girl was taken from her family.
-    constexpr const char* KIDNAPPED = "Kidnapped";
-
-    /// This girl was was a customer but broke the law in some way, allowing you to take
-    /// her as a slave.
-    constexpr const char* EMPRISONED_CUSTOMER = "Emprisoned Customer";
-
-    /// You have recently punished this girl. Her fear and obedience are increased.
-    constexpr const char* RECENTLY_PUNISHED = "Recently Punished";
-
-    /// You have recently scolded this girl. Her fear and obedience are increased.
-    /// Scolding her again will be less effective.
-    constexpr const char* RECENTLY_SCOLDED = "Recently Scolded";
+    /// This girl can fight well and is tough. (+combat skills/stats)
+    constexpr const char* STRONG = "Strong";
 
 
 
-    // OtherModifiers.xml
+    // Social.xml
+    /// Increased Charisma. She is a natural-born leader, negotiator, diplomat, and fast
+    /// talker. Damn, she's smooth. (+looks)
+    constexpr const char* CHARISMATIC = "Charismatic";
+
+    /// This girl has a lot of natural appealing wit on her side, in a non-sexual sort
+    /// of way. Higher Charisma, and Natural Looks. (+looks)
+    constexpr const char* CHARMING = "Charming";
+
+    /// She's got style and flair. (+looks)
+    constexpr const char* ELEGANT = "Elegant";
+
+    /// She loves to show her body.
+    constexpr const char* EXHIBITIONIST = "Exhibitionist";
+
+    /// This girl has trouble interacting with people she does not know.
+    constexpr const char* SHY = "Shy";
+
+    /// This girl has gathered quite the following.
+    constexpr const char* IDOL = "Idol";
+
+    /// This blue-blooded girl comes from an aristocratic, high-class background.
+    constexpr const char* NOBLE = "Noble";
+
+    /// She is a princess.
+    constexpr const char* PRINCESS = "Princess";
+
+    /// She is a queen.
+    constexpr const char* QUEEN = "Queen";
+
+    /// Something about this girl is just so sexy, everything she does is hot.
+    /// (+customer attraction)
+    constexpr const char* SEXY_AIR = "Sexy Air";
+
+    /// She definitely wouldn't make a good wife. A good whore on the other hand...
+    constexpr const char* SLUT = "Slut";
+
+    /// This girl knows how to handle her alcohol.
+    constexpr const char* SOCIAL_DRINKER = "Social Drinker";
+
+    /// This person is just cool to be with. (+looks)
+    constexpr const char* COOL_PERSON = "Cool Person";
+
+    /// This girl is just very cute.
+    constexpr const char* CUTE = "Cute";
+
+    /// This girl is a klutz, but somehow, that just makes her more attractive.
+    constexpr const char* DOJIKKO = "Dojikko";
+
+    /// Bookish and clumsy but kinda cute all the same. (+brains)
+    constexpr const char* NERD = "Nerd";
+
+    /// She has a boyfriend.
+    constexpr const char* HAS_BOY_FRIEND = "Has Boy Friend";
+
+    /// She has a girlfriend.
+    constexpr const char* HAS_GIRL_FRIEND = "Has Girl Friend";
+
+
+
+    // Species.xml
+    /// This girl is technically alive, but not in a medical sense.
+    constexpr const char* UNDEAD = "Undead";
+
+    /// This girl died, but she got better... or did she?
+    constexpr const char* ZOMBIE = "Zombie";
+
+    /// This girl is dead, nothing but bones held together by a magical force. Her
+    /// spirit is strong but her flesh is gone.
+    constexpr const char* SKELETON = "Skeleton";
+
+    /// This girl is an undead blood sucker.
+    constexpr const char* VAMPIRE = "Vampire";
+
+    /// She is an angel from above.
+    constexpr const char* ANGEL = "Angel";
+
+    /// She keeps going and going and going... She can never get tired, but she can get
+    /// hurt or sad.
+    constexpr const char* BATTERY_OPERATED = "Battery Operated";
+
+    /// This girl is a dog, literally.
+    constexpr const char* CANINE = "Canine";
+
+    /// This girl is part feline.
+    constexpr const char* CAT_GIRL = "Cat Girl";
+
+    /// This girl is not alive or real - she's a machine or has been created with magic.
+    /// Her health doesn't go down or up quickly. (hard to hurt)
+    constexpr const char* CONSTRUCT = "Construct";
+
+    /// This girl is part cow.
+    constexpr const char* COW_GIRL = "Cow Girl";
+
+    /// This girl comes from the abyss.
+    constexpr const char* DEMON = "Demon";
+
+    /// This girl has a plant-like body.
+    constexpr const char* DRYAD = "Dryad";
+
+    /// This girl gives birth to eggs instead of live young.
+    constexpr const char* EGG_LAYER = "Egg Layer";
+
+    /// This girl grew up in the woodlands and has pointy ears.
+    constexpr const char* ELF = "Elf";
+
+    /// This girl has the body of a horse.
+    constexpr const char* EQUINE = "Equine";
+
+    /// She used to be a goddess, until she was stripped of her powers and thrown to the
+    /// slavers.
+    constexpr const char* FALLEN_GODDESS = "Fallen Goddess";
+
+    /// This girl has short soft fur covering most of her body.
+    constexpr const char* FURRY = "Furry";
+
+    /// This girl is a hermaphrodite, by magic or birth. Only a few guys will sleep with
+    /// her.
+    constexpr const char* FUTANARI = "Futanari";
+
+    /// She's a goddess from above.
+    constexpr const char* GODDESS = "Goddess";
+
+    /// This girl is half human and half... something else.
+    constexpr const char* HALF_BREED = "Half-Breed";
+
+    /// This girl has lost a limb, and has a machine or magically animated replacement
+    /// one. (hard to hurt)
+    constexpr const char* HALF_CONSTRUCT = "Half-Construct";
+
+    /// This girl never gets tired or loses health. (can't get tired or hurt)
+    constexpr const char* INCORPOREAL = "Incorporeal";
+
+    /// This girl is not human, which may appeal to some customers.
+    constexpr const char* NOT_HUMAN = "Not Human";
+
+    /// This girl has a Reptilian body.
+    constexpr const char* REPTILIAN = "Reptilian";
+
+    /// This girl can change her shape to anything.
+    constexpr const char* SHAPE_SHIFTER = "Shape Shifter";
+
+    /// This girl has a tail-like appendage instead of legs.
+    constexpr const char* SLITHERER = "Slitherer";
+
+    /// She needs direct sunlight for a lengthy period to survive.
+    constexpr const char* SOLAR_POWERED = "Solar Powered";
+
+    /// She is a demon who feeds on sexual energies.
+    constexpr const char* SUCCUBUS = "Succubus";
+
+    /// This girl was born with only one eye.
+    constexpr const char* CYCLOPS = "Cyclops";
+
+    /// This girl has a tail that she can't control.
+    constexpr const char* PLAYFUL_TAIL = "Playful Tail";
+
+    /// This girl has a tail that she can use like a third hand.
+    constexpr const char* PREHENSILE_TAIL = "Prehensile Tail";
+
+    /// This girl has wings.
+    constexpr const char* WINGS = "Wings";
+
+
+
+    // TattoosPiercings.xml
+    /// Normally the slave brand goes on the shoulder, but for some reason hers was
+    /// placed on her ass.
+    constexpr const char* BRANDED_ON_THE_ASS = "Branded on the Ass";
+
+    /// Normally the slave brand goes on the shoulder, but for some reason hers was
+    /// placed on her forehead.
+    constexpr const char* BRANDED_ON_THE_FOREHEAD = "Branded on the Forehead";
+
+    /// She has some type of image tattooed on her body, be it a bird, a heart, or the
+    /// name of an old lover.
+    constexpr const char* TATTOOED = "Tattooed";
+
+    /// She has some small tattoos on her body. If you ask nicely, she may show you.
+    constexpr const char* SMALL_TATTOOS = "Small Tattoos";
+
+    /// This poor girl has small scars. (-looks)
+    constexpr const char* SMALL_SCARS = "Small Scars";
+
+    /// This girl has some scars that look kinda cool and dangerous.
+    constexpr const char* COOL_SCARS = "Cool Scars";
+
+    /// She has her tongue pierced.
+    constexpr const char* PIERCED_TONGUE = "Pierced Tongue";
+
+    /// This girl has a pierced nose.
+    constexpr const char* PIERCED_NOSE = "Pierced Nose";
+
+    /// This girl has a pierced navel.
+    constexpr const char* PIERCED_NAVEL = "Pierced Navel";
+
+    /// She has had her nipples pierced.
+    constexpr const char* PIERCED_NIPPLES = "Pierced Nipples";
+
+    /// She has tattoos over most of her body. It is very hard for her to cover them
+    /// all.
+    constexpr const char* HEAVILY_TATTOOED = "Heavily Tattooed";
+
+    /// The poor girl has some horrid scars on her body. (-looks)
+    constexpr const char* HORRIFIC_SCARS = "Horrific Scars";
+
+    /// This girl has bruises all over her body.
+    constexpr const char* BRUISES = "Bruises";
+
+    /// She has had her clit pierced.
+    constexpr const char* PIERCED_CLIT = "Pierced Clit";
+
     namespace modifiers {
         constexpr const char* BREAST_SIZE = "breast-size";
         constexpr const char* COMBAT_HURT_MAGICAL = "combat.hurt.magical";

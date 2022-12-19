@@ -108,41 +108,29 @@ set(SRC cEvents.cpp
         images/sImageSpec.cpp
         )
 
+set(LUA_DOC_FILE ${RESOURCE_DIR}/Scripts/_traits.lua)
+
+make_generated_header(
+        TARGET "generate_traits_ids"
+        SCRIPT "traits.py"
+        SOURCE "Data/Traits"
+        SOURCE_FILE_TYPE "xml"
+        ARGS "${LUA_DOC_FILE}"
+        OUTPUT "character/include/traits/ids.h"
+        BYPRODUCTS "${LUA_DOC_FILE}")
+
+make_generated_header(
+        TARGET "generate_event_ids"
+        SCRIPT "events.py"
+        SOURCE "Scripts"
+        SOURCE_FILE_TYPE "lua"
+        OUTPUT "events.h")
+
 add_library(WmGameObjects OBJECT ${BUILDINGS_SRC} ${SCREENS_SRC} ${JOBS_SRC} ${CHARACTER_SRC} ${MOVIES_SRC} ${SRC})
 target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects)
+add_dependencies(WmGameObjects generate_event_ids)
 set_target_properties(WmGameObjects PROPERTIES CXX_STANDARD 14)
 target_include_directories(WmGameObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-
-find_package(Python3)
-set(SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../codegen/traits.py)
-set(TRAITS_DIR ${RESOURCE_DIR}/Data/Traits)
-set(TRAITS_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/character/include/traits/ids.h)
-set(LUA_DOC_FILE ${RESOURCE_DIR}/Scripts/_traits.lua)
-file(GLOB TRAIT_XML_FILES ${TRAITS_DIR}/*.xml)
-
-add_custom_command(
-        COMMAND Python3::Interpreter "${SCRIPT_FILE}" "${TRAITS_DIR}" "${TRAITS_HEADER}" "${LUA_DOC_FILE}"
-        DEPENDS ${SCRIPT_FILE} ${TRAIT_XML_FILES}
-        OUTPUT "${TRAITS_HEADER}"
-        BYPRODUCTS "${LUA_DOC_FILE}"
-        COMMENT "Generating traits header ${TRAITS_HEADER}."
-)
-add_custom_target(generate_traits_ids DEPENDS "${TRAITS_HEADER}")
-
-set(SCRIPT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../codegen/events.py)
-set(EVENTS_DIR ${RESOURCE_DIR}/Scripts)
-set(EVENTS_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/events.h)
-file(GLOB EVENTS_XML_FILES ${EVENTS_DIR}/*.xml)
-add_custom_command(
-        COMMAND Python3::Interpreter ${SCRIPT_FILE} ${EVENTS_DIR} ${EVENTS_HEADER}
-        DEPENDS ${SCRIPT_FILE} ${EVENTS_XML_FILES}
-        OUTPUT ${EVENTS_HEADER}
-        COMMENT "Generating events header ${EVENTS_HEADER}."
-)
-
-
-target_sources(WmGameObjects PUBLIC ${EVENTS_HEADER})
 
 if (UNIX)
     target_compile_definitions(WmGameObjects PUBLIC LINUX=1)

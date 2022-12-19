@@ -451,7 +451,7 @@ void FightTraining::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
         girl.constitution() + girl.strength() >= 500)
     {
         girl.m_NightJob = girl.m_DayJob = JOB_RESTING;
-        girl.AddMessage("There is nothing more she can learn here so ${name} takes the rest of the day off.",
+        girl.AddMessage("There is nothing more she can learn here, so ${name} takes the rest of the day off.",
                         EImageBaseType::PROFILE, EVENT_WARNING);
     }
 }

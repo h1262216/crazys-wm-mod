@@ -90,8 +90,8 @@ def format_description(description: str):
 
 
 def main():
-    search_path = Path(sys.argv[1])
-    result_path = Path(sys.argv[2])
+    result_path = Path(sys.argv[1])
+    search_path = Path(sys.argv[2])
     result_path.parent.mkdir(exist_ok=True, parents=True)
 
     parser = TraitsParser()
@@ -103,7 +103,9 @@ def main():
     out_text += "namespace traits {\n"
     lua_text += "--- @class wm.TRAITS\n"
 
-    for traits_file in search_path.glob("*.xml"):
+    xml_file_list = sorted(search_path.glob("*.xml"))
+
+    for traits_file in xml_file_list:
         try:
             parser.parse_file(traits_file)
         except Exception as E:

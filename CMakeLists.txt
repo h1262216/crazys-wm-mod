@@ -30,6 +30,7 @@ find_package(SDL2TTF REQUIRED)
 find_package(FFMPEG REQUIRED)
 
 include(Doxygen)
+include(CodeGen)
 
 set(RESOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Resources)
 
