@@ -202,7 +202,7 @@ class MainWindow(QMainWindow):
         from tagger.resource import ImageResource
         images = []
         for file in Path(directory).iterdir():
-            if file.suffix not in FILE_SUFFIXES:
+            if file.suffix.lower() not in FILE_SUFFIXES:
                 continue
             image = ImageResource(file=file, **guess_type_by_file_name(file, self.translator))
             images.append(image)

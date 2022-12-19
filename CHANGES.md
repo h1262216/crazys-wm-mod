@@ -5,6 +5,7 @@
 
 ## Tagger
 * Prefer game `ImageFiles.xml` over bundled one, allowing for user overrides
+* Add directory adds files with matching extension now case-insensitively
 
 ## Bugfixes
 * Fixed two bugs reported by big fan of fans
