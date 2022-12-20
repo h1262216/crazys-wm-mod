@@ -100,8 +100,7 @@ protected:
         IMPOSSIBLE
     };
 
-    sGirl& active_girl();
-    const sGirl& active_girl() const;
+    sGirl& active_girl() const;
     bool is_night_shift() const;
 
     // resources
@@ -118,7 +117,7 @@ protected:
     bool TryConsumeResource(const std::string& name, int amount);
 
     //  one-on-one interactions
-    void ProvideInteraction(const std::string& name, int amount);
+    void ProvideInteraction(const std::string& name, int amount) const;
     sGirl* RequestInteraction(const std::string& name);
 
     bool HasInteraction(const std::string& name) const;

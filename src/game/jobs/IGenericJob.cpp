@@ -99,12 +99,7 @@ void IGenericJob::OnRegisterJobManager(const cJobManager& manager) {
     load_job();
 }
 
-sGirl& IGenericJob::active_girl() {
-    assert(m_ActiveGirl);
-    return *m_ActiveGirl;
-}
-
-const sGirl& IGenericJob::active_girl() const {
+sGirl& IGenericJob::active_girl() const {
     assert(m_ActiveGirl);
     return *m_ActiveGirl;
 }
@@ -131,7 +126,7 @@ bool IGenericJob::TryConsumeResource(const std::string& name, int amount) {
     return brothel->TryConsumeResource(name, amount);
 }
 
-void IGenericJob::ProvideInteraction(const std::string& name, int amount) {
+void IGenericJob::ProvideInteraction(const std::string& name, int amount) const {
     auto brothel = active_girl().m_Building;
     assert(brothel);
     return brothel->ProvideInteraction(name, &active_girl(), amount);
