@@ -100,7 +100,7 @@ bool cFilmSceneJob::CheckCanWork(sGirl& girl) {
 }
 
 namespace {
-    int libido_influence(const sFilmPleasureData& data, const sGirl& girl) {
+    int lust_influence(const sFilmPleasureData& data, const sGirl& girl) {
         if(data.Skill == NUM_SKILLS)
             return 0;
 
@@ -114,7 +114,7 @@ namespace {
         // the 0.09 makes the curve a bit smoother
         skill_factor = std::sqrt(0.09f + skill_factor) / std::sqrt(1.09f);
 
-        float lib_value = girl.lust() * (data.Factor + data.BaseValue) * skill_factor;
+        int lib_value = girl.lust() * (data.Factor + data.BaseValue) * skill_factor;
         return lib_value / 100 - data.BaseValue;
     }
 }
@@ -124,7 +124,7 @@ sFilmObedienceData cFilmSceneJob::CalcChanceToObey(const sGirl& girl) const {
     int base_chance = 100 - cGirls::GetRebelValue(girl, job());
     base_chance /= 2;      // get a conventional percentage value
 
-    int libido = libido_influence(m_PleasureFactor, girl);
+    int lust = lust_influence(m_PleasureFactor, girl);
     int enjoy = (2 * girl.get_enjoyment(m_PrimaryAction) + girl.get_enjoyment(m_SecondaryAction)) / 3;
     int love_fear = (girl.pclove() + girl.pcfear()) / 10;
 
@@ -134,7 +134,7 @@ sFilmObedienceData cFilmSceneJob::CalcChanceToObey(const sGirl& girl) const {
         base_chance -= 10;
     }
 
-    return {base_chance, libido, enjoy, love_fear};
+    return {base_chance, lust, enjoy, love_fear};
 }
 
 bool cFilmSceneJob::CheckRefuseWork(sGirl& girl) {
@@ -142,7 +142,7 @@ bool cFilmSceneJob::CheckRefuseWork(sGirl& girl) {
     auto obey = CalcChanceToObey(girl);
 
     m_Dbg_Msg << "Obedience:\n  Basic Value " << obey.Base << "\n";
-    m_Dbg_Msg << "  Libido " << obey.Libido << "\n";
+    m_Dbg_Msg << "  Lust " << obey.Lust << "\n";
     m_Dbg_Msg << "  Enjoy " << obey.Enjoy << "\n";
     m_Dbg_Msg << "  Love/Hate " << obey.LoveHate << "\n";
 
@@ -163,9 +163,9 @@ bool cFilmSceneJob::CheckRefuseWork(sGirl& girl) {
 
     // if she doesn't want to do it, but still works, her enjoyment decreases
     m_Dbg_Msg << "Enjoyment: \n  Init " << m_Enjoyment << "\n";
-    m_Dbg_Msg << "  Libido " << libido_influence(m_PleasureFactor, girl) << "\n";
+    m_Dbg_Msg << "  Libido " << lust_influence(m_PleasureFactor, girl) << "\n";
     m_Dbg_Msg << "  Base " << (2*(2 * girl.get_enjoyment(m_PrimaryAction) + girl.get_enjoyment(m_SecondaryAction)) / 3) / 3 << "\n";
-    m_Enjoyment += libido_influence(m_PleasureFactor, girl);
+    m_Enjoyment += lust_influence(m_PleasureFactor, girl);
     m_Enjoyment += (2*(2 * girl.get_enjoyment(m_PrimaryAction) + girl.get_enjoyment(m_SecondaryAction)) / 3) / 3;
     if(chance_to_obey < 60) {
         m_Enjoyment += (chance_to_obey - 60) / 10;

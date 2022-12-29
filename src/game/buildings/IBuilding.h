@@ -76,7 +76,6 @@ public:
     // xml helpers
     void save_girls_xml(tinyxml2::XMLElement& target) const;
     void save_settings_xml(tinyxml2::XMLElement& root) const;
-    virtual void save_additional_xml(tinyxml2::XMLElement& root) const {};
     void load_girls_xml(const tinyxml2::XMLElement& root);
     void load_settings_xml(const tinyxml2::XMLElement& root);
 
@@ -139,9 +138,9 @@ public:
     int                m_MiscCustomers = 0;            // customers used for temp purposes but must still be taken into account
 
     unsigned char    m_Fame = 0;                        // How famous this brothel is
-    unsigned short    m_Happiness   = 0;                // av. % happy customers last week
-    int                m_NumRooms    = 0;                // How many rooms it has
-    int                m_MaxNumRooms = 0;                // How many rooms it can have
+    unsigned short   m_Happiness   = 0;                // av. % happy customers last week
+    int              m_NumRooms    = 0;                // How many rooms it has
+    int              m_MaxNumRooms = 0;                // How many rooms it can have
     cGold            m_Finance;                      // for keeping track of how well the place is doing (for the last week)
 
     // helper functions
@@ -210,6 +209,7 @@ protected:
     std::unique_ptr<cGirlPool> m_Girls;
 
     virtual void GirlBeginShift(sGirl& girl, bool is_night);
+    virtual void GirlEndShift(sGirl& girl, bool is_night);
 
     sGirl* get_active_matron() { return m_ActiveMatron; }
 
@@ -237,6 +237,7 @@ private:
     bool m_HasDoneEncounter = false;
 
     void do_daily_items(sGirl& girl);
+    void handle_accommodation(sGirl& girl);
 
     // meeting new girls
     virtual std::shared_ptr<sGirl> meet_girl() const;

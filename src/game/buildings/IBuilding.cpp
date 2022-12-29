@@ -43,7 +43,6 @@ namespace settings{
     extern const char* BALANCING_HEALTH_REGAIN;
 }
 
-void do_food_and_digs(IBuilding& brothel, sGirl& girl);
 void updateGirlTurnBrothelStats(sGirl& girl);
 
 const char* building_type_to_str(BuildingType type) {
@@ -98,6 +97,10 @@ int IBuilding::matron_count() const
 
 void IBuilding::BeginWeek()
 {
+    // reset the data
+    m_Happiness = m_MiscCustomers = m_TotalCustomers = 0;
+    m_RejectCustomersRestrict = m_RejectCustomersDisease = 0;
+
     m_HasDoneEncounter = false;
     m_Finance.zero();
     m_AntiPregUsed = 0;
@@ -142,7 +145,7 @@ void IBuilding::BeginWeek()
             std::string summary;
 
             cgirl.add_tiredness();                    // `J` moved all girls add tiredness to one place
-            do_food_and_digs(*this, cgirl);            // Brothel only update for girls accommodation level
+            handle_accommodation(cgirl);             // Brothel only update for girls accommodation level
             cGirls::CalculateGirlType(cgirl);        // update the fetish traits
             cGirls::updateGirlAge(cgirl, true);        // update birthday counter and age the girl
             handle_children(cgirl, summary, true);    // handle pregnancy and children growing up
@@ -244,7 +247,7 @@ void IBuilding::HandleRestingGirls(bool is_night)
 void IBuilding::Update()
 {
     BeginWeek();
-    UpdateGirls(false);        // Run the Day Shift
+    UpdateGirls(false);       // Run the Day Shift
     UpdateGirls(true);        // Run the Night Shift
     EndWeek();
 }
@@ -255,136 +258,137 @@ void IBuilding::EndShift(bool Day0Night1)
     m_Girls->apply([&](sGirl& current)
     {
         if (current.is_dead())
-        {    // skip dead girls
             return;
-        }
-        auto sum = EVENT_SUMMARY;
-        std::stringstream ss;
+        GirlEndShift(current, Day0Night1);
+    });
+}
 
-        // Level the girl up if nessessary
-        cGirls::LevelUp(current);
-        if(Day0Night1)
-            end_of_week_update(current);
+void IBuilding::GirlEndShift(sGirl& girl, bool is_night) {
+    auto sum = EVENT_SUMMARY;
+    std::stringstream ss;
 
-        JOBS sw = current.get_job(Day0Night1);
-        if (current.happiness()< 40)
+    // Level the girl up if nessessary
+    cGirls::LevelUp(girl);
+    if(is_night)
+        end_of_week_update(girl);
+
+    JOBS sw = girl.get_job(is_night);
+    if (girl.happiness() < 40)
+    {
+        if (sw != m_MatronJob && m_ActiveMatron && num_girls() > 1 && g_Dice.percent(70))
         {
-            if (sw != m_MatronJob && m_ActiveMatron && num_girls() > 1 && g_Dice.percent(70))
+            ss << "The " << get_job_name(m_MatronJob) << " helps cheer up ${name} when she is feeling sad.\n";
+            girl.happiness(g_Dice % 10 + 5);
+        }
+        else if (num_girls() > 10 && g_Dice.percent(50))
+        {
+            ss << "Some of the other girls help cheer up ${name} when she is feeling sad.\n";
+            girl.happiness(g_Dice % 8 + 3);
+        }
+        else if (num_girls() > 1 && g_Dice.percent(std::max((int)num_girls(), 50)))
+        {
+            ss << "One of the other girls helps cheer up ${name} when she is feeling sad.\n";
+            girl.happiness(g_Dice % 6 + 2);
+        }
+        else if (num_girls() == 1 && g_Dice.percent(70))
+        {
+            ss << "${name} plays around in the empty building until she feels better.\n";
+            girl.happiness(g_Dice % 10 + 10);
+        }
+        else if (girl.health()< 20) // no one helps her and she is really unhappy
+        {
+            ss << "${name} is looking very depressed. You may want to do something about that before she does something drastic.\n";
+            sum = EVENT_WARNING;
+        }
+    }
+
+    int t = girl.tiredness();
+    int h = girl.health();
+    if (sw == m_MatronJob && (t > 60 || h < 40))
+    {
+        ss << "As " << get_job_name(m_MatronJob) << ", ${name} has the keys to the store room.\nShe used them to 'borrow' ";
+        if (t > 50 && h < 50)
+        {
+            ss << "some potions";
+            girl.upd_base_stat(STAT_HEALTH, 20 + g_Dice % 20, false);
+            girl.upd_base_stat(STAT_TIREDNESS, -(20 + g_Dice % 20), false);
+            g_Game->gold().consumable_cost(20, true);
+        }
+        else if (t > 50)
+        {
+            ss << "a resting potion";
+            girl.upd_base_stat(STAT_TIREDNESS, -(20 + g_Dice % 20), false);
+            g_Game->gold().consumable_cost(10, true);
+        }
+        else if (h < 50)
+        {
+            ss << "a healing potion";
+            girl.upd_base_stat(STAT_HEALTH, 20 + g_Dice % 20, false);
+            g_Game->gold().consumable_cost(10, true);
+        }
+        else
+        {
+            ss << "a potion";
+            girl.upd_base_stat(STAT_HEALTH, 10 + g_Dice % 10, false);
+            girl.upd_base_stat(STAT_TIREDNESS, -(10 + g_Dice % 10), false);
+            g_Game->gold().consumable_cost(5, true);
+        }
+        ss << " for herself.\n";
+    }
+    else if (t > 80 || h < 40)
+    {
+        if (!m_ActiveMatron)    // do no matron first as it is the easiest
+        {
+            ss << "WARNING! ${name}";
+            /* */if (t > 80 && h < 20)    ss << " is in real bad shape, she is tired and injured.\nShe should go to the Clinic.\n";
+            else if (t > 80 && h < 40)    ss << " is in bad shape, she is tired and injured.\nShe should rest or she may die!\n";
+            else if (t > 80)/*      */    ss << " is desparatly in need of rest.\nGive her some free time\n";
+            else if (h < 20)/*      */    ss << " is badly injured.\nShe should rest or go to the Clinic.\n";
+            else if (h < 40)/*      */    ss << " is hurt.\nShe should rest and recuperate.\n";
+            sum = EVENT_WARNING;
+        }
+        else    // do all other girls with a matron working
+        {
+            if (girl.m_PrevNightJob == 255 && girl.m_PrevDayJob == 255) // the girl has been working
             {
-                ss << "The " << get_job_name(m_MatronJob) << " helps cheer up ${name} when she is feeling sad.\n";
-                current.happiness(g_Dice % 10 + 5);
-            }
-            else if (num_girls() > 10 && g_Dice.percent(50))
-            {
-                ss << "Some of the other girls help cheer up ${name} when she is feeling sad.\n";
-                current.happiness(g_Dice % 8 + 3);
-            }
-            else if (num_girls() > 1 && g_Dice.percent(std::max((int)num_girls(), 50)))
-            {
-                ss << "One of the other girls helps cheer up ${name} when she is feeling sad.\n";
-                current.happiness(g_Dice % 6 + 2);
-            }
-            else if (num_girls() == 1 && g_Dice.percent(70))
-            {
-                ss << "${name} plays around in the empty building until she feels better.\n";
-                current.happiness(g_Dice % 10 + 10);
-            }
-            else if (current.health()< 20) // no one helps her and she is really unhappy
-            {
-                ss << "${name} is looking very depressed. You may want to do something about that before she does something drastic.\n";
+                girl.m_PrevDayJob = girl.m_DayJob;
+                girl.m_PrevNightJob = girl.m_NightJob;
+                girl.m_DayJob = girl.m_NightJob = JOB_RESTING;
+                ss << "The " << get_job_name(m_MatronJob) << " takes ${name} off duty to rest due to her ";
+                if (t > 80 && h < 40)    ss << "exhaustion.\n";
+                else if (t > 80)        ss << "tiredness.\n";
+                else if (h < 40)        ss << "low health.\n";
+                else /*       */        ss << "girl state.\n";
                 sum = EVENT_WARNING;
             }
-        }
-
-        int t = current.tiredness();
-        int h = current.health();
-        if (sw == m_MatronJob && (t > 60 || h < 40))
-        {
-            ss << "As " << get_job_name(m_MatronJob) << ", ${name} has the keys to the store room.\nShe used them to 'borrow' ";
-            if (t > 50 && h < 50)
+            else    // the girl has already been taken off duty by the matron
             {
-                ss << "some potions";
-                current.upd_base_stat(STAT_HEALTH, 20 + g_Dice % 20, false);
-                current.upd_base_stat(STAT_TIREDNESS, -(20 + g_Dice % 20), false);
-                g_Game->gold().consumable_cost(20, true);
-            }
-            else if (t > 50)
-            {
-                ss << "a resting potion";
-                current.upd_base_stat(STAT_TIREDNESS, -(20 + g_Dice % 20), false);
-                g_Game->gold().consumable_cost(10, true);
-            }
-            else if (h < 50)
-            {
-                ss << "a healing potion";
-                current.upd_base_stat(STAT_HEALTH, 20 + g_Dice % 20, false);
-                g_Game->gold().consumable_cost(10, true);
-            }
-            else
-            {
-                ss << "a potion";
-                current.upd_base_stat(STAT_HEALTH, 10 + g_Dice % 10, false);
-                current.upd_base_stat(STAT_TIREDNESS, -(10 + g_Dice % 10), false);
-                g_Game->gold().consumable_cost(5, true);
-            }
-            ss << " for herself.\n";
-        }
-        else if (t > 80 || h < 40)
-        {
-            if (!m_ActiveMatron)    // do no matron first as it is the easiest
-            {
-                ss << "WARNING! ${name}";
-                /* */if (t > 80 && h < 20)    ss << " is in real bad shape, she is tired and injured.\nShe should go to the Clinic.\n";
-                else if (t > 80 && h < 40)    ss << " is in bad shape, she is tired and injured.\nShe should rest or she may die!\n";
-                else if (t > 80)/*      */    ss << " is desparatly in need of rest.\nGive her some free time\n";
-                else if (h < 20)/*      */    ss << " is badly injured.\nShe should rest or go to the Clinic.\n";
-                else if (h < 40)/*      */    ss << " is hurt.\nShe should rest and recuperate.\n";
-                sum = EVENT_WARNING;
-            }
-            else    // do all other girls with a matron working
-            {
-                if (current.m_PrevNightJob == 255 && current.m_PrevDayJob == 255) // the girl has been working
+                if (g_Dice.percent(70))
                 {
-                    current.m_PrevDayJob = current.m_DayJob;
-                    current.m_PrevNightJob = current.m_NightJob;
-                    current.m_DayJob = current.m_NightJob = JOB_RESTING;
-                    ss << "The " << get_job_name(m_MatronJob) << " takes ${name} off duty to rest due to her ";
-                    if (t > 80 && h < 40)    ss << "exhaustion.\n";
-                    else if (t > 80)        ss << "tiredness.\n";
-                    else if (h < 40)        ss << "low health.\n";
-                    else /*       */        ss << "current state.\n";
-                    sum = EVENT_WARNING;
-                }
-                else    // the girl has already been taken off duty by the matron
-                {
-                    if (g_Dice.percent(70))
+                    ss << "The " << get_job_name(m_MatronJob) << "helps ";
+                    if (t > 80 && h < 40)
                     {
-                        ss << "The " << get_job_name(m_MatronJob) << "helps ";
-                        if (t > 80 && h < 40)
-                        {
-                            ss << "${name} recuperate.\n";
-                          current.upd_base_stat(STAT_HEALTH, 2 + g_Dice % 4, false);
-                          current.upd_base_stat(STAT_TIREDNESS, -(2 + g_Dice % 4), false);
-                        }
-                        else if (t > 80)
-                        {
-                            ss << "${name} to relax.\n";
-                          current.upd_base_stat(STAT_TIREDNESS, -(5 + g_Dice % 5), false);
-                        }
-                        else if (h < 40)
-                        {
-                            ss << " heal ${name}.\n";
-                          current.upd_base_stat(STAT_HEALTH, 5 + g_Dice % 5, false);
-                        }
+                        ss << "${name} recuperate.\n";
+                        girl.upd_base_stat(STAT_HEALTH, 2 + g_Dice % 4, false);
+                        girl.upd_base_stat(STAT_TIREDNESS, -(2 + g_Dice % 4), false);
+                    }
+                    else if (t > 80)
+                    {
+                        ss << "${name} to relax.\n";
+                        girl.upd_base_stat(STAT_TIREDNESS, -(5 + g_Dice % 5), false);
+                    }
+                    else if (h < 40)
+                    {
+                        ss << " heal ${name}.\n";
+                        girl.upd_base_stat(STAT_HEALTH, 5 + g_Dice % 5, false);
                     }
                 }
             }
         }
+    }
 
-        if (ss.str().length() > 0)    current.AddMessage(ss.str(), EImageBaseType::PROFILE, sum);
-    });
+    if (ss.str().length() > 0)    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, sum);
 }
-
 
 IBuilding::~IBuilding() = default;
 
@@ -557,7 +561,6 @@ void IBuilding::save_xml(tinyxml2::XMLElement& root) const
 {
     save_settings_xml(root);
     save_girls_xml(root);
-    save_additional_xml(root);
 }
 
 sGirl* IBuilding::get_girl(int index)
@@ -570,10 +573,8 @@ void IBuilding::BeginShift(bool is_night)
     setup_resources();
 
     m_Girls->apply([this, is_night](sGirl& girl){
-        if (girl.is_dead())        // skip dead girls
-        {
+        if (girl.is_dead())
             return;
-        }
         GirlBeginShift(girl, is_night);
     });
 
@@ -1683,7 +1684,7 @@ void IBuilding::EndWeek() {
     });
 
     // cap filthiness and security at 0
-    if (m_Filthiness < 0)        m_Filthiness = 0;
+    if (m_Filthiness < 0)       m_Filthiness = 0;
     if (m_SecurityLevel < 0)    m_SecurityLevel = 0;
 }
 
@@ -1845,4 +1846,152 @@ void IBuilding::end_of_week_update(sGirl& girl) {
     // Natural healing, 2% health and 4% tiredness per day
     girl.upd_base_stat(STAT_HEALTH, g_Game->settings().get_integer(settings::BALANCING_HEALTH_REGAIN), false);
     girl.upd_base_stat(STAT_TIREDNESS, -g_Game->settings().get_integer(settings::BALANCING_FATIGUE_REGAIN), false);
+}
+
+void IBuilding::handle_accommodation(sGirl& girl) {
+    std::stringstream ss;
+
+    // Gold per accommodation level
+    int gold = (girl.is_slave() ? 0 : 15) + 10 * (girl.m_AccLevel + 1);
+    m_Finance.girl_support(gold);
+
+    int preferredaccom = cGirls::PreferredAccom(girl);    // what she wants/expects
+    int mod = girl.m_AccLevel - preferredaccom;
+
+    /*   if (acc == 0)    return "Bare Bones";
+    else if (acc == 1)    return "Very Poor";
+    else if (acc == 2)    return "Poor";
+    else if (acc == 3)    return "Adequate";
+    else if (acc == 4)    return "Comfortable";
+    else if (acc == 5)    return "Nice";
+    else if (acc == 6)    return "Good";
+    else if (acc == 7)    return "Great";
+    else if (acc == 8)    return "Wonderful";
+    else if (acc == 9)    return "High Class";
+    */
+    // bsin added Sanity for .06.02.30
+    int hapA, hapB, lovA, lovB, hatA, hatB, feaA, feaB, sanA, sanB;        // A should always be lower than B
+    if (mod < -9) mod = -9;
+    if (mod > 9) mod = 9;
+    switch (mod)    // happiness, love, hate, fear
+    {
+        case -9:    hapA = -24;    hapB = -7;    lovA = -14;    lovB = -3;    hatA = 6;    hatB = 22;    feaA = 5;    feaB = 12;    sanA = -7;    sanB = 2;    break;
+        case -8:    hapA = -19;    hapB = -6;    lovA = -11;    lovB = -3;    hatA = 5;    hatB = 18;    feaA = 4;    feaB = 9;    sanA = -6;    sanB = 2;    break;
+        case -7:    hapA = -16;    hapB = -5;    lovA = -9;    lovB = -3;    hatA = 4;    hatB = 14;    feaA = 3;    feaB = 7;    sanA = -5;    sanB = 1;    break;
+        case -6:    hapA = -13;    hapB = -4;    lovA = -7;    lovB = -2;    hatA = 4;    hatB = 10;    feaA = 2;    feaB = 5;    sanA = -4;    sanB = 1;    break;
+        case -5:    hapA = -10;    hapB = -3;    lovA = -6;    lovB = -2;    hatA = 3;    hatB = 7;    feaA = 1;    feaB = 4;    sanA = -3;    sanB = 1;    break;
+        case -4:    hapA = -8;    hapB = -2;    lovA = -5;    lovB = -1;    hatA = 2;    hatB = 5;    feaA = 0;    feaB = 3;    sanA = -2;    sanB = 0;    break;
+        case -3:    hapA = -6;    hapB = -1;    lovA = -4;    lovB = 0;    hatA = 1;    hatB = 4;    feaA = 0;    feaB = 2;    sanA = -1;    sanB = 0;    break;
+        case -2:    hapA = -4;    hapB = 0;    lovA = -3;    lovB = 0;    hatA = 0;    hatB = 3;    feaA = 0;    feaB = 1;    sanA = 0;    sanB = 0;    break;
+        case -1:    hapA = -2;    hapB = 1;    lovA = -2;    lovB = 1;    hatA = -1;    hatB = 2;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 0;    break;
+        case 0:        hapA = -1;    hapB = 3;    lovA = -1;    lovB = 2;    hatA = -1;    hatB = 1;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 1;    break;
+        case 1:        hapA = 0;    hapB = 5;    lovA = -1;    lovB = 3;    hatA = -1;    hatB = 0;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 1;    break;
+        case 2:        hapA = 1;    hapB = 8;    lovA = 0;    lovB = 3;    hatA = -3;    hatB = 0;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 1;    break;
+        case 3:        hapA = 2;    hapB = 11;    lovA = 0;    lovB = 4;    hatA = -5;    hatB = -1;    feaA = -1;    feaB = 0;    sanA = 0;    sanB = 2;    break;
+        case 4:        hapA = 3;    hapB = 14;    lovA = 1;    lovB = 4;    hatA = -6;    hatB = -1;    feaA = -1;    feaB = 0;    sanA = 0;    sanB = 2;    break;
+        case 5:        hapA = 4;    hapB = 16;    lovA = 1;    lovB = 5;    hatA = -7;    hatB = -1;    feaA = -1;    feaB = 0;    sanA = 0;    sanB = 3;    break;
+        case 6:        hapA = 5;    hapB = 18;    lovA = 2;    lovB = 5;    hatA = -7;    hatB = -2;    feaA = -2;    feaB = 0;    sanA = -1;    sanB = 3;    break;
+        case 7:        hapA = 5;    hapB = 19;    lovA = 2;    lovB = 6;    hatA = -8;    hatB = -2;    feaA = -2;    feaB = 0;    sanA = -1;    sanB = 4;    break;
+        case 8:        hapA = 5;    hapB = 20;    lovA = 2;    lovB = 7;    hatA = -9;    hatB = -3;    feaA = -3;    feaB = 0;    sanA = -1;    sanB = 4;    break;
+        case 9:        hapA = 5;    hapB = 21;    lovA = 2;    lovB = 8;    hatA = -10;    hatB = -3;    feaA = -3;    feaB = 0;    sanA = -2;    sanB = 5;    break;
+        default: break;
+    }
+    if (girl.happiness() < 20 - mod)            // if she is unhappy, her mood will go down
+    {
+        /* */if (mod < -6){ hapA -= 7;    hapB -= 3;    lovA -= 4;    lovB -= 1;    hatA += 2;    hatB += 5;    feaA += 2;    feaB += 5; }
+        else if (mod < -3){ hapA -= 5;    hapB -= 2;    lovA -= 2;    lovB -= 1;    hatA += 1;    hatB += 3;    feaA += 1;    feaB += 3; }
+        else if (mod < 0){ hapA -= 3;    hapB -= 1;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 2;    feaA += 0;    feaB += 2; }
+        else if (mod < 1){ hapA -= 2;    hapB -= 0;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 1;    feaA += 0;    feaB += 1; }
+        else if (mod < 4){ hapA -= 2;    hapB -= 0;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 1;    feaA -= 1;    feaB += 1; }
+        else if (mod < 7){ hapA -= 1;    hapB -= 0;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 0;    feaA -= 1;    feaB += 0; }
+    }
+    else if (!g_Dice.percent(girl.happiness()))    // if she is not happy, her mood may go up or down
+    {
+        /* */if (mod < -6){ hapA -= 3;    hapB += 1;    lovA -= 3;    lovB += 0;    hatA -= 0;    hatB += 4;    feaA -= 2;    feaB += 3; }
+        else if (mod < -3){ hapA -= 2;    hapB += 1;    lovA -= 2;    lovB += 0;    hatA -= 0;    hatB += 3;    feaA -= 1;    feaB += 2; }
+        else if (mod < 0){ hapA -= 1;    hapB += 2;    lovA -= 1;    lovB += 1;    hatA -= 1;    hatB += 2;    feaA -= 1;    feaB += 2; }
+        else if (mod < 1){ hapA -= 1;    hapB += 2;    lovA -= 1;    lovB += 1;    hatA -= 1;    hatB += 1;    feaA -= 1;    feaB += 1; }
+        else if (mod < 4){ hapA += 0;    hapB += 2;    lovA -= 0;    lovB += 1;    hatA -= 1;    hatB += 1;    feaA -= 1;    feaB += 0; }
+        else if (mod < 7){ hapA += 0;    hapB += 3;    lovA += 0;    lovB += 1;    hatA -= 1;    hatB -= 0;    feaA -= 0;    feaB += 0; }
+    }
+    else                                        // otherwise her mood can go up
+    {
+        /* */if (mod < -6){ hapA -= 1;    hapB += 2;    lovA -= 1;    lovB += 1;    hatA -= 1;    hatB -= 1;    feaA -= 1;    feaB += 1; }
+        else if (mod < -3){ hapA += 0;    hapB += 2;    lovA += 0;    lovB += 1;    hatA -= 2;    hatB -= 0;    feaA -= 2;    feaB -= 0; }
+        else if (mod < 0){ hapA += 0;    hapB += 3;    lovA += 0;    lovB += 1;    hatA -= 2;    hatB -= 0;    feaA -= 2;    feaB -= 0; }
+        else if (mod < 1){ hapA += 0;    hapB += 5;    lovA += 0;    lovB += 1;    hatA -= 2;    hatB -= 1;    feaA -= 2;    feaB -= 0; }
+        else if (mod < 4){ hapA += 1;    hapB += 7;    lovA += 0;    lovB += 2;    hatA -= 3;    hatB -= 1;    feaA -= 3;    feaB -= 0; }
+        else if (mod < 7){ hapA += 2;    hapB += 8;    lovA += 1;    lovB += 3;    hatA -= 4;    hatB -= 1;    feaA -= 3;    feaB -= 1; }
+    }
+    if (girl.health() < 25)                    // if she is injured she may be scared because of her surroundings
+    {
+        /* */if (mod < -6){ hapA -= 6;    hapB -= 2;    lovA -= 4;    lovB -= 1;    hatA += 3;    hatB += 4;    feaA += 2;    feaB += 4; sanA -= 4;  sanB -= 2;}
+        else if (mod < -3){ hapA -= 4;    hapB -= 1;    lovA -= 3;    lovB -= 1;    hatA += 2;    hatB += 3;    feaA += 1;    feaB += 3; sanA -= 2;  sanB -= 1;}
+        else if (mod < 0){    hapA -= 2;    hapB -= 1;    lovA -= 1;    lovB += 0;    hatA += 1;    hatB += 2;    feaA += 0;    feaB += 2; sanA -= 1;  sanB -= 0;}
+        else if (mod < 1){    hapA -= 1;    hapB += 1;    lovA -= 0;    lovB += 0;    hatA -= 0;    hatB += 1;    feaA -= 1;    feaB += 1; sanA += 0;  sanB += 1;}
+        else if (mod < 4){    hapA += 0;    hapB += 4;    lovA += 0;    lovB += 1;    hatA -= 1;    hatB += 0;    feaA -= 2;    feaB += 1; sanA += 1;  sanB += 2;}
+        else if (mod < 7){    hapA += 2;    hapB += 8;    lovA += 1;    lovB += 1;    hatA -= 1;    hatB += 0;    feaA -= 3;    feaB += 0; sanA += 2;  sanB += 4;}
+    }
+
+    if (girl.is_slave())                        // slaves get half as much from their mods
+    {
+        hapA /= 2;    hapB /= 2;    lovA /= 2;    lovB /= 2;    hatA /= 2;    hatB /= 2;    feaA /= 2;    feaB /= 2;
+    }
+
+    int hap = g_Dice.bell(hapA, hapB);
+    int lov = g_Dice.bell(lovA, lovB);
+    int hat = g_Dice.bell(hatA, hatB);
+    int fea = g_Dice.bell(feaA, feaB);
+    int san = g_Dice.bell(sanA, sanB);
+
+    girl.happiness(hap);
+    girl.pclove(lov - hat);
+    girl.pcfear(fea);
+    girl.sanity(san);
+
+
+    // after all the happy, love fear and hate are done, do some other checks.
+    int chance = 1 + (mod < 0 ? -mod : mod);
+    if (!g_Dice.percent(chance)) return;
+    // Only check if a trait gets modified if mod is far from 0
+
+    bool b_intelligence = g_Dice.percent(girl.intelligence());
+    bool b_confidence = g_Dice.percent(girl.confidence());
+    bool b_spirit = g_Dice.percent(girl.spirit());
+    bool b_refinement = g_Dice.percent(girl.refinement());
+    bool b_dignity = g_Dice.percent(girl.dignity());
+
+    if (b_refinement && b_dignity && b_confidence &&
+        mod >= 0 && girl.m_AccLevel >= 5 && girl.lose_trait(traits::HOMELESS, true, girl.m_AccLevel))
+    {
+        ss << girl.FullName() << " has gotten used to better surroundings and has lost the \"Homeless\" trait.";
+    }
+    else if (b_intelligence && b_spirit && b_confidence && mod >= 2 &&
+             girl.lose_trait(traits::MASOCHIST, true, girl.m_AccLevel - 7))
+    {
+        ss << girl.FullName() << " seems to be getting used to being treated well and has lost the \"Masochist\" trait.";
+    }
+    else if (!b_dignity && !b_spirit && !b_confidence && mod <= -1 && girl.gain_trait(traits::MASOCHIST, 3 - mod))
+    {
+        ss << girl.FullName()
+           << " seems to be getting used to being treated poorly and has become a \"Masochist\".";
+    }
+    else if (mod < 0 && girl.lose_trait(traits::OPTIMIST, true, 3))
+    {
+        ss << girl.FullName() << " has lost her \"Optimistic\" outlook on life.";
+    }
+    else if (mod > 0 && girl.gain_trait(traits::OPTIMIST, 3))
+    {
+        ss << girl.FullName() << " has started to view the world from a more \"Optimistic\" point of view.";
+    }
+    else if (mod > 0 && g_Dice.percent(3) && girl.lose_trait(traits::PESSIMIST, true, 3))
+    {
+        ss << girl.FullName() << " has lost her \"Pessimistic\" way of viewing the world around her.";
+    }
+    else if (mod < 0 && girl.gain_trait(traits::PESSIMIST, 3))
+    {
+        ss << girl.FullName() << " has started to view the world from a more \"Pessimistic\" point of view.";
+    }
+
+    if (ss.str().length() > 0)    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
 }

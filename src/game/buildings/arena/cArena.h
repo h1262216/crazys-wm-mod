@@ -31,8 +31,6 @@ public:
     sArena();
     ~sArena() override;
 
-    void save_additional_xml(tinyxml2::XMLElement& root) const override {};
-
     std::string meet_no_luck() const override;
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;

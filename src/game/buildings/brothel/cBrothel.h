@@ -29,20 +29,9 @@
 // defines a single brothel
 struct sBrothel : public IBuilding
 {
-    explicit sBrothel();        // constructor
-    virtual ~sBrothel();        // destructor
+    explicit sBrothel();
+    ~sBrothel() override;
 
-    unsigned char    m_Bar;                        // level of bar: 0 => none
-    unsigned char    m_GamblingHall;                // as above
-
-    // For keeping track of any shows currently being produced here
-    int                m_ShowTime;            // when reaches 0 then the show is ready
-    int                m_ShowQuality;        // Determined by the average fame and skill of the girls in the show
-    unsigned char    m_HasGambStaff;        // gambling hall or
-    unsigned char    m_HasBarStaff;        // Bar staff. Not as good as girls but consistent
-
-    void save_additional_xml(tinyxml2::XMLElement& root) const override;
-    virtual bool LoadXML(tinyxml2::XMLElement * pBrothel);
     // currently unused for brothel
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override {};
 

@@ -41,15 +41,13 @@ void handle_weekly_lust(sGirl& girl);
 
 
 /*
- * The following functions are helpers to check if the girl engages in a sexual activity. There are four different
+ * The following functions are helpers to check if the girl engages in a sexual activity. There are two different
  * scenarios:
  *  1) Sex in a private setting: Masturbation, Player with love, boy/girlfriend. Determined mostly by her lust.
- *  2) Sex as part of the job: There is the threat of being fired/punished if she refuses. Requires some combination of
- *     lust and obedience.
- *  3) Sex in a public setting: With a stranger or in view of other people, but not threat if she refuses. Requires more
+ *  2) Sex in a public setting: With a stranger or in view of other people, but not threat if she refuses. Requires more
  *     lust and less dignity than the private counterpart.
  *
- *  Scenarios 1) and 3) come in two variations: Either she initiates it herself, or she just responds to a request.
+ *  Both come in two variations: Either she initiates it herself, or she just responds to a request.
  */
 
 

@@ -5,7 +5,6 @@
 * [ ] Integrate boost::stacktrace for better debugging
 * [ ] Async loading of animations
 * [ ] for logging? https://github.com/gabime/spdlog
-* [ ] Girl identifiers -- so we can have stable references in the save file e.g. for movie scenes
 * [ ] named actions for screens -- so we can make configurable key bindings
 * [ ] redo all the item code :( 
 
@@ -14,8 +13,6 @@
   - [ ] cScreenSlaveMarket
   - [ ] cScreenGang 
   - [ ] cScreenDungeon
-* [x] Replace image name based tags by an xml file
-* [x] Improve image paths handling / image selection
 * [ ] Improve performance of animations (upscale only when blitting?)
 * [ ] De-interlacing
 * [ ] Convert job functions to classes

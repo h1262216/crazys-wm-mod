@@ -33,11 +33,11 @@ struct sFilmPleasureData {
 
 struct sFilmObedienceData {
     int total() const {
-        return Base + Libido + Enjoy + LoveHate;
+        return Base + Lust + Enjoy + LoveHate;
     }
 
     int Base;
-    int Libido;
+    int Lust;
     int Enjoy;
     int LoveHate;
 

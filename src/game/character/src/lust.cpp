@@ -281,7 +281,7 @@ sPercent chance_horny_private(const ICharacter& character, ESexParticipants part
 
     // is she the one initiating this, or just responding?
     int threshold = 33;
-    if(init == false) {
+    if(!init) {
         threshold = 25;
     }
 
@@ -372,7 +372,7 @@ sPercent chance_horny_public(const ICharacter& character, ESexParticipants partn
 
     // is she the one initiating this, or just responding?
     int threshold = 66;
-    if(init == false) {
+    if(!init) {
         threshold = 33;
     }
 

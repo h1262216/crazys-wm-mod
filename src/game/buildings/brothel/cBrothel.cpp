@@ -46,59 +46,14 @@ extern cRng                    g_Dice;
 sBrothel::sBrothel() :
     IBuilding(BuildingType::BROTHEL, "Brothel")
 {
-    m_HasGambStaff = m_HasBarStaff = m_Bar = m_GamblingHall = 0;
-
     m_TotalCustomers = m_RejectCustomersRestrict = m_RejectCustomersDisease = m_MiscCustomers = 0;
-
-    //movie
-    m_ShowTime = m_ShowQuality = 0;
 
     m_FirstJob = JOB_RESTING;
     m_LastJob = JOB_WHORESTREETS;
     m_MatronJob = JOB_MATRON;
 }
 
-sBrothel::~sBrothel()            // destructor
-{
-}
-
-
-bool sBrothel::LoadXML(tinyxml2::XMLElement * pBrothel)
-{
-    /// TODO why is this unused?
-    // no need to init this, we just created it
-    int tempInt = 0;
-    // g_LogFile.write("Loading brothel");
-
-    // load variables for sex restrictions
-    load_settings_xml(*pBrothel);
-
-    pBrothel->QueryIntAttribute("Bar", &tempInt); m_Bar = tempInt; tempInt = 0;
-    pBrothel->QueryIntAttribute("GamblingHall", &tempInt); m_GamblingHall = tempInt; tempInt = 0;
-    pBrothel->QueryIntAttribute("HasBarStaff", &tempInt); m_HasBarStaff = tempInt; tempInt = 0;
-    pBrothel->QueryIntAttribute("HasGambStaff", &tempInt); m_HasGambStaff = tempInt; tempInt = 0;
-    pBrothel->QueryIntAttribute("ShowQuality", &m_ShowQuality);
-    pBrothel->QueryIntAttribute("ShowTime", &m_ShowTime);
-
-    m_Finance.loadGoldXML(pBrothel->FirstChildElement("Gold"));
-
-    load_girls_xml(*pBrothel);
-    return true;
-}
-
-
-void sBrothel::save_additional_xml(tinyxml2::XMLElement& root) const
-{
-    root.SetAttribute("Bar", m_Bar);
-    root.SetAttribute("GamblingHall", m_GamblingHall);
-    root.SetAttribute("HasBarStaff", m_HasBarStaff);
-    root.SetAttribute("id", m_id);
-    root.SetAttribute("HasGambStaff", m_HasGambStaff);
-    root.SetAttribute("ShowQuality", m_ShowQuality);
-    root.SetAttribute("ShowTime", m_ShowTime);
-
-    m_Finance.saveGoldXML(root);
-}
+sBrothel::~sBrothel() = default;
 
 void sBrothel::UpdateGirls(bool is_night)
 {
@@ -153,9 +108,6 @@ void sBrothel::UpdateGirls(bool is_night)
                     current.AddMessage("WARNING ${name} is doing nothing!\n", EImageBaseType::PROFILE, EVENT_WARNING);
                 }
             }
-
-
-
         }
 
         /*
@@ -441,10 +393,6 @@ bool sBrothel::runaway_check(sGirl& girl)
 void sBrothel::Update()
 {
     std::stringstream ss;
-    // reset the data
-    m_Happiness = m_MiscCustomers = m_TotalCustomers = 0;
-    m_RejectCustomersRestrict = m_RejectCustomersDisease = 0;
-
     BeginWeek();
 
     // Moved to here so Security drops once per day instead of everytime a girl works security -PP
@@ -557,157 +505,6 @@ void sBrothel::Update()
     EndWeek();
 }
 
-
-// add the girls accommodation and food costs to the upkeep
-void do_food_and_digs(IBuilding& brothel, sGirl& girl)
-{
-    // `J` new code for .06.01.18
-    std::stringstream ss;
-
-    // Gold per accommodation level
-    int gold = (girl.is_slave() ? 5 : 20) * (girl.m_AccLevel + 1);
-    brothel.m_Finance.girl_support(gold);
-
-    int preferredaccom = cGirls::PreferredAccom(girl);    // what she wants/expects
-    int mod = girl.m_AccLevel - preferredaccom;
-
-    /*   if (acc == 0)    return "Bare Bones";
-    else if (acc == 1)    return "Very Poor";
-    else if (acc == 2)    return "Poor";
-    else if (acc == 3)    return "Adequate";
-    else if (acc == 4)    return "Comfortable";
-    else if (acc == 5)    return "Nice";
-    else if (acc == 6)    return "Good";
-    else if (acc == 7)    return "Great";
-    else if (acc == 8)    return "Wonderful";
-    else if (acc == 9)    return "High Class";
-    */
-    // bsin added Sanity for .06.02.30
-    int hapA, hapB, lovA, lovB, hatA, hatB, feaA, feaB, sanA, sanB;        // A should always be lower than B
-    if (mod < -9) mod = -9;
-    if (mod > 9) mod = 9;
-    switch (mod)    // happiness, love, hate, fear
-    {
-    case -9:    hapA = -24;    hapB = -7;    lovA = -14;    lovB = -3;    hatA = 6;    hatB = 22;    feaA = 5;    feaB = 12;    sanA = -7;    sanB = 2;    break;
-    case -8:    hapA = -19;    hapB = -6;    lovA = -11;    lovB = -3;    hatA = 5;    hatB = 18;    feaA = 4;    feaB = 9;    sanA = -6;    sanB = 2;    break;
-    case -7:    hapA = -16;    hapB = -5;    lovA = -9;    lovB = -3;    hatA = 4;    hatB = 14;    feaA = 3;    feaB = 7;    sanA = -5;    sanB = 1;    break;
-    case -6:    hapA = -13;    hapB = -4;    lovA = -7;    lovB = -2;    hatA = 4;    hatB = 10;    feaA = 2;    feaB = 5;    sanA = -4;    sanB = 1;    break;
-    case -5:    hapA = -10;    hapB = -3;    lovA = -6;    lovB = -2;    hatA = 3;    hatB = 7;    feaA = 1;    feaB = 4;    sanA = -3;    sanB = 1;    break;
-    case -4:    hapA = -8;    hapB = -2;    lovA = -5;    lovB = -1;    hatA = 2;    hatB = 5;    feaA = 0;    feaB = 3;    sanA = -2;    sanB = 0;    break;
-    case -3:    hapA = -6;    hapB = -1;    lovA = -4;    lovB = 0;    hatA = 1;    hatB = 4;    feaA = 0;    feaB = 2;    sanA = -1;    sanB = 0;    break;
-    case -2:    hapA = -4;    hapB = 0;    lovA = -3;    lovB = 0;    hatA = 0;    hatB = 3;    feaA = 0;    feaB = 1;    sanA = 0;    sanB = 0;    break;
-    case -1:    hapA = -2;    hapB = 1;    lovA = -2;    lovB = 1;    hatA = -1;    hatB = 2;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 0;    break;
-    case 0:        hapA = -1;    hapB = 3;    lovA = -1;    lovB = 2;    hatA = -1;    hatB = 1;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 1;    break;
-    case 1:        hapA = 0;    hapB = 5;    lovA = -1;    lovB = 3;    hatA = -1;    hatB = 0;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 1;    break;
-    case 2:        hapA = 1;    hapB = 8;    lovA = 0;    lovB = 3;    hatA = -3;    hatB = 0;    feaA = 0;    feaB = 0;    sanA = 0;    sanB = 1;    break;
-    case 3:        hapA = 2;    hapB = 11;    lovA = 0;    lovB = 4;    hatA = -5;    hatB = -1;    feaA = -1;    feaB = 0;    sanA = 0;    sanB = 2;    break;
-    case 4:        hapA = 3;    hapB = 14;    lovA = 1;    lovB = 4;    hatA = -6;    hatB = -1;    feaA = -1;    feaB = 0;    sanA = 0;    sanB = 2;    break;
-    case 5:        hapA = 4;    hapB = 16;    lovA = 1;    lovB = 5;    hatA = -7;    hatB = -1;    feaA = -1;    feaB = 0;    sanA = 0;    sanB = 3;    break;
-    case 6:        hapA = 5;    hapB = 18;    lovA = 2;    lovB = 5;    hatA = -7;    hatB = -2;    feaA = -2;    feaB = 0;    sanA = -1;    sanB = 3;    break;
-    case 7:        hapA = 5;    hapB = 19;    lovA = 2;    lovB = 6;    hatA = -8;    hatB = -2;    feaA = -2;    feaB = 0;    sanA = -1;    sanB = 4;    break;
-    case 8:        hapA = 5;    hapB = 20;    lovA = 2;    lovB = 7;    hatA = -9;    hatB = -3;    feaA = -3;    feaB = 0;    sanA = -1;    sanB = 4;    break;
-    case 9:        hapA = 5;    hapB = 21;    lovA = 2;    lovB = 8;    hatA = -10;    hatB = -3;    feaA = -3;    feaB = 0;    sanA = -2;    sanB = 5;    break;
-    default: break;
-    }
-    if (girl.happiness() < 20 - mod)            // if she is unhappy, her mood will go down
-    {
-        /* */if (mod < -6){ hapA -= 7;    hapB -= 3;    lovA -= 4;    lovB -= 1;    hatA += 2;    hatB += 5;    feaA += 2;    feaB += 5; }
-        else if (mod < -3){ hapA -= 5;    hapB -= 2;    lovA -= 2;    lovB -= 1;    hatA += 1;    hatB += 3;    feaA += 1;    feaB += 3; }
-        else if (mod < 0){ hapA -= 3;    hapB -= 1;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 2;    feaA += 0;    feaB += 2; }
-        else if (mod < 1){ hapA -= 2;    hapB -= 0;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 1;    feaA += 0;    feaB += 1; }
-        else if (mod < 4){ hapA -= 2;    hapB -= 0;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 1;    feaA -= 1;    feaB += 1; }
-        else if (mod < 7){ hapA -= 1;    hapB -= 0;    lovA -= 1;    lovB -= 0;    hatA += 0;    hatB += 0;    feaA -= 1;    feaB += 0; }
-    }
-    else if (!g_Dice.percent(girl.happiness()))    // if she is not happy, her mood may go up or down
-    {
-        /* */if (mod < -6){ hapA -= 3;    hapB += 1;    lovA -= 3;    lovB += 0;    hatA -= 0;    hatB += 4;    feaA -= 2;    feaB += 3; }
-        else if (mod < -3){ hapA -= 2;    hapB += 1;    lovA -= 2;    lovB += 0;    hatA -= 0;    hatB += 3;    feaA -= 1;    feaB += 2; }
-        else if (mod < 0){ hapA -= 1;    hapB += 2;    lovA -= 1;    lovB += 1;    hatA -= 1;    hatB += 2;    feaA -= 1;    feaB += 2; }
-        else if (mod < 1){ hapA -= 1;    hapB += 2;    lovA -= 1;    lovB += 1;    hatA -= 1;    hatB += 1;    feaA -= 1;    feaB += 1; }
-        else if (mod < 4){ hapA += 0;    hapB += 2;    lovA -= 0;    lovB += 1;    hatA -= 1;    hatB += 1;    feaA -= 1;    feaB += 0; }
-        else if (mod < 7){ hapA += 0;    hapB += 3;    lovA += 0;    lovB += 1;    hatA -= 1;    hatB -= 0;    feaA -= 0;    feaB += 0; }
-    }
-    else                                        // otherwise her mood can go up
-    {
-        /* */if (mod < -6){ hapA -= 1;    hapB += 2;    lovA -= 1;    lovB += 1;    hatA -= 1;    hatB -= 1;    feaA -= 1;    feaB += 1; }
-        else if (mod < -3){ hapA += 0;    hapB += 2;    lovA += 0;    lovB += 1;    hatA -= 2;    hatB -= 0;    feaA -= 2;    feaB -= 0; }
-        else if (mod < 0){ hapA += 0;    hapB += 3;    lovA += 0;    lovB += 1;    hatA -= 2;    hatB -= 0;    feaA -= 2;    feaB -= 0; }
-        else if (mod < 1){ hapA += 0;    hapB += 5;    lovA += 0;    lovB += 1;    hatA -= 2;    hatB -= 1;    feaA -= 2;    feaB -= 0; }
-        else if (mod < 4){ hapA += 1;    hapB += 7;    lovA += 0;    lovB += 2;    hatA -= 3;    hatB -= 1;    feaA -= 3;    feaB -= 0; }
-        else if (mod < 7){ hapA += 2;    hapB += 8;    lovA += 1;    lovB += 3;    hatA -= 4;    hatB -= 1;    feaA -= 3;    feaB -= 1; }
-    }
-    if (girl.health() < 25)                    // if she is injured she may be scared because of her surroundings
-    {
-        /* */if (mod < -6){ hapA -= 6;    hapB -= 2;    lovA -= 4;    lovB -= 1;    hatA += 3;    hatB += 4;    feaA += 2;    feaB += 4; sanA -= 4;  sanB -= 2;}
-        else if (mod < -3){ hapA -= 4;    hapB -= 1;    lovA -= 3;    lovB -= 1;    hatA += 2;    hatB += 3;    feaA += 1;    feaB += 3; sanA -= 2;  sanB -= 1;}
-        else if (mod < 0){    hapA -= 2;    hapB -= 1;    lovA -= 1;    lovB += 0;    hatA += 1;    hatB += 2;    feaA += 0;    feaB += 2; sanA -= 1;  sanB -= 0;}
-        else if (mod < 1){    hapA -= 1;    hapB += 1;    lovA -= 0;    lovB += 0;    hatA -= 0;    hatB += 1;    feaA -= 1;    feaB += 1; sanA += 0;  sanB += 1;}
-        else if (mod < 4){    hapA += 0;    hapB += 4;    lovA += 0;    lovB += 1;    hatA -= 1;    hatB += 0;    feaA -= 2;    feaB += 1; sanA += 1;  sanB += 2;}
-        else if (mod < 7){    hapA += 2;    hapB += 8;    lovA += 1;    lovB += 1;    hatA -= 1;    hatB += 0;    feaA -= 3;    feaB += 0; sanA += 2;  sanB += 4;}
-    }
-
-    if (girl.is_slave())                        // slaves get half as much from their mods
-    {
-        hapA /= 2;    hapB /= 2;    lovA /= 2;    lovB /= 2;    hatA /= 2;    hatB /= 2;    feaA /= 2;    feaB /= 2;
-    }
-
-    int hap = g_Dice.bell(hapA, hapB);
-    int lov = g_Dice.bell(lovA, lovB);
-    int hat = g_Dice.bell(hatA, hatB);
-    int fea = g_Dice.bell(feaA, feaB);
-    int san = g_Dice.bell(sanA, sanB);
-
-    girl.happiness(hap);
-    girl.pclove(lov - hat);
-    girl.pcfear(fea);
-    girl.sanity(san);
-
-
-    // after all the happy, love fear and hate are done, do some other checks.
-    int chance = 1 + (mod < 0 ? -mod : mod);
-    if (!g_Dice.percent(chance)) return;
-    // Only check if a trait gets modified if mod is far from 0
-
-    bool b_intelligence = g_Dice.percent(girl.intelligence());
-    bool b_confidence = g_Dice.percent(girl.confidence());
-    bool b_spirit = g_Dice.percent(girl.spirit());
-    bool b_refinement = g_Dice.percent(girl.refinement());
-    bool b_dignity = g_Dice.percent(girl.dignity());
-
-    if (b_refinement && b_dignity && b_confidence &&
-        mod >= 0 && girl.m_AccLevel >= 5 && girl.lose_trait(traits::HOMELESS, true, girl.m_AccLevel))
-    {
-        ss << girl.FullName() << " has gotten used to better surroundings and has lost the \"Homeless\" trait.";
-    }
-    else if (b_intelligence && b_spirit && b_confidence && mod >= 2 &&
-        girl.lose_trait(traits::MASOCHIST, true, girl.m_AccLevel - 7))
-    {
-        ss << girl.FullName() << " seems to be getting used to being treated well and has lost the \"Masochist\" trait.";
-    }
-    else if (!b_dignity && !b_spirit && !b_confidence && mod <= -1 && girl.gain_trait(traits::MASOCHIST, 3 - mod))
-    {
-        ss << girl.FullName()
-           << " seems to be getting used to being treated poorly and has become a \"Masochist\".";
-    }
-    else if (mod < 0 && girl.lose_trait(traits::OPTIMIST, true, 3))
-    {
-        ss << girl.FullName() << " has lost her \"Optimistic\" outlook on life.";
-    }
-    else if (mod > 0 && girl.gain_trait(traits::OPTIMIST, 3))
-    {
-        ss << girl.FullName() << " has started to view the world from a more \"Optimistic\" point of view.";
-    }
-    else if (mod > 0 && g_Dice.percent(3) && girl.lose_trait(traits::PESSIMIST, true, 3))
-    {
-        ss << girl.FullName() << " has lost her \"Pessimistic\" way of viewing the world around her.";
-    }
-    else if (mod < 0 && girl.gain_trait(traits::PESSIMIST, 3))
-    {
-        ss << girl.FullName() << " has started to view the world from a more \"Pessimistic\" point of view.";
-    }
-
-    if (ss.str().length() > 0)    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
-}
 
 // ----- Stats
 
