@@ -68,13 +68,13 @@ void cWindowManager::replace(const std::string& window_name)
     auto current = m_WindowStack.back();
     // remove old window, but to not re-initialize the window under it, since we immediately push a new window on top.
     m_WindowStack.pop_back();
-    //try {
+    try {
         push(window_name);
-    /*} catch(...) {
+    } catch(...) {
         // in case of exception, roll back the pop
         m_WindowStack.push_back(current);
         throw;
-    }*/
+    }
 }
 
 
@@ -205,12 +205,12 @@ void cWindowManager::add_window(std::string name, std::shared_ptr<cInterfaceWind
     windows[std::move(name)] = std::move(win);
 }
 
-cBuilding * cWindowManager::GetActiveBuilding() const
+cBuilding* cWindowManager::GetActiveBuilding() const
 {
     return m_ActiveBuilding;
 }
 
-void cWindowManager::SetActiveBuilding(cBuilding * building)
+void cWindowManager::SetActiveBuilding(cBuilding* building)
 {
     m_ActiveBuilding = building;
 }

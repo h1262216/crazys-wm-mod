@@ -25,6 +25,7 @@
 #include "buildings/cBuilding.h"
 #include "IGame.h"
 #include "cInventory.h"
+#include "buildings/queries.h"
 
 class MatronJob : public IGenericJob {
 public:
@@ -36,12 +37,12 @@ public:
         m_Info.FreeOnly = true;
     }
     double GetPerformance(const sGirl& girl, bool estimate) const override;
-    sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
+    void DoWork(sGirlShiftData& shift) override;
 protected:
     int MatronGains(sGirl& girl, bool Day0Night1, int conf);
     void HandleMatronResult(sGirl& girl, int &conf);
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override {
-        return eCheckWorkResult::ACCEPTS;
+    ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override {
+        return ECheckWorkResult::ACCEPTS;
     }
     void ApplyMatronEffect(const sGirl& girl);
 
@@ -51,7 +52,7 @@ protected:
 class BrothelMatronJob : public MatronJob {
 public:
     using MatronJob::MatronJob;
-    sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
+    void DoWork(sGirlShiftData& shift) override;
 };
 
 double MatronJob::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -92,7 +93,9 @@ double MatronJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return jobperformance;
 }
 
-sWorkJobResult MatronJob::DoWork(sGirl& girl, bool is_night) {
+void MatronJob::DoWork(sGirlShiftData& shift) {
+    auto& girl = shift.girl();
+    bool is_night = shift.IsNightShift;
     // DisobeyCheck is done in the building flow.
     girl.m_DayJob = girl.m_NightJob = job();    // it is a full time job
 
@@ -108,11 +111,11 @@ sWorkJobResult MatronJob::DoWork(sGirl& girl, bool is_night) {
 
     // Improve girl
     int wages = MatronGains(girl, is_night, conf);
-    return {false, 0, 0, 0};
+    shift.Wages = wages;
 }
 
 int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
-    int numgirls = girl.m_Building->num_girls();
+    int numgirls = num_girls(*girl.m_Building);
     int xp = numgirls / 10,  skill = 3;
 
     if (girl.has_active_trait(traits::QUICK_LEARNER))        { skill += 1; xp += 5; }
@@ -135,7 +138,7 @@ int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
 }
 
 void MatronJob::HandleMatronResult(sGirl& girl, int &conf) {
-    int numgirls = girl.m_Building->num_girls();
+    int numgirls = num_girls(*girl.m_Building);
     int check = d100();
     if (check < 10 && numgirls >(girl.service() + girl.confidence()) * 3)
     {
@@ -183,12 +186,13 @@ void MatronJob::ApplyMatronEffect(const sGirl& girl) {
     });
 }
 
-sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
-    auto brothel = girl.m_Building;
+void BrothelMatronJob::DoWork(sGirlShiftData& shift) {
+    auto& girl = shift.girl();
+    bool is_night = shift.IsNightShift;
 
     Action_Types actiontype = ACTION_WORKMATRON;
     girl.m_DayJob = girl.m_NightJob = JOB_MATRON;    // it is a full time job
-    if (is_night) return {false, 0, 0, 0};    // and is only checked once
+    if (is_night) return;    // and is only checked once
 
     ss << "Matron ${name} ";
 
@@ -199,7 +203,8 @@ sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
     {
         ss << "refused to work during the " << (is_night ? "night" : "day") << " shift.";
         girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
-        return {true, 0, 0, 0};
+        shift.Refused = ECheckWorkResult::REFUSES;
+        return;
     }
 
     int conf = 0;
@@ -219,7 +224,7 @@ sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
         int steal = g_Game->gold().ival() / 1000;
         if (steal > 1000) steal = 1000;
         if (steal < 10) steal = 10;
-
+/*
         if (roll_b < brothel->m_SecurityLevel)
         {
             std::stringstream warning;
@@ -232,6 +237,7 @@ sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
             g_Game->gold().misc_debit(steal);
             girl.m_Money += steal;        // goes directly into her pocket
         }
+*/
     }
 
     if (is_addict(girl, true) && chance(girl.m_Withdrawals * 20))
@@ -309,54 +315,54 @@ sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
         if (chance(50) && girl.has_active_trait(traits::HORRIFIC_SCARS))
         {
             ss << " The customers were disgusted by her horrific scars.";
-            brothel->m_Happiness -= 15;
+            //brothel->m_Happiness -= 15;
         }
         else if (chance(50) && girl.has_active_trait(traits::SMALL_SCARS))
         {
             ss << " Some customers were disgusted by her scars.";
-            brothel->m_Happiness -= 5;
+            //brothel->m_Happiness -= 5;
         }
         else if (chance(50) && girl.has_active_trait(traits::BRUISES))
         {
             ss << " The customers were disgusted by her bruises.";
-            brothel->m_Happiness -= 5;
+            //brothel->m_Happiness -= 5;
         }
 
         if (chance(50) && girl.has_active_trait(traits::FUTANARI))
         {
             ss << " The girls and some customers couldn't stop looking at her big cock.";
-            brothel->m_Happiness += 2;
+            //brothel->m_Happiness += 2;
         }
 
         if (chance(50) && girl.breast_size() >= BreastSize::MASSIVE_MELONS)
         {
             ss << " Her enormous, heaving breasts drew a lot of attention from the customers.";
-            brothel->m_Happiness += 15;
+            //brothel->m_Happiness += 15;
         }
         else if (chance(50) && (girl.breast_size() >= BreastSize::BIG_BOOBS && girl.breast_size() < BreastSize::MASSIVE_MELONS))
         {
             ss << " Her big, round breasts drew a lot of attention from the customers.";
-            brothel->m_Happiness += 10;
+            //brothel->m_Happiness += 10;
         }
         if (chance(50) && (girl.any_active_trait({traits::DELUXE_DERRIERE, traits::GREAT_ARSE})))
         {
             ss << " The customers were hypnotized by the movements of her well shaped butt.";
-            brothel->m_Happiness += 15;
+            //brothel->m_Happiness += 15;
         }
         if (chance(50) && (girl.any_active_trait({traits::GREAT_FIGURE, traits::HOURGLASS_FIGURE})))
         {
             ss << " She has such a great figure that the customers couldn't stop looking at her.";
-            brothel->m_Happiness += 15;
+            //brothel->m_Happiness += 15;
         }
         if (chance(50) && girl.has_active_trait(traits::SEXY_AIR))
         {
             ss << " She's so sexy that the customers couldn't stop looking at her.";
-            brothel->m_Happiness += 10;
+            //brothel->m_Happiness += 10;
         }
         if (chance(50) && (girl.any_active_trait({traits::PIERCED_NIPPLES, traits::PIERCED_NAVEL, traits::PIERCED_NOSE})))
         {
             ss << " Her piercings catch the eye of some customers.";
-            brothel->m_Happiness += 5;
+            //brothel->m_Happiness += 5;
         }
         imagetype = EImageBaseType::ECCHI;
     }
@@ -364,21 +370,19 @@ sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
     if (girl.has_active_trait(traits::OPTIMIST) && roll_b < girl.happiness() / 2) // 50% chance at best
     {
         ss << "\n \nWorking with someone as cheerful as ${name} makes everybody a bit happier.";
-        brothel->update_all_girls_stat(STAT_HAPPINESS, 1);
+        // girl.m_Building->update_all_girls_stat(STAT_HAPPINESS, 1);
     }
 
     if (girl.has_active_trait(traits::PESSIMIST) && roll_b > 50 + girl.happiness() / 2) // 50% chance at worst
     {
         ss << "\n \nWorking with someone as pessimistic as ${name} makes everybody a little bit sadder.";
-        brothel->update_all_girls_stat(STAT_HAPPINESS, -1);
+        // girl.m_Building->update_all_girls_stat(STAT_HAPPINESS, -1);
     }
 
     girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     // Improve girl
-    int wages = MatronGains(girl, is_night, conf);
-
-    return {false, 0, 0, wages};
+    shift.Wages = MatronGains(girl, is_night, conf);
 }
 
 void RegisterManagerJobs(cJobManager& mgr) {

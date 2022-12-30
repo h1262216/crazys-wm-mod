@@ -125,7 +125,12 @@ int cTariff::nets_price(int n)
 
 int cTariff::anti_preg_price(int n)
 {
-    return int(n * 2 * g_Game->settings().get_integer(settings::MONEY_COST_CONTRA));
+    return int(n * g_Game->settings().get_integer(settings::MONEY_COST_CONTRA));
+}
+
+int cTariff::anti_preg_spot_price(int n)
+{
+    return int(n * 5 * g_Game->settings().get_integer(settings::MONEY_COST_CONTRA));
 }
 
 int cTariff::advertising_costs(int budget)

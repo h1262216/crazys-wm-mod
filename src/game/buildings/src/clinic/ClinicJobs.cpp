@@ -24,6 +24,7 @@
 #include "cGirls.h"
 #include "buildings/cBuilding.h"
 #include "IGame.h"
+#include "queries.h"
 
 extern const char* const CarePointsBasicId;
 extern const char* const CarePointsGoodId;
@@ -43,7 +44,7 @@ namespace {
 
 struct DoctorJob : public cSimpleJob {
     DoctorJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
 };
 
@@ -72,7 +73,7 @@ void DoctorJob::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
     }
 }
 
-bool DoctorJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool DoctorJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     // this will be added to the clinic's code eventually - for now it is just used for her pay
 
     ProvideInteraction(DoctorInteractionId, 1);
@@ -107,8 +108,8 @@ bool DoctorJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 
 struct NurseJob : public cSimpleJob {
     NurseJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
 };
 
@@ -116,7 +117,7 @@ void NurseJob::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
     HandleAids(girl);
 }
 
-IGenericJob::eCheckWorkResult NurseJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult NurseJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if (girl.disobey_check(ACTION_WORKNURSE, JOB_NURSE))            // they refuse to work
     {
         ss << "${name} refused to see any patients during the " << (is_night ? "night" : "day") << " shift.";
@@ -137,7 +138,7 @@ NurseJob::NurseJob() : cSimpleJob(JOB_NURSE, "Nurse.xml", {ACTION_WORKNURSE, 0, 
     m_Info.Provides.emplace_back(CarePointsGoodId);
 }
 
-bool NurseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool NurseJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100(), roll_b = d100();
     int fame = 0;
     bool hand = false, sex = false, les = false;
@@ -318,7 +319,7 @@ struct InternJob : public cBasicJob {
     InternJob();
     sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
 };
 
@@ -363,7 +364,7 @@ sWorkJobResult InternJob::DoWork(sGirl& girl, bool is_night) {
     bool gaintrait = false;                                        // posibility of gaining a trait
     bool promote = false;                                        // posibility of getting promoted to Doctor or Nurse
     int skill = 0;                                                // gian for main skill trained
-    int dirtyloss = brothel->m_Filthiness / 100;                // training time wasted with bad equipment
+    int dirtyloss = cast_building(*brothel).m_Filthiness / 100;                // training time wasted with bad equipment
     int sgMed = 0, sgInt = 0, sgCha = 0;                        // gains per skill
     int roll_a = d100();                                    // roll for main skill gain
     int roll_b = d100();                                    // roll for main skill trained
@@ -491,7 +492,7 @@ sWorkJobResult InternJob::DoWork(sGirl& girl, bool is_night) {
     return {false, 0, 0, m_Wages};
 }
 
-IGenericJob::eCheckWorkResult InternJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult InternJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if (girl.medicine() + girl.intelligence() + girl.charisma() >= 300)
     {
         ss << "There is nothing more she can learn here so she is promoted to ";

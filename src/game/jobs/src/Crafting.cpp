@@ -24,31 +24,32 @@
 #include "buildings/cBuilding.h"
 #include "cInventory.h"
 #include "character/cPlayer.h"
+#include "buildings/IBuildingShift.h"
 
 namespace settings {
     extern const char* MONEY_SELL_ITEM;
 }
 
-bool GenericCraftingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    m_Wages = m_Data.BaseWages * (1.0 + (m_Performance - 70) / 100.0);
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    shift.Wages = m_Data.BaseWages * (1.0 + (shift.Performance - 70) / 100.0);
+    auto msgtype = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //    Job Performance            //
 
-    craftpoints = m_Performance;
+    craftpoints = shift.Performance;
 
-    int dirtyloss = brothel.m_Filthiness / 10;        // craftpoints lost due to repairing equipment
+    int dirtyloss = shift.building().Filthiness() / 10;        // craftpoints lost due to repairing equipment
     if (dirtyloss > 0)
     {
         craftpoints -= dirtyloss * 2;
-        brothel.m_Filthiness -= dirtyloss * 10;
+        shift.building().ProvideCleaning(dirtyloss * 10);
         add_text("repair") << "\n\n";
     }
 
     performance_msg();
 
     //    Enjoyment and Tiredness        //
-    DoWorkEvents(girl);
+    DoWorkEvents(girl, shift);
     if(girl.is_dead())
         return false;    // not refusing, she is dead
     // TODO tiredness
@@ -62,14 +63,14 @@ bool GenericCraftingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_
         float item_worth = DoCrafting(girl, craftpoints);
         if(item_worth > 0) {
             msgtype = EVENT_GOODNEWS;
-            m_Earnings += item_worth * girl_pay;
+            shift.Earnings += item_worth * girl_pay;
         }
     }
 
     // Push out the turn report
     girl.AddMessage(ss.str(), m_ImageType, msgtype);
 
-    apply_gains(girl, m_Performance);
+    apply_gains(girl, shift.Performance);
 
     // Update Enjoyment
     girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
@@ -111,7 +112,7 @@ float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) {
     return item_worth;
 }
 
-void GenericCraftingJob::DoWorkEvents(sGirl& girl) {
+void GenericCraftingJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
     shift_enjoyment();
 }
 
@@ -121,7 +122,7 @@ void GenericCraftingJob::performance_msg() {
 
 struct cBlacksmithJob : GenericCraftingJob {
     cBlacksmithJob();
-    void DoWorkEvents(sGirl& girl) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
 };
 
 cBlacksmithJob::cBlacksmithJob() :
@@ -130,9 +131,9 @@ cBlacksmithJob::cBlacksmithJob() :
 
 }
 
-void cBlacksmithJob::DoWorkEvents(sGirl& girl) {
-    int tired = (300 - (int)m_Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
-    int roll_a = uniform(0, 100) + (m_Performance - 75) / 20;
+void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+    int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
+    int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
     if (roll_a <= 10)
     {
@@ -141,7 +142,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl) {
         if (roll_b < 10)    // fire
         {
             int fire = std::max(0, rng().bell(-2, 10));
-            girl.m_Building->m_Filthiness += fire * 2;
+            shift.building().GenerateFilth(fire * 2);
             craftpoints *= (1 - fire * 0.1);
             if (girl.pcfear() > 20) girl.pcfear(fire / 2);    // she is afraid you will get mad at her
             ss << "She accidentally started a fire";
@@ -196,7 +197,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl) {
 
 struct cCobblerJob : GenericCraftingJob {
     cCobblerJob();
-    void DoWorkEvents(sGirl& girl) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
 };
 
 cCobblerJob::cCobblerJob() :
@@ -204,9 +205,9 @@ cCobblerJob::cCobblerJob() :
                        ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
-void cCobblerJob::DoWorkEvents(sGirl& girl) {
-    int tired = (300 - (int)m_Performance);    // this gets divided in roll_a by (10, 12 or 14) so it will end up around 0-23 tired
-    int roll_a = uniform(0, 100) + (m_Performance - 75) / 20;
+void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+    int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (10, 12 or 14) so it will end up around 0-23 tired
+    int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
     if (roll_a <= 10)
     {
@@ -258,7 +259,7 @@ void cCobblerJob::DoWorkEvents(sGirl& girl) {
 
 struct cMakeItemJob : GenericCraftingJob {
     cMakeItemJob();
-    void DoWorkEvents(sGirl& girl) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
 };
 
 cMakeItemJob::cMakeItemJob() :
@@ -266,9 +267,9 @@ cMakeItemJob::cMakeItemJob() :
                            ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
-void cMakeItemJob::DoWorkEvents(sGirl& girl) {
-    int tired = (300 - (int)m_Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
-    int roll_a = uniform(0, 100) + (m_Performance - 75) / 20;
+void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+    int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
+    int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
     if (roll_a <= 10)
     {
@@ -318,7 +319,7 @@ void cMakeItemJob::DoWorkEvents(sGirl& girl) {
 
 struct cMakePotionsJob : GenericCraftingJob {
     cMakePotionsJob();
-    void DoWorkEvents(sGirl& girl) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
 };
 
 
@@ -327,8 +328,8 @@ cMakePotionsJob::cMakePotionsJob() :
                            ACTION_WORKMAKEPOTIONS, 20, EImageBaseType::CRAFT) {
 }
 
-void cMakePotionsJob::DoWorkEvents(sGirl& girl) {
-    int roll = uniform(0, 100) + (m_Performance - 75) / 20;
+void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+    int roll = uniform(0, 100) + (shift.Performance - 75) / 20;
     //enjoyed the work or not
     if (roll >= 90)
     {
@@ -360,7 +361,7 @@ void cMakePotionsJob::DoWorkEvents(sGirl& girl) {
 struct cTailorJob : GenericCraftingJob {
     cTailorJob();
 
-    void DoWorkEvents(sGirl& girl) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
 };
 
 
@@ -369,9 +370,9 @@ cTailorJob::cTailorJob() :
                            ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
-void cTailorJob::DoWorkEvents(sGirl& girl) {
-    int tired = (300 - (int)m_Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
-    int roll_a = uniform(0, 100) + (m_Performance - 75) / 20;
+void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+    int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
+    int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
     if (roll_a <= 10)
     {
@@ -431,7 +432,7 @@ cGardenerJob::cGardenerJob() :
 
 struct cJewelerJob : GenericCraftingJob {
     cJewelerJob();
-    void DoWorkEvents(sGirl& girl) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
 };
 
 cJewelerJob::cJewelerJob() :
@@ -439,9 +440,9 @@ cJewelerJob::cJewelerJob() :
                            ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
 }
 
-void cJewelerJob::DoWorkEvents(sGirl& girl) {
-    int tired = (300 - (int)m_Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
-    int roll_a = uniform(0, 100) + (m_Performance - 75) / 20;
+void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+    int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
+    int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
     if (roll_a <= 10)
     {
@@ -450,7 +451,7 @@ void cJewelerJob::DoWorkEvents(sGirl& girl) {
         if (roll_b < 10)    // fire
         {
             int fire = std::max(0, rng().bell(-2, 10));
-            girl.m_Building->m_Filthiness += fire * 2;
+            shift.building().GenerateFilth(fire * 2);
             craftpoints -= (craftpoints * (fire * 0.1));
             if (girl.pcfear() > 20) girl.pcfear(fire / 2);    // she is afraid you will get mad at her
             ss << "She accidently started a fire";
@@ -459,7 +460,7 @@ void cJewelerJob::DoWorkEvents(sGirl& girl) {
             else if (fire < 10)    ss << " that destroyed most of the equipment she had made.";
             else /*          */    ss << " destroying everything she had made.";
 
-            if (fire > 5) g_Game->push_message(girl.FullName() + " accidently started a large fire while working as a Jeweler at the Arena.", COLOR_WARNING);
+            if (fire > 5) g_Game->push_message(girl.FullName() + " accidentally started a large fire while working as a Jeweler at the Arena.", COLOR_WARNING);
         }
         else if (roll_b < 30)    // injury
         {

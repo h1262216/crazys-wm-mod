@@ -34,7 +34,7 @@ namespace {
         PracticeJob();
 
         sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+        eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
     };
 
     class MistressJob : public cBasicJob {
@@ -42,7 +42,7 @@ namespace {
         MistressJob();
 
         sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+        eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
     };
 }
 
@@ -78,12 +78,13 @@ sWorkJobResult MistressJob::DoWork(sGirl& girl, bool is_night) {
     return {false, 0, 0, 100};
 }
 
-IGenericJob::eCheckWorkResult MistressJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult MistressJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     return SimpleRefusalCheck(girl, ACTION_WORKMATRON);
 }
 
 PracticeJob::PracticeJob() : cBasicJob(JOB_TRAINING, "Training.xml") {
     m_Info.Consumes.emplace_back(TrainingInteractionId);
+    m_Info.Phase = EJobPhase::LATE;
 }
 
 namespace {
@@ -235,7 +236,7 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
     }
 }
 
-IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if (girl.disobey_check(ACTION_WORKTRAINING, JOB_TRAINING))            // they refuse to work
     {
 
@@ -273,7 +274,7 @@ public:
     }
 
     double GetPerformance(const sGirl& girl, bool estimate) const override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
 
     virtual void HandleTraining(sGirl& girl, bool is_night) = 0;
     virtual void OnComplete(sGirl& girl) = 0;
@@ -336,7 +337,7 @@ double TrainingJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return 250;
 }
 
-IGenericJob::eCheckWorkResult TrainingJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult TrainingJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if (girl.has_active_trait(TargetTrait))
     {
         add_text("is-already");

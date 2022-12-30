@@ -25,7 +25,9 @@
 #include "utils/algorithms.hpp"
 #include "character/predicates.h"
 #include "events.h"
+#include "queries.h"
 #include "cGirls.h"
+#include "cBuildingShift.h"
 
 
 extern cRng    g_Dice;
@@ -34,44 +36,24 @@ extern const char* const CarePointsBasicId = "CarePointsBasic";
 extern const char* const CarePointsGoodId = "CarePointsGood";
 extern const char* const DoctorInteractionId = "DoctorInteraction";
 
-// // ----- Strut sClinic Create / destroy
-sClinic::sClinic() : cBuilding(BuildingType::CLINIC, "Clinic")
-{
-    m_FirstJob = JOB_GETHEALING;
-    m_LastJob = JOB_JANITOR;
-    m_MatronJob = JOB_CHAIRMAN;
-    m_MeetGirlData.Spawn = SpawnReason::CLINIC;
-    m_MeetGirlData.Event = events::GIRL_MEET_CLINIC;
+namespace {
+    sBuildingConfig ClinicConfig() {
+        return sBuildingConfig{BuildingType::CLINIC, JOB_GETHEALING, JOB_JANITOR, JOB_CHAIRMAN}
+                .spawn(SpawnReason::CLINIC, events::GIRL_MEET_CLINIC);
+    }
+}
 
-    declare_resource(CarePointsBasicId);
-    declare_resource(CarePointsGoodId);
-    declare_interaction(DoctorInteractionId);
+// // ----- Strut sClinic Create / destroy
+sClinic::sClinic() : cBuilding("Clinic", ClinicConfig())
+{
+    m_Shift->declare_resource(CarePointsBasicId);
+    m_Shift->declare_resource(CarePointsGoodId);
+    m_Shift->declare_interaction(DoctorInteractionId);
 }
 
 sClinic::~sClinic()    = default;
 
 // Run the shifts
-void sClinic::UpdateGirls(bool is_night)    // Start_Building_Process_B
-{
-    // `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >> cClinic.cpp
-    std::stringstream ss;
-    std::string girlName;
-
-    BeginShift(is_night);
-
-    //  Do all the Clinic staff jobs.
-    IterateGirls(is_night, {JOB_INTERN, JOB_NURSE, JOB_JANITOR, JOB_DOCTOR},
-                 [is_night](auto& current) {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    //  Do all the surgery jobs.
-    IterateGirls(is_night, {JOB_GETHEALING, JOB_GETABORT, JOB_COSMETICSURGERY,
-                            JOB_LIPO, JOB_BREASTREDUCTION, JOB_BOOBJOB, JOB_VAGINAREJUV, JOB_FACELIFT,
-                            JOB_ASSJOB, JOB_TUBESTIED, JOB_CUREDISEASES, JOB_FERTILITY}, [is_night](auto& current) {
-        g_Game->job_manager().do_job(current, is_night);
-    });
-
     //  Finally, treat external patients. This depends on how many treatment points and free doctors we still have
     /*
     while(sGirl* doc = RequestInteraction(DoctorInteractionId)) {
@@ -133,23 +115,21 @@ void sClinic::UpdateGirls(bool is_night)    // Start_Building_Process_B
                              EBaseImage::PROFILE, EVENT_SUMMARY);
          }
      });
-*/
-    EndShift(is_night);
 
-    int total_doctor_actions = GetInteractionConsumed(DoctorInteractionId);
-    int possible_doctor_actions = GetInteractionProvided(DoctorInteractionId);
+
+    int total_doctor_actions = m_Shift->GetInteractionConsumed(DoctorInteractionId);
+    int possible_doctor_actions = m_Shift->GetInteractionProvided(DoctorInteractionId);
 
     if(total_doctor_actions > possible_doctor_actions) {
         std::stringstream msg;
         msg << "You tried to get " << total_doctor_actions << " girls treated, but doctors could only take care of " << possible_doctor_actions << ".\n";
-        AddMessage(msg.str(), EEventType::EVENT_WARNING);
+        AddMessage(msg.str(), EventType::EVENT_WARNING);
     } else if(possible_doctor_actions > 0) {
         std::stringstream msg;
         msg << "Your clinic has enough doctors for " << possible_doctor_actions << " patients. This week you requested treatment for " << total_doctor_actions << " girls.\n";
-        AddMessage(msg.str(), EEventType::EVENT_BUILDING);
+        AddMessage(msg.str(), EventType::EVENT_BUILDING);
     }
-
-}
+*/
 
 void sClinic::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {
@@ -163,13 +143,13 @@ void sClinic::auto_assign_job(sGirl& target, std::stringstream& message, bool is
     }
     else if ((target.is_free() &&                                        // assign any free girl
              (target.intelligence() > 70 && target.medicine() > 70))    // who is well qualified
-             || (num_girls_on_job(JOB_DOCTOR, is_night) < 1 &&            // or if there are no doctors yet
+             || (num_girls_on_job(*this, JOB_DOCTOR, is_night) < 1 &&            // or if there are no doctors yet
                  target.intelligence() >= 50 && target.medicine() >= 50))    // assign anyone who qualifies
     {
         target.m_DayJob = target.m_NightJob = JOB_DOCTOR;            // as a Doctor
         ss << "work as a Doctor.";
     }
-    else if (num_girls_on_job(JOB_NURSE, is_night) < 1)            // make sure there is at least 1 Nurse
+    else if (num_girls_on_job(*this, JOB_NURSE, is_night) < 1)            // make sure there is at least 1 Nurse
     {
         target.m_DayJob = target.m_NightJob = JOB_NURSE;
         ss << "work as a Nurse.";
@@ -186,18 +166,18 @@ void sClinic::auto_assign_job(sGirl& target, std::stringstream& message, bool is
         ss << "get her " << (numdiseases > 1 ? "diseases" : diseases[0]) << " treated.";
     }
         // then make sure there is at least 1 Janitor and 1 Mechanic
-    else if (num_girls_on_job(JOB_JANITOR, is_night) < 1)
+    else if (num_girls_on_job(*this, JOB_JANITOR, is_night) < 1)
     {
         target.m_DayJob = target.m_NightJob = JOB_JANITOR;
         ss << "work as a Janitor.";
     }
         // then add more of each job as numbers permit
-    else if (target.medicine() > 30 && num_girls_on_job(JOB_NURSE, is_night) < num_girls() / 10)
+    else if (target.medicine() > 30 && num_girls_on_job(*this, JOB_NURSE, is_night) < num_girls() / 10)
     {
         target.m_DayJob = target.m_NightJob = JOB_NURSE;
         ss << "work as a Nurse.";
     }
-    else if (num_girls_on_job(JOB_JANITOR, is_night) < num_girls() / 20)
+    else if (num_girls_on_job(*this, JOB_JANITOR, is_night) < num_girls() / 20)
     {
         target.m_DayJob = target.m_NightJob = JOB_JANITOR;
         ss << "work as a Janitor.";
@@ -309,17 +289,4 @@ std::string sClinic::meet_no_luck() const {
                 "got daddy's gold.  Looks like nothing to gain here today. "
             }
     );
-}
-
-void sClinic::GirlBeginShift(sGirl& girl, bool is_night) {
-    cBuilding::GirlBeginShift(girl, is_night);
-
-    if (girl.has_active_trait(traits::AIDS) && (
-            is_in((JOBS)girl.m_DayJob, {JOB_DOCTOR, JOB_INTERN, JOB_NURSE}) ||
-            is_in((JOBS)girl.m_NightJob, {JOB_DOCTOR, JOB_INTERN, JOB_NURSE})))
-    {
-        girl.m_DayJob = girl.m_NightJob = JOB_RESTING;
-        girl.AddMessage("Health laws prohibit anyone with AIDS from working in the Medical profession so ${name} was sent to the waiting room.",
-                        EImageBaseType::PROFILE, EVENT_WARNING);
-    }
 }

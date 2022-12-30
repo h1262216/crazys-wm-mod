@@ -41,6 +41,7 @@ class TraitSpec;
 class sInventoryItem;
 class sChild;
 class cBuilding;
+class IBuilding;
 class cPlayer;
 class sCustomer;
 class sGirl;

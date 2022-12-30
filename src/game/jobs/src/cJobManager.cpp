@@ -42,12 +42,14 @@
 #include "cGirlGangFight.h"
 #include "cShop.h"
 #include "character/lust.h"
+#include "buildings/IBuildingShift.h"
 
 extern cRng g_Dice;
 
 void RegisterCraftingJobs(cJobManager& mgr);
 void RegisterSurgeryJobs(cJobManager& mgr);
 void RegisterWrappedJobs(cJobManager& mgr);
+void RegisterFreeTimeJob(cJobManager& mgr);
 void RegisterManagerJobs(cJobManager& mgr);
 void RegisterTherapyJobs(cJobManager& mgr);
 void RegisterBarJobs(cJobManager& mgr);
@@ -172,30 +174,31 @@ void cJobManager::Setup()
     register_filter(JOBFILTER_HOUSETTRAINING, JOB_MISTRESS, JOB_HOUSEPET, {});
 
     RegisterCraftingJobs(*this);
-    RegisterSurgeryJobs(*this);
-    RegisterWrappedJobs(*this);
+//    RegisterSurgeryJobs(*this);
+//    RegisterWrappedJobs(*this);
     RegisterManagerJobs(*this);
-    RegisterFilmingJobs(*this);
-    RegisterFilmCrewJobs(*this);
-    RegisterOtherStudioJobs(*this);
-    RegisterTherapyJobs(*this);
-    RegisterBarJobs(*this);
-    RegisterFarmJobs(*this);
-    RegisterClinicJobs(*this);
-    RegisterTrainingJobs(*this);
+//    RegisterFilmingJobs(*this);
+//    RegisterFilmCrewJobs(*this);
+//    RegisterOtherStudioJobs(*this);
+//    RegisterTherapyJobs(*this);
+//    RegisterBarJobs(*this);
+//    RegisterFarmJobs(*this);
+//    RegisterClinicJobs(*this);
+//    RegisterTrainingJobs(*this);
     RegisterArenaJobs(*this);
     RegisterCleaningJobs(*this);
-    RegisterHouseJobs(*this);
+ //   RegisterHouseJobs(*this);
     RegisterCentreJobs(*this);
+    RegisterFreeTimeJob(*this);
 }
-
+/*
 sCustomer cJobManager::GetMiscCustomer(cBuilding& brothel)
 {
     sCustomer cust = g_Game->GetCustomer(brothel);
     brothel.m_MiscCustomers+=1;
     return cust;
 }
-
+*/
 // ----- Job related
 
 bool cJobManager::FullTimeJob(JOBS Job)
@@ -377,7 +380,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     bool MadeChanges = true;  // whether a special case applies to specified job or not
 
     assert(m_OOPJobs[JobID] != nullptr);
-    auto check = m_OOPJobs[JobID]->is_job_valid(Girl);
+    auto check = m_OOPJobs[JobID]->is_job_valid(Girl, Day0Night1);
     if(!check) {
         g_Game->push_message(check.Reason, 0);
         return false;
@@ -393,7 +396,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
 // Special Brothel Jobs
     else if (JobID == JOB_MATRON)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_MATRON, Day0Night1) > 0)
+        if (num_girls_on_job(*Girl.m_Building, JOB_MATRON, Day0Night1) > 0)
             g_Game->push_message("You can only have one matron per brothel.", 0);
         else
             Girl.m_NightJob = Girl.m_DayJob = JOB_MATRON;
@@ -408,7 +411,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     // Special House Jobs
     else if (JobID == JOB_HEADGIRL)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_HEADGIRL, Day0Night1) > 0)    g_Game->push_message("There can be only one Head Girl!", 0);
+        if (num_girls_on_job(*Girl.m_Building, JOB_HEADGIRL, Day0Night1) > 0)    g_Game->push_message("There can be only one Head Girl!", 0);
         else /*                                 */    Girl.m_NightJob = Girl.m_DayJob = JOB_HEADGIRL;
     }
     else if (JobID == JOB_RECRUITER)
@@ -448,7 +451,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     // Special Farm Jobs
     else if (JobID == JOB_FARMMANGER)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_FARMMANGER, Day0Night1) > 0)
+        if (num_girls_on_job(*Girl.m_Building, JOB_FARMMANGER, Day0Night1) > 0)
             g_Game->push_message("There can be only one Farm Manager!", 0);
         else
             Girl.m_NightJob = Girl.m_DayJob = JOB_FARMMANGER;
@@ -457,13 +460,13 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     {
         if (Day0Night1 == SHIFT_DAY || fulltime)
         {
-            if (Girl.m_Building->num_girls_on_job(JOB_MARKETER, SHIFT_DAY) > 0)
+            if (num_girls_on_job(*Girl.m_Building, JOB_MARKETER, SHIFT_DAY) > 0)
                 g_Game->push_message("There can be only one Farm Marketer on each shift!", 0);
             else Girl.m_DayJob = JOB_MARKETER;
         }
         if (Day0Night1 == SHIFT_NIGHT || fulltime)
         {
-            if (Girl.m_Building->num_girls_on_job(JOB_MARKETER, SHIFT_NIGHT) > 0)
+            if (num_girls_on_job(*Girl.m_Building, JOB_MARKETER, SHIFT_NIGHT) > 0)
                 g_Game->push_message("There can be only one Farm Marketer on each shift!", 0);
             else Girl.m_NightJob = JOB_MARKETER;
         }
@@ -471,7 +474,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     // Special Arena Jobs
     else if (JobID == JOB_DOCTORE)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_DOCTORE, Day0Night1) > 0)
+        if (num_girls_on_job(*Girl.m_Building, JOB_DOCTORE, Day0Night1) > 0)
             g_Game->push_message("There can be only one Doctore!", 0);
         else
             Girl.m_NightJob = Girl.m_DayJob = JOB_DOCTORE;
@@ -485,7 +488,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     // Special Clinic Jobs
     else if (JobID == JOB_CHAIRMAN)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_CHAIRMAN, Day0Night1)>0)
+        if (num_girls_on_job(*Girl.m_Building, JOB_CHAIRMAN, Day0Night1)>0)
             g_Game->push_message("There can be only one Chairman!", 0);
         else
             Girl.m_NightJob = Girl.m_DayJob = JOB_CHAIRMAN;
@@ -533,7 +536,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     // Special Centre Jobs
     else if (JobID == JOB_CENTREMANAGER)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_CENTREMANAGER, Day0Night1) >0)
+        if (num_girls_on_job(*Girl.m_Building, JOB_CENTREMANAGER, Day0Night1) >0)
             g_Game->push_message(("There can be only one Centre Manager!"), 0);
         else
             Girl.m_NightJob = Girl.m_DayJob = JOB_CENTREMANAGER;
@@ -544,7 +547,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     }
     else if (JobID == JOB_REHAB)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_COUNSELOR, Day0Night1) < 1)
+        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
             g_Game->push_message(("You must have a counselor for rehab."), 0);
         else if (!is_addict(Girl))
             g_Game->push_message(("She has no addictions."), 0);
@@ -553,7 +556,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     }
     else if (JobID == JOB_ANGER)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_COUNSELOR, Day0Night1) < 1)
+        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
             g_Game->push_message(("You must have a counselor for anger management."), 0);
         else if (!Girl.any_active_trait({traits::AGGRESSIVE, traits::TSUNDERE, traits::YANDERE}))
             g_Game->push_message(("She has no anger issues."), 0);
@@ -562,7 +565,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     }
     else if (JobID == JOB_EXTHERAPY)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_COUNSELOR, Day0Night1) < 1)
+        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
             g_Game->push_message(("You must have a counselor for extreme therapy."), 0);
         else if (!Girl.any_active_trait({traits::MIND_FUCKED, traits::BROKEN_WILL}))
             g_Game->push_message(("She has no extreme issues."), 0);
@@ -571,7 +574,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     }
     else if (JobID == JOB_THERAPY)
     {
-        if (Girl.m_Building->num_girls_on_job(JOB_COUNSELOR, Day0Night1) < 1)
+        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
             g_Game->push_message(("You must have a counselor for therapy."), 0);
         else if (!Girl.any_active_trait({traits::NERVOUS, traits::DEPENDENT, traits::PESSIMIST}))
             g_Game->push_message(("She has no need of therapy."), 0);
@@ -626,7 +629,7 @@ bool cJobManager::work_related_violence(sGirl& girl, bool Day0Night1, bool stree
     // the base chance of an attempted rape is higher on the streets
     float rape_chance = (float)g_Game->settings().get_percent(streets ? settings::WORLD_RAPE_STREETS : settings::WORLD_RAPE_BROTHEL);
 
-    cBuilding * Brothl = girl.m_Building;
+    cBuilding * Brothl = &cast_building(*girl.m_Building);
 
     // `J` adjusted this a bit so gangs spying on the girl can help also
     std::vector<sGang *> gangs_guarding = g_Game->gang_manager().gangs_watching_girls();
@@ -743,14 +746,14 @@ int cJobManager::guard_coverage(std::vector<sGang*> *vpt)
 // True means security intercepted the perp(s)
 bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_night)
 {
-    cBuilding* Brothl = girl.m_Building;
+    cBuilding* Brothl = &cast_building(*girl.m_Building);
     int SecLev = Brothl->m_SecurityLevel, OrgNumMem = enemy_gang->m_Num;
 
     int p_seclev = 90 + (SecLev / 1000);
     if (p_seclev > 99) p_seclev = 99;
     // A gang takes 5 security points per member to stop
     if (SecLev > OrgNumMem * 5 && g_Dice.percent(p_seclev) &&
-        (Brothl->num_girls_on_job(JOB_SECURITY, day_night == SHIFT_DAY) > 0 ||
+        (num_girls_on_job(*Brothl, JOB_SECURITY, day_night == SHIFT_DAY) > 0 ||
         !g_Game->gang_manager().gangs_on_mission(MISS_GUARDING).empty()))
         return true;
 
@@ -1076,7 +1079,7 @@ void cJobManager::customer_rape(sGirl& girl, int numberofattackers)
 
     // `J` do Pregnancy and/or STDs
     bool preg = false, std = false, a = false, c = false, h = false, s = false;
-    sCustomer Cust = GetMiscCustomer(*girl.m_Building);
+    sCustomer Cust; // TODO = GetMiscCustomer(*girl.m_Building);
     Cust.m_Amount = numberofattackers;
 
     if (attacktype == SKILL_GROUP || attacktype == SKILL_NORMALSEX)
@@ -1332,138 +1335,86 @@ double calc_pilfering(sGirl& girl)
     return factor;    // otherwise, she stays honest (aside from addict factored-in earlier)
 }
 
-sPaymentData cJobManager::CalculatePay(sGirl& girl, sWorkJobResult result)
+sPaymentData cJobManager::CalculatePay(sGirlShiftData shift)
 {
     sPaymentData retval{0, 0, 0, 0, 0};
     // no pay or tips, no need to continue
-    if(result.Wages == 0 && result.Tips == 0 && result.Earnings == 0) return retval;
+    if(shift.Wages == 0 && shift.Tips == 0 && shift.Earnings == 0) return retval;
 
-    if(girl.is_unpaid()) {
-        result.Wages = 0;
+    if(shift.girl().is_unpaid()) {
+        shift.Wages = 0;
     }
 
-    retval.Wages = result.Wages;
-    retval.Earnings = result.Earnings;
-    retval.Tips = result.Tips;
+    retval.Wages = shift.Wages;
+    retval.Earnings = shift.Earnings;
+    retval.Tips = shift.Tips;
 
-    if (result.Tips > 0)        // `J` check tips first
+    if (shift.Tips > 0)        // `J` check tips first
     {
-        if (girl.keep_tips())
+        if (shift.girl().keep_tips())
         {
-            girl.m_Money += result.Tips;    // give her the tips directly
-            retval.GirlGets += result.Tips;
+            shift.girl().m_Money += shift.Tips;    // give her the tips directly
+            retval.GirlGets += shift.Tips;
         }
         else    // otherwise add tips into pay
         {
-            result.Earnings += result.Tips;
+            shift.Earnings += shift.Tips;
         }
     }
 
-    // TODO when can this be false? How do we handle that case?
-    if(girl.m_Building) {
-        // TODO check where we are handling the money processing for girl's payment
-        girl.m_Building->m_Finance.girl_support(result.Wages);
-    }
+    // TODO check where we are handling the money processing for girl's payment
+    shift.building().Finance().girl_support(shift.Wages);
 
-    retval.PlayerGets -= result.Wages;
-    girl.m_Money += result.Wages;    // she gets it all
-    retval.GirlGets += result.Wages;
+
+    retval.PlayerGets -= shift.Wages;
+    shift.girl().m_Money += shift.Wages;    // she gets it all
+    retval.GirlGets += shift.Wages;
 
 
     // work out how much gold (if any) she steals
-    double steal_factor = calc_pilfering(girl);
-    int stolen = int(steal_factor * result.Earnings);
-    result.Earnings -= stolen;
+    double steal_factor = calc_pilfering(shift.girl());
+    int stolen = int(steal_factor * shift.Earnings);
+    shift.Earnings -= stolen;
     retval.Earnings -= stolen;
-    girl.m_Money += stolen;
+    shift.girl().m_Money += stolen;
 
     // so now we are to the house percent.
-    int house = (girl.house() * result.Earnings) / 100;       // the house takes its cut of whatever's left
+    int house = (shift.girl().house() * shift.Earnings) / 100;       // the house takes its cut of whatever's left
     retval.PlayerGets += house;
 
-    girl.m_Money += result.Earnings - house;               // The girl collects her part of the pay
-    retval.GirlGets += result.Earnings - house;
-    if(girl.m_Building) {
-        // TODO ditto
-        girl.m_Building->m_Finance.brothel_work(house);                         // and add the rest to the brothel finances
-    }
+    shift.girl().m_Money += shift.Earnings - house;               // The girl collects her part of the pay
+    retval.GirlGets += shift.Earnings - house;
+    // TODO ditto
+    shift.building().Finance().brothel_work(house);                         // and add the rest to the brothel finances
 
     if (!stolen) return retval;                                    // If she didn't steal anything, we're done
     sGang* gang = g_Game->gang_manager().GetGangOnMission(MISS_SPYGIRLS);    // if no-one is watching for theft, we're done
     if (!gang) return retval;
-    int catch_pc = g_Game->gang_manager().chance_to_catch(girl);            // work out the % chance that the girl gets caught
+    int catch_pc = g_Game->gang_manager().chance_to_catch(shift.girl());            // work out the % chance that the girl gets caught
     if (!g_Dice.percent(catch_pc)) return retval;                    // if they don't catch her, we're done
 
     // OK: she got caught. Tell the player
-    std::stringstream gmess; gmess << "Your Goons spotted " << girl.FullName() << " taking more gold then she reported.";
+    std::stringstream gmess; gmess << "Your Goons spotted " << shift.girl().FullName() << " taking more gold then she reported.";
     gang->AddMessage(gmess.str());
     return retval;
 }
 
-void cJobManager::handle_simple_job(sGirl& girl, bool is_night)
-{
-    auto sw = girl.get_job(is_night);;
-    auto brothel = girl.m_Building;
-    if(!brothel) {
-        g_LogFile.error("jobs", "Could not handle simple job, because girl '", girl.FullName(), "' is not in any building");
-        return;
-    }
-
-    // do their job
-    auto result = do_job(girl, is_night);
-
-    //        Summary Messages
-    if (result.Refused)
-    {
-        brothel->m_Fame -= girl.fame();
-        girl.AddMessage("${name} refused to work so she made no money.", EImageBaseType::PROFILE, EVENT_SUMMARY);
-    }
-    else
-    {
-        brothel->m_Fame += girl.fame();
-        std::stringstream ss;
-        auto money_data = CalculatePay(girl, result);
-        ss << "${name} made " << money_data.Earnings;
-        if(money_data.Tips != 0) {
-            ss << " and " << money_data.Tips << " in tips. ";
-        } else {
-            ss << " gold. ";
-        }
-        if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
-        ss << "In total, she got " << money_data.GirlGets << " gold and you ";
-        if(money_data.PlayerGets > 0) {
-           ss << "got " << money_data.PlayerGets << " gold.";
-        } else {
-            ss << "spent " << -money_data.PlayerGets << " gold.";
-        }
-
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
-    }
-}
-
-sWorkJobResult cJobManager::do_job(sGirl& girl, bool is_night)
-{
-    return do_job(girl.get_job(is_night), girl, is_night);
-}
-
-sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
-{
-    auto ctx{g_Game->push_error_context("job: " + get_job_name(job_id))};
-    assert(m_OOPJobs[job_id] != nullptr);
-    auto result = m_OOPJobs[job_id]->Work(girl, is_night, g_Dice);
-    if(is_night) {
-        girl.m_Refused_To_Work_Night = result.Refused;
+void cJobManager::handle_pre_shift(sGirlShiftData& shift) {
+    auto job_id = shift.Job;
+    if(m_OOPJobs[job_id] != nullptr) {
+        auto ctx{g_Game->push_error_context("pre@job: " + get_job_name(job_id))};
+        g_LogFile.info("shift", "Running pre-shift handler for girl '", shift.girl().FullName(), "' with job '", get_job_name(job_id), "'.");
+        m_OOPJobs[job_id]->PreShift(shift);
     } else {
-        girl.m_Refused_To_Work_Day = result.Refused;
+        throw std::runtime_error("Invalid job id " + std::to_string(job_id));
     }
-    return result;
 }
 
-void cJobManager::handle_pre_shift(sGirl& girl, bool is_night) {
-    auto job_id = girl.get_job(is_night);
-    auto ctx{g_Game->push_error_context("pre@job: " + get_job_name(job_id))};
+void cJobManager::handle_main_shift(sGirlShiftData& shift) {
+    auto job_id = shift.Job;
+    auto ctx{g_Game->push_error_context("main@job: " + get_job_name(job_id))};
     assert(m_OOPJobs[job_id] != nullptr);
-    m_OOPJobs[job_id]->PreShift(girl, is_night, g_Dice);
+    m_OOPJobs[job_id]->Work(shift);
 }
 
 
@@ -1582,7 +1533,7 @@ const IGenericJob* cJobManager::get_job(JOBS job) const {
     if(!ptr) {
       g_LogFile.error("jobmgr",
 		      "Job ", job, " has not been registered.");
-      throw std::invalid_argument("cJobManager::get_job()");
+      throw std::invalid_argument(std::string("cJobManager::get_job(") + std::to_string(job) + ")");
     }
 
     return ptr.get();
@@ -1619,7 +1570,7 @@ bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl
     if(!g_Game->shop().GirlBuyItem(girl, *item))   return false;
 
     // If a matron is on shift, she may catch the girl buying drugs
-    if ((brothel->num_girls_on_job(JOB_MATRON, true) >= 1 || brothel->num_girls_on_job(JOB_MATRON, false) >= 1)
+    if ((num_girls_on_job(*brothel, JOB_MATRON, true) >= 1 || num_girls_on_job(*brothel, JOB_MATRON, false) >= 1)
         && g_Dice.percent(70))
     {
         girl.AddMessage("Matron confiscates drugs", EImageBaseType::PROFILE, EVENT_WARNING);

@@ -19,10 +19,11 @@
 
 #include "jobs/IGenericJob.h"
 #include "jobs/Treatment.h"
-#include "jobs/cJobManager.h"
+#include "cJobManager.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
 #include "buildings/cBuilding.h"
+#include "buildings/IBuildingShift.h"
 #include "IGame.h"
 #include <sstream>
 #include <utility>
@@ -31,6 +32,7 @@
 #include "CLog.h"
 #include "xml/getattr.h"
 #include "xml/util.h"
+#include "queries.h"
 
 extern const char* const CarePointsBasicId;
 extern const char* const CarePointsGoodId;
@@ -76,7 +78,7 @@ public:
 
     void ReceiveTreatment(sGirl& girl, bool is_night) final;
     sJobValidResult is_job_valid(const sGirl& girl) const override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
 protected:
     // common data
     sSurgeryData m_SurgeryData;
@@ -133,7 +135,7 @@ void SurgeryJob::ReceiveTreatment(sGirl& girl, bool is_night) {
         sGirl* doctor = RequestInteraction(DoctorInteractionId);
         girl.make_treatment_progress(g_Dice.closed_uniform(90, 110) / m_SurgeryData.Duration);
         nursing_effect(girl);
-        doctor->AddMessage(girl.Interpolate(get_text("doctor.work")), EImageBaseType::NURSE, EEventType::EVENT_DAYSHIFT);
+        doctor->AddMessage(girl.Interpolate(get_text("doctor.work")), EImageBaseType::NURSE, EventType::EVENT_DAYSHIFT);
         doctor->exp(5);
     } else    // and if there are nurses on duty, they take care of her at night
     {
@@ -173,11 +175,11 @@ void SurgeryJob::ReceiveTreatment(sGirl& girl, bool is_night) {
     }
 }
 
-IGenericJob::eCheckWorkResult SurgeryJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult SurgeryJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if (!HasInteraction(DoctorInteractionId)) {
         // calling request-interaction because we still want to count how many interactions where requested.
         RequestInteraction(DoctorInteractionId);
-        int dp = girl.m_Building->GetInteractionProvided(DoctorInteractionId);
+        int dp = building.GetInteractionProvided(DoctorInteractionId);
         if(dp > 0) {
             ss << "${name} does nothing. You don't have enough Doctors working. All " << dp << " Doctor Interactions have already been used up.";
         } else {
@@ -527,7 +529,7 @@ public:
 private:
     void ReceiveTreatment(sGirl& girl, bool is_night) final;
     double GetPerformance(const sGirl& girl, bool estimate) const final;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) final;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) final;
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const final;
 };
 
@@ -604,7 +606,7 @@ void CureDiseases::ReceiveTreatment(sGirl& girl, bool is_night) {
     }
     ss << ".\n \n";
 
-    brothel->m_Finance.clinic_costs(cost);    // pay for it
+    active_building().Finance().clinic_costs(cost);    // pay for it
 
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, msgtype);
 }
@@ -615,7 +617,7 @@ double CureDiseases::GetPerformance(const sGirl& girl, bool estimate) const {
     return diseases * 100;
 }
 
-auto CureDiseases::CheckWork(sGirl& girl, bool is_night) -> eCheckWorkResult {
+auto CureDiseases::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) -> eCheckWorkResult {
     return IGenericJob::eCheckWorkResult::ACCEPTS;
 }
 
@@ -641,7 +643,7 @@ public:
 private:
     void ReceiveTreatment(sGirl& girl, bool is_night) final;
     double GetPerformance(const sGirl& girl, bool estimate) const final;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) final;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) final;
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const final;
 };
 
@@ -710,7 +712,7 @@ void Abortion::ReceiveTreatment(sGirl& girl, bool is_night) {
     else    // and if there are nurses on duty, they take care of her at night
     {
         // TODO Consume interactions!
-        if (brothel->num_girls_on_job(JOB_NURSE, 1) > 0)
+        if (num_girls_on_job(*brothel, JOB_NURSE, 1) > 0)
         {
             girl.make_treatment_progress(25);
             girl.happiness(5);
@@ -843,7 +845,7 @@ void Abortion::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
     }
 }
 
-IGenericJob::eCheckWorkResult Abortion::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult Abortion::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     return eCheckWorkResult::ACCEPTS;
 }
 
@@ -854,7 +856,7 @@ public:
 private:
     void ReceiveTreatment(sGirl& girl, bool is_night) final;
     double GetPerformance(const sGirl& girl, bool estimate) const final;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) final;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) final;
 };
 
 Healing::Healing() : IMedicalJob(JOB_GETHEALING, "Healing.xml") {
@@ -868,7 +870,7 @@ double Healing::GetPerformance(const sGirl& girl, bool estimate) const {
     return performance;
 }
 
-IGenericJob::eCheckWorkResult Healing::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult Healing::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     return eCheckWorkResult::ACCEPTS;
 }
 

@@ -328,3 +328,23 @@ auto get_spawn_lookup() -> const auto& {
 SpawnReason get_spawn_id(const std::string& name) {
     return lookup_with_error(get_spawn_lookup(), name, "Trying to get invalid spawn location");
 }
+
+const char* get_building_type_name(BuildingType type) {
+    switch(type) {
+        case BuildingType::BROTHEL:
+            return "Brothel";
+        case BuildingType::ARENA:
+            return "Arena";
+        case BuildingType::CLINIC:
+            return "Clinic";
+        case BuildingType::FARM:
+            return "Farm";
+        case BuildingType::HOUSE:
+            return "House";
+        case BuildingType::CENTRE:
+            return "Centre";
+        case BuildingType::STUDIO:
+            return "MovieStudio";
+    }
+    assert(false);
+}

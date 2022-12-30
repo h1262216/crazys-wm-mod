@@ -106,7 +106,7 @@ void IBuildingScreen::init(bool back)
     std::stringstream ss;
 
     ss << "Day: " << g_Game->date().day << " Month: " << g_Game->date().month << " Year: " << g_Game->date().year
-       << " -- " << active_building().type_str() << ": " << active_building().name();
+       << " -- " << get_building_type_name(active_building().type()) << ": " << active_building().name();
     EditTextItem(ss.str(), buildinglabel_id);
     DisableWidget(walk_id, !active_building().CanEncounter());
     SetImage(background_id, "Backdrops", active_building().background_image());
@@ -127,17 +127,17 @@ void IBuildingScreen::try_walk()
     }
 }
 
-static std::string fame_text(const cBuilding* brothel)
+static std::string fame_text(const cBuilding& brothel)
 {
     std::stringstream ss;
-    /* */if (brothel->m_Fame >= 90)/*     */    ss << "World Renowned";
-    else if (brothel->m_Fame >= 80)/*     */    ss << "Famous";
-    else if (brothel->m_Fame >= 70)/*     */    ss << "Well Known";
-    else if (brothel->m_Fame >= 60)/*     */    ss << "Talk of the town";
-    else if (brothel->m_Fame >= 50)/*     */    ss << "Somewhat known";
-    else if (brothel->m_Fame >= 30)/*     */    ss << "Mostly unknown";
-    else/*                                */    ss << "Unknown";
-    if (g_Game->settings().get_bool(settings::USER_SHOW_NUMBERS))    ss << " (" << (int)brothel->m_Fame << ")";
+    if (brothel.m_Fame >= 90)         ss << "World Renowned";
+    else if (brothel.m_Fame >= 80)    ss << "Famous";
+    else if (brothel.m_Fame >= 70)    ss << "Well Known";
+    else if (brothel.m_Fame >= 60)    ss << "Talk of the town";
+    else if (brothel.m_Fame >= 50)    ss << "Somewhat known";
+    else if (brothel.m_Fame >= 30)    ss << "Mostly unknown";
+    else                              ss << "Unknown";
+    if (g_Game->settings().get_bool(settings::USER_SHOW_NUMBERS))    ss << " (" << (int)brothel.m_Fame << ")";
     return ss.str();
 }
 
@@ -159,7 +159,7 @@ static std::string get_building_summary(const cBuilding& building)
     *    format the summary into one big string, and return it
     */
     ss << "Customer Happiness: \t" << happiness_text(&building);
-    ss << "\nFame: \t" << fame_text(&building);
+    ss << "\nFame: \t" << fame_text(building);
     ss << "\nRooms (available/current): \t" << building.free_rooms() << " / " << building.num_rooms();
     ss << "\nThis brothel's Profit: \t" << profit;
     ss << "\nYour Gold: \t" << g_Game->gold().ival();

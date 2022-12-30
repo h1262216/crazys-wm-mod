@@ -18,7 +18,7 @@ add_library(WmCharacterInterface INTERFACE)
 target_include_directories(WmCharacterInterface INTERFACE include)
 
 add_library(WmCharacterObjects OBJECT ${CHARACTER_SRC})
-target_link_libraries(WmCharacterObjects PRIVATE WMEngineObjects lua::lua WmScriptingInterface WmBuildingObjects WmJobsInterface)
+target_link_libraries(WmCharacterObjects PRIVATE WMEngineObjects lua::lua WmScriptingInterface WmBuildingInterface WmJobsInterface)
 target_link_libraries(WmCharacterObjects PUBLIC WmCharacterInterface)
 target_include_directories(WmCharacterObjects PRIVATE include/character include/traits)
 # TODO Fix includes!

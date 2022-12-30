@@ -19,31 +19,19 @@
 
 #pragma once
 
-#ifndef __CMOVIESTUDIO_H
-#define __CMOVIESTUDIO_H
+#ifndef __CHOUSE_H
+#define __CHOUSE_H
 
 #include "buildings/cBuilding.h"
-#include "jobs/cJobManager.h"
-#include "fwd.h"
-#include <vector>
 
-// defines a single studio
-struct sMovieStudio : public cBuilding
+// defines a single House
+struct sHouse : public cBuilding
 {
-    sMovieStudio();                            // constructor
-    ~sMovieStudio();                        // destructor
+    sHouse();                         // constructor
+    ~sHouse();                        // destructor
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
-    void UpdateGirls(bool is_night) override;
-
-    void Update() override;
-
-    std::string meet_no_luck() const override;
-
-    int GetNumScenes() const;
-private:
-    void auto_create_movies();
-    void check_overuse(const std::string& resource, const std::string& message);
 };
 
-#endif  /* __CMOVIESTUDIO_H */
+
+#endif  /* __CHOUSE_H */

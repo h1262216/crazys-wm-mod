@@ -25,6 +25,7 @@
 #include <sstream>
 #include "cJobManager.h"
 #include "Constants.h"
+#include "buildings/IBuildingShift.h"
 #include <boost/variant.hpp>
 
 namespace tinyxml2 {
@@ -35,7 +36,16 @@ namespace tinyxml2 {
 using StatSkill = boost::variant<STATS, SKILLS>;
 
 class sGirl;
+class IBuildingShift;
+struct sGirlShiftData;
 class cRng;
+
+enum class EJobPhase {
+    PREPARE,  //!< Preparations to make the building ready for work: Cleaning, Security, Advertisement
+    PRODUCE,
+    MAIN,
+    LATE
+};
 
 struct sJobInfo {
     JOBS        JobId;
@@ -45,6 +55,9 @@ struct sJobInfo {
 
     bool FullTime = false;
     bool FreeOnly = false;
+    bool DayOnly = false;
+    bool NightOnly = false;
+    EJobPhase Phase = EJobPhase::MAIN;
 
     std::vector<std::string> Consumes;
     std::vector<std::string> Provides;
@@ -67,21 +80,24 @@ public:
     // queries
     const sJobInfo& get_info() const { return m_Info; }
     JOBS job() const { return m_Info.JobId; }
+    EJobPhase phase() const { return m_Info.Phase; }
 
     /// Gets an estimate or actual value of how well the girl performs at this job
     virtual double GetPerformance(const sGirl& girl, bool estimate) const = 0;
 
     /// Checks whether the given girl can do this job.
-    virtual sJobValidResult is_job_valid(const sGirl& girl) const;
+    virtual sJobValidResult is_job_valid(const sGirl& girl, bool night_shift) const;
 
     /// Handles simple pre-shift setup, before any actual jobs are run.
     /// Note: This function cannot handle any
     /// stateful job processing. Multiple `PreShift` calls for different
     /// girls might happen before the corresponding `Work` calls.
-    virtual void PreShift(sGirl& girl, bool is_night, cRng& rng) const {};
+    void PreShift(sGirlShiftData& shift);
 
     /// Lets the girl do the job
-    sWorkJobResult Work(sGirl& girl, bool is_night, cRng& rng);
+    void Work(sGirlShiftData& shift);
+
+    virtual void HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night, cRng& rng) const {};
 
     /// called by the job manager when the job gets registered.
     void OnRegisterJobManager(const cJobManager& manager);
@@ -89,19 +105,15 @@ protected:
     std::stringstream ss;
 
     // random functions
-    cRng& rng() { return *m_Rng; }
+    cRng& rng() const;
     int d100() const;
     bool chance(float percent) const;
     int uniform(int min, int max) const;
 
-    enum class eCheckWorkResult {
-        REFUSES,
-        ACCEPTS,
-        IMPOSSIBLE
-    };
-
     sGirl& active_girl() const;
+    IBuildingShift& active_building() const;
     bool is_night_shift() const;
+    sGirlShiftData& active_shift() const;
 
     // resources
     //  bulk resources
@@ -122,19 +134,20 @@ protected:
 
     bool HasInteraction(const std::string& name) const;
 
+    virtual void on_pre_shift(sGirlShiftData& shift);
+
 private:
-    virtual void InitWork() {}
-    virtual sWorkJobResult DoWork(sGirl& girl, bool is_night) = 0;
+    virtual void InitWork(sGirlShiftData& shift) {}
+    virtual void DoWork(sGirlShiftData& shift) = 0;
+
 
     /*! Checks whether the girl will work. There are two reasons why she might not:
         She could refuse, or the job could not be possible because of external
         circumstances. This function should report which reason applies.
     */
-    virtual eCheckWorkResult CheckWork(sGirl& girl, bool is_night) = 0;
+    virtual ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) = 0;
 
-    cRng* m_Rng;
-    sGirl* m_ActiveGirl;
-    bool m_CurrentShift;
+    sGirlShiftData* m_ActiveData;
 
     const cJobManager* m_JobManager = nullptr;
 

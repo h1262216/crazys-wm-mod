@@ -100,6 +100,6 @@ int get_total_player_girls();
 int get_total_player_monster_girls();
 
 sGirl* random_girl_on_job(const cBuildingManager& mgr, JOBS job, bool at_night);
-sGirl* random_girl_on_job(cBuilding& building, JOBS job, bool at_night);
+sGirl* random_girl_on_job(const IBuilding& building, JOBS job, bool at_night);
 
 #endif //WM_CBUILDINGMANAGER_H

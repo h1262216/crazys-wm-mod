@@ -30,6 +30,7 @@
 ITreatmentJob::ITreatmentJob(JOBS job, std::string xml_file) : IGenericJob(job, std::move(xml_file), EJobClass::TREATMENT),
     m_Interface(std::make_unique<cJobTextInterface>(this)) {
     m_Info.FullTime = true;
+    m_Info.Phase = EJobPhase::LATE;
 }
 
 ITreatmentJob::~ITreatmentJob() = default;
@@ -78,11 +79,10 @@ std::stringstream& ITreatmentJob::add_text(const std::string& prompt) {
     return ss;
 }
 
-sWorkJobResult ITreatmentJob::DoWork(sGirl& girl, bool is_night) {
-    cGirls::UnequipCombat(girl);    // not for patient
-    if(girl.get_active_treatment() != job()) {
-        girl.start_treatment(job());
+void ITreatmentJob::DoWork(sGirlShiftData& shift) {
+    cGirls::UnequipCombat(active_girl());    // not for patient
+    if(active_girl().get_active_treatment() != job()) {
+        active_girl().start_treatment(job());
     }
-    ReceiveTreatment(girl, is_night);
-    return {false, 0, 0, 0};
+    ReceiveTreatment(active_girl(), is_night_shift());
 }

@@ -19,44 +19,26 @@
 
 #include <sstream>
 
-#include "house/cHouse.h"
+#include "cHouse.h"
 #include "cGangs.h"
 #include "IGame.h"
 #include "jobs/cJobManager.h"
 #include "character/predicates.h"
 #include "cGirls.h"
+#include "queries.h"
+#include "cBuildingShift.h"
+
 extern cRng             g_Dice;
 
 extern const char* const TrainingInteractionId = "TrainingInteraction";
 
 // // ----- Strut sHouse Create / destroy
-sHouse::sHouse() : cBuilding(BuildingType::HOUSE, "House")
+sHouse::sHouse() : cBuilding("House", {BuildingType::HOUSE, JOB_HEADGIRL, JOB_HOUSEPET, JOB_HEADGIRL})
 {
-    m_FirstJob = JOB_HEADGIRL;
-    m_LastJob = JOB_HOUSEPET;
-    m_MatronJob = JOB_HEADGIRL;
-    declare_interaction(TrainingInteractionId);
+    m_Shift->declare_interaction(TrainingInteractionId);
 }
 
 sHouse::~sHouse() = default;
-
-// Run the shifts
-void sHouse::UpdateGirls(bool is_night)    // Start_Building_Process_B
-{
-    BeginShift(is_night);
-
-    //  Do all Personal Bed Warmers together. Mistress needs to run before all the training jobs
-    IterateGirls(is_night, {JOB_PERSONALBEDWARMER, JOB_MISTRESS}, [&](auto& current) {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    IterateGirls(is_night, {JOB_RECRUITER, JOB_HOUSECOOK, JOB_CLEANHOUSE, JOB_PERSONALTRAINING, JOB_TRAINING,
-                            JOB_FAKEORGASM, JOB_SO_STRAIGHT, JOB_SO_BISEXUAL, JOB_SO_LESBIAN, JOB_HOUSEPET}, [&](auto& current) {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    EndShift(is_night);
-}
 
 void sHouse::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {
@@ -71,26 +53,26 @@ void sHouse::auto_assign_job(sGirl& target, std::stringstream& message, bool is_
         ss << "work recruiting girls for you.";
     }
         // assign a slave to clean
-    else if (target.is_slave() && num_girls_on_job(JOB_CLEANHOUSE, is_night) < std::max(1, num_girls() / 20))
+    else if (target.is_slave() && num_girls_on_job(*this, JOB_CLEANHOUSE, is_night) < std::max(1, num_girls() / 20))
     {
         target.m_DayJob = target.m_NightJob = JOB_CLEANHOUSE;
         ss << "work cleaning the house.";
     }
         // and a free girl to recruit for you
-    else if (target.is_free() && num_girls_on_job(JOB_RECRUITER, is_night) < 1)
+    else if (target.is_free() && num_girls_on_job(*this, JOB_RECRUITER, is_night) < 1)
     {
         target.m_DayJob = target.m_NightJob = JOB_RECRUITER;
         ss << "work recruiting girls for you.";
     }
         // set at least 1 bed warmer
-    else if (num_girls_on_job(JOB_PERSONALBEDWARMER, is_night) < 1
+    else if (num_girls_on_job(*this, JOB_PERSONALBEDWARMER, is_night) < 1
              && !is_virgin(target))    // Crazy added this so that it wont set virgins to this
     {
         target.m_DayJob = target.m_NightJob = JOB_PERSONALBEDWARMER;
         ss << "work warming your bed.";
     }
         // assign 1 cleaner per 20 girls
-    else if (num_girls_on_job(JOB_CLEANHOUSE, is_night) < std::max(1, num_girls() / 20))
+    else if (num_girls_on_job(*this, JOB_CLEANHOUSE, is_night) < std::max(1, num_girls() / 20))
     {
         target.m_DayJob = target.m_NightJob = JOB_CLEANHOUSE;
         ss << "work cleaning the house.";

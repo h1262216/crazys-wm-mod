@@ -26,6 +26,7 @@
 #include "utils/streaming_random_selection.hpp"
 #include <cmath>
 #include "buildings/cBuildingManager.h"
+#include "queries.h"
 
 namespace {
     class cJobMovieOther : public cSimpleJob {
@@ -37,14 +38,14 @@ namespace {
     public:
         cJobMarketResearch();
 
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
     };
 
 
     cJobMarketResearch::cJobMarketResearch() : cJobMovieOther(JOB_MARKET_RESEARCH, "MarketResearch.xml") {
     }
 
-    bool cJobMarketResearch::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+    bool cJobMarketResearch::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
         m_Wages = 50;
 
         // slave girls not being paid for a job that normally you would pay directly for do less work
@@ -110,13 +111,13 @@ namespace {
 class cJobMoviePromoter : public cJobMovieOther {
 public:
     cJobMoviePromoter();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
 };
 
 cJobMoviePromoter::cJobMoviePromoter() : cJobMovieOther(JOB_PROMOTER, "Promoter.xml") {
 }
 
-bool cJobMoviePromoter::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cJobMoviePromoter::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     bool movies = !g_Game->movie_manager().get_movies().empty();
     if (!movies)    ss << "There were no movies for her to promote, so she just promoted the studio in general.\n \n";
 
@@ -156,7 +157,7 @@ bool cJobMoviePromoter::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_n
     }
 
     m_Performance = std::max(m_Performance, 1);
-    int ad_money = brothel.m_AdvertisingBudget / brothel.num_girls_on_job(JOB_PROMOTER, is_night);
+    int ad_money = brothel.m_AdvertisingBudget / num_girls_on_job(brothel, JOB_PROMOTER, is_night);
 
     for(int tries = 0; tries < 5; ++tries) {
         auto& mm = g_Game->movie_manager();

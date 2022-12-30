@@ -185,6 +185,8 @@ void sCustomer::Setup(int social_class, cBuilding& brothel)
         gain_trait(traits::HERPES, 60);
     }
     m_Money *= m_Amount;
+
+    brothel.setup_customer(*this);
 }
 
 std::unique_ptr<sCustomer> cCustomers::CreateCustomer(cBuilding& brothel)
@@ -203,83 +205,6 @@ sCustomer cCustomers::GetCustomer(cBuilding& brothel)
     else /*                 */    { class_ = 3; }
     customer.Setup(class_, brothel);
     return std::move(customer);
-}
-
-void cCustomers::GenerateCustomers(cBuilding& brothel, bool Day0Night1)
-{
-    m_Customers.clear();
-
-    // TODO Free any existing customers?
-    if (brothel.num_girls() == 0) return;    // no girls, no customers
-
-    std::stringstream ss;
-    std::string daynighttime = (Day0Night1 ? "nighttime" : "daytime");
-    /*
- *    base number of customers = number of girls times 1.5f
- *    (was set to time 5 - reverting it to agree with the comment for now
- *    --doc)
- *
- *    adding a .5 bonus to night time trade as well - should see more
- *    punters after dark it seems to me
- */
-    int num = int(brothel.num_girls() * (Day0Night1 ? 2.0 : 1.5));
-    ss << "The number of girls in this brothel attracted " << num << " initial " << daynighttime << " customers.\n \n";
-/*
- *    the customers attracted by the places fame (for this shift)
- *    is the fame divided by 4 (so a max of 25 people)
- *    they may be culled by randomizing this value
- *    (halved the number -- doc)
- */
-    int fame_customers = brothel.m_Fame / 4;
-    ss << "This brothel's fame enticed " << fame_customers << " additional " << daynighttime << " customers to visit.\n \n";
-    num += fame_customers;
-
-    // each 100 gold of advertising adds 6 customers which is then randomized a little
-    if (brothel.m_AdvertisingBudget > 0 || brothel.m_AdvertisingLevel > 1.0)
-    {    // advertising value is actual gold budget multiplied by advertising level, set by girls working in advertising
-        double advert = double(brothel.m_AdvertisingBudget);
-        if (brothel.m_AdvertisingLevel > 1.0) advert += 50;        // a 50 gold gimme if you have girls working on advertising
-        advert *= brothel.m_AdvertisingLevel;                        // apply multiplier from girls working on advertising
-        int custsFromAds = int(advert * 0.06);                        // 6 customers per 100 gold or so
-        custsFromAds = g_Dice%custsFromAds + (custsFromAds / 2);    // randomized from 50% to 150%
-        ss << "You brought in " << custsFromAds << " more " << daynighttime << " customers through advertising.\n \n";
-        num += custsFromAds;
-    }
-
-    // filthiness will take away customers
-    int LostCustomers = std::max(0, int(brothel.filthiness() / 10));        // was /3, but that was overly harsh; changed to /10
-    num -= LostCustomers;
-
-    if (LostCustomers <= 0)    ss << "Your brothel was spotlessly clean, so you didn't lose any " << daynighttime << " customers due to filthiness.\n \n";
-    else/*               */    ss << "You lost " << LostCustomers << " " << daynighttime << " customers due to the filthiness of your brothel.\n \n";
-
-    // `J` Too much security will scare away customers
-    int ScareCustomers = int(brothel.security() / 500);    // this number will need to be tweaked a bit
-    ScareCustomers -= 4;    // less security could attract more customers (for good or bad)
-    if (ScareCustomers < 0) ScareCustomers = (g_Dice % 3) * -1;
-    if (ScareCustomers > 10) ScareCustomers += g_Dice%ScareCustomers;
-    num -= ScareCustomers;
-
-    if (ScareCustomers < 0)
-    {
-        ss << "Your nonintrusive security attracted " << -ScareCustomers << " " << daynighttime << " customers. (for better or worse)";
-    }
-    else if (ScareCustomers == 0)
-        ss << "Your brothel was safe and secure, so you didn't lose any " << daynighttime << " customers due to excessive security.";
-    else if (ScareCustomers < 10)
-        ss << "You lost " << ScareCustomers << " " << daynighttime << " customers due to the excessive security in your brothel.";
-    else
-        ss << "You lost " << ScareCustomers << " " << daynighttime << " customers due to the oppressive security in your brothel.";
-    brothel.AddMessage(ss.str());
-
-
-    if (num < 0)    num = 0;  // negative number of customers doesn't make sense
-
-    for (int i = 0; i < num; i++)
-    {
-        Add(CreateCustomer(brothel));
-    }
-
 }
 
 void cCustomers::ChangeCustomerBase()

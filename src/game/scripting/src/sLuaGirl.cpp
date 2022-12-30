@@ -43,6 +43,7 @@ extern "C" {
 // to get the currently active building
 #include "interface/cWindowManager.h"
 #include "character/lust.h"
+#include "buildings/queries.h"
 
 namespace {
     template<class T>
@@ -410,7 +411,7 @@ int sLuaGirl::acquire_girl(lua_State* L) {
 *    otherwise, it's very simple
 */
     text += " has been sent to your current brothel.";
-    building.add_girl(std::move(girl_owner));
+    building.add_girl(std::move(girl_owner), false);
     g_Game->push_message(text, 0);
     return 0;
 }
@@ -615,7 +616,7 @@ int sLuaGirl::clean_building(lua_State* L) {
     if(auto building = girl.m_Building)
     {
        auto improvement = std::max(((girl.service() / 10 + 5) * 10), 50);
-       building->m_Filthiness -= improvement;
+       cast_building(*building).m_Filthiness -= improvement;
        girl.service(+1);
     }
 

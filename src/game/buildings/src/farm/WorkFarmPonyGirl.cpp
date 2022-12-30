@@ -18,6 +18,7 @@
 */
 #pragma region //    Includes and Externs            //
 #include "buildings/cBuildingManager.h"
+#include "buildings/queries.h"
 #include "cRng.h"
 #include <sstream>
 #include "IGame.h"

@@ -31,52 +31,71 @@
 #include "combat/combat.h"
 #include "combat/combatant.h"
 #include "buildings/cBuilding.h"
+#include "buildings/IBuildingShift.h"
 #include "buildings/cDungeon.h"
+#include "character/lust.h"
+
+extern const char* const DrawVisitorsId = "Visitors";
+extern const char* const FightsFameId = "FightFame";
+extern const char* const BrutalityId = "Brutality";
+extern const char* const SexualityId = "Sexuality";
+extern const char* const CombatId = "Combat";
+extern const char* const BeautyId = "Beauty";
+extern const char* const ArenaFightId = "ArenaFight";
 
 namespace {
     class CityGuard : public cSimpleJob {
     public:
         CityGuard();
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
     private:
-        int CatchThief;
+        int catch_thief() const;
+        int CatchThiefID;
     };
 
-    class FightBeasts : public cSimpleJob {
+    class FighterJob: public cSimpleJob {
+    public:
+        using cSimpleJob::cSimpleJob;
+    private:
+        void on_pre_shift(sGirlShiftData& shift) override;
+    };
+
+    class FightBeasts : public FighterJob {
     public:
         FightBeasts();
 
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
         bool CheckCanWork(sGirl& girl, bool is_night) override;
     };
 
-    class FightGirls : public cSimpleJob {
+    class FightGirls : public FighterJob {
     public:
         FightGirls();
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
     };
 
     class FightTraining : public cSimpleJob {
     public:
         FightTraining();
 
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
         double GetPerformance(const sGirl& girl, bool estimate) const override;
-        void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
+        void on_pre_shift(sGirlShiftData& shift) override;
     };
 }
 
 CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "CityGuard.xml", {ACTION_WORKSECURITY, 10, EImageBaseType::SECURITY, true}) {
     m_Info.FullTime = true;
-    RegisterVariable("CatchThief", CatchThief);
+    CatchThiefID = RegisterVariable("CatchThief", 0);
 }
 
-bool CityGuard::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     int roll_a = d100();
     int enjoy = 0, enjoyc = 0, sus = 0;
 
-    CatchThief = girl.agility() / 2 + uniform(0, girl.constitution() / 2);
-    m_Earnings = 30 + CatchThief / 5;
+    int catch_thief_value = girl.agility() / 2 + uniform(0, girl.constitution() / 2);;
+    shift.set_var(CatchThiefID, catch_thief_value);
+    shift.Earnings = 30 + catch_thief() / 5;
 
     if (roll_a >= 50)
     {
@@ -85,12 +104,12 @@ bool CityGuard::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     }
     else if (roll_a >= 25)
     {
-        int chance_catch = std::max(5, std::min(95, 2 * CatchThief - 50));
+        int chance_catch = std::max(5, std::min(95, 2 * catch_thief() - 50));
         if(chance(chance_catch)) {
             add_text("event.caught-thief");
             enjoy += 2;
             sus -= 10;
-            m_Earnings += 25;
+            shift.Earnings += 25;
         } else {
             enjoy -= 2;
             sus += 5;
@@ -111,15 +130,15 @@ bool CityGuard::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
                 enjoy += 3; enjoyc += 3;
                 ss << "${name} ran into some trouble and ended up in a fight. She was able to win.";
                 sus -= 20;
-                m_Earnings += 25;
-                m_Tips += 25;
+                shift.Earnings += 25;
+                shift.Tips += 25;
             }
             else  // she lost or it was a draw
             {
                 ss << "${name} ran into some trouble and ended up in a fight. She was unable to win the fight.";
                 enjoy -= 1; enjoyc -= 1;
                 sus += 10;
-                m_Earnings -= 20;
+                shift.Earnings -= 20;
             }
         }
         else
@@ -130,20 +149,24 @@ bool CityGuard::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         }
     }
 
-    girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     g_Game->player().suspicion(sus);
 
     // Improve girl
     girl.upd_Enjoyment(ACTION_WORKSECURITY, enjoy);
     girl.upd_Enjoyment(ACTION_COMBAT, enjoyc);
 
-    apply_gains(girl, m_Performance);
+    apply_gains(girl, shift.Performance);
 
     return false;
 }
 
-FightBeasts::FightBeasts() : cSimpleJob(JOB_FIGHTBEASTS, "FightBeasts.xml", {ACTION_COMBAT, 100, EImageBaseType::COMBAT, true}) {
+int CityGuard::catch_thief() const {
+    return GetVariable(CatchThiefID);
+}
 
+FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "FightBeasts.xml", {ACTION_COMBAT, 100, EImageBaseType::COMBAT, true}) {
+    m_Info.NightOnly = true;
 }
 
 bool FightBeasts::CheckCanWork(sGirl& girl, bool is_night) {
@@ -156,38 +179,50 @@ bool FightBeasts::CheckCanWork(sGirl& girl, bool is_night) {
     return true;
 }
 
+void FighterJob::on_pre_shift(sGirlShiftData& shift) {
+    cSimpleJob::on_pre_shift(shift);
+    if(shift.Refused != ECheckWorkResult::ACCEPTS)
+        return;
 
-bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+    // Draw customers
+    auto& girl = shift.girl();
+    int visitors = 1 + girl.fame() / 10 + (girl.beauty() + girl.charisma()) / 20;
+    if(girl.fame() > 80) {
+        visitors += 2;
+    }
+    // TODO Trait-based arena visitors
+    shift.building().ProvideResource(DrawVisitorsId, visitors);
+}
+
+bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     bool has_armor = girl.get_num_item_equiped(sInventoryItem::Armor);
     bool has_wpn = girl.get_num_item_equiped(sInventoryItem::Weapon) + girl.get_num_item_equiped(sInventoryItem::SmWeapon);
-
-    if (!has_armor)
-    {
-        ss << "The crowd can't believe you sent ${name} out to fight without armor";
-        if (!has_wpn)
-        {
-            ss << " or a weapon.";
-        }
-        else
-        {
-            ss << ". But at least she had a weapon.";
-        }
+    int lack_of_equipment = 0;
+    if(!has_armor && !has_wpn) {
+        lack_of_equipment = 2;
+        add_text("no-equipment");
+    } else if(!has_armor) {
+        lack_of_equipment = 1;
+        add_text("no-armor");
+    } else if(!has_wpn) {
+        lack_of_equipment = 1;
+        add_text("no-weapon");
+    } else {
+        lack_of_equipment = 0;
+        add_text("fully-equipped");
     }
-    else
-    {
-        ss << "${name} came out in armor";
-        if (has_wpn)
-        {
-            ss << " but didn't have a weapon.";
-        }
-        else
-        {
-            ss << " and with a weapon in hand. The crowd felt she was ready for battle.";
-        }
-    }
-    ss << "\n \n";
+    ss << "\n\n";
 
-    int enjoy = 0;
+    int turn_enjoy = 0;
+    int turn_fame = girl.fame() / 2;
+    int turn_brutality = 0;
+    int turn_sexuality = 0;
+    int turn_beauty = uniform(girl.beauty() / 2, girl.beauty()) / 2;
+    int turn_combat = uniform(girl.combat() / 2, girl.combat()) / 2;
+    if(lack_of_equipment > 0) {
+        turn_brutality += uniform(10, 40);
+        turn_combat -= uniform(10, 40);
+    }
 
     // TODO need better dialog
     Combat combat(ECombatObjective::KILL, ECombatObjective::KILL);
@@ -204,27 +239,84 @@ bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
 
     if (result == ECombatResult::VICTORY)    // she won
     {
-        ss << " fights against a beast. She won the fight.";//was confusing
-        enjoy += 3;
-        girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+        int duration = combat.round_summaries().size();
+        if(duration + lack_of_equipment > 4) {
+            turn_combat += uniform(50, 100);
+        } else {
+            turn_combat += uniform(20, 60);
+        }
+
+        ss << "${name} fights against a beast. ";
+        if(girl.health() < 33) {
+            turn_brutality += uniform(10, 20);
+            ss << "She barely won the fight.";
+        } else {
+            ss << "She won the fight.";
+        }
+
+        if(girl.has_active_trait(traits::EXHIBITIONIST) && chance(25) && girl.breast_size() > 3) {
+            ss << "\nAs she bows for the crowd, her top 'accidentally' slips, ";
+            if(girl.breast_size() > 6) {
+                ss << "giving the crowd a good look at her ample bosom.";
+            } else {
+                ss << "flashing the crowd her boobs.";
+            }
+            turn_enjoy += 3;
+            turn_beauty += girl.beauty() / 10;
+        }
+
+        turn_enjoy += 3;
+        girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
         int roll_max = girl.fame() + girl.charisma();
         roll_max /= 4;
-        m_Tips = uniform(10, 10+roll_max);
+        shift.Tips = uniform(10, 10+roll_max);
         girl.fame(2);
     }
     else  // she lost or it was a draw
     {
+        turn_combat += uniform(girl.agility() / 2, girl.agility()) / 4;
+        turn_combat -= uniform(10, 40);
         ss << "${name} was unable to win the fight.";
-        enjoy -= 1;
+        turn_enjoy -= 1;
         //Crazy: I feel there needs to be more of a bad outcome for losses added this... Maybe could use some more
         if (girl.is_sex_type_allowed(SKILL_BEASTIALITY) && !is_virgin(girl))
         {
-            ss << " So as punishment you allow the beast to have its way with her.";
-            enjoy -= 5;
-            girl.libido(-2);
+            ss << " So as punishment you allow the beast to have its way with her.\n";
+            // she wants/likes it
+            if(chance(chance_horny_public(girl, ESexParticipants::GANGBANG, SKILL_BEASTIALITY, false).as_percentage())) {
+                add_text("beast-won-horny");
+                turn_brutality += uniform(0, 10);
+                turn_sexuality += uniform(30, 80);
+            } else if(girl.has_active_trait(traits::MASOCHIST) && girl.beastiality() > 33) {
+                add_text("beast-won-masochist");
+                make_horny(girl, 10);
+                turn_brutality += uniform(10, 40);
+                turn_sexuality += uniform(50, 100);
+            } else if (girl.beastiality() < 33) {
+                add_text("beast-won-bad");
+                if(girl.health() > 33) {
+                    girl.health(-uniform(5, 10));
+                }
+                girl.pclove(-10);
+                girl.pcfear(5);
+                turn_enjoy -= 15;
+                girl.libido(-5);
+                turn_brutality += uniform(50, 100);
+                turn_sexuality += uniform(20, 60);
+                turn_beauty -= uniform(20, 60);
+            } else {
+                add_text("beast-won-regular");
+                turn_enjoy -= 5;
+                girl.pclove(-4);
+                girl.pcfear(2);
+                girl.libido(-2);
+                turn_brutality += uniform(20, 60);
+                turn_sexuality += uniform(50, 100);
+            }
+
             girl.lust_release_spent();
-            girl.beastiality(2);
-            girl.AddMessage(ss.str(), EImageBaseType::RAPE_BEAST, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+            girl.gain_attribute(SKILL_BEASTIALITY, 1, 2, 50);
+            girl.AddMessage(ss.str(), EImageBaseType::RAPE_BEAST, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             if (!girl.calc_insemination(cGirls::GetBeast(), 1.0))
             {
                 g_Game->push_message(girl.FullName() + " has gotten inseminated", 0);
@@ -233,7 +325,7 @@ bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
         else
         {
             ss << " So you send your men in to cage the beast before it can harm her further.";
-            girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+            girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             girl.fame(-1);
         }
     }
@@ -262,47 +354,53 @@ bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
     if (roll <= 15)
     {
         ss << " didn't like fighting beasts today.";
-        enjoy -= 3;
+        turn_enjoy -= 3;
     }
     else if (roll >= 90)
     {
         ss << " loved fighting beasts today.";
-        enjoy += 3;
+        turn_enjoy += 3;
     }
     else
     {
         ss << " had a pleasant time fighting beasts today.";
-        enjoy += 1;
+        turn_enjoy += 1;
     }
     ss << "\n \n";
 
     int earned = 0;
-    for (int i = 0; i < m_Performance; i++)
+    for (int i = 0; i < shift.Performance; i++)
     {
         earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
     }
-    brothel.m_Finance.arena_income(earned);
+    ProvideResource(FightsFameId, shift.Performance);
+    ProvideResource(BrutalityId, turn_brutality);
+    ProvideResource(SexualityId, turn_sexuality);
+    ProvideResource(CombatId, turn_combat);
+    ProvideResource(BeautyId, turn_beauty);
+    ProvideResource(ArenaFightId, 1);
+    shift.building().Finance().arena_income(earned);
     ss.str("");
-    ss << "${name} drew in " << m_Performance << " people to watch her and you earned " << earned << " from it.";
-    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    ss << "${name} drew in " << shift.Performance << " people to watch her and you earned " << earned << " from it.";
+    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
+    girl.upd_Enjoyment(ACTION_COMBAT, turn_enjoy);
 
-    apply_gains(girl, m_Performance);
+    apply_gains(girl, shift.Performance);
 
     if (chance(25) && girl.strength() >= 60 && girl.combat() >= girl.magic())
     {
-        cGirls::PossiblyGainNewTrait(girl, "Strong", 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", is_night);
+        cGirls::PossiblyGainNewTrait(girl, "Strong", 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", shift.IsNightShift);
     }
 
     return false;
 }
 
-FightGirls::FightGirls() : cSimpleJob(JOB_FIGHTARENAGIRLS, "FightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
-
+FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "FightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
+    m_Info.NightOnly = true;
 }
 
-bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     int enjoy = 0, fame = 0;
     auto tempgirl = g_Game->CreateRandomGirl(SpawnReason::ARENA);
     if (tempgirl) {
@@ -336,7 +434,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
                 else
                 {
                     Tmsg << " put up a good fight so you let her live as long as she came work for you.\n \n";
-                    m_Tips = uniform(100, 100 + girl.fame() + girl.charisma());
+                    shift.Tips = uniform(100, 100 + girl.fame() + girl.charisma());
                 }
                 msg << Tmsg.str();
                 Umsg << Tmsg.str();
@@ -349,7 +447,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             else
             {
                 add_text("victory") << "\n";
-                m_Tips = uniform(100, 100 + girl.fame() + girl.charisma());
+                shift.Tips = uniform(100, 100 + girl.fame() + girl.charisma());
             }
         }
         else if (fight_outcome == EFightResult::DEFEAT) // she lost
@@ -358,7 +456,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             fame = -uniform(1, 3);
             add_text("defeat") << "\n";
             int cost = 150;
-            brothel.m_Finance.arena_costs(cost);
+            shift.building().Finance().arena_costs(cost);
             ss << " You had to pay " << cost << " gold cause your girl lost.";
             /*that should work but now need to make if you lose the girl if you dont have the gold zzzzz FIXME*/
         }
@@ -399,7 +497,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     }
 
     // Improve girl
-    girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     girl.fame(fame);
     girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
 
@@ -407,24 +505,24 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     *
     */
     int earned = 0;
-    for (int i = 0; i < m_Performance; i++)
+    for (int i = 0; i < shift.Performance; i++)
     {
         earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
     }
-    brothel.m_Finance.arena_income(earned);
+    shift.building().Finance().arena_income(earned);
     ss.str("");
-    ss << "${name} drew in " << m_Performance << " people to watch her and you earned " << earned << " from it.";
-    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    ss << "${name} drew in " << shift.Performance << " people to watch her and you earned " << earned << " from it.";
+    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
 
     //gain traits
     if (chance(25) && girl.strength() >= 65 && girl.combat() > girl.magic())
     {
-        cGirls::PossiblyGainNewTrait(girl, traits::STRONG, 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", is_night);
+        cGirls::PossiblyGainNewTrait(girl, traits::STRONG, 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", shift.IsNightShift);
     }
     if (chance(25) && girl.combat() >= 60 && girl.combat() > girl.magic())
     {
-        cGirls::PossiblyGainNewTrait(girl, traits::BRAWLER, 60, ACTION_COMBAT, "${name} has become pretty good at fighting.", is_night);
+        cGirls::PossiblyGainNewTrait(girl, traits::BRAWLER, 60, ACTION_COMBAT, "${name} has become pretty good at fighting.", shift.IsNightShift);
     }
 
 #pragma endregion
@@ -432,6 +530,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 }
 
 FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "FightTrain.xml", {ACTION_COMBAT, 20, EImageBaseType::COMBAT, true}) {
+    m_Info.DayOnly = true;
 }
 
 double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -446,17 +545,19 @@ double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {
     return 0.0;
 }
 
-void FightTraining::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
+void FightTraining::on_pre_shift(sGirlShiftData& shift) {
+    auto& girl = shift.girl();
     if (girl.combat() + girl.magic() + girl.agility() +
         girl.constitution() + girl.strength() >= 500)
     {
+        shift.Refused = ECheckWorkResult::IMPOSSIBLE;
         girl.m_NightJob = girl.m_DayJob = JOB_RESTING;
         girl.AddMessage("There is nothing more she can learn here, so ${name} takes the rest of the day off.",
                         EImageBaseType::PROFILE, EVENT_WARNING);
     }
 }
 
-bool FightTraining::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     int enjoy = 0;                                                //
     int train = 0;                                                // main skill trained
     int tcom = girl.combat();                                    // Starting level - train = 1
@@ -466,7 +567,7 @@ bool FightTraining::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night
     int tstr = girl.strength();                                // Starting level - train = 5
     bool gaintrait = false;                                        // posibility of gaining a trait
     int skill = 0;                                                // gian for main skill trained
-    int dirtyloss = brothel.m_Filthiness / 100;                // training time wasted with bad equipment
+    int dirtyloss = shift.building().Filthiness() / 100;                // training time wasted with bad equipment
     int sgCmb = 0, sgMag = 0, sgAgi = 0, sgCns = 0, sgStr = 0;    // gains per skill
     int roll_a = d100();                                     // roll for main skill gain
     int roll_b = d100();                                    // roll for main skill trained
@@ -485,7 +586,7 @@ bool FightTraining::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night
     ss << "The Arena is ";
     if (dirtyloss <= 0) ss << "clean and tidy";
     if (dirtyloss == 1) ss << "dirty and the equipment has not been put back in its place";
-    if (dirtyloss == 2) ss << "messy. The equipment is damaged and strewn about the building";
+    if (dirtyloss == 2) ss << "messy. The equipment is damaged and strewn about the shift";
     if (dirtyloss == 3) ss << "filthy and some of the equipment is broken";
     if (dirtyloss >= 4) ss << "in complete disarray and the equipment barely usable";
     ss << ".\n \n";
@@ -684,9 +785,9 @@ bool FightTraining::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night
     girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
     girl.upd_Enjoyment(ACTION_WORKTRAINING, enjoy);
 
-    girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-    brothel.m_Filthiness += 2;    // fighting is dirty
-    m_Wages += (skill * 5); // `J` Pay her more if she learns more
+    girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    shift.building().GenerateFilth(2);
+    shift.Wages += (skill * 5); // `J` Pay her more if she learns more
 
     // Improve stats
     int xp = 5 + skill;

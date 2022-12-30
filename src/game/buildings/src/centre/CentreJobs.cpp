@@ -22,10 +22,12 @@
 #include "character/cCustomers.h"
 #include "character/predicates.h"
 #include "buildings/cBuilding.h"
+#include "buildings/IBuildingShift.h"
 #include "cGirls.h"
 #include "IGame.h"
 #include "character/cPlayer.h"
 #include "character/lust.h"
+#include "queries.h"
 
 extern const char* const CounselingInteractionId;
 
@@ -33,19 +35,19 @@ namespace {
     class CommunityService: public cSimpleJob {
     public:
         CommunityService();
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
     };
 
     class FeedPoor : public cSimpleJob {
     public:
         FeedPoor();
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
     };
 
     class Counselor : public cSimpleJob {
     public:
         Counselor();
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
     };
 }
 
@@ -53,18 +55,18 @@ CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "Communit
 
 }
 
-bool CommunityService::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     bool blow = false, sex = false;
     int fame = 0;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    auto msgtype = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //Adding cust here for use in scripts...
-    sCustomer Cust = cJobManager::GetMiscCustomer(brothel);
+    // sCustomer Cust = cJobManager::GetMiscCustomer(brothel);
 
     // `J` merged slave/free messages and moved actual dispo change to after
     add_performance_text();
     int changes[] = {2, 4, 5, 8, 10, 12};
-    int dispo = changes[get_performance_class(m_Performance)];
+    int dispo = changes[get_performance_class(shift.Performance)];
 
     //try and add randomness here
     if (!is_virgin(girl) && check_public_sex(girl, ESexParticipants::HETERO, SKILL_NORMALSEX, sPercent{30}, true))
@@ -93,17 +95,17 @@ bool CommunityService::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
             {
                 ss << "\nShe is no longer a virgin.\n";
             }
-            if (!girl.calc_pregnancy(Cust, 1.0))
+            /*if (!girl.calc_pregnancy(Cust, 1.0))
             {
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
-            }
+            }*/
         }
         else if (girl.is_sex_type_allowed(SKILL_ANAL))
         {
             girl.anal(2);
             m_ImageType = EImageBaseType::ANAL;
         }
-        brothel.m_Happiness += 100;
+        //brothel.m_Happiness += 100;
         girl.lust_release_regular();
         girl.upd_Enjoyment(ACTION_SEX, +3);
         fame += 1;
@@ -111,7 +113,7 @@ bool CommunityService::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
     }
     else if (blow)
     {
-        brothel.m_Happiness += uniform(60, 130);
+        //brothel.m_Happiness += uniform(60, 130);
         dispo += 4;
         girl.oralsex(2);
         fame += 1;
@@ -121,23 +123,23 @@ bool CommunityService::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
     if (girl.is_slave())
     {
         ss << "\nThe fact that she is your slave makes people think its less of a good deed on your part.";
-        m_Wages = 0;
+        shift.Wages = 0;
     }
     else
     {
         ss << "\nThe fact that your paying this girl to do this helps people think your a better person.";
-        g_Game->gold().staff_wages(m_Wages);  // wages come from you
+        g_Game->gold().staff_wages(shift.Wages);  // wages come from you
         dispo = int(dispo*1.5);
     }
 
     g_Game->player().disposition(dispo);
     girl.AddMessage(ss.str(), m_ImageType, msgtype);
 
-    int help = m_Performance / 10;        //  1 helped per 10 point of performance
+    int help = shift.Performance / 10;        //  1 helped per 10 point of performance
 
     ss.str("");
     ss << "${name} helped " << help << " people today.";
-    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     // Improve stats
     HandleGains(girl, fame);
@@ -149,19 +151,19 @@ FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENT
 
 }
 
-bool FeedPoor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     bool blow = false, sex = false;
     int feed = 0, fame = 0;
     int roll_b = d100();
 
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    auto msg_type = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //Adding cust here for use in scripts...
-    sCustomer Cust = cJobManager::GetMiscCustomer(brothel);
+    // sCustomer Cust = cJobManager::GetMiscCustomer(brothel);
 
     add_performance_text();
     int changes[] = {2, 4, 5, 8, 10, 12};
-    int dispo = changes[get_performance_class(m_Performance)];
+    int dispo = changes[get_performance_class(shift.Performance)];
 
     //try and add randomness here
     if (girl.intelligence() < 55 && chance(30))//didn't put a check on this one as we could use some randomness and its an intel check... guess we can if people keep bitching
@@ -179,12 +181,12 @@ bool FeedPoor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     {
         ss << "\nThe fact that she is your slave makes people think its less of a good deed on your part.";
         g_Game->player().disposition(dispo);
-        m_Wages = 0;
+        shift.Wages = 0;
     }
     else
     {
         ss << "\nThe fact that your paying this girl to do this helps people think your a better person.";
-        g_Game->gold().staff_wages(m_Wages);  // wages come from you
+        g_Game->gold().staff_wages(shift.Wages);  // wages come from you
         g_Game->player().disposition(int(dispo*1.5));
     }
 
@@ -194,23 +196,23 @@ bool FeedPoor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     {
         if (girl.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || girl.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
         {
-            girl.AddMessage(ss.str(), EImageBaseType::VAGINAL, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+            girl.AddMessage(ss.str(), EImageBaseType::VAGINAL, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             girl.normalsex(2);
             if (girl.lose_trait(traits::VIRGIN))
             {
                 ss << "She is no longer a virgin.\n";
             }
-            if (!girl.calc_pregnancy(Cust, 1.0))
+            /*if (!girl.calc_pregnancy(Cust, 1.0))
             {
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
-            }
+            }*/
         }
         else if (girl.is_sex_type_allowed(SKILL_ANAL))
         {
-            girl.AddMessage(ss.str(), EImageBaseType::ANAL, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+            girl.AddMessage(ss.str(), EImageBaseType::ANAL, msg_type);
             girl.anal(2);
         }
-        brothel.m_Happiness += 100;
+        //brothel.m_Happiness += 100;
         girl.lust_release_regular();
         girl.upd_Enjoyment(ACTION_SEX, +3);
         fame += 1;
@@ -218,28 +220,28 @@ bool FeedPoor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     }
     else if (blow)
     {
-        brothel.m_Happiness += uniform(60, 130);
+        //brothel.m_Happiness += uniform(60, 130);
         dispo += 4;
         girl.oralsex(2);
         fame += 1;
-        girl.AddMessage(ss.str(), EImagePresets::BLOWJOB, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+        girl.AddMessage(ss.str(), EImagePresets::BLOWJOB, msg_type);
     }
     else
     {
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, msg_type);
     }
 
-    feed += m_Performance / 10;        //  1 feed per 10 point of performance
+    feed += shift.Performance / 10;        //  1 feed per 10 point of performance
 
     int cost = 0;
     for (int i = 0; i < feed; i++)
     {
         cost += uniform(2, 5); // 2-5 gold per customer
     }
-    brothel.m_Finance.centre_costs(cost);
+    shift.building().Finance().centre_costs(cost);
     ss.str("");
     ss << "${name} feed " << feed << " costing you " << cost << " gold.";
-    girl.AddMessage(ss.str(), m_ImageType, msgtype);
+    girl.AddMessage(ss.str(), m_ImageType, msg_type);
 
     HandleGains(girl, fame);
 
@@ -251,20 +253,20 @@ Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORK
     m_Info.FreeOnly = true;
 }
 
-bool Counselor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     int roll_a = d100();
 
-    if (roll_a <= 10)       { m_Enjoyment -= uniform(1, 3);    ss << "The addicts hasseled her."; }
+    if (roll_a <= 10)       { m_Enjoyment -= uniform(1, 3);    ss << "The addicts hassled her."; }
     else if (roll_a >= 90)  { m_Enjoyment += uniform(1, 3);    ss << "She had a pleasant time working."; }
     else                    { m_Enjoyment += uniform(0, 1);    ss << "Otherwise, the shift passed uneventfully."; }
 
-    girl.AddMessage(ss.str(), EImageBaseType::TEACHER, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), EImageBaseType::TEACHER, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
-    int rehabers = brothel.num_girls_on_job(JOB_REHAB, is_night);
+    int rehabers = num_girls_on_job(shift.building(), JOB_REHAB, shift.IsNightShift);
     // work out the pay between the house and the girl
     int roll_max = (girl.spirit() + girl.intelligence()) / 4;
-    m_Wages += uniform(10, 10 + roll_max);
-    m_Wages += 5 * rehabers;    // `J` pay her 5 for each patient you send to her
+    shift.Wages += uniform(10, 10 + roll_max);
+    shift.Wages += 5 * rehabers;    // `J` pay her 5 for each patient you send to her
     ProvideInteraction(CounselingInteractionId, 2);
 
     HandleGains(girl, 0);

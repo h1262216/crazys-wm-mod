@@ -5,9 +5,6 @@
 namespace events {
 
 
-    // GlobalTriggers.xml
-
-
     // DefaultEvents.xml
     // PunishCustomer.lua: EventNoPay
     constexpr const char* CUSTOMER_NO_PAY = "customer:no-pay";
@@ -198,4 +195,7 @@ namespace events {
     // FreeTime.lua: Movie
     constexpr const char* GIRL_FREE_TIME_MOVIE = "girl:free-time:movie";
 
+
+
+    // GlobalTriggers.xml
 }

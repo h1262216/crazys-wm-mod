@@ -85,8 +85,8 @@ namespace {
                                     SceneType::BEAST, cFilmSceneJob::SexAction::MONSTER) {
         }
 
-        bool CheckCanWork(sGirl& girl) override {
-            if(cFilmSceneJob::CheckCanWork(girl)) {
+        bool CheckCanWork(sGirl& girl, IBuildingShift& building) override {
+            if(cFilmSceneJob::CheckCanWork(girl, building)) {
                 // no beasts = no scene
                 if (g_Game->storage().beasts() < 1)
                 {
@@ -170,7 +170,7 @@ namespace {
             m_Info.Description = "She will perform in a random scene, chosen according to her skills.";
         }
 
-        eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override {
+        eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override {
             return eCheckWorkResult::ACCEPTS;
         }
 

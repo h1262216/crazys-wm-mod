@@ -50,6 +50,7 @@
 #include "character/pregnancy.h"
 #include "character/cGirlPool.h"
 #include "cGirlGangFight.h"
+#include "buildings/queries.h"
 
 namespace settings {
     extern const char* USER_HOUSE_PERCENT_FREE;
@@ -1700,25 +1701,25 @@ void cGirls::updateHappyTraits(sGirl& girl)
             string stopper;
             if(girl.m_Building) {
                 auto bt = girl.m_Building->type();
-                if (bt == BuildingType::ARENA && girl.m_Building->num_girls_on_job(JOB_DOCTORE, 0) > 0)
+                if (bt == BuildingType::ARENA && num_girls_on_job(*girl.m_Building, JOB_DOCTORE, 0) > 0)
                     stopper = "the Doctore";
-                else if (bt == BuildingType::STUDIO && girl.m_Building->num_girls_on_job(JOB_DIRECTOR, 1) > 0)
+                else if (bt == BuildingType::STUDIO && num_girls_on_job(*girl.m_Building, JOB_DIRECTOR, 1) > 0)
                     stopper = "the Director";
-                else if (bt == BuildingType::CLINIC && girl.m_Building->num_girls_on_job(JOB_CHAIRMAN, 0) > 0)
+                else if (bt == BuildingType::CLINIC && num_girls_on_job(*girl.m_Building, JOB_CHAIRMAN, 0) > 0)
                     stopper = "the Chairman";
                 else if (bt == BuildingType::CENTRE &&
                         (girl.m_DayJob == JOB_REHAB || girl.m_PrevDayJob == JOB_REHAB) &&
-                        girl.m_Building->num_girls_on_job(JOB_COUNSELOR, 0) > 0)
+                        num_girls_on_job(*girl.m_Building, JOB_COUNSELOR, 0) > 0)
                     stopper = "her Counselor";
-                else if (bt == BuildingType::CENTRE && girl.m_Building->num_girls_on_job(JOB_CENTREMANAGER, 0) > 0)
+                else if (bt == BuildingType::CENTRE && num_girls_on_job(*girl.m_Building, JOB_CENTREMANAGER, 0) > 0)
                     stopper = "the Centre Manager";
                 else if (bt == BuildingType::HOUSE && g_Dice.percent(50))
                     stopper = "You";
-                else if (bt == BuildingType::HOUSE &&  girl.m_Building->num_girls_on_job(JOB_HEADGIRL, 0) > 0)
+                else if (bt == BuildingType::HOUSE &&  num_girls_on_job(*girl.m_Building, JOB_HEADGIRL, 0) > 0)
                     stopper = "your Head Girl";
-                else if (bt == BuildingType::FARM &&  girl.m_Building->num_girls_on_job(JOB_FARMMANGER, 0) > 0)
+                else if (bt == BuildingType::FARM &&  num_girls_on_job(*girl.m_Building, JOB_FARMMANGER, 0) > 0)
                     stopper = "the Farm Manger";
-                else if ( girl.m_Building->num_girls_on_job(JOB_MATRON, 0) > 0)
+                else if ( num_girls_on_job(*girl.m_Building, JOB_MATRON, 0) > 0)
                     stopper = "the Matron";
 
             }
@@ -3366,7 +3367,8 @@ void cGirls::updateSTD(sGirl& girl)
     // Sanity check. Abort on dead girl
     if (girl.is_dead()) return;
 
-    bool matron = girl_has_matron(girl, SHIFT_DAY);
+    // TODO FIX THIS!
+    bool matron = false;
 
     int Dhea = 0, Dhap = 0, Dtir = 0, Dint = 0, Dcha = 0;
     if (girl.has_active_trait(traits::AIDS))
@@ -3615,14 +3617,6 @@ string cGirls::GetHoroscopeName(int month, int day)
     return "";
 }
 
-bool cGirls::girl_has_matron(const sGirl& girl, int shift)
-{
-    if(girl.m_Building) {
-        return girl.m_Building->matron_on_shift(shift);
-    }
-    return false;
-}
-
 string cGirls::Accommodation(int acc)
 {
     static std::array<std::string, 10> accomodations = {
@@ -3678,57 +3672,6 @@ int cGirls::PreferredAccom(const sGirl& girl)
     if (preferredaccom <= 0.0) return 0;
     if (preferredaccom >= 9.0) return 9;
     return (int)preferredaccom;
-}
-
-// `J` the girl will check the customer for diseases before continuing.
-bool cGirls::detect_disease_in_customer(cBuilding * brothel, sGirl& girl, sCustomer * Cust, double mod)
-{
-    stringstream ss;
-    if (g_Dice.percent(0.1))    // 0.001 chance of false positive
-    {
-        ss << girl.FullName() << " thought she detected that her customer had a disease and refused to allow them to touch her just to be safe.";
-        g_Game->push_message(ss.str(), COLOR_WARNING);
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
-        return true;
-    }
-    // if the customer is clean, then it will return false
-    if (!has_disease(*Cust)) return false;
-    // 10% chance to miss it
-    if (g_Dice.percent(10))    return false;
-
-    double detectdisease = 1.0;                                                // base 1% chance
-    detectdisease += mod;                                                    // add mod
-    detectdisease += girl.medicine() / 2.0;                                // +50 medicine
-    detectdisease += girl.intelligence() / 5.0;                            // +20 intelligence
-    detectdisease += girl.magic() / 5.0;                                    // +20 magic
-    detectdisease -= girl.lust() / 2.0;                                    // -50 lust
-
-    if (has_disease(girl))                        detectdisease += 20;    // has it so know what to look for
-    detectdisease += girl.get_trait_modifier(traits::modifiers::DETECT_DISEASE);
-
-    const char* found_disease = nullptr;
-    // these need better texts
-    if (Cust->has_active_trait(traits::AIDS) && g_Dice.percent(min(90.0, detectdisease*0.5)))    // harder to detect
-    {
-        found_disease = traits::AIDS;
-    } else if (Cust->has_active_trait(traits::SYPHILIS) && g_Dice.percent(detectdisease*0.8))    // harder to detect
-    {
-        found_disease = traits::SYPHILIS;
-    } else if (Cust->has_active_trait(traits::CHLAMYDIA) && g_Dice.percent(detectdisease)) {
-        found_disease = traits::CHLAMYDIA;
-    } else if (Cust->has_active_trait(traits::HERPES) && g_Dice.percent(detectdisease)) {
-        found_disease = traits::HERPES;
-    }
-
-    if(found_disease) {
-        ss << girl.FullName() << " detected that her customer has " << found_disease <<
-            " and refused to allow them to touch her.";
-        g_Game->push_message(ss.str(), COLOR_WARNING);
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
-        brothel->m_RejectCustomersDisease++;
-    }
-
-    return found_disease;
 }
 
 string cGirls::catacombs_look_for(int girls, int items, int beast)

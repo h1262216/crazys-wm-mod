@@ -26,6 +26,7 @@
 #include "IGame.h"
 #include "CLog.h"
 #include "traits/ITraitSpec.h"
+#include "buildings/queries.h"
 
 extern bool g_AllTogle;
 
@@ -179,7 +180,7 @@ void cScreenGirlDetails::init(bool back)
     DisableWidget(takegold_id, (m_SelectedGirl->m_Money <= 0));
     SetCheckBox(antipreg_id, (m_SelectedGirl->m_UseAntiPreg));
 
-    cBuilding* pBuilding = m_SelectedGirl->m_Building;
+    auto pBuilding = m_SelectedGirl->m_Building;
     HideWidget(reldungeon_id, m_SelectedGirl->m_DayJob != JOB_INDUNGEON);
     HideWidget(senddungeon_id, m_SelectedGirl->m_DayJob == JOB_INDUNGEON);
 
@@ -308,10 +309,10 @@ void cScreenGirlDetails::on_select_job(int selection, bool fulltime)
     if (old_job != selection)
     {
         std::stringstream text;
-        text << g_Game->job_manager().get_job_name(old_job) << " (" << m_SelectedGirl->m_Building->num_girls_on_job((JOBS)old_job, m_EditNightShift) << ")";
+        text << g_Game->job_manager().get_job_name(old_job) << " (" << num_girls_on_job(*m_SelectedGirl->m_Building, (JOBS)old_job, m_EditNightShift) << ")";
         SetSelectedItemText(joblist_id, old_job, text.str());
         text.str("");
-        text << g_Game->job_manager().get_job_name((JOBS)selection) << " (" << m_SelectedGirl->m_Building->num_girls_on_job((JOBS)selection, m_EditNightShift) << ")";
+        text << g_Game->job_manager().get_job_name((JOBS)selection) << " (" << num_girls_on_job(*m_SelectedGirl->m_Building, (JOBS)selection, m_EditNightShift) << ")";
     }
     RefreshJobList();
 }
@@ -327,7 +328,7 @@ void cScreenGirlDetails::release_from_dungeon()
     else
     {
         auto tempGirl = g_Game->dungeon().RemoveGirl(m_SelectedGirl.get());
-        current_brothel.add_girl(std::move(tempGirl));
+        current_brothel.add_girl(std::move(tempGirl), false);
     }
     init(true);
 }
@@ -377,7 +378,7 @@ void cScreenGirlDetails::RefreshJobList()
         btext << g_Game->job_manager().get_job_name(i);
         btext << " (";
         if(m_SelectedGirl->m_Building) {
-            btext << m_SelectedGirl->m_Building->num_girls_on_job((JOBS)i, m_EditNightShift);
+            btext << num_girls_on_job(*m_SelectedGirl->m_Building, (JOBS)i, m_EditNightShift);
         } else {
             btext << '?';
         }

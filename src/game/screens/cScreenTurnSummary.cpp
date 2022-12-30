@@ -34,6 +34,7 @@
 #include <sstream>
 #include "cRival.h"
 #include "images/cImageLookup.h"
+#include "buildings/queries.h"
 
 #pragma endregion
 #pragma region //    Local Variables            //
@@ -125,7 +126,7 @@ void cScreenTurnSummary::init(bool back)
         else if (selected_girl()->m_DayJob == JOB_INDUNGEON)    m_ActiveCategory = Summary_DUNGEON;
         else if(selected_girl()->m_Building) {
             m_ActiveCategory = Summary_GIRLS;
-            set_active_building(selected_girl()->m_Building);
+            set_active_building(&cast_building(*selected_girl()->m_Building));
         }
     }
 

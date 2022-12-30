@@ -24,17 +24,17 @@
 #include "cRng.h"
 #include "character/sGirl.h"
 #include "buildings/cBuilding.h"
+#include "buildings/IBuildingShift.h"
 #include "xml/util.h"
 #include "xml/getattr.h"
 
 class sBrothel;
 
 
-sWorkJobResult IGenericJob::Work(sGirl& girl, bool is_night, cRng& rng) {
+void IGenericJob::Work(sGirlShiftData& shift) {
     ss.str("");
-    m_Rng = &rng;
-    m_ActiveGirl = &girl;
-    m_CurrentShift = is_night;
+    auto& girl = shift.girl();
+    m_ActiveData = &shift;
 
     if(m_Info.FullTime && girl.m_DayJob != girl.m_NightJob) {
         g_LogFile.error("jobs", "Full time job was assigned for a single shift!");
@@ -42,41 +42,43 @@ sWorkJobResult IGenericJob::Work(sGirl& girl, bool is_night, cRng& rng) {
         girl.m_NightJob = job();
     }
 
-    if(is_night) {
+    if(shift.IsNightShift) {
         girl.m_Refused_To_Work_Night = false;
     } else {
         girl.m_Refused_To_Work_Day = false;
     }
 
-    InitWork();
-    switch (CheckWork(girl, is_night)) {
-        case eCheckWorkResult::ACCEPTS:
-            return DoWork(girl, is_night);
-        case eCheckWorkResult::REFUSES:
-            if(is_night) {
+    InitWork(shift);
+    auto checked_work = CheckWork(girl, active_building(), shift.IsNightShift);
+    shift.Refused = checked_work;
+    switch (checked_work) {
+        case ECheckWorkResult::ACCEPTS:
+            DoWork(shift);
+            break;
+        case ECheckWorkResult::REFUSES:
+            if(shift.IsNightShift) {
                 girl.m_Refused_To_Work_Night = true;
             } else {
                 girl.m_Refused_To_Work_Day = true;
             }
-            return {true, 0, 0, 0};
-        case eCheckWorkResult::IMPOSSIBLE:
-            return {false, 0, 0, 0};
+            break;
+        case ECheckWorkResult::IMPOSSIBLE:
+            break;
     }
-    assert(false);
 }
 
 int IGenericJob::d100() const {
-    return m_Rng->d100();
+    return rng().d100();
 }
 
 bool IGenericJob::chance(float percent) const {
-    return m_Rng->percent(percent);
+    return rng().percent(percent);
 }
 
 int IGenericJob::uniform(int min_, int max_) const {
     int min = std::min(min_, max_);
     int max = std::max(min_, max_);
-    return m_Rng->closed_uniform(min, max);
+    return rng().closed_uniform(min, max);
 }
 
 IGenericJob::IGenericJob(JOBS j, std::string xml_file, EJobClass job_class) :
@@ -85,10 +87,22 @@ IGenericJob::IGenericJob(JOBS j, std::string xml_file, EJobClass job_class) :
 
 }
 
-sJobValidResult IGenericJob::is_job_valid(const sGirl& girl) const {
+void IGenericJob::PreShift(sGirlShiftData& shift) {
+    m_ActiveData = &shift;
+    shift.Refused = ECheckWorkResult::ACCEPTS;
+    on_pre_shift(shift);
+}
+
+sJobValidResult IGenericJob::is_job_valid(const sGirl& girl, bool night_shift) const {
     if(m_Info.FreeOnly && girl.is_slave()) {
         return {false, "Slaves cannot work as " + m_Info.Name + "!"};
     }
+    if(night_shift && m_Info.DayOnly) {
+        return {false, "The " + m_Info.Name + " job can only be assigned for the day shift."};
+    } else if (!night_shift && m_Info.NightOnly) {
+        return {false, "The " + m_Info.Name + " job can only be assigned for the night shift."};
+    }
+
 
     return {true, {}};
 }
@@ -100,48 +114,42 @@ void IGenericJob::OnRegisterJobManager(const cJobManager& manager) {
 }
 
 sGirl& IGenericJob::active_girl() const {
-    assert(m_ActiveGirl);
-    return *m_ActiveGirl;
+    assert(m_ActiveData);
+    return m_ActiveData->girl();
+}
+
+IBuildingShift& IGenericJob::active_building() const {
+    assert(m_ActiveData);
+    return m_ActiveData->building();
 }
 
 bool IGenericJob::is_night_shift() const {
-    return m_CurrentShift;
+    assert(m_ActiveData);
+    return m_ActiveData->IsNightShift;
 };
 
 int IGenericJob::ConsumeResource(const std::string& name, int amount) {
-    auto brothel = active_girl().m_Building;
-    assert(brothel);
-    return brothel->ConsumeResource(name, amount);
+    return active_building().ConsumeResource(name, amount);
 }
 
 void IGenericJob::ProvideResource(const std::string& name, int amount) {
-    auto brothel = active_girl().m_Building;
-    assert(brothel);
-    brothel->ProvideResource(name, amount);
+    return active_building().ProvideResource(name, amount);
 }
 
 bool IGenericJob::TryConsumeResource(const std::string& name, int amount) {
-    auto brothel = active_girl().m_Building;
-    assert(brothel);
-    return brothel->TryConsumeResource(name, amount);
+    return active_building().TryConsumeResource(name, amount);
 }
 
 void IGenericJob::ProvideInteraction(const std::string& name, int amount) const {
-    auto brothel = active_girl().m_Building;
-    assert(brothel);
-    return brothel->ProvideInteraction(name, &active_girl(), amount);
+    return active_building().ProvideInteraction(name, &active_girl(), amount);
 }
 
 sGirl* IGenericJob::RequestInteraction(const std::string& name) {
-    auto brothel = active_girl().m_Building;
-    assert(brothel);
-    return brothel->RequestInteraction(name);
+    return active_building().RequestInteraction(name);
 }
 
 bool IGenericJob::HasInteraction(const std::string& name) const {
-    auto brothel = active_girl().m_Building;
-    assert(brothel);
-    return brothel->HasInteraction(name);
+    return active_building().HasInteraction(name);
 }
 
 void IGenericJob::load_job() {
@@ -178,6 +186,27 @@ void IGenericJob::load_job() {
     }
 }
 
+cRng& IGenericJob::rng() const {
+    assert(m_ActiveData);
+    return m_ActiveData->rng();
+}
+
+void IGenericJob::on_pre_shift(sGirlShiftData& shift) {
+    auto valid = is_job_valid(shift.girl(), shift.IsNightShift);
+    if(!valid.IsValid) {
+        shift.girl().AddMessage(valid.Reason, EImageBaseType::PROFILE, EVENT_WARNING);
+        shift.Refused = ECheckWorkResult::IMPOSSIBLE;
+        return;
+    }
+    auto checked_work = CheckWork(active_girl(), active_building(), is_night_shift());
+    shift.Refused = checked_work;
+}
+
+sGirlShiftData& IGenericJob::active_shift() const {
+    assert(m_ActiveData);
+    return *m_ActiveData;
+}
+/*
 class cJobWrapper: public IGenericJob {
 public:
     cJobWrapper(JOBS j, std::function<sWorkJobResult(sGirl&, bool, cRng&)> w, std::function<double(const sGirl&, bool)> p,
@@ -190,11 +219,11 @@ public:
     cJobWrapper& full_time() { m_Info.FullTime = true; return *this; };
     cJobWrapper& free_only() { m_Info.FreeOnly = true; return *this; };
 
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override {
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override {
         if(!is_job_valid(girl)) {
-            return eCheckWorkResult::IMPOSSIBLE;
+            return ECheckWorkResult::IMPOSSIBLE;
         }
-        return eCheckWorkResult::ACCEPTS;
+        return ECheckWorkResult::ACCEPTS;
     }
 private:
     double GetPerformance(const sGirl& girl, bool estimate) const override { return m_Perf(girl, estimate); }
@@ -245,3 +274,4 @@ void RegisterWrappedJobs(cJobManager& mgr) {
     REGISTER_JOB(JOB_INDUNGEON, NullJob, "", "She is languishing in the dungeon.");
     REGISTER_JOB(JOB_RUNAWAY, NullJob, "", "She has escaped.");
 }
+*/

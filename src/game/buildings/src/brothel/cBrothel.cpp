@@ -23,7 +23,7 @@
 #include "character/cPlayer.h"
 #include "CLog.h"
 
-#include "brothel/cBrothel.h"
+#include "cBrothel.h"
 #include "cGangs.h"
 #include "XmlMisc.h"
 #include "cObjectiveManager.hpp"
@@ -32,6 +32,7 @@
 #include "cTariff.h"
 #include "utils/string.hpp"
 #include "cGirls.h"
+#include "queries.h"
 
 // fwd-declare the relevant settings
 namespace settings {
@@ -44,19 +45,16 @@ extern cRng                    g_Dice;
 
 // // ----- Strut sBrothel Create / destroy
 sBrothel::sBrothel() :
-    cBuilding(BuildingType::BROTHEL, "Brothel")
+    cBuilding("Brothel", {BuildingType::BROTHEL, JOB_RESTING, JOB_WHORESTREETS, JOB_MATRON})
 {
     m_TotalCustomers = m_RejectCustomersRestrict = m_RejectCustomersDisease = m_MiscCustomers = 0;
-
-    m_FirstJob = JOB_RESTING;
-    m_LastJob = JOB_WHORESTREETS;
-    m_MatronJob = JOB_MATRON;
 }
 
 sBrothel::~sBrothel() = default;
-
+/*
 void sBrothel::UpdateGirls(bool is_night)
 {
+    // TODO Fix this!
     m_AdvertisingLevel = 1.0;  // base multiplier
     IterateGirls(is_night, {JOB_ADVERTISING},
                  [&](auto& current) {
@@ -72,27 +70,23 @@ void sBrothel::UpdateGirls(bool is_night)
                      g_Game->job_manager().handle_simple_job(current, is_night);
     });
 
-    bool matron = num_girls_on_job(m_MatronJob, false) >= 1;
+    bool matron = num_girls_on_job(*this, matron_job(), false) >= 1;
     std::stringstream ss;
 
-    /*
-    *    as for the rest of them...
-    */
-    m_Girls->apply([&](sGirl& current){
+    //   as for the rest of them...
+    girls().apply([&](sGirl& current){
         bool refused = false;
         auto sum = EVENT_SUMMARY;
 
-        /*
-        *        ONCE DAILY processing
-        *        at start of Day Shift
-        */
+        //        ONCE DAILY processing
+        //       at start of Day Shift
         if (is_night == SHIFT_DAY)
         {
             // Back to work
             if (current.m_NightJob == JOB_RESTING && current.m_DayJob == JOB_RESTING && current.m_PregCooldown < g_Game->settings().get_integer(settings::PREG_COOL_DOWN) &&
                 current.health() >= 80 && current.tiredness() <= 20)
             {
-                if ((matron || current.m_PrevDayJob == m_MatronJob)                    // do we have a director, or was she the director and made herself rest?
+                if ((matron || current.m_PrevDayJob == matron_job())                    // do we have a director, or was she the director and made herself rest?
                     && current.m_PrevDayJob != JOB_UNSET && current.m_PrevNightJob != JOB_UNSET)    // 255 = nothing, in other words no previous job stored
                 {
                     g_Game->job_manager().HandleSpecialJobs(current, current.m_PrevDayJob, current.m_DayJob, false);
@@ -110,9 +104,7 @@ void sBrothel::UpdateGirls(bool is_night)
             }
         }
 
-        /*
-        *        EVERY SHIFT processing
-        */
+        //       EVERY SHIFT processing
 
         // Sanity check! Don't process dead girls
         if (current.is_dead())
@@ -122,9 +114,7 @@ void sBrothel::UpdateGirls(bool is_night)
         cGirls::UseItems(current);                        // Girl uses items she has
         cGirls::UpdateAskPrice(current, true);        // Calculate the girls asking price
 
-        /*
-        *        JOB PROCESSING
-        */
+        //       JOB PROCESSING
         JOBS sw = current.get_job(is_night);
 
         // Sanity check! Don't process runaways
@@ -154,12 +144,10 @@ void sBrothel::UpdateGirls(bool is_night)
             return;
         }
 
-        /*
-        *        MATRON CODE START
-        */
+        //       MATRON CODE START
 
         // Lets try to compact multiple messages into one.
-        bool matron = (num_girls_on_job(JOB_MATRON, true) >= 1 || num_girls_on_job(JOB_MATRON, false) >= 1);
+        bool matron = (num_girls_on_job(*this, JOB_MATRON, true) >= 1 || num_girls_on_job(*this, JOB_MATRON, false) >= 1);
 
         std::string MatronWarningMsg;
         std::string MatronMsg;
@@ -228,25 +216,9 @@ void sBrothel::UpdateGirls(bool is_night)
             current.AddMessage(MatronWarningMsg, EImageBaseType::PROFILE, EVENT_WARNING);
             MatronWarningMsg = "";
         }
-        /*
-        *        MATRON CODE END
-        */
-
-        // Do item check at the end of the day
-        if (is_night == SHIFT_NIGHT)
-        {
-            // Myr: Automate the use of a number of different items. See the function itself for more comments.
-            //      Enabled or disabled based on config option.
-            if (g_Game->settings().get_bool(settings::USER_ITEMS_AUTO_USE)) g_Game->player().apply_items(current);
-
-            end_of_week_update(current);
-        }
-
-        // Level the girl up if necessary
-        cGirls::LevelUp(current);
     });
 }
-
+*/
 bool sBrothel::runaway_check(sGirl& girl)
 {
 /*
@@ -299,11 +271,18 @@ bool sBrothel::runaway_check(sGirl& girl)
     *    may be inclined to turn a blind eye to runaway attempts
     */
     //    int matron_chance = brothel->matron_count() * 35;
-    int matron_chance = matron_count() * 35;
+    int matron_count = 0;
+    for (int i = 0; i < 2; i++)
+    {
+        if(matron_on_shift(i)) {
+            ++matron_count;
+        }
+    }
+    int matron_chance = matron_count * 35;
 
     if (g_Dice.percent(matron_chance)) return false;    // if there is a matron 70%
 
-    if (girl.m_DayJob == JOB_REHAB && (num_girls_on_job(JOB_COUNSELOR, true) > 0 || num_girls_on_job(JOB_COUNSELOR, false) > 0))
+    if (girl.m_DayJob == JOB_REHAB && (num_girls_on_job(*this, JOB_COUNSELOR, true) > 0 || num_girls_on_job(*this, JOB_COUNSELOR, false) > 0))
     {
         if (g_Dice.percent(70)) return false;
     }
@@ -389,122 +368,6 @@ bool sBrothel::runaway_check(sGirl& girl)
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
     return false;
 }
-
-void sBrothel::Update()
-{
-    std::stringstream ss;
-    BeginWeek();
-
-    // Moved to here so Security drops once per day instead of everytime a girl works security -PP
-    m_SecurityLevel -= 10;
-    m_SecurityLevel -= girls().num();    //`J` m_SecurityLevel is extremely over powered.
-    // Reducing it's power a lot.
-    if (m_SecurityLevel <= 0) m_SecurityLevel = 0;     // crazy added
-
-
-    // Generate customers for the brothel for the day shift and update girls
-    UpdateGirls(false);
-
-    // update the girls and satisfy the customers for this brothel during the night
-    UpdateGirls(true);
-
-#pragma region //    Shift Summary            //
-
-    // get the misc customers
-    m_TotalCustomers += m_MiscCustomers;
-
-    ss.str("");
-    ss << m_TotalCustomers << " customers visited the building.";
-    if (m_RejectCustomersRestrict > 0) ss << "\n \n" << m_RejectCustomersRestrict << " were turned away because of your sex restrictions.";
-    if (m_RejectCustomersDisease > 0) ss << "\n \n" << m_RejectCustomersDisease << " were turned away because they had an STD.";
-    AddMessage(ss.str());
-
-    // empty rooms cost 2 gold to maintain
-    m_Finance.building_upkeep(g_Game->tariff().empty_room_cost(*this));
-
-    // update brothel stats
-    if (!girls().empty())
-        m_Fame = (total_fame() / girls().num());
-    if (m_Happiness > 0 && g_Game->GetNumCustomers())
-        m_Happiness = std::min(100, m_Happiness / m_TotalCustomers);
-
-
-    // advertising costs are set independently for each brothel
-    m_Finance.advertising_costs(g_Game->tariff().advertising_costs(m_AdvertisingBudget));
-
-    ss.str("");
-    ss << "Your advertising budget for this brothel is " << m_AdvertisingBudget << " gold.";
-    if (g_Game->tariff().advertising_costs(m_AdvertisingBudget) != m_AdvertisingBudget)
-    {
-        ss << " However, due to your configuration, you instead had to pay " <<
-           g_Game->tariff().advertising_costs(m_AdvertisingBudget) << " gold.";
-    }
-    AddMessage(ss.str());
-
-    // `J` include antipreg potions in summary
-    ss.str("");
-    if (m_AntiPregPotions > 0 || m_AntiPregUsed > 0)
-    {
-        int num = m_AntiPregPotions;
-        int used = m_AntiPregUsed;
-        bool stocked = m_KeepPotionsStocked;
-        bool matron = num_girls_on_job(m_MatronJob, false) >= 1;
-        bool skip = false;    // to allow easy skipping of unneeded lines
-        bool error = false;    // in case there is an error this makes for easier debugging
-
-        // first line: previous stock
-        if (stocked && num > 0)        ss << "You keep a regular stock of " << num << " Anti-Pregnancy potions in this brothel.\n \n";
-        else if (num + used > 0)    ss << "You " << (used > 0 ? "had" : "have") << " a stock of " << (num + used) << " Anti-Pregnancy potions in this brothel.\n \n";
-        else { skip = true;            ss << "You have no Anti-Pregnancy potions in this brothel."; }
-
-        // second line: number used
-        /* */if (skip){}    // skip the rest of the lines
-        else if (used == 0)            { skip = true;    ss << "None were used.\n \n"; }
-        else if (num == 0)            { skip = true;    ss << "All have been used.\n \n"; }
-        else if (used > 0 && stocked)                ss << used << " were " << (used > num ? "needed" : "used") << " this week.\n \n";
-        else if (used > 0 && num > 0 && !stocked)    ss << used << " were used this week leaving " << num << " in stock.\n \n";
-        else
-        {    // `J` put this in just in case I missed something
-            ss << "error code::  BAP02|" << m_AntiPregPotions << "|" << m_AntiPregUsed << "|" << m_KeepPotionsStocked << "  :: Please report it to pinkpetal.org so it can be fixed";
-            error = true;
-        }
-
-        // third line: budget
-        if (!skip && stocked)
-        {
-            int cost = 0;
-            if (used > num)
-            {
-                ss << used - num << " more than were in stock were needed so an emergency restock had to be made.\n";
-                ss << "Normally they cost " << g_Game->tariff().anti_preg_price(1) << " gold, but our supplier charges five times the normal price for unscheduled deliveries.\n \n";
-                cost += g_Game->tariff().anti_preg_price(num);
-                cost += g_Game->tariff().anti_preg_price(used - num) * 5;
-            }
-            else
-            {
-                cost += g_Game->tariff().anti_preg_price(used);
-            }
-
-            ss << "Your budget for Anti-Pregnancy potions for this brothel is " << cost << " gold.";
-
-            if (matron && used > num)
-            {
-                int newnum = (((used / 10) + 1) * 10) + 10;
-
-                AddAntiPreg(newnum - num);
-                ss << "\n \nThe Matron of this brothel has increased the quantity of Anti-Pregnancy potions for further orders to " << m_AntiPregPotions << ".";
-            }
-        }
-        if (error) {
-            g_LogFile.log(ELogLevel::ERROR, ss.str());
-        }
-        AddMessage(ss.str());
-    }
-
-#pragma endregion
-    EndWeek();
-}
-
 
 // ----- Stats
 

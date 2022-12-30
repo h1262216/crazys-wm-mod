@@ -22,13 +22,31 @@
 #ifndef CRAZYS_WM_MOD_QUERIES_HPP
 #define CRAZYS_WM_MOD_QUERIES_HPP
 
-class cBuilding;
 
-bool DoctorNeeded(cBuilding& building);
-int GetNumberPatients(cBuilding& building, bool Day0Night1);
-bool CrewNeeded(const cBuilding& building);
+#include "Constants.h"
+
+class cBuilding;
+class IBuilding;
+class IBuildingShift;
+class sGirl;
+
+
+int num_girls(const IBuilding& building);
+int num_girls_on_job(const IBuilding& building, JOBS jobID, int is_night);
+[[deprecated]] int num_girls_on_job(const IBuildingShift& building, JOBS jobID, int is_night);
+sGirl* random_girl_on_job(const IBuilding& building, JOBS job, bool at_night);
+
+int free_rooms(const IBuilding& building);
+
+bool DoctorNeeded(IBuilding& building);
+int GetNumberPatients(IBuilding& building, bool Day0Night1);
+bool CrewNeeded(const IBuilding& building);
 bool is_Actress_Job(int testjob);
-int GetNumberActresses(const cBuilding& building);
+int GetNumberActresses(const IBuilding& building);
 int Num_Patients(const cBuilding& building, bool is_night);
+
+bool is_valid_job(const IBuilding& building, JOBS job);
+
+[[deprecated]] cBuilding& cast_building(IBuilding& b);
 
 #endif //CRAZYS_WM_MOD_QUERIES_HPP

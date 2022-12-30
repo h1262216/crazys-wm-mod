@@ -34,7 +34,13 @@ public:
     std::string meet_no_luck() const override;
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
-    void UpdateGirls(bool is_night) override;
+
+    void setup_customer(sCustomer& customer) const override;
+    void AttractCustomers(IBuildingShift& shift, bool is_night) override;
+    void EndShift(bool is_night) override;
+
+private:
+    int m_Reputation = 0;
 };
 
 

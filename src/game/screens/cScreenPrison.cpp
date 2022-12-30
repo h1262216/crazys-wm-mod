@@ -134,7 +134,7 @@ void cScreenPrison::release_button()
         std::string text = pgirls->FullName();
         text += " has been sent to your current brothel.";
         push_message(text, 0);
-        bld.add_girl(std::move(girl));
+        bld.add_girl(std::move(girl), false);
     }
 }
 

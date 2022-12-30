@@ -2,6 +2,7 @@
 
 ## Other
 * Trait xml files now specify which traits are gained / lost on level-up
+* Unified contraceptive code between buildings
 
 ## Tagger
 * Prefer game `ImageFiles.xml` over bundled one, allowing for user overrides

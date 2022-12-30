@@ -31,7 +31,6 @@ struct sCentre : public cBuilding
     ~sCentre() override;
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
-    void UpdateGirls(bool is_night) override;
     bool handle_back_to_work(sGirl& girl, std::stringstream& ss, bool is_night) override;
 };
 

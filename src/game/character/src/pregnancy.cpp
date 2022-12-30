@@ -35,6 +35,7 @@
 #include "buildings/cDungeon.h"
 #include "character/cPlayer.h"
 #include "utils/algorithms.hpp"
+#include "buildings/queries.h"
 #include <sstream>
 
 namespace settings {
@@ -89,7 +90,7 @@ bool UseAntiPreg(const sGirl& girl)
     */
     // TODO base this on a status effect!
     auto building = girl.m_Building;
-    if(building && building->provide_anti_preg()) {
+    if(building && cast_building(*building).provide_anti_preg()) {
         return !g_Dice.percent( g_Game->settings().get_percent(settings::PREG_CONTRA_FAIL) );
     }
 
@@ -111,7 +112,7 @@ int fertility(const sGirl& girl) {
         return 0;
     }
     if(UseAntiPreg(girl)) {
-        g_LogFile.debug("pregnancy", girl.FullName(), " succesfully used contraceptives.");
+        g_LogFile.debug("pregnancy", girl.FullName(), " successfully used contraceptives.");
         return 0;
     }
 

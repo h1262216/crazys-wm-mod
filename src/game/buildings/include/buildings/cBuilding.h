@@ -28,6 +28,8 @@
 #include <algorithm>
 #include <unordered_set>
 #include <unordered_map>
+
+#include "IBuilding.h"
 #include "utils/streaming_random_selection.hpp"
 
 #include "cEvents.h"
@@ -38,23 +40,47 @@
 #include "character/sGirl.h"
 #include "character/cGirlPool.h"
 
-struct sWorkJobResult;
+class cBuildingShift;
 
-class cBuilding
+class ContraceptiveData {
+public:
+    void reset();
+
+    void add(int amount) { m_Stock += amount; }
+    void emergency(int amount);
+    bool request();
+    bool take();
+
+    void set_restock(int amount) { m_Restock = amount; }
+
+    // getters
+    int  get_stock() const { return m_Stock; }
+    int  get_requested() const { return m_Requested; }
+    int  get_used() const { return m_Used; }
+    int  get_restock() const { return m_Restock; }
+    int  get_emergency() const { return m_Emergency; }
+    bool is_restocking() const { return m_Restock > 0; }
+
+    void load_xml(const tinyxml2::XMLElement& root);
+    void save_xml(tinyxml2::XMLElement& root) const;
+private:
+    int m_Stock     = 0;
+    int m_Requested = 0;
+    int m_Used      = 0;
+    int m_Restock   = 0;
+    int m_Emergency = 0;
+};
+
+// Common resources:
+extern const char* const CleaningAmountId;
+
+class cBuilding : public IBuilding
 {
 public:
-    explicit cBuilding(BuildingType type, std::string name);
-    virtual ~cBuilding();
-
-    cBuilding(const cBuilding&) = delete;
+    cBuilding(std::string name, sBuildingConfig config);
+    ~cBuilding() override;
 
     virtual void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) = 0;
-
-    // info functions
-    BuildingType type() const { return m_Type; };
-    const char* type_str() const;
-    const std::string& name() const { return m_Name; }
-    void set_name(std::string new_name) { m_Name = std::move(new_name); }
 
     // display data
     const std::string& background_image() const { return m_BackgroundImage; }
@@ -68,8 +94,8 @@ public:
     int filthiness() const;
     int security() const;
 
+    JOBS matron_job() const;
     bool matron_on_shift(int shift) const; // `J` added building checks
-    int matron_count() const;
 
     void update_all_girls_stat(STATS stat, int amount);
 
@@ -79,36 +105,25 @@ public:
     void load_girls_xml(const tinyxml2::XMLElement& root);
     void load_settings_xml(const tinyxml2::XMLElement& root);
 
-    virtual void load_xml(const tinyxml2::XMLElement& root);
-    virtual void save_xml(tinyxml2::XMLElement& root) const;
+    void load_xml(const tinyxml2::XMLElement& root) override;
+    void save_xml(tinyxml2::XMLElement& root) const override;
 
     // girl management
-    const cGirlPool& girls() const { return *m_Girls; }
-    cGirlPool& girls() { return *m_Girls; }
-
     sGirl* get_girl(int index);
     int get_girl_index(const sGirl& girl) const;
-    void add_girl(std::shared_ptr<sGirl> girl, bool keep_job = false);
-    std::shared_ptr<sGirl> remove_girl(sGirl* girl);
+    void add_girl(std::shared_ptr<sGirl> girl, bool keep_job) override;
+    std::shared_ptr<sGirl> remove_girl(sGirl* girl) override;
 
     // utilities: common uses of the functions above
-    int    num_girls_on_job(JOBS jobID, int is_night = 0) const;
     std::vector<sGirl*> girls_on_job(JOBS jobID, int is_night = 0) const;
 
-
+    IBuildingShift& shift() const override;
     int total_fame() const;
 
     // private:
 
     // potions
-    int  GetNumPotions()                    { return m_AntiPregPotions; }
-    void KeepPotionsStocked(bool stocked)    { m_KeepPotionsStocked = stocked; }
-    bool GetPotionRestock()                    { return m_KeepPotionsStocked; }
-    void AddAntiPreg(int amount);
-
-    int     m_AntiPregPotions    = 0;          // `J` added so all buildings save their own number of potions
-    int     m_AntiPregUsed       = 0;          // `J` number of potions used last turn
-    bool m_KeepPotionsStocked = false;        // `J` and if they get restocked
+    ContraceptiveData& contraceptives() { return m_Contraceptives; }
 
     /// returns true if an anti-preg potion is available and subtracts that potion from the stock.
     /// also handles auto-buy if no potion is in stock.
@@ -118,10 +133,6 @@ public:
     void set_sex_type_allowed(SKILLS sex_type, bool is_allowed=true);
     bool is_sex_type_allowed(SKILLS sex_type) const;
     bool nothing_banned() const;
-
-    JOBS m_FirstJob;
-    JOBS m_LastJob;
-    JOBS m_MatronJob;
 
     int             m_id   = 0;
     int    m_Filthiness       = 0;
@@ -143,22 +154,7 @@ public:
     int              m_MaxNumRooms = 0;                // How many rooms it can have
     cGold            m_Finance;                      // for keeping track of how well the place is doing (for the last week)
 
-    // helper functions
-    void BeginWeek();
-    void EndWeek();
-    void BeginShift(bool is_night);
-    void EndShift(bool is_night);
-
-    /// Looks for a matron and decides whether she works.
-    /// Returns true if the matron for this shift does work.
-    bool SetupMatron(bool is_night);
-
-    virtual void Update();
-    virtual void UpdateGirls(bool is_night) = 0;
-
-
-    /// Handles all resting girls.
-    void HandleRestingGirls(bool is_night);
+    void Update();
 
     /// This function is called for every resting girl that is not on maternity leave. If it returns
     /// true, processing for this girl is assuemd to be finished.
@@ -172,65 +168,41 @@ public:
     { return false; }
 
     // this is called for when the player tries to meet a new girl at this location
-    bool CanEncounter() const;
-    std::shared_ptr<sGirl> TryEncounter();
-
-
-    // resource management
-    //  bulk resources
-    /// Returns how many points of the resource `name` are available.
-    int GetResourceAmount(const std::string& name) const;
-
-    /// Consumes up to `amount` points of the given resource. If less is available,
-    /// that amount will we consumed. Returns the amount of actual consumption.
-    int ConsumeResource(const std::string& name, int amount);
-
-    /// Provides `amount` points of the given resource.
-    void ProvideResource(const std::string& name, int amount);
-
-    /// Tries to consume `amount` of the given resource. If not enough is available,
-    /// no resource is consumed and false is returned.
-    bool TryConsumeResource(const std::string& name, int amount);
-
-    //  one-on-one interactions
-    void ProvideInteraction(const std::string& name, sGirl* source, int amount);
-    sGirl* RequestInteraction(const std::string& name);
-
-    bool HasInteraction(const std::string& name) const;
-    /// Returns how many girls are working as "interactors" of the given type.
-    int NumInteractors(const std::string& name) const;
-
-    int GetInteractionProvided(const std::string& name) const;
-    int GetInteractionConsumed(const std::string& name) const;
+    bool CanEncounter() const override;
+    std::shared_ptr<sGirl> TryEncounter() override;
 
     void AddMessage(std::string message, EEventType event = EEventType::EVENT_BUILDING);
-protected:
-    std::string m_Name;
-    std::unique_ptr<cGirlPool> m_Girls;
 
-    virtual void GirlBeginShift(sGirl& girl, bool is_night);
+    /// Looks for a matron and decides whether she works.
+    /// Returns true if the matron for this shift does work.
+    sGirl* SetupMatron(bool is_night);
+
     virtual void GirlEndShift(sGirl& girl, bool is_night);
+    virtual void EndShift(bool is_night) {};
+    virtual void PostMainShift(bool is_night) {};
 
-    sGirl* get_active_matron() { return m_ActiveMatron; }
+    virtual void AttractCustomers(IBuildingShift& shift, bool is_night);
 
-    struct sMeetGirlData {
-        SpawnReason Spawn = SpawnReason::COUNT;
-        std::string Event;
-    } m_MeetGirlData;
-
-    // resource management
-    void declare_resource(const std::string& name);
-    void declare_interaction(const std::string& name);
+    int get_variable(const std::string& name) const override;
+protected:
 
     // Calls `handler` for all girls that are not dead and are working in one of the given jobs during the shift.
     void IterateGirls(bool is_night, std::initializer_list<JOBS> jobs, const std::function<void(sGirl&)>& handler);
 
-    /// regain of health and decrease of tiredness every week, and runs item updates.
-    void end_of_week_update(sGirl& girl);
+    virtual void onBeginWeek() {};
+
 private:
+    // sub-functions for structuring the week processing
+    void BeginWeek();
+    void EndWeek();
+
+
+    /// regain of health and decrease of tiredness every week, and runs item updates.
+    void GirlEndWeek(sGirl& girl);
+    void GirlBeginWeek(sGirl& girl);
+
     std::unordered_set<SKILLS> m_ForbiddenSexType;
 
-    BuildingType m_Type;
     std::string m_BackgroundImage;
 
     // whether an encounter event has already happened this week
@@ -238,31 +210,20 @@ private:
 
     void do_daily_items(sGirl& girl);
     void handle_accommodation(sGirl& girl);
+    void handle_contraceptives();
 
     // meeting new girls
     virtual std::shared_ptr<sGirl> meet_girl() const;
     virtual std::string meet_no_luck() const;
 
-    sGirl* m_ActiveMatron;
+    ContraceptiveData m_Contraceptives;
 
+    std::unordered_map<std::string, int*> m_BuildingVars;
 
-    // job processing cache
-    std::unordered_map<std::string, int> m_ShiftResources;
+protected:
+    void declare_variable(std::string name, int* target);
 
-    struct sInteractionWorker {
-        sGirl* Worker;
-        int Amount;
-    };
-
-    struct sInteractionData {
-        int TotalProvided = 0;
-        int TotalConsumed = 0;
-        std::vector<sInteractionWorker> Workers = {};
-    };
-
-    std::unordered_map<std::string, sInteractionData> m_ShiftInteractions;
-
-    void setup_resources();
+    std::unique_ptr<cBuildingShift> m_Shift;
 };
 
 // predicates
@@ -291,7 +252,5 @@ struct HasJob {
     JOBS m_Job;
     bool m_DayNight;
 };
-
-const char* building_type_to_str(BuildingType type);
 
 #endif //CRAZYS_WM_MOD_IBUILDING_HPP

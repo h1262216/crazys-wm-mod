@@ -154,9 +154,6 @@ public:
     static void updateHappyTraits(sGirl& girl);
     static void updateGirlTurnStats(sGirl& girl);
 
-    static bool girl_has_matron(const sGirl& girl, int shift = 0);
-    static bool detect_disease_in_customer(cBuilding * brothel, sGirl& girl, sCustomer * Cust, double mod = 0.0);
-
     static std::string Accommodation(int acc);
     static int PreferredAccom(const sGirl& girl);
     static std::string catacombs_look_for(int girls, int items, int beast);

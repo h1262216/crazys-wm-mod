@@ -12,7 +12,7 @@ add_library(WmScriptingInterface INTERFACE)
 target_include_directories(WmScriptingInterface INTERFACE include)
 
 add_library(WmScriptingObjects OBJECT ${SCRIPTING_SRC})
-target_link_libraries(WmScriptingObjects PRIVATE WMEngineObjects lua::lua WmCharacterObjects WmBuildingObjects WmScriptingInterface)
+target_link_libraries(WmScriptingObjects PRIVATE WMEngineObjects lua::lua WmCharacterObjects WmBuildingInterface WmScriptingInterface)
 target_link_libraries(WmScriptingObjects PUBLIC WmScriptingInterface)
 target_include_directories(WmScriptingObjects PRIVATE include/scripting)
 # TODO Fix includes!

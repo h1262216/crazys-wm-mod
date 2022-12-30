@@ -61,7 +61,11 @@ void cScreenBuildingSetup::set_ids()
     }
 
     SetCheckBoxCallback(autopotions_id, [this](bool on) {
-        active_building().m_KeepPotionsStocked = on;
+        if(on) {
+            active_building().contraceptives().set_restock(active_building().contraceptives().get_stock());
+        } else {
+            active_building().contraceptives().set_restock(-1);
+        }
     });
 
     SetSliderCallback(advertsli_id, [this](int value) {
@@ -75,19 +79,17 @@ void cScreenBuildingSetup::init(bool back)
 {;
     Focused();
 
-    int rooms = 20, maxrooms = 200, antipregnum = 0, antipregused = 0, advert = 0;
-    std::string brothel;
     cBuilding& building = active_building();
-    brothel = building.name();
+    std::string brothel = building.name();
 
-    rooms = building.m_NumRooms;
-    maxrooms = building.m_MaxNumRooms;
-    antipregnum = building.GetNumPotions();
-    antipregused = building.m_AntiPregUsed;
-    advert = building.m_AdvertisingBudget / 50;
+    int rooms = building.m_NumRooms;
+    int maxrooms = building.m_MaxNumRooms;
+    int antipregnum = building.contraceptives().get_stock();
+    int antipregused = building.contraceptives().get_requested();
+    int advert = building.m_AdvertisingBudget / 50;
 
     // setup check boxes
-    SetCheckBox(autopotions_id, building.GetPotionRestock());
+    SetCheckBox(autopotions_id, building.contraceptives().is_restocking());
     for(const auto& data : m_SexTypeAllowedMap) {
         SetCheckBox(data.id, !building.is_sex_type_allowed(data.skill));
     }
@@ -120,17 +122,17 @@ void cScreenBuildingSetup::init(bool back)
 void cScreenBuildingSetup::buy_potions(int buypotions)
 {
     int buynum = buypotions;
-    int buysum = buynum;
-    int antipregnum = 0;
-    if (!g_Game->gold().afford(g_Game->tariff().anti_preg_price(buynum)))    push_message("You don't have enough gold", COLOR_WARNING);
+    int buysum = buypotions;
+    auto& building = active_building();
+    int antipregnum = building.contraceptives().get_stock();
+    int MaxSupplies = g_Game->MaxSupplies();
+    if (antipregnum + buynum > MaxSupplies)
+        buysum = std::max(0, MaxSupplies - antipregnum);
+
+    if (!g_Game->gold().afford(g_Game->tariff().anti_preg_price(buysum)))    push_message("You don't have enough gold", COLOR_WARNING);
     else
     {
-        int MaxSupplies = g_Game->MaxSupplies();
-
-        auto& building = active_building();
-        antipregnum = building.m_AntiPregPotions;
-        if (antipregnum + buynum > MaxSupplies) buysum = std::max(0, MaxSupplies - antipregnum);
-        building.m_AntiPregPotions += buysum;
+        building.contraceptives().add(buysum);
 
         if (buysum < buynum)
         {

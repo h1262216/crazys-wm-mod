@@ -36,19 +36,21 @@ struct sSimpleJobData {
 class cSimpleJob : public cBasicJob {
 public:
     cSimpleJob(JOBS job, const char* xml, sSimpleJobData data);
-    sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
+    void DoWork(sGirlShiftData& shift) override;
     /// Run the job processing, and return whether the girl refused.
-    virtual bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) = 0;
+    virtual bool JobProcessing(sGirl& girl, sGirlShiftData& shift) = 0;
 
 protected:
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
+
+    void on_pre_shift(sGirlShiftData& shift) override;
 
     /// This function should check if `girl` is, in principle, available to do this job.
     /// It should return false if she could not work even if she wanted to, due to external circumstances.
     /// In that case a message should be attached to girl.
     virtual bool CheckCanWork(sGirl& girl, bool is_night) { return true; };
 
-    void InitWork() override;
+    void InitWork(sGirlShiftData& shift) override;
     void HandleGains(sGirl& girl, int fame);
     sSimpleJobData m_Data;
 
@@ -62,7 +64,7 @@ protected:
 
     template<class T>
     T performance_based_lookup(T worst, T bad, T ok, T good, T great, T perfect) {
-        switch(get_performance_class(m_Performance)) {
+        switch(get_performance_class(active_shift().Performance)) {
             case 0: return worst;
             case 1: return bad;
             case 2: return ok;

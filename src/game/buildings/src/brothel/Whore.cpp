@@ -20,6 +20,7 @@
 #include "BrothelJobs.h"
 
 #include "buildings/cBuildingManager.h"
+#include "buildings/IBuildingShift.h"
 #include "character/cCustomers.h"
 #include "character/cPlayer.h"
 #include "cRival.h"
@@ -30,7 +31,7 @@
 #include <algorithm>
 #include "IGame.h"
 #include "events.h"
-#include "jobs/cJobManager.h"
+#include "cJobManager.h"
 #include "cGirls.h"
 #include "character/predicates.h"
 
@@ -55,13 +56,15 @@ namespace {
     }
 }
 
+bool detect_disease_in_customer(cBuilding * brothel, sGirl& girl, sCustomer * Cust);
+
 cWhoreJob::cWhoreJob(JOBS job, const char* short_name, const char* description) :
         cSimpleJob(job, "Whore.xml", {ACTION_SEX}) {
     m_CacheDescription = description;
     m_CacheShortName = short_name;
 }
 
-bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cWhoreJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     /*
     *    WD:    Modified to fix customer service problems.. I hope :)
     *
@@ -197,7 +200,7 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         // Stop if she has worked the bare minimum and tiredness is high enough to get a warning, pushing too hard is bad for the business too
         if ((girl.tiredness() > 80 || girl.health() < 20) && m_NumSleptWith >= 2) break;
 
-        HandleCustomer(girl, brothel, is_night);
+        HandleCustomer(girl, building, is_night);
     }
 
     // WD:    Reduce number of availabe customers for next whore
@@ -227,7 +230,7 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     return false;
 }
 
-void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
+void cWhoreJob::HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night) {
     m_FuckMessage.str("");
 
     int pay = girl.askprice();
@@ -240,7 +243,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     bool femalecustcaught = false;    // if a female customer tries running and gets caught
     bool acceptsGirl = false;        // Customer will sleep girl
     // WD:    Create Customer
-    sCustomer Cust = g_Game->GetCustomer(brothel);
+    sCustomer Cust = building.GetCustomer();
 
     const JOBS job = girl.get_job(is_night);
     const bool bStreetWork = (job == JOB_WHORESTREETS);
@@ -250,7 +253,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     }
 
     // `J` check for disease
-    if (cGirls::detect_disease_in_customer(&brothel, girl, &Cust)) return;
+    if (detect_disease_in_customer(&brothel, girl, &Cust)) return;
 
     // filter out unwanted sex types (unless it is street work)
     if (!bStreetWork && !girl.is_sex_type_allowed(Cust.m_SexPref) && !girl.is_sex_type_allowed(Cust.m_SexPrefB))
@@ -492,7 +495,9 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     else if (SexType == SKILL_HANDJOB)        m_OralCount += uniform(0, 1);
 
     m_NumSleptWith++;
-    if (!bStreetWork) brothel.m_Filthiness++;
+    if (!bStreetWork) {
+        building.GenerateFilth(1);
+    }
 
     // update how happy the customers are on average
     brothel.m_Happiness += Cust.happiness();
@@ -739,7 +744,7 @@ double cWhoreJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return jobperformance;
 }
 
-IGenericJob::eCheckWorkResult cWhoreJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult cWhoreJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     // whores accept or reject individual customers atm, I think?
     return eCheckWorkResult::ACCEPTS;
 }
@@ -752,4 +757,56 @@ void cWhoreJob::load_from_xml_internal(const tinyxml2::XMLElement& source, const
     // and reset
     m_Info.ShortName = m_CacheShortName;
     m_Info.Description = m_CacheDescription;
+}
+
+
+
+// `J` the girl will check the customer for diseases before continuing.
+bool detect_disease_in_customer(cBuilding * brothel, sGirl& girl, sCustomer * Cust)
+{
+    std::stringstream ss;
+    if (g_Dice.percent(0.1))    // 0.001 chance of false positive
+    {
+        ss << girl.FullName() << " thought she detected that her customer had a disease and refused to allow them to touch her just to be safe.";
+        g_Game->push_message(ss.str(), COLOR_WARNING);
+        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
+        return true;
+    }
+    // if the customer is clean, then it will return false
+    if (!has_disease(*Cust)) return false;
+    // 10% chance to miss it
+    if (g_Dice.percent(10))    return false;
+
+    double detectdisease = 1.0;                                                // base 1% chance
+    detectdisease += girl.medicine() / 2.0;                                // +50 medicine
+    detectdisease += girl.intelligence() / 5.0;                            // +20 intelligence
+    detectdisease += girl.magic() / 5.0;                                    // +20 magic
+    detectdisease -= girl.lust() / 2.0;                                    // -50 lust
+
+    if (has_disease(girl))                        detectdisease += 20;    // has it so know what to look for
+    detectdisease += girl.get_trait_modifier(traits::modifiers::DETECT_DISEASE);
+
+    const char* found_disease = nullptr;
+    // these need better texts
+    if (Cust->has_active_trait(traits::AIDS) && g_Dice.percent(std::min(90.0, detectdisease*0.5)))    // harder to detect
+    {
+        found_disease = traits::AIDS;
+    } else if (Cust->has_active_trait(traits::SYPHILIS) && g_Dice.percent(detectdisease*0.8))    // harder to detect
+    {
+        found_disease = traits::SYPHILIS;
+    } else if (Cust->has_active_trait(traits::CHLAMYDIA) && g_Dice.percent(detectdisease)) {
+        found_disease = traits::CHLAMYDIA;
+    } else if (Cust->has_active_trait(traits::HERPES) && g_Dice.percent(detectdisease)) {
+        found_disease = traits::HERPES;
+    }
+
+    if(found_disease) {
+        ss << girl.FullName() << " detected that her customer has " << found_disease <<
+           " and refused to allow them to touch her.";
+        g_Game->push_message(ss.str(), COLOR_WARNING);
+        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
+        brothel->m_RejectCustomersDisease++;
+    }
+
+    return found_disease;
 }

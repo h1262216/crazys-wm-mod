@@ -18,9 +18,9 @@
 */
 
 #include <sstream>
-#include <buildings/studio/cMovieStudio.h>
-#include "buildings/cBuilding.h"
-#include "buildings/queries.h"
+#include "cBuilding.h"
+#include "IBuildingShift.h"
+#include "queries.h"
 #include "cGirls.h"
 #include "jobs/IGenericJob.h"
 #include "studio/StudioJobs.h"
@@ -65,7 +65,7 @@ public:
 
 bool cCrewJob::CheckCanWork(sGirl& girl, bool is_night) {
     auto brothel = girl.m_Building;
-    if (brothel->num_girls_on_job(JOB_CAMERAMAGE, SHIFT_NIGHT) == 0 || brothel->num_girls_on_job(JOB_CRYSTALPURIFIER, SHIFT_NIGHT) == 0)
+    if (num_girls_on_job(*brothel, JOB_CAMERAMAGE, is_night) == 0 || num_girls_on_job(*brothel, JOB_CRYSTALPURIFIER, is_night) == 0)
     {
         add_text("no-crew");
         girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
@@ -80,7 +80,7 @@ bool cCrewJob::CheckCanWork(sGirl& girl, bool is_night) {
     return true;
 }
 
-bool cCrewJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cCrewJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     m_Wages = 50;
 
     // slave girls not being paid for a job that normally you would pay directly for do less work
@@ -157,12 +157,12 @@ public:
     cJobStageHand() : cBasicJob(JOB_STAGEHAND) {
         m_Info.Provides.emplace_back(StageHandPtsId);
     };
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
     sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
 
-IGenericJob::eCheckWorkResult cJobStageHand::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult cJobStageHand::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100();
     if (roll_a <= 50 && (girl.disobey_check(ACTION_MOVIECREW, JOB_STAGEHAND) || girl.disobey_check(ACTION_WORKCLEANING, JOB_STAGEHAND)))
     {
@@ -174,7 +174,6 @@ IGenericJob::eCheckWorkResult cJobStageHand::CheckWork(sGirl& girl, bool is_nigh
 }
 
 sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
-    auto brothel = dynamic_cast<sMovieStudio*>(girl.m_Building);
     int roll_a = d100();
     ss << "${name} worked as a stagehand.\n \n";
 
@@ -191,9 +190,9 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     CleanAmt += girl.get_trait_modifier(traits::modifiers::WORK_STAGEHAND_CLEAN_AMOUNT);
     jobperformance += girl.get_trait_modifier(traits::modifiers::WORK_STAGEHAND_PERFORMANCE);
 
-    if (brothel->num_girls_on_job(JOB_CAMERAMAGE, SHIFT_NIGHT) == 0 ||
-        brothel->num_girls_on_job(JOB_CRYSTALPURIFIER, SHIFT_NIGHT) == 0 ||
-        GetNumberActresses(*brothel) < 1)
+    if (num_girls_on_job(*girl.m_Building, JOB_CAMERAMAGE, is_night) == 0 ||
+        num_girls_on_job(*girl.m_Building, JOB_CRYSTALPURIFIER, is_night) == 0 ||
+        GetNumberActresses(*girl.m_Building) < 1)
     {
         ss << "There were no scenes being filmed, so she just cleaned the set.\n \n";
         filming = false;
@@ -220,7 +219,7 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     jobperformance += enjoyc + enjoym;
     ss << "\n \n";
 
-    CleanAmt = std::min((int)CleanAmt, brothel->m_Filthiness);
+    CleanAmt = std::min((int)CleanAmt, cast_building(*girl.m_Building).m_Filthiness);
 
     if (filming)
     {
@@ -255,7 +254,7 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
         m_Wages += int(CleanAmt);
     }
 
-    if (!filming && brothel->m_Filthiness < CleanAmt / 2) // `J` needs more variation
+    if (!filming && cast_building(*girl.m_Building).m_Filthiness < CleanAmt / 2) // `J` needs more variation
     {
         ss << "\n \n${name} finished her cleaning early so she hung out around the Studio a bit.";
         girl.happiness(uniform(1, 3));
@@ -265,7 +264,7 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     girl.AddMessage(ss.str(), imagetype, EVENT_NIGHTSHIFT);
 
     ProvideResource(StageHandPtsId, int(jobperformance));
-    brothel->m_Filthiness = std::max(0, brothel->m_Filthiness - int(CleanAmt));
+    active_building().ProvideCleaning(CleanAmt);
 
     // Improve girl
     int xp = filming ? 15 : 10, skill = 3;

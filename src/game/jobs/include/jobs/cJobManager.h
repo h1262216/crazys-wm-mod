@@ -31,6 +31,7 @@ struct sGang;
 class sCustomer;
 class cBuilding;
 class IGenericJob;
+class sGirlShiftData;
 
 struct sFilm
 {
@@ -54,13 +55,6 @@ struct sJobFilter {
     std::vector<JOBS> Contents;
 };
 
-struct sWorkJobResult {
-    bool Refused;           // Whether she actually worked
-    int Tips = 0;           // how much she received in tips
-    int Earnings = 0;       // how much money did she make you directly
-    int Wages = 0;          // how much do you pay her for the job
-};
-
 struct sPaymentData {
     int Tips;
     int Earnings;
@@ -75,8 +69,6 @@ class cJobManager
 public:
     cJobManager();
     ~cJobManager();
-    sWorkJobResult do_job(sGirl& girl, bool is_night);
-    sWorkJobResult do_job(JOBS job, sGirl& girl, bool is_night);
     bool job_filter(int Filter, JOBS jobs) const;
 
     const IGenericJob* get_job(JOBS job) const;
@@ -87,11 +79,9 @@ public:
     bool is_free_only(JOBS job) const;
 
     /// does the pre-shift setup part of the job processing
-    void handle_pre_shift(sGirl& girl, bool is_night);
+    void handle_pre_shift(sGirlShiftData& shift);
 
-    // does the whole package of job processing: Runs the job, in case of refusal creates an event, and processes
-    // pay for the building.
-    void handle_simple_job(sGirl& girl, bool is_night);
+    void handle_main_shift(sGirlShiftData& shift);
 
     std::array<sJobFilter, NUMJOBTYPES> JobFilters;
 
@@ -117,7 +107,7 @@ public:
 
     bool is_job_Paid_Player(JOBS Job);        //    WD:    Test for all jobs paid by player
     bool FullTimeJob(JOBS Job);            //    `J`    Test if job is takes both shifts
-    sPaymentData CalculatePay(sGirl& girl, sWorkJobResult pay);
+    sPaymentData CalculatePay(sGirlShiftData shift);
 
     static bool is_Surgery_Job(int testjob);
 

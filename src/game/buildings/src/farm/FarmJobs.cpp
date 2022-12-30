@@ -32,6 +32,7 @@
 #include "buildings/cBuilding.h"
 #include "buildings/cBuildingManager.h"
 #include "character/lust.h"
+#include "queries.h"
 
 namespace settings {
     extern const char* SLAVE_MARKET_UNIQUE_CHANCE;
@@ -47,7 +48,7 @@ cFarmJobFarmer::cFarmJobFarmer() : cFarmJob(
         JOB_FARMER, "Farmer.xml", {ACTION_WORKFARM, 20, EImageBaseType::FARM}) {
 }
 
-bool cFarmJobFarmer::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobFarmer::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100(), roll_b = d100(), roll_c = d100();
 
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
@@ -188,6 +189,7 @@ bool cFarmJobFarmer::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_nigh
 
 cFarmJobMarketer::cFarmJobMarketer() : cFarmJob(JOB_MARKETER, "Marketer.xml",
     {ACTION_WORKCUSTSERV, 20, EImageBaseType::PROFILE}) {
+    m_Info.Phase = EJobPhase::LATE;
 }
 
 double cFarmJobMarketer::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -197,7 +199,7 @@ double cFarmJobMarketer::GetPerformance(const sGirl& girl, bool estimate) const 
     return basic;
 }
 
-bool cFarmJobMarketer::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobMarketer::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100();
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
@@ -360,7 +362,7 @@ cFarmJobVeterinarian::cFarmJobVeterinarian() : cFarmJob(
         JOB_VETERINARIAN, "Veterinarian.xml", {ACTION_WORKFARM, 20}) {
 }
 
-bool cFarmJobVeterinarian::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobVeterinarian::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100();
 
     //    Job Performance            //
@@ -400,7 +402,7 @@ cFarmJobShepherd::cFarmJobShepherd() : cFarmJob(
         JOB_SHEPHERD, "Shepherd.xml", {ACTION_WORKFARM, 20, EImageBaseType::HERD}) {
 }
 
-bool cFarmJobShepherd::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobShepherd::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100(), roll_b = d100();
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
@@ -514,7 +516,7 @@ cFarmJobRancher::cFarmJobRancher() : cFarmJob(
         JOB_RANCHER, "Rancher.xml", {ACTION_WORKFARM, 20, EImageBaseType::FARM}) {
 }
 
-bool cFarmJobRancher::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobRancher::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100(), roll_b = d100();
 
     //    Job Performance            //
@@ -627,7 +629,7 @@ cFarmJobMilker::cFarmJobMilker() : cFarmJob(
         JOB_MILKER, "Milker.xml", {ACTION_WORKFARM, 20, EImageBaseType::FARM}) {
 }
 
-bool cFarmJobMilker::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobMilker::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100(), roll_b = d100();
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
@@ -782,7 +784,7 @@ cFarmJobBeastCapture::cFarmJobBeastCapture() : cFarmJob(
         JOB_BEASTCAPTURE, "BeastCapture.xml", {ACTION_COMBAT, 40, EImageBaseType::COMBAT, true}) {
 }
 
-bool cFarmJobBeastCapture::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobBeastCapture::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //    The Fight to get the Beasts        //
@@ -986,7 +988,7 @@ cFarmJobGetMilked::cFarmJobGetMilked() : cFarmJob(
         JOB_MILK, "GetMilked.xml", {ACTION_WORKMILK}) {
 }
 
-bool cFarmJobGetMilked::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobGetMilked::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     const sGirl* farmmanonduty = random_girl_on_job(*girl.m_Building, JOB_FARMMANGER, is_night);
     std::string farmmanname = (farmmanonduty ? "Farm Manager " + farmmanonduty->FullName() + "" : "the Farm Manager");
 
@@ -1049,7 +1051,7 @@ bool cFarmJobGetMilked::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_n
 
     //test code for auto preg
     // can get pregnant?
-    if (girl.m_WeeksPreg == 0 && girl.m_PregCooldown == 0 && brothel.num_girls_on_job(JOB_FARMMANGER, false) >= 1 && noAnti && !is_virgin(girl))
+    if (girl.m_WeeksPreg == 0 && girl.m_PregCooldown == 0 && num_girls_on_job(brothel, JOB_FARMMANGER, false) >= 1 && noAnti && !is_virgin(girl))
     {
         sCustomer Cust = g_Game->GetCustomer(brothel);
         ss << farmmanname <<" noticing that ${name} wasn't pregnant decided to take it upon herself to make sure she got knocked up.\n";
@@ -1505,7 +1507,7 @@ cFarmJobCatacombRancher::cFarmJobCatacombRancher() : cFarmJob(
         JOB_CATACOMBRANCHER, "CatacombRancher.xml", {ACTION_WORKFARM, 20}) {
 }
 
-bool cFarmJobCatacombRancher::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobCatacombRancher::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     cGirls::EquipCombat(girl);    // This job can be dangerous so any protection is good.
 
     m_Earnings = 20 + (int)m_PerformanceToEarnings((float)m_Performance);
@@ -1530,7 +1532,7 @@ bool cFarmJobCatacombRancher::JobProcessing(sGirl& girl, cBuilding& brothel, boo
 cFarmJobResearch::cFarmJobResearch() : cFarmJob(JOB_RESEARCH, "FarmResearch.xml", {ACTION_WORKTRAINING, 40}) {
 }
 
-bool cFarmJobResearch::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cFarmJobResearch::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int roll_a = d100(), roll_b = d100(), roll_c = d100();
     
     //    Job Performance            //

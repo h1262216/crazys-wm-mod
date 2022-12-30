@@ -25,40 +25,19 @@
 #include "buildings/queries.h"
 #include "jobs/cJobManager.h"
 #include "character/predicates.h"
+#include "cBuildingShift.h"
 
 extern cRng             g_Dice;
 
 extern const char* const CounselingInteractionId = "CounselingInteraction";
 
 // // ----- Strut sCentre Create / destroy
-sCentre::sCentre() : cBuilding(BuildingType::CENTRE, "Centre")
+sCentre::sCentre() : cBuilding("Centre", {BuildingType::CENTRE, JOB_CENTREMANAGER, JOB_ANGER, JOB_CENTREMANAGER})
 {
-    m_FirstJob = JOB_CENTREMANAGER;
-    m_LastJob = JOB_ANGER;
-    m_MatronJob = JOB_CENTREMANAGER;
-    declare_interaction(CounselingInteractionId);
+    m_Shift->declare_interaction(CounselingInteractionId);
 }
 
 sCentre::~sCentre()    = default;
-
-// Run the shifts
-void sCentre::UpdateGirls(bool is_night)
-{
-    //  Handle the start of shift stuff for all girls.  //
-    BeginShift(is_night);
-
-    IterateGirls(is_night, {JOB_FEEDPOOR, JOB_COMUNITYSERVICE, JOB_CLEANCENTRE, JOB_COUNSELOR}, [&](auto& current)
-    {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    IterateGirls(is_night, {JOB_REHAB, JOB_ANGER, JOB_EXTHERAPY, JOB_THERAPY}, [&](auto& current)
-    {
-        g_Game->job_manager().do_job(current, is_night);
-    });
-
-    EndShift(is_night);
-}
 
 void sCentre::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {
@@ -73,25 +52,25 @@ void sCentre::auto_assign_job(sGirl& target, std::stringstream& message, bool is
         ss << "go to Rehab.";
     }
         // Make sure there is at least 1 counselor on duty
-    else if (target.is_free() && num_girls_on_job(JOB_COUNSELOR, is_night) < 1)
+    else if (target.is_free() && num_girls_on_job(*this, JOB_COUNSELOR, is_night) < 1)
     {
         target.m_DayJob = target.m_NightJob = JOB_COUNSELOR;
         ss << "work as a Counselor.";
     }
         // assign 1 cleaner per 20 girls
-    else if (num_girls_on_job(JOB_CLEANCENTRE, is_night) < std::max(1, num_girls() / 20))
+    else if (num_girls_on_job(*this, JOB_CLEANCENTRE, is_night) < std::max(1, num_girls() / 20))
     {
         target.m_DayJob = target.m_NightJob = JOB_CLEANCENTRE;
         ss << "clean the Centre.";
     }
         // assign 1 counselor per 20 girls
-    else if (target.is_free() && num_girls_on_job(JOB_COUNSELOR, is_night) < num_girls() / 20)
+    else if (target.is_free() && num_girls_on_job(*this, JOB_COUNSELOR, is_night) < num_girls() / 20)
     {
         target.m_DayJob = target.m_NightJob = JOB_COUNSELOR;
         ss << "work as a Counselor.";
     }
         // split all the rest between JOB_COMUNITYSERVICE and JOB_FEEDPOOR
-    else if (num_girls_on_job(JOB_COMUNITYSERVICE, is_night) < num_girls_on_job(JOB_FEEDPOOR, is_night))
+    else if (num_girls_on_job(*this, JOB_COMUNITYSERVICE, is_night) < num_girls_on_job(*this, JOB_FEEDPOOR, is_night))
     {
         target.m_DayJob = target.m_NightJob = JOB_COMUNITYSERVICE;
         ss << "work doing community service.";

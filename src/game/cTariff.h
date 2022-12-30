@@ -31,6 +31,7 @@ public:
     int healing_price(int n);
     int nets_price(int n);
     int anti_preg_price(int n);
+    int anti_preg_spot_price(int n);
 
     int empty_room_cost(cBuilding& brothel);
 

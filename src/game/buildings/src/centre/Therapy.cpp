@@ -18,10 +18,11 @@
  */
 
 #include "jobs/Treatment.h"
-#include "jobs/cJobManager.h"
+#include "cJobManager.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
 #include "buildings/cBuilding.h"
+#include "buildings/IBuildingShift.h"
 #include <sstream>
 #include <utility>
 #include "character/predicates.h"
@@ -54,7 +55,7 @@ protected:
     int         HealthDanger;      //!< How much health does she lose TODO does it make sense that she loses health in therapy but not without therapy???
     std::vector<sRemoveTrait> TraitRemove;   //!< The traits that this therapy can remove
 
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
 
     virtual void FightEvent(sGirl& girl, bool is_night);
     virtual void OnFinish(sGirl& girl) {}
@@ -197,8 +198,7 @@ double TherapyJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return p;
 }
 
-IGenericJob::eCheckWorkResult TherapyJob::CheckWork(sGirl& girl, bool is_night) {
-    auto brothel = girl.m_Building;
+IGenericJob::eCheckWorkResult TherapyJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if (!needs_therapy(girl))
     {
         add_text("no-need") << " She was sent to the waiting room.";
@@ -208,7 +208,7 @@ IGenericJob::eCheckWorkResult TherapyJob::CheckWork(sGirl& girl, bool is_night) 
         return eCheckWorkResult::IMPOSSIBLE; // not refusing
     }
 
-    if (!brothel->HasInteraction(CounselingInteractionId))
+    if (!building.HasInteraction(CounselingInteractionId))
     {
         add_text("no-counselor");
         girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);

@@ -34,6 +34,13 @@ int cJobTextInterface::LookupNumber(const std::string& name) const {
     } else if(type == "skill") {
         return m_Job->active_girl().get_skill(get_skill_id(name.substr(split_point+1)));
     } else if (type.size() == name.size()) {
+        if(name == "Tips") {
+            return m_Job->m_ActiveData->Tips;
+        } else if (name == "Wages") {
+            return m_Job->m_ActiveData->Wages;
+        } else if (name == "Earnings") {
+            return m_Job->m_ActiveData->Earnings;
+        }
         try {
             return *m_MappedIntValues.at(name);
         } catch (const std::out_of_range& oor) {

@@ -31,6 +31,7 @@
 #include "events.h"
 #include "cGirls.h"
 #include "studio/manager.h"
+#include "cBuildingShift.h"
 
 extern const char* const FluffPointsId = "FluffPoints";
 extern const char* const StageHandPtsId = "StageHandPoints";
@@ -44,41 +45,38 @@ namespace settings
     extern const char* USER_MOVIES_AUTO;
 }
 
+namespace {
+    sBuildingConfig StudioConfig() {
+        return sBuildingConfig{BuildingType::STUDIO, JOB_EXECUTIVE, JOB_FILMRANDOM, JOB_EXECUTIVE, false}
+                .spawn(SpawnReason::STUDIO, events::GIRL_MEET_STUDIO);
+    }
+}
+
+
 // // ----- Strut sMovieStudio Create / destroy
-sMovieStudio::sMovieStudio() : cBuilding(BuildingType::STUDIO, "Studio")
+sMovieStudio::sMovieStudio() : cBuilding("Studio", StudioConfig())
 {
-    m_FirstJob = JOB_EXECUTIVE;
-    m_LastJob = JOB_FILMRANDOM;
-    m_MatronJob = JOB_EXECUTIVE;
-    m_MeetGirlData.Spawn = SpawnReason::STUDIO;
-    m_MeetGirlData.Event = events::GIRL_MEET_STUDIO;
-    declare_resource(FluffPointsId);
-    declare_resource(StageHandPtsId);
-    declare_interaction(DirectorInteractionId);
-    declare_interaction(CamMageInteractionId);
-    declare_interaction(CrystalPurifierInteractionId);
+    m_Shift->declare_resource(FluffPointsId);
+    m_Shift->declare_resource(StageHandPtsId);
+    m_Shift->declare_interaction(DirectorInteractionId);
+    m_Shift->declare_interaction(CamMageInteractionId);
+    m_Shift->declare_interaction(CrystalPurifierInteractionId);
 }
 
 sMovieStudio::~sMovieStudio() = default;
-
+/*
 // Run the shifts
 void sMovieStudio::UpdateGirls(bool is_night)
 {
-    if(!is_night)
-        return;
-
     std::stringstream ss;
-
-    //  Handle the start of shift stuff for all girls.  //
-    BeginShift(is_night);
 
     IterateGirls(is_night, {JOB_CAMERAMAGE, JOB_CRYSTALPURIFIER, JOB_PROMOTER, JOB_DIRECTOR, JOB_MARKET_RESEARCH},
                  [&]( sGirl& current){
-        g_Game->job_manager().handle_simple_job(current, SHIFT_NIGHT);
+        g_Game->job_manager().handle_simple_job(current, is_night);
     });
 
     // last check, is there a crew to film?
-    bool ready_to_film = HasInteraction(CamMageInteractionId) && HasInteraction(CrystalPurifierInteractionId) && HasInteraction(DirectorInteractionId);
+    bool ready_to_film = m_Shift->HasInteraction(CamMageInteractionId) && m_Shift->HasInteraction(CrystalPurifierInteractionId) && m_Shift->HasInteraction(DirectorInteractionId);
     std::stringstream summary;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,32 +86,32 @@ void sMovieStudio::UpdateGirls(bool is_night)
         summary << "No filming took place at the studio today. In order to film a scene, you need at least a camera mage, "
                    "crystal purifier and a director. Your scenes will be better if you also employ sufficiently many stage hands "
                    "and fluffers.";
-        m_Girls->apply([this](sGirl& girl) {
-            if (girl.is_dead() || girl.m_NightJob == JOB_RESTING || girl.m_NightJob == m_MatronJob ||
+        girls().apply([&](sGirl& girl) {
+            if (girl.is_dead() || girl.m_NightJob == JOB_RESTING || girl.m_NightJob == matron_job() ||
                 girl.m_NightJob == JOB_PROMOTER || girl.m_NightJob == JOB_MARKET_RESEARCH) {    // skip dead girls, resting girls and the director (if there is one)
                 return;
             }
             if (girl.m_NightJob == JOB_STAGEHAND) { // these two can still work
-                g_Game->job_manager().handle_simple_job(girl, SHIFT_NIGHT);
+                g_Game->job_manager().handle_simple_job(girl, is_night);
             } else {
                 girl.AddMessage("There was no crew to film the scene, so ${name} took the day off", EImageBaseType::PROFILE, EVENT_NOWORK);
             }
         });
     } else {
         // Process the Crew.  //
-        IterateGirls(is_night, {JOB_STAGEHAND, JOB_FLUFFER}, [](sGirl& girl) {
-            g_Game->job_manager().handle_simple_job(girl, SHIFT_NIGHT);
+        IterateGirls(is_night, {JOB_STAGEHAND, JOB_FLUFFER}, [&](sGirl& girl) {
+            g_Game->job_manager().handle_simple_job(girl, is_night);
         });
 
         // Add an event with info
-        summary << "You have " << NumInteractors(CrystalPurifierInteractionId) << " crystal purifiers, " << NumInteractors(CamMageInteractionId) << " camera mages ";
-        summary << "and " << NumInteractors(DirectorInteractionId) << " working.\n";
-        summary << "Your stagehands provide a total of " << GetResourceAmount(StageHandPtsId) << " stagehand points.\n";
-        summary << "Your fluffers provide a total of " << GetResourceAmount(FluffPointsId) << " fluffer points.\n";
+        summary << "You have " << m_Shift->NumInteractors(CrystalPurifierInteractionId) << " crystal purifiers, " << m_Shift->NumInteractors(CamMageInteractionId) << " camera mages ";
+        summary << "and " << m_Shift->NumInteractors(DirectorInteractionId) << " working.\n";
+        summary << "Your stagehands provide a total of " << m_Shift->GetResourceAmount(StageHandPtsId) << " stagehand points.\n";
+        summary << "Your fluffers provide a total of " << m_Shift->GetResourceAmount(FluffPointsId) << " fluffer points.\n";
 
         int num_scenes_before = g_Game->movie_manager().get_scenes().size();
         // Process Stars.  //
-        m_Girls->apply([&](sGirl& girl) {
+        girls().apply([&](sGirl& girl) {
             auto sw = girl.m_NightJob;
             if (girl.is_dead() || sw == JOB_RESTING || sw == JOB_FLUFFER || sw == JOB_CAMERAMAGE ||
                 sw == JOB_CRYSTALPURIFIER || sw == JOB_DIRECTOR || sw == JOB_EXECUTIVE || sw == JOB_PROMOTER || sw == JOB_MARKET_RESEARCH ||
@@ -137,11 +135,9 @@ void sMovieStudio::UpdateGirls(bool is_night)
                   "You need more Directors. You have ${workers} Directors who can direct up to "
                   "${possible} scenes each week, but you wanted ${total} scenes this week.");
 
-    EndShift(is_night);
-
     AddMessage(summary.str(), EVENT_SUMMARY);
 }
-
+*/
 void sMovieStudio::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {
     std::stringstream& ss = message;
@@ -149,66 +145,28 @@ void sMovieStudio::auto_assign_job(sGirl& target, std::stringstream& message, bo
     target.m_DayJob = JOB_RESTING;
 
     int actresses = GetNumberActresses(*this);
-    if (num_girls_on_job(JOB_CAMERAMAGE, 1) * 3 < actresses + 1) {
+    if (num_girls_on_job(*this, JOB_CAMERAMAGE, 1) * 3 < actresses + 1) {
         target.m_NightJob = JOB_CAMERAMAGE;
         ss << "film the scenes.";
-    } else if (num_girls_on_job(JOB_CRYSTALPURIFIER, 1) * 3 < actresses + 1) {
+    } else if (num_girls_on_job(*this, JOB_CRYSTALPURIFIER, 1) * 3 < actresses + 1) {
         target.m_NightJob = JOB_CRYSTALPURIFIER;
         ss << "clean up the filmed scenes.";
-    } else if (num_girls_on_job(JOB_DIRECTOR, 1) * 3 < actresses + 1) {
+    } else if (num_girls_on_job(*this, JOB_DIRECTOR, 1) * 3 < actresses + 1) {
         target.m_NightJob = JOB_DIRECTOR;
         ss << "direct the scenes.";
-    } else if (m_Filthiness > 10 || num_girls_on_job(JOB_STAGEHAND, 1) * 3 < actresses) {
+    } else if (m_Filthiness > 10 || num_girls_on_job(*this, JOB_STAGEHAND, 1) * 3 < actresses) {
         target.m_NightJob = JOB_STAGEHAND;
         ss << "setup equipment and keep the studio clean.";
-    } else if (num_girls_on_job(JOB_FLUFFER, 1) < actresses / 5) {
+    } else if (num_girls_on_job(*this, JOB_FLUFFER, 1) < actresses / 5) {
         target.m_NightJob = JOB_FLUFFER;
         ss << "keep the porn stars aroused.";
-    } else if (g_Game->movie_manager().get_movies().size() > num_girls_on_job(JOB_PROMOTER, 1)) {
+    } else if (g_Game->movie_manager().get_movies().size() > num_girls_on_job(*this, JOB_PROMOTER, 1)) {
         target.m_NightJob = JOB_PROMOTER;
         ss << "promote the movies being sold.";
     } else {
         target.m_NightJob = JOB_FILMRANDOM;
         ss << "work as an actress.";
     }
-}
-
-void sMovieStudio::Update()
-{
-    // Cannot use UpdateBase here currently, as this expects two shifts.
-    std::stringstream ss;
-    std::string girlName;
-
-    m_Finance.zero();
-    m_AntiPregUsed = 0;
-
-    // `J` autocreatemovies added for .06.02.57
-    if (GetNumScenes() < 5) {}        // don't worry about it if there are less than 5 scenes
-    // TODO decide whether this belongs to the settings, or whether we want to handle this as part of the MovieStudio
-    else if (g_Game->settings().get_bool(settings::USER_MOVIES_AUTO)) {
-        auto_create_movies();
-    }
-    else if (GetNumScenes() > 0)
-    {
-        ss.str("");    ss << "You have " << GetNumScenes() << " unused scenes in the Movie Studio ready to be put into movies.";
-        g_Game->push_message(ss.str(), COLOR_POSITIVE);
-    }
-
-    BeginWeek();
-
-    auto income = g_Game->movie_manager().step(*this);
-    m_Finance.movie_income(income);
-
-    UpdateGirls(true);        // Run the Nighty Shift
-
-    g_Game->gold().brothel_accounts(m_Finance, m_id);
-
-    m_Girls->apply([this](sGirl& g){
-        cGirls::updateTemp(g);            // update temp stuff
-        cGirls::EndDayGirls(*this, g);
-    });
-    if (m_Filthiness < 0)        m_Filthiness = 0;
-    if (m_SecurityLevel < 0)    m_SecurityLevel = 0;
 }
 
 // ----- Get / Set
@@ -231,6 +189,23 @@ std::string sMovieStudio::meet_no_luck() const {
             );
 }
 
+void sMovieStudio::onBeginWeek() {
+    if (GetNumScenes() < 5) {}        // don't worry about it if there are less than 5 scenes
+        // TODO decide whether this belongs to the settings, or whether we want to handle this as part of the MovieStudio
+    else if (g_Game->settings().get_bool(settings::USER_MOVIES_AUTO)) {
+        auto_create_movies();
+    }
+    else
+    {
+        std::stringstream ss;
+        ss << "You have " << GetNumScenes() << " unused scenes in the Movie Studio ready to be put into movies.";
+        g_Game->push_message(ss.str(), COLOR_POSITIVE);
+    }
+
+    auto income = g_Game->movie_manager().step(*this);
+    m_Finance.movie_income(income);
+}
+
 void sMovieStudio::auto_create_movies() {
     while(GetNumScenes() >= 5) {
         std::vector<const MovieScene*> active_scenes;
@@ -246,14 +221,14 @@ void sMovieStudio::auto_create_movies() {
 }
 
 void sMovieStudio::check_overuse(const std::string& resource, const std::string& message) {
-    int total_scenes = GetInteractionConsumed(resource);
-    int possible_scenes = GetInteractionProvided(resource);
+    int total_scenes = m_Shift->GetInteractionConsumed(resource);
+    int possible_scenes = m_Shift->GetInteractionProvided(resource);
 
 
     if(total_scenes > possible_scenes) {
         auto lookup = [&](const std::string& key) {
             if(key == "workers") {
-                return std::to_string(NumInteractors(resource));
+                return std::to_string(m_Shift->NumInteractors(resource));
             } else if (key == "possible") {
                 return std::to_string(possible_scenes);
             } else if (key == "total") {

@@ -35,12 +35,7 @@ double cBasicJob::GetPerformance(const sGirl& girl, bool estimate) const {
 
 cBasicJob::cBasicJob(JOBS job, std::string xml_file) :
     IGenericJob(job, std::move(xml_file)),
-    m_Interface(std::make_unique<cJobTextInterface>(this))
-{
-    RegisterVariable("Performance", m_Performance);
-    RegisterVariable("Tips", m_Tips);
-    RegisterVariable("Wages", m_Wages);
-    RegisterVariable("Earnings", m_Earnings);
+    m_Interface(std::make_unique<cJobTextInterface>(this)) {
 }
 
 cBasicJob::~cBasicJob() = default;
@@ -120,52 +115,66 @@ std::stringstream& cBasicJob::add_text(const std::string& prompt) {
 }
 
 void cBasicJob::SetSubstitution(std::string key, std::string replace) {
-    m_Replacements[key] = std::move(replace);
+    m_Replacements[std::move(key)] = std::move(replace);
 }
 
-void cBasicJob::InitWork() {
-    m_Performance = GetPerformance(active_girl(), false);
-    m_Earnings = 0;
-    m_Wages = 0;
-    m_Tips = 0;
+void cBasicJob::InitWork(sGirlShiftData& shift) {
+    for(auto& var : m_Variables) {
+        shift.set_var(var.Index, var.DefaultValue);
+    }
+    shift.Performance = GetPerformance(active_girl(), false);
 }
 
-void cBasicJob::RegisterVariable(std::string name, int& value) {
-    m_Interface->RegisterVariable(std::move(name), value);
+int cBasicJob::RegisterVariable(std::string name, int default_value) {
+    // m_Interface->RegisterVariable(std::move(name), value);
+    int index = m_VariableCounter;
+    if(index >= NUM_JOB_VARIABLES) {
+        throw std::runtime_error(std::string("Ran out of variables for job ") + get_job_name(job()));
+    }
+    sVariableData data = {std::move(name), index, default_value};
+    m_Variables.push_back(data);
+    return index;
+}
+
+int cBasicJob::GetVariable(int index) const {
+    if(index < 0 || index >= m_VariableCounter) {
+        throw std::runtime_error("Variable index is out of range.");
+    }
+    return active_shift().get_var(index);
 }
 
 void cBasicJob::RegisterVariable(std::string name, sImagePreset& value) {
     m_Interface->RegisterVariable(std::move(name), value);
 }
 
-IGenericJob::eCheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) {
+ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) {
     if (girl.disobey_check(action, job()))
     {
         add_text("refuse");
         girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
-        return eCheckWorkResult::REFUSES;
+        return ECheckWorkResult::REFUSES;
     }
-    return eCheckWorkResult::ACCEPTS;
+    return ECheckWorkResult::ACCEPTS;
 }
 
 void cBasicJob::add_performance_text() {
-    if (m_Performance >= 245)
+    if (active_shift().Performance >= 245)
     {
         add_text("work.perfect");
     }
-    else if (m_Performance >= 185)
+    else if (active_shift().Performance >= 185)
     {
         add_text("work.great");
     }
-    else if (m_Performance >= 145)
+    else if (active_shift().Performance >= 145)
     {
         add_text("work.good");
     }
-    else if (m_Performance >= 100)
+    else if (active_shift().Performance >= 100)
     {
         add_text("work.ok");
     }
-    else if (m_Performance >= 70)
+    else if (active_shift().Performance >= 70)
     {
         add_text("work.bad");
     }

@@ -12,6 +12,7 @@
 #include <CLog.h>
 #include "jobs/cJobManager.h"
 #include "cGirls.h"
+#include "jobs/IGenericJob.h"
 
 namespace settings {
     extern const char* USER_ACCOMODATION_FREE;
@@ -86,6 +87,10 @@ void IBuildingScreenManagement::RefreshJobList()
     for (auto i : g_Game->job_manager().JobFilters.at(job_filter).Contents)
     {
         if (g_Game->job_manager().get_job_name(i).empty()) continue;
+        if (g_Game->job_manager().get_job(i)->get_info().DayOnly && Day0Night1 ||
+            g_Game->job_manager().get_job(i)->get_info().NightOnly && !Day0Night1) {
+            continue;
+        }
         AddToListBox(joblist_id, i, jobname_with_count((JOBS)i, Day0Night1));
     }
     if (selected_girl)
@@ -340,7 +345,7 @@ std::string IBuildingScreenManagement::jobname_with_count(JOBS job_id, bool is_n
 {
     std::stringstream text;
     text << g_Game->job_manager().get_job_name(job_id);
-    text << " (" << active_building().num_girls_on_job(job_id, is_night) << ")";
+    text << " (" << num_girls_on_job(active_building(), job_id, is_night) << ")";
     return text.str();
 }
 
@@ -580,8 +585,8 @@ std::string cScreenCentreManagement::get_job_description(int selection)
 {
     std::stringstream jdmessage; jdmessage << job_manager().JobFilters[selection].Description;
     auto& centre = active_building();
-    if ((centre.num_girls_on_job(JOB_COUNSELOR, 0) < 1 && Num_Patients(centre, 0) > 0) ||
-         (centre.num_girls_on_job(JOB_COUNSELOR, 1) < 1 && Num_Patients(centre, 1) > 0))
+    if ((num_girls_on_job(centre, JOB_COUNSELOR, 0) < 1 && Num_Patients(centre, 0) > 0) ||
+         (num_girls_on_job(centre, JOB_COUNSELOR, 1) < 1 && Num_Patients(centre, 1) > 0))
         jdmessage << "\n*** A Counselor is required to guide Rehab and Therapy patients. ";
     return jdmessage.str();
 }

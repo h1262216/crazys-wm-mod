@@ -217,7 +217,7 @@ int cScreenTransfer::checkjobcolor(const sGirl& temp)
         return COLOR_POSITIVE;
     else if (temp.m_DayJob == JOB_COUNSELOR || temp.m_NightJob == JOB_COUNSELOR)
     {
-        if (temp.m_Building->num_girls_on_job(JOB_REHAB, SHIFT_NIGHT) < 1) return COLOR_ATTENTION;
+        if (num_girls_on_job(*temp.m_Building, JOB_REHAB, SHIFT_NIGHT) < 1) return COLOR_ATTENTION;
         else return COLOR_WARNING;
     }
     else if (temp.m_DayJob == JOB_DOCTOR || temp.m_NightJob == JOB_DOCTOR)
@@ -237,12 +237,12 @@ int cScreenTransfer::checkjobcolor(const sGirl& temp)
     }
     else if (temp.m_NightJob == JOB_CAMERAMAGE)
     {
-        if (temp.m_Building->num_girls_on_job(JOB_CAMERAMAGE, SHIFT_NIGHT) > 1) return COLOR_EMPHASIS;
+        if (num_girls_on_job(*temp.m_Building, JOB_CAMERAMAGE, SHIFT_NIGHT) > 1) return COLOR_EMPHASIS;
         else return COLOR_WARNING;
     }
     else if (temp.m_NightJob == JOB_CRYSTALPURIFIER)
     {
-        if (temp.m_Building->num_girls_on_job(JOB_CRYSTALPURIFIER, SHIFT_NIGHT) > 1) return COLOR_EMPHASIS;
+        if (num_girls_on_job(*temp.m_Building, JOB_CRYSTALPURIFIER, SHIFT_NIGHT) > 1) return COLOR_EMPHASIS;
         else return COLOR_WARNING;
     }
     return COLOR_NEUTRAL;

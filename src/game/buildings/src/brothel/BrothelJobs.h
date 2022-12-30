@@ -27,15 +27,15 @@ class cBarJob : public cSimpleJob {
 public:
     using cSimpleJob::cSimpleJob;
 protected:
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
 };
 
 class cEscortJob : public cSimpleJob {
 public:
     cEscortJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
 protected:
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
 
 private:
     int m_Escort;
@@ -59,12 +59,12 @@ class cWhoreJob : public cSimpleJob {
 public:
     cWhoreJob(JOBS job, const char* short_name, const char* description);
 
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
 private:
     void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) override;
-    void HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night);
+    void HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night);
     int m_NumSleptWith = 0;
     int m_OralCount = 0;
     std::stringstream m_FuckMessage;

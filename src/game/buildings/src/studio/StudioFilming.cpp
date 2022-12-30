@@ -1,31 +1,33 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2019-2022, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-#include "studio/StudioJobs.h"
+#include "StudioJobs.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 #include "character/cPlayer.h"
 #include "character/cCustomers.h"
-#include "studio/cMovieStudio.h"
+#include "cBuilding.h"
 #include "IGame.h"
 #include "CLog.h"
 #include "xml/getattr.h"
+#include "IBuildingShift.h"
+#include "queries.h"
 
 extern const char* const DirectorInteractionId;
 extern const char* const CamMageInteractionId;
@@ -33,8 +35,8 @@ extern const char* const CrystalPurifierInteractionId;
 extern const char* const FluffPointsId;
 extern const char* const StageHandPtsId;
 
-auto cFilmSceneJob::CheckWork(sGirl& girl, bool is_night) -> eCheckWorkResult {
-    if(!CheckCanWork(girl)) {
+auto cFilmSceneJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) -> eCheckWorkResult {
+    if(!CheckCanWork(girl, building)) {
         return IGenericJob::eCheckWorkResult::IMPOSSIBLE;
     }
 
@@ -45,20 +47,14 @@ auto cFilmSceneJob::CheckWork(sGirl& girl, bool is_night) -> eCheckWorkResult {
     return IGenericJob::eCheckWorkResult::ACCEPTS;
 }
 
-bool cFilmSceneJob::CheckCanWork(sGirl& girl) {
-    auto* brothel = dynamic_cast<sMovieStudio*>(girl.m_Building);
-    if(!brothel) {
-        g_LogFile.error("jobs", girl.FullName(), " was not at the movie studio when doing movie job.");
-        return false;
-    }
-
+bool cFilmSceneJob::CheckCanWork(sGirl& girl, IBuildingShift& building) {
     // No film crew.. then go home
     if (!HasInteraction(DirectorInteractionId) ||
         !HasInteraction(CamMageInteractionId)  ||
         !HasInteraction(CrystalPurifierInteractionId) )
     {
-        if(brothel->NumInteractors(DirectorInteractionId) != 0 && brothel->NumInteractors(CamMageInteractionId) != 0 &&
-        brothel->NumInteractors(CrystalPurifierInteractionId) != 0) {
+        if(building.NumInteractors(DirectorInteractionId) != 0 && building.NumInteractors(CamMageInteractionId) != 0 &&
+                building.NumInteractors(CrystalPurifierInteractionId) != 0) {
             girl.AddMessage("There were more scenes scheduled for filming today than you crew could handle. ${name} took the day off.",
                             EImageBaseType::PROFILE, EVENT_NOWORK);
         } else {
@@ -244,9 +240,6 @@ bool cFilmSceneJob::RefusedTieUp(sGirl& girl) {
 }
 
 sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
-    auto brothel = dynamic_cast<sMovieStudio*>(girl.m_Building);
-    assert(brothel);
-
     // pre-work processing
     PreFilmCallback(girl);
 
@@ -294,7 +287,7 @@ sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
         }
 
         if(m_SexAction == SexAction::HUMAN) {
-            sCustomer Cust = g_Game->GetCustomer(*brothel);
+            sCustomer Cust = g_Game->GetCustomer(cast_building(*girl.m_Building));
             Cust.m_Amount = 1;
             Cust.m_IsWoman = false;
             if (!girl.calc_pregnancy(Cust, 1.0)) {
@@ -335,7 +328,7 @@ sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
     }
 
     try {
-        auto& scene = film_scene(g_Game->movie_manager(), girl, quality, m_SceneType, m_IsForced);
+        auto& scene = film_scene(g_Game->movie_manager(), girl, active_building(), quality, m_SceneType, m_IsForced);
     } catch (std::runtime_error& error)  {
         g_Game->error(error.what());
     }

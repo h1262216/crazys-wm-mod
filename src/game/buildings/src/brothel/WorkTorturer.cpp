@@ -23,6 +23,7 @@
 #include "jobs/cJobManager.h"
 #include "buildings/cDungeon.h"
 #include "cGirls.h"
+#include "queries.h"
 
 // `J` Job Brothel - General
 sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
@@ -124,7 +125,7 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
                 girl.happiness(rng % 5);
                     girl.upd_Enjoyment(actiontype, +1);
                 // TODO so the torturing happens in the brothel where the torturer is, not in the dungeon?
-                girl.m_Building->m_Filthiness += 15;
+                    cast_building(*girl.m_Building).m_Filthiness += 15;
                 break;
             case 2:
                 ss << ("${name} over-exerted herself.");

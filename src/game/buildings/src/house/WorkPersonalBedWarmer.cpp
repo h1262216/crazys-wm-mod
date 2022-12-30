@@ -26,6 +26,7 @@
 #include "character/cPlayer.h"
 #include "cGirls.h"
 #include "character/lust.h"
+#include "queries.h"
 
 // `J` Job House - General
 sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
@@ -545,7 +546,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
     //If we have lots of slaves let's put them all together...
 
     //**********ONE: check for lots of bedwarmers
-    std::vector<sGirl*> harem = brothel->girls_on_job(JOB_PERSONALBEDWARMER, Day0Night1);
+    std::vector<sGirl*> harem = cast_building(*brothel).girls_on_job(JOB_PERSONALBEDWARMER, Day0Night1);
 
     //total girls on job
     int warmers = harem.size();

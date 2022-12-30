@@ -751,5 +751,5 @@ void cDungeon::SetFeeding(int num, bool allow) {
 
 void cDungeon::ReleaseGirl(int index, cBuilding& target) {
     auto girl = RemoveGirl(GetGirl(index));
-    target.add_girl(std::move(girl));
+    target.add_girl(std::move(girl), false);
 }

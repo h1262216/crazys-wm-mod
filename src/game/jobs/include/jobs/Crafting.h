@@ -33,13 +33,13 @@ public:
     }
 
 protected:
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
 
     // shift processing data
     int craftpoints;
 private:
     virtual void performance_msg();
-    virtual void DoWorkEvents(sGirl& girl);
+    virtual void DoWorkEvents(sGirl& girl, sGirlShiftData& shift);
 
     float DoCrafting(sGirl& girl, int craft_points);
 };

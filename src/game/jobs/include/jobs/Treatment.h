@@ -29,7 +29,7 @@ class ITreatmentJob : public IGenericJob {
 public:
     ITreatmentJob(JOBS job, std::string xml_file);
     ~ITreatmentJob() override;
-    sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
+    void DoWork(sGirlShiftData& shift) override;
 
 protected:
     const std::string& get_text(const std::string& prompt) const;

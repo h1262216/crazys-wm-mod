@@ -22,24 +22,24 @@
 #include "cGirls.h"
 #include "character/sGirl.h"
 #include "xml/util.h"
+#include "buildings/IBuildingShift.h"
 
-sWorkJobResult cSimpleJob::DoWork(sGirl& girl, bool is_night)
+void cSimpleJob::DoWork(sGirlShiftData& shift)
 {
-    m_Wages = m_Data.BaseWages;
+    shift.Wages = m_Data.BaseWages;
     m_ImageType = m_Data.DefaultImage;
 
-    auto brothel = girl.m_Building;
     if(has_text("work")) {
         add_text("work") << "\n\n";
     }
 
     if(m_Data.IsCombatJob) {
-        cGirls::EquipCombat(girl);
+        cGirls::EquipCombat(shift.girl());
     } else {
-        cGirls::UnequipCombat(girl);  // put that shit away, you'll scare off the customers!
+        cGirls::UnequipCombat(shift.girl());  // put that shit away, you'll scare off the customers!
     }
 
-    return {JobProcessing(girl, *brothel, is_night), m_Tips, m_Earnings, m_Wages};
+    JobProcessing(shift.girl(), shift);
 }
 
 cSimpleJob::cSimpleJob(JOBS job, const char* xml, sSimpleJobData data) : cBasicJob(job, xml), m_Data(data),
@@ -52,21 +52,31 @@ void cSimpleJob::HandleGains(sGirl& girl, int fame) {
     // Update Enjoyment
     girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
 
-    if (girl.fame() < 10 && m_Performance >= 70)     { fame += 1; }
-    if (girl.fame() < 20 && m_Performance >= 100)    { fame += 1; }
-    if (girl.fame() < 40 && m_Performance >= 145)    { fame += 1; }
-    if (girl.fame() < 60 && m_Performance >= 185)    { fame += 1; }
+    if (girl.fame() < 10 && active_shift().Performance >= 70)     { fame += 1; }
+    if (girl.fame() < 20 && active_shift().Performance >= 100)    { fame += 1; }
+    if (girl.fame() < 40 && active_shift().Performance >= 145)    { fame += 1; }
+    if (girl.fame() < 60 && active_shift().Performance >= 185)    { fame += 1; }
 
     girl.fame(fame);
 
-    apply_gains(girl, m_Performance);
+    apply_gains(girl, active_shift().Performance);
 }
 
-IGenericJob::eCheckWorkResult cSimpleJob::CheckWork(sGirl& girl, bool is_night) {
+ECheckWorkResult cSimpleJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if(!CheckCanWork(girl, is_night)) {
-        return eCheckWorkResult::IMPOSSIBLE;
+        return ECheckWorkResult::IMPOSSIBLE;
     }
     return SimpleRefusalCheck(girl, m_Data.Action);
+}
+
+void cSimpleJob::on_pre_shift(sGirlShiftData& shift) {
+    IGenericJob::on_pre_shift(shift);
+    if(shift.Refused == ECheckWorkResult::IMPOSSIBLE) return;
+    if(!CheckCanWork(shift.girl(), shift.IsNightShift)) {
+        shift.Refused = ECheckWorkResult::IMPOSSIBLE;
+        return;
+    }
+    shift.Refused = SimpleRefusalCheck(shift.girl(), m_Data.Action);
 }
 
 void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element) {
@@ -75,6 +85,8 @@ void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
         m_PerformanceToEarnings = LoadLinearFunction(*wages, "Performance", "Wages");
     }
 }
+
+
 
 void cSimpleJob::shift_enjoyment() {
     ss << "\n";
@@ -110,13 +122,13 @@ void cSimpleJob::shift_enjoyment() {
         m_Enjoyment += 1;
     }
 
-    if (m_Performance < 50)  m_Enjoyment -= 1;
-    if (m_Performance < 0)   m_Enjoyment -= 1;          // if she doesn't do well at the job, she enjoys it less
-    if (m_Performance > 200) m_Enjoyment *= 2;          // if she is really good at the job, her enjoyment (positive or negative) is doubled
+    if (active_shift().Performance < 50)  m_Enjoyment -= 1;
+    if (active_shift().Performance < 0)   m_Enjoyment -= 1;          // if she doesn't do well at the job, she enjoys it less
+    if (active_shift().Performance > 200) m_Enjoyment *= 2;          // if she is really good at the job, her enjoyment (positive or negative) is doubled
 }
 
-void cSimpleJob::InitWork() {
-    cBasicJob::InitWork();
+void cSimpleJob::InitWork(sGirlShiftData& shift) {
+    cBasicJob::InitWork(shift);
     m_Enjoyment = 0;
 }
 

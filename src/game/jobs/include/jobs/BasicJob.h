@@ -47,20 +47,15 @@ protected:
     void add_performance_text();
 
     // processing variables
-    void InitWork() override;
-    void RegisterVariable(std::string name, int& value);
+    void InitWork(sGirlShiftData& shift) override;
+    int RegisterVariable(std::string name, int default_value);
     void RegisterVariable(std::string name, sImagePreset& preset);
+
+    int GetVariable(int index) const;
 
     void SetSubstitution(std::string key, std::string replace);
 
-    int m_Performance;
-
-    // payment data
-    int m_Earnings;
-    int m_Wages;
-    int m_Tips;
-
-    eCheckWorkResult SimpleRefusalCheck(sGirl& girl, Action_Types action);
+    ECheckWorkResult SimpleRefusalCheck(sGirl& girl, Action_Types action);
 
 private:
     cJobPerformance m_PerformanceData;
@@ -70,6 +65,13 @@ private:
     std::unique_ptr<cJobTextInterface> m_Interface;
 
     std::unordered_map<std::string, std::string> m_Replacements;
+    struct sVariableData {
+        std::string Name;
+        int Index;
+        int DefaultValue;
+    };
+    std::vector<sVariableData> m_Variables;
+    int m_VariableCounter = 0;
 protected:
     // protected, so derived classes can call the base-class version
     void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) override;

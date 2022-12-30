@@ -28,9 +28,9 @@
 #include "arena/cArena.h"
 #include "centre/cCentre.h"
 #include "clinic/cClinic.h"
-#include "house/cHouse.h"
+#include "cHouse.h"
 #include "farm/cFarm.h"
-#include "brothel/cBrothel.h"
+#include "cBrothel.h"
 #include "cDungeon.h"
 #include "character/predicates.h"
 #include "character/cGirlPool.h"
@@ -40,8 +40,8 @@ tinyxml2::XMLElement * cBuildingManager::SaveXML(tinyxml2::XMLElement& root) con
     auto& elBrothels = PushNewElement(root, "Buildings");
     for(const auto& current : m_Buildings)
     {
-        g_LogFile.log(ELogLevel::DEBUG,"Saving building (", current->type_str(), "): ", current->name());
-        auto& elBrothel = PushNewElement(elBrothels, current->type_str());
+        g_LogFile.log(ELogLevel::DEBUG,"Saving building (", get_building_type_name(current->type()), "): ", current->name());
+        auto& elBrothel = PushNewElement(elBrothels, get_building_type_name(current->type()));
         current->save_xml(elBrothel);
     }
 
@@ -164,12 +164,6 @@ sGirl* random_girl_on_job(const cBuildingManager& mgr, JOBS job, bool at_night)
     return const_cast<sGirl*>(all_girls[g_Dice % all_girls.size()]);
 }
 
-
-sGirl* random_girl_on_job(cBuilding& building, JOBS job, bool at_night)
-{
-    return building.girls().get_random_girl(HasJob(job, at_night));
-}
-
 int cBuildingManager::num_buildings(BuildingType type) const
 {
     return std::count_if(begin(m_Buildings), end(m_Buildings), [type](const std::unique_ptr<cBuilding>& b){ return b->type() == type; });
@@ -203,7 +197,7 @@ std::size_t cBuildingManager::find(const cBuilding * target) const
 
 cBuilding& cBuildingManager::AddBuilding(const BrothelCreationData& data)
 {
-    auto building = create_building(building_type_to_str(data.type));
+    auto building = create_building(get_building_type_name(data.type));
     building->m_NumRooms = data.rooms;
     building->m_MaxNumRooms = data.maxrooms;
     building->set_background_image(data.background);

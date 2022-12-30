@@ -39,7 +39,7 @@ namespace {
     };
 }
 
-bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool cEscortJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     Action_Types actiontype = ACTION_WORKESCORT;
     m_Escort = 0;
     m_Prepare = (girl.agility() + girl.service() / 2);
@@ -518,7 +518,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     return false;
 }
 
-IGenericJob::eCheckWorkResult cEscortJob::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult cEscortJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     if (girl.disobey_check(ACTION_WORKESCORT, JOB_ESCORT))
     {
         ss << "${name} refused to work during the " << (is_night ? "night" : "day") << " shift.";

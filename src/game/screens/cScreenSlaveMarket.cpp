@@ -548,7 +548,7 @@ bool cScreenSlaveMarket::buy_slaves()
         girl->set_default_house_percent();
 
         if(m_TargetBuilding) {
-            m_TargetBuilding->add_girl(g_Game->GetSlaveMarket().TakeGirl(girl));
+            m_TargetBuilding->add_girl(g_Game->GetSlaveMarket().TakeGirl(girl), false);
             affect_girl_by_disposition(*girl);
         } else    // if something fails this will catch it and send them to the dungeon
         {

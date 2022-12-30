@@ -20,15 +20,17 @@
 #include "SimpleJob.h"
 #include "character/sGirl.h"
 #include "buildings/cBuilding.h"
+#include "buildings/IBuildingShift.h"
 #include "cGirls.h"
 #include "character/predicates.h"
+#include "buildings/queries.h"
 
 
 namespace {
     struct Cleaning : public cSimpleJob {
         Cleaning(JOBS job, const char* xml);
 
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
         void CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount);
 
         virtual void DoneEarly(sGirl& girl) = 0;
@@ -62,10 +64,11 @@ namespace {
 }
 
 Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml, {ACTION_WORKCLEANING, 0, EImageBaseType::MAID}) {
+    m_Info.Phase = EJobPhase::PREPARE;
 }
 
 void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) {
-    girl.m_Building->m_Filthiness -= (int)clean_amount;
+    active_building().ProvideCleaning(clean_amount);
 
     // Base Improvement and trait modifiers
     int xp = 10, skill = 3;
@@ -93,8 +96,8 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
         cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, ACTION_WORKCLEANING, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", is_night);
 }
 
-bool Cleaning::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night){
-    double CleanAmt = m_Performance;
+bool Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift){
+    double CleanAmt = shift.Performance;
     int enjoy = 0;
     bool playtime = false;
 
@@ -124,10 +127,13 @@ bool Cleaning::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night){
     {
         CleanAmt *= 0.9;
     }
-    m_Wages = std::min(30, int(30 + (CleanAmt / 10))); // `J` Pay her based on how much she cleaned
+    shift.Wages = std::min(30, int(30 + (CleanAmt / 10))); // `J` Pay her based on how much she cleaned
 
     // `J` if she can clean more than is needed, she has a little free time after her shift
-    if (brothel.m_Filthiness < CleanAmt / 2) playtime = true;
+    if (shift.building().Filthiness() < CleanAmt / 2) {
+        playtime = true;
+        CleanAmt /= 2;
+    }
     ss << "\n\nCleanliness rating improved by " << (int)CleanAmt << ".\n";
     if (playtime)    // `J` needs more variation
     {
@@ -136,9 +142,9 @@ bool Cleaning::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night){
     }
 
     // do all the output
-    girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), m_ImageType, is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
-    CleaningUpdateGirl(girl, is_night, enjoy, CleanAmt);
+    CleaningUpdateGirl(girl, is_night_shift(), enjoy, CleanAmt);
     return false;
 }
 
@@ -251,7 +257,7 @@ void CleanClinic::DoneEarly(sGirl& girl) {
         add_text("event.maternity-ward");
         girl.happiness(uniform(-2, 3));
     }
-    else if (girl.tiredness() > 50 && brothel->free_rooms() > 10)
+    else if (girl.tiredness() > 50 && free_rooms(*brothel) > 10)
     {
         add_text("event.nap");
         girl.tiredness(-uniform(5, 15));
@@ -259,8 +265,8 @@ void CleanClinic::DoneEarly(sGirl& girl) {
     else
     {
         ss << "${name} finished her cleaning early, so she ";
-        int d = brothel->num_girls_on_job(JOB_DOCTOR, is_night_shift());
-        int n = brothel->num_girls_on_job(JOB_NURSE, is_night_shift());
+        int d = num_girls_on_job(*brothel, JOB_DOCTOR, is_night_shift());
+        int n = num_girls_on_job(*brothel, JOB_NURSE, is_night_shift());
         ss << "watched the ";
         if (d + n < 1)
         {
@@ -388,7 +394,7 @@ void CleanBrothel::BJEvent(sGirl& girl) {
     int tips = uniform(-1, 4); //how many 'tips' she clean? <5 for now, considered adjusting to amount playtime - didn't seem worth complexity
     if (tips > 0)
     {
-        brothel->m_Happiness += tips;
+        // brothel->m_Happiness += tips;
         girl.oralsex(tips / 2);
         // TODO Tips
         //tips *= 5; //customers tip 5 gold each

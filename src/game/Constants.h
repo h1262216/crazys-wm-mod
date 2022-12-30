@@ -509,6 +509,8 @@ enum class BuildingType {
     FARM
 };
 
+const char* get_building_type_name(BuildingType type);
+
 // Town Constants
 const int TOWN_NUMBUSINESSES        = 250;    // the amount of businesses in the town
 const int TOWN_OFFICIALSWAGES       = 10;    // how much the authorities in the town are paid by the govenment

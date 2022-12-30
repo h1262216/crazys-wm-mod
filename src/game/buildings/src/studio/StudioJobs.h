@@ -21,7 +21,7 @@
 #define WM_STUDIOJOBS_H
 
 #include "jobs/SimpleJob.h"
-#include "data.h"
+#include "studio/data.h"
 #include "images/sImageSpec.h"
 
 struct sFilmPleasureData {
@@ -56,7 +56,7 @@ public:
     sFilmObedienceData CalcChanceToObey(const sGirl& girl) const;
 
 private:
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
     void InitWork() override;
     sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
 
@@ -95,7 +95,7 @@ protected:
     void PrintForcedSceneEval();
 
     virtual bool CheckRefuseWork(sGirl& girl);
-    virtual bool CheckCanWork(sGirl& girl);
+    virtual bool CheckCanWork(sGirl& girl, IBuildingShift& building);
 
     mutable std::stringstream m_Dbg_Msg;
 
@@ -106,7 +106,7 @@ protected:
 
 class cCrewJob : public cSimpleJob {
 public:
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
     using cSimpleJob::cSimpleJob;
 protected:
     bool CheckCanWork(sGirl& girl, bool is_night) override;

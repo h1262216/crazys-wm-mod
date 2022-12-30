@@ -27,28 +27,29 @@
 #include "buildings/cDungeon.h"
 #include "cGirls.h"
 #include "IGame.h"
+#include "queries.h"
 
 namespace {
     struct HouseCook: public cSimpleJob {
         HouseCook();
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
     };
 
     struct HousePet: public cBasicJob {
         HousePet();
         sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+        eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
     };
 
     struct Recruiter: public cSimpleJob {
         Recruiter();
-        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) override;
     };
 
     struct PersonalTraining: public cBasicJob {
         PersonalTraining();
         sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+        eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
         double GetPerformance(const sGirl& girl, bool estimate) const override;
     };
 }
@@ -57,7 +58,7 @@ HouseCook::HouseCook() : cSimpleJob(JOB_HOUSECOOK, "HouseCook.xml", {ACTION_WORK
 
 }
 
-bool HouseCook::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool HouseCook::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     m_Wages += (int)m_PerformanceToEarnings((float)m_Performance);
     brothel.update_all_girls_stat(STAT_HAPPINESS, get_performance_class(m_Performance) - 2);
     add_performance_text();
@@ -247,7 +248,7 @@ sWorkJobResult HousePet::DoWork(sGirl& girl, bool is_night) {
                 }
                 training += 2;
             }
-            else if (roll_b >= 40 && brothel->num_girls_on_job(JOB_HEADGIRL, false) >= 1)
+            else if (roll_b >= 40 && num_girls_on_job(*brothel, JOB_HEADGIRL, false) >= 1)
             {
                 add_text("train.skilled.headgirl");
                 training += 2;
@@ -360,7 +361,7 @@ sWorkJobResult HousePet::DoWork(sGirl& girl, bool is_night) {
     return sWorkJobResult{false, 0, 0, 0};
 }
 
-IGenericJob::eCheckWorkResult HousePet::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult HousePet::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     return IGenericJob::eCheckWorkResult::ACCEPTS;
 }
 
@@ -654,7 +655,7 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
     return sWorkJobResult{false, 0, 0, pay};
 }
 
-IGenericJob::eCheckWorkResult PersonalTraining::CheckWork(sGirl& girl, bool is_night) {
+IGenericJob::eCheckWorkResult PersonalTraining::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
     return SimpleRefusalCheck(girl, ACTION_SEX);
 }
 
@@ -670,7 +671,7 @@ Recruiter::Recruiter() : cSimpleJob(JOB_RECRUITER, "Recruiter.xml", {ACTION_WORK
     m_Info.FreeOnly = true;
 }
 
-bool Recruiter::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+bool Recruiter::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_night) {
     int fame = 0;
 
     int HateLove = girl.pclove();

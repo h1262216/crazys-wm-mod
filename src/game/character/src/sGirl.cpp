@@ -22,11 +22,12 @@
 #include "predicates.h"
 #include "pregnancy.h"
 #include "buildings/cDungeon.h"
+#include "buildings/queries.h"
 
 extern cRng g_Dice;
 
 bool is_Actress_Job(int testjob);
-bool CrewNeeded(const cBuilding& building);
+bool CrewNeeded(const IBuilding& building);
 
 namespace settings {
     extern const char* PREG_CONTRA_FAIL;
@@ -142,8 +143,8 @@ bool sGirl::disobey_check(Action_Types action, JOBS job)
     */
     if (m_Building)
     { // `J` added building checks
-        if (m_Building->matron_on_shift(SHIFT_DAY)) chance_to_obey += 10;
-        if (m_Building->matron_on_shift(SHIFT_NIGHT)) chance_to_obey += 10;
+        if (cast_building(*m_Building).matron_on_shift(SHIFT_DAY)) chance_to_obey += 10;
+        if (cast_building(*m_Building).matron_on_shift(SHIFT_NIGHT)) chance_to_obey += 10;
     }
     /*
     *    This is still confusing - at least it still confuses me
@@ -405,7 +406,7 @@ int sGirl::get_stat(STATS stat_id) const
 void sGirl::run_away()
 {
     if(m_Building)
-        g_Game->AddGirlToRunaways(m_Building->remove_girl(this));
+        g_Game->AddGirlToRunaways(cast_building(*m_Building).remove_girl(this));
     else if (m_NightJob == JOB_INDUNGEON)
         g_Game->AddGirlToRunaways(g_Game->dungeon().RemoveGirl(this));
     else
@@ -1429,7 +1430,7 @@ std::string sGirl::Interpolate(const std::string& pattern) {
 
 bool sGirl::is_sex_type_allowed(SKILLS sex_type) const {
     if(m_Building) {
-        return m_Building->is_sex_type_allowed(sex_type);
+        return cast_building(*m_Building).is_sex_type_allowed(sex_type);
     }
     return true;
 }
