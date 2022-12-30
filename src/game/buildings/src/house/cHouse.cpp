@@ -19,7 +19,7 @@
 
 #include <sstream>
 
-#include "cHouse.h"
+#include "house/cHouse.h"
 #include "cGangs.h"
 #include "IGame.h"
 #include "cJobManager.h"

@@ -17,12 +17,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StudioJobs.h"
+#include "studio/StudioJobs.h"
 #include "jobs/SimpleJob.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 #include "IGame.h"
-#include "manager.h"
+#include "studio/manager.h"
 #include "utils/streaming_random_selection.hpp"
 #include <cmath>
 #include "buildings/cBuildingManager.h"

@@ -17,12 +17,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StudioJobs.h"
+#include "studio/StudioJobs.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 #include "character/cPlayer.h"
 #include "character/cCustomers.h"
-#include "cMovieStudio.h"
+#include "studio/cMovieStudio.h"
 #include "IGame.h"
 #include "CLog.h"
 #include "xml/getattr.h"

@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <utils/string.hpp>
-#include "cMovieStudio.h"
+#include "studio/cMovieStudio.h"
 #include "cGangs.h"
 #include "buildings/cBuildingManager.h"
 #include "IGame.h"
@@ -30,7 +30,7 @@
 #include "interface/constants.h"
 #include "events.h"
 #include "cGirls.h"
-#include "manager.h"
+#include "studio/manager.h"
 
 extern const char* const FluffPointsId = "FluffPoints";
 extern const char* const StageHandPtsId = "StageHandPoints";

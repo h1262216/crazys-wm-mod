@@ -14,10 +14,12 @@ set(CHARACTER_SRC
         src/cGirlPool.cpp
         )
 
+add_library(WmCharacterInterface INTERFACE)
+target_include_directories(WmCharacterInterface INTERFACE include)
 
 add_library(WmCharacterObjects OBJECT ${CHARACTER_SRC})
-target_link_libraries(WmCharacterObjects PRIVATE WMEngineObjects lua::lua WmScriptingInterface)
-target_include_directories(WmCharacterObjects PUBLIC include)
+target_link_libraries(WmCharacterObjects PRIVATE WMEngineObjects lua::lua WmScriptingInterface WmBuildingObjects)
+target_link_libraries(WmCharacterObjects PUBLIC WmCharacterInterface)
 target_include_directories(WmCharacterObjects PRIVATE include/character include/traits)
 # TODO Fix includes!
 target_include_directories(WmCharacterObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)

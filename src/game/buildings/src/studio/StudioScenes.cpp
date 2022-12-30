@@ -17,7 +17,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StudioJobs.h"
+#include "studio/StudioJobs.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 #include "IGame.h"

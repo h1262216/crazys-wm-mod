@@ -1,5 +1,6 @@
 add_subdirectory(character)
 add_subdirectory(scripting)
+add_subdirectory(buildings)
 
 
 set(SCREENS_SRC
@@ -36,41 +37,7 @@ set(JOBS_SRC
         jobs/IGenericJob.cpp
         jobs/Matron.cpp
         jobs/JobData.cpp
-        jobs/Cleaning.cpp buildings/centre/CentreJobs.cpp jobs/BasicJob.cpp buildings/brothel/Escort.cpp jobs/SimpleJob.cpp jobs/SimpleJob.h buildings/brothel/Whore.cpp jobs/Treatment.cpp jobs/TextInterface.cpp)
-
-set(BUILDINGS_SRC
-        buildings/arena/cArena.cpp
-        buildings/brothel/cBrothel.cpp
-        buildings/centre/cCentre.cpp
-        buildings/cDungeon.cpp
-        buildings/farm/cFarm.cpp
-        buildings/house/cHouse.cpp
-        buildings/studio/cMovieStudio.cpp
-        buildings/queries.cpp
-        buildings/cBuildingManager.cpp
-        buildings/house/Training.cpp
-        buildings/studio/StudioCrew.cpp
-        buildings/farm/WorkFarmPonyGirl.cpp
-        buildings/clinic/cClinic.cpp
-        buildings/clinic/Surgery.cpp
-        buildings/clinic/ClinicJobs.cpp
-        buildings/house/WorkPersonalBedWarmer.cpp
-        buildings/brothel/WorkTorturer.cpp
-        buildings/studio/StudioFilming.cpp
-        buildings/centre/Therapy.cpp
-        buildings/brothel/BrothelJobs.cpp
-        buildings/farm/FarmJobs.cpp
-        buildings/studio/StudioScenes.cpp
-        buildings/studio/StudioOther.cpp
-        buildings/arena/ArenaJobs.cpp
-        buildings/house/House.cpp
-)
-
-set(MOVIES_SRC
-        buildings/studio/manager.cpp
-        buildings/studio/data.cpp
-        buildings/studio/filming.cpp
-        )
+        jobs/Cleaning.cpp  jobs/BasicJob.cpp jobs/SimpleJob.cpp jobs/SimpleJob.h jobs/Treatment.cpp jobs/TextInterface.cpp)
 
 set(SRC cEvents.cpp
         cGangs.cpp
@@ -90,7 +57,6 @@ set(SRC cEvents.cpp
         cTariff.cpp
         IGame.cpp
         gang_missions.cpp
-        buildings/IBuilding.cpp
         InterfaceGlobals.cpp
         InterfaceProcesses.cpp
         Inventory.cpp
@@ -126,8 +92,8 @@ make_generated_header(
         SOURCE_FILE_TYPE "lua"
         OUTPUT "events.h")
 
-add_library(WmGameObjects OBJECT ${BUILDINGS_SRC} ${SCREENS_SRC} ${JOBS_SRC} ${CHARACTER_SRC} ${MOVIES_SRC} ${SRC})
-target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects)
+add_library(WmGameObjects OBJECT ${SCREENS_SRC} ${JOBS_SRC} ${SRC})
+target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects WmBuildingObjects)
 add_dependencies(WmGameObjects generate_event_ids)
 set_target_properties(WmGameObjects PROPERTIES CXX_STANDARD 14)
 target_include_directories(WmGameObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -136,7 +102,12 @@ if (UNIX)
     target_compile_definitions(WmGameObjects PUBLIC LINUX=1)
 endif(UNIX)
 
-set(AllWmObjects $<TARGET_OBJECTS:WmGameObjects> $<TARGET_OBJECTS:WmScriptingObjects> $<TARGET_OBJECTS:WmCharacterObjects> $<TARGET_OBJECTS:WMEngineObjects>)
+set(AllWmObjects
+        $<TARGET_OBJECTS:WmGameObjects>
+        $<TARGET_OBJECTS:WmScriptingObjects>
+        $<TARGET_OBJECTS:WmCharacterObjects>
+        $<TARGET_OBJECTS:WmBuildingObjects>
+        $<TARGET_OBJECTS:WMEngineObjects>)
 
 add_executable(WhoreMaster ${AllWmObjects} main.cpp)
 target_link_libraries(WhoreMaster PUBLIC WmGameObjects)

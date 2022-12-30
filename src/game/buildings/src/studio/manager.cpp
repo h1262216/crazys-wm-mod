@@ -17,7 +17,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "manager.h"
+#include "studio/manager.h"
 #include "utils/DirPath.h"
 #include "xml/util.h"
 #include "xml/getattr.h"

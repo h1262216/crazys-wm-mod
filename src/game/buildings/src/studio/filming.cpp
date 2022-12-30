@@ -17,10 +17,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "fwd.h"
-#include "manager.h"
+#include "studio/fwd.h"
+#include "studio/manager.h"
 #include "character/sGirl.h"
-#include "cMovieStudio.h"
+#include "studio/cMovieStudio.h"
 #include "buildings/cBuildingManager.h"
 #include <sstream>
 

@@ -89,6 +89,8 @@ public:
         mouse_event.button.y = rand() % cfg.height();
         for(int i = 0; i < 5; ++i) {
             cInterfaceWindow* pWindow = window_manager().GetWindow();
+            if(!pWindow)
+                break;
             size_t num_widgets = pWindow->NumWidgets();
             if(num_widgets == 0)
                 break;

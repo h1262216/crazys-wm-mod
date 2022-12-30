@@ -17,7 +17,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data.h"
+#include "studio/data.h"
 #include <cassert>
 #include "xml/getattr.h"
 #include "xml/util.h"
