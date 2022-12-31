@@ -1053,7 +1053,7 @@ bool cFarmJobGetMilked::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_n
     {
         sCustomer Cust = g_Game->GetCustomer(brothel);
         ss << farmmanname <<" noticing that ${name} wasn't pregnant decided to take it upon herself to make sure she got knocked up.\n";
-        if (brothel.is_sex_type_allowed(SKILL_BEASTIALITY) && g_Game->storage().beasts() >= 1 && chance(50))
+        if (girl.is_sex_type_allowed(SKILL_BEASTIALITY) && g_Game->storage().beasts() >= 1 && chance(50))
         {
             ss << "She sends in one of your beasts to get the job done.";
             girl.beastiality(2);

@@ -132,7 +132,7 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
         SKILLS skills[] = {SKILL_NORMALSEX, SKILL_ANAL, SKILL_FOOTJOB, SKILL_HANDJOB, SKILL_LESBIAN,
                            SKILL_TITTYSEX, SKILL_ORALSEX, SKILL_PERFORMANCE, SKILL_STRIP};
         for(auto& skill : skills) {
-            if(girl.get_skill(skill) < 50 && girl.m_Building->is_sex_type_allowed(skill)) {
+            if(girl.get_skill(skill) < 50 && girl.is_sex_type_allowed(skill)) {
                 selector.process(&skill, 50 - girl.get_skill(skill));
             }
         }
@@ -160,7 +160,7 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
                            SKILL_PERFORMANCE, SKILL_STRIP};
 
         for(auto& skill : skills) {
-            if(!girl.m_Building->is_sex_type_allowed(skill))
+            if(!girl.is_sex_type_allowed(skill))
                 continue;
 
             int my_value = girl.get_skill(skill);
@@ -418,8 +418,6 @@ public:
 };
 
 void SoStraight::HandleTraining(sGirl& girl, bool is_night) {
-    auto brothel = girl.m_Building;
-
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.normalsex() / 5;
@@ -444,7 +442,7 @@ void SoStraight::HandleTraining(sGirl& girl, bool is_night) {
         add_text("broken-will") << "\n";
     }
 
-    if (!brothel->is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(10, 30);
+    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(10, 30);
 
     CountTheDays(girl, is_night, progress);
 
@@ -473,8 +471,6 @@ public:
 };
 
 void SoLesbian::HandleTraining(sGirl& girl, bool is_night) {
-    auto brothel = girl.m_Building;
-
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.lesbian() / 5;
@@ -499,7 +495,7 @@ void SoLesbian::HandleTraining(sGirl& girl, bool is_night) {
 
     //    if (girl.check_virginity())                {}
 
-    if (!brothel->is_sex_type_allowed(SKILL_LESBIAN))        progress -= uniform(10, 30);
+    if (!girl.is_sex_type_allowed(SKILL_LESBIAN))        progress -= uniform(10, 30);
 
     CountTheDays(girl, is_night, progress);
 
@@ -528,7 +524,6 @@ public:
 };
 
 void SoBi::HandleTraining(sGirl& girl, bool is_night) {
-    auto brothel = girl.m_Building;
     int progress = 0;
     if (girl.has_active_trait(traits::STRAIGHT))
     {
@@ -565,8 +560,8 @@ void SoBi::HandleTraining(sGirl& girl, bool is_night) {
         add_text("broken-will") << "\n";
     }
 
-    if (!brothel->is_sex_type_allowed(SKILL_LESBIAN))        progress -= uniform(5, 15);
-    if (!brothel->is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(5, 15);
+    if (!girl.is_sex_type_allowed(SKILL_LESBIAN))        progress -= uniform(5, 15);
+    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(5, 15);
 
     CountTheDays(girl, is_night, progress);
 
@@ -596,8 +591,6 @@ public:
 };
 
 void FakeOrg::HandleTraining(sGirl& girl, bool is_night) {
-    auto brothel = girl.m_Building;
-
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.performance() / 5;
@@ -610,7 +603,7 @@ void FakeOrg::HandleTraining(sGirl& girl, bool is_night) {
     progress += uniform(trait / 2, trait + trait / 2);
     if (girl.has_active_trait(traits::BROKEN_WILL))    { add_text("broken-will") << "\n"; }
 
-    if (!brothel->is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(5, 15);
+    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(5, 15);
 
     CountTheDays(girl, is_night, progress);
 

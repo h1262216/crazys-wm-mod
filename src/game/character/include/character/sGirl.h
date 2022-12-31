@@ -260,6 +260,8 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
     bool is_havingsex() const;
     bool was_resting() const;
 
+    bool is_sex_type_allowed(SKILLS sex_type) const;
+
     FormattedCellData GetDetail(const std::string& detailName) const;
     FormattedCellData GetJobRating(JOBS job) const;
 

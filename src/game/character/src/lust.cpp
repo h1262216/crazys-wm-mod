@@ -385,8 +385,7 @@ bool will_masturbate_public(const ICharacter& character, sPercent base_chance) {
 }
 
 bool check_public_sex(const sGirl& girl, ESexParticipants partner, SKILLS action, sPercent base_chance, bool init) {
-    auto brothel = girl.m_Building;
-    if(brothel && !brothel->is_sex_type_allowed(action)) {
+    if(girl.is_sex_type_allowed(action)) {
         return false;
     }
 

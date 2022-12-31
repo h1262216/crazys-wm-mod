@@ -89,7 +89,7 @@ bool cFilmSceneJob::CheckCanWork(sGirl& girl) {
 
     // check sex type
     if(m_PleasureFactor.Skill != NUM_SKILLS) {
-        if(!brothel->is_sex_type_allowed(m_PleasureFactor.Skill)) {
+        if(!girl.is_sex_type_allowed(m_PleasureFactor.Skill)) {
             girl.AddMessage("A scene of this type cannot be filmed, because you have forbidden the corresponding sex type.",
                             EImageBaseType::PROFILE, EVENT_NOWORK);
             return false;

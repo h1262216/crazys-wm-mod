@@ -253,14 +253,14 @@ void cWhoreJob::HandleCustomer(sGirl& girl, IBuilding& brothel, bool is_night) {
     if (cGirls::detect_disease_in_customer(&brothel, girl, &Cust)) return;
 
     // filter out unwanted sex types (unless it is street work)
-    if (!bStreetWork && !brothel.is_sex_type_allowed(Cust.m_SexPref) && !brothel.is_sex_type_allowed(Cust.m_SexPrefB))
+    if (!bStreetWork && !girl.is_sex_type_allowed(Cust.m_SexPref) && !girl.is_sex_type_allowed(Cust.m_SexPrefB))
     {
         brothel.m_RejectCustomersRestrict++;
         return;    // `J` if both their sexprefs are banned then they leave
     }
 
     SKILLS SexType{};
-    if (!bStreetWork && !brothel.is_sex_type_allowed(Cust.m_SexPref)) // it their first sexpref is banned then switch to the second
+    if (!bStreetWork && !girl.is_sex_type_allowed(Cust.m_SexPref)) // it their first sexpref is banned then switch to the second
     {
         Cust.m_SexPref = Cust.m_SexPrefB;
         SexType = (SKILLS)Cust.m_SexPref;

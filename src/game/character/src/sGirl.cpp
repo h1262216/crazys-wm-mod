@@ -1426,3 +1426,10 @@ std::string sGirl::Interpolate(const std::string& pattern) {
       throw std::runtime_error("Invalid pattern " + pattern);
     }, g_Dice);
 }
+
+bool sGirl::is_sex_type_allowed(SKILLS sex_type) const {
+    if(m_Building) {
+        return m_Building->is_sex_type_allowed(sex_type);
+    }
+    return true;
+}

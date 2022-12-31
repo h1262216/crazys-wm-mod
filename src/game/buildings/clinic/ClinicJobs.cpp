@@ -206,7 +206,7 @@ bool NurseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     if (chance(30) && !is_virgin(girl) && likes_men(girl)
         && (is_sex_crazy(girl) || girl.has_active_trait(traits::BIMBO)))
     {
-        if (girl.lust() > 65 && (brothel.is_sex_type_allowed(SKILL_NORMALSEX) || brothel.is_sex_type_allowed(SKILL_ANAL)))
+        if (girl.lust() > 65 && (girl.is_sex_type_allowed(SKILL_NORMALSEX) || girl.is_sex_type_allowed(SKILL_ANAL)))
         {
             m_Tips += 50;
             sex = true;
@@ -249,7 +249,7 @@ bool NurseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
 
     if (sex)
     {
-        if (brothel.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || brothel.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
+        if (girl.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || girl.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
         {
             m_ImageType = EImageBaseType::VAGINAL;
             girl.normalsex(2);
@@ -262,7 +262,7 @@ bool NurseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
             }
         }
-        else if (brothel.is_sex_type_allowed(SKILL_ANAL))
+        else if (girl.is_sex_type_allowed(SKILL_ANAL))
         {
             m_ImageType = EImageBaseType::ANAL;
             girl.anal(2);

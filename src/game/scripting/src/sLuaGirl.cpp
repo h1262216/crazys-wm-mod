@@ -466,7 +466,7 @@ int sLuaGirl::is_slave(lua_State *L) {
 int sLuaGirl::is_sex_type_allowed(lua_State *L) {
     auto& girl = check_type(L, 1);
     auto skill = (SKILLS)luaL_checkinteger(L, 2);
-    bool allowed = girl.m_Building->is_sex_type_allowed(skill);
+    bool allowed = girl.is_sex_type_allowed(skill);
     lua_pushboolean(L, allowed);
     return 1;
 }

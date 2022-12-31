@@ -288,7 +288,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) {
     auto brothel = girl.m_Building;
 
     int choice = uniform(0, 5);
-    if (choice == 1 && (!brothel->is_sex_type_allowed(SKILL_ORALSEX) || likes_women(girl))) choice = 0;
+    if (choice == 1 && (!girl.is_sex_type_allowed(SKILL_ORALSEX) || likes_women(girl))) choice = 0;
     if (choice != 2 && girl.tiredness() >= 80) choice = 2;
     if (choice != 1 && chance(30) && girl.has_active_trait(traits::CUM_ADDICT)) choice = 1;
 
@@ -333,7 +333,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) {
                 ss << "she came to your room and cleaned you.\n \n${name} ran you a hot bath and bathed naked with you.";/* Need a check here so your daughters won't do this zzzzz FIXME*/
                 m_ImageType = EImageBaseType::BATH;
 
-                if (brothel->is_sex_type_allowed(SKILL_TITTYSEX))
+                if (girl.is_sex_type_allowed(SKILL_TITTYSEX))
                 {
                     ss << " Taking care to clean your whole body carefully, She rubbed cleansing oils over your back and chest with her ";
                     if (girl.breast_size() >= 8)
@@ -345,7 +345,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) {
                     else ss << "nice, firm ";
                     ss << "breasts. ";
                 }
-                if (brothel->is_sex_type_allowed(SKILL_ORALSEX))
+                if (girl.is_sex_type_allowed(SKILL_ORALSEX))
                 {
                     ss << "She finished by cleaning your cock with her " << (girl.has_active_trait(traits::DICK_SUCKING_LIPS) ? "amazing dick-sucking lips" : "mouth") << ". ";
                     if (girl.has_active_trait(traits::CUM_ADDICT))

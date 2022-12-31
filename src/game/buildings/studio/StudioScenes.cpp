@@ -185,7 +185,7 @@ namespace {
                 for(auto& job : jobs.Contents) {
                     auto& job_class = dynamic_cast<cFilmSceneJob&>(*mgr.m_OOPJobs[job]);
                     auto st = job_class.GetSexType();
-                    if(girl.m_Building->is_sex_type_allowed(st)) {
+                    if(girl.is_sex_type_allowed(st)) {
                         auto o = job_class.CalcChanceToObey(girl);
                         // scale performance with chance to obey. If larger than 80%, don't differentiate further
                         float f = o.total() / 80.f;

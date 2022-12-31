@@ -226,7 +226,7 @@ sWorkJobResult HousePet::DoWork(sGirl& girl, bool is_night) {
             else if (roll_b >= 60 && g_Game->has_building(BuildingType::STUDIO))
             {
                 add_text("train.skilled.studio");
-                if (brothel->is_sex_type_allowed(SKILL_BEASTIALITY) && !is_virgin(girl))
+                if (girl.is_sex_type_allowed(SKILL_BEASTIALITY) && !is_virgin(girl))
                 {
                     ss << "Your bitch looked up, and began to crawl back over to you, but the mastiff had other ideas.";
                     ss << " ${name} suddenly yelped and began to let out a series of piercing, pleading barks as the mastiff mounted her from behind, and drove";
@@ -376,17 +376,17 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
     cGirls::UnequipCombat(girl);    // put that shit away, not needed for sex training
 
     // first set sex restrictions
-    bool Allow_BEAST = brothel->is_sex_type_allowed(SKILL_BEASTIALITY);
-    bool Allow_BDSM = brothel->is_sex_type_allowed(SKILL_BDSM);
-    bool Allow_GROUP = brothel->is_sex_type_allowed(SKILL_GROUP);
-    bool Allow_NORMALSEX = brothel->is_sex_type_allowed(SKILL_NORMALSEX);
-    bool Allow_ANAL = brothel->is_sex_type_allowed(SKILL_ANAL);
-    bool Allow_LESBIAN = brothel->is_sex_type_allowed(SKILL_LESBIAN);
-    bool Allow_FOOTJOB = brothel->is_sex_type_allowed(SKILL_FOOTJOB);
-    bool Allow_HANDJOB = brothel->is_sex_type_allowed(SKILL_HANDJOB);
-    bool Allow_ORALSEX = brothel->is_sex_type_allowed(SKILL_ORALSEX);
-    bool Allow_TITTYSEX = brothel->is_sex_type_allowed(SKILL_TITTYSEX);
-    bool Allow_STRIP = brothel->is_sex_type_allowed(SKILL_STRIP);
+    bool Allow_BEAST = girl.is_sex_type_allowed(SKILL_BEASTIALITY);
+    bool Allow_BDSM = girl.is_sex_type_allowed(SKILL_BDSM);
+    bool Allow_GROUP = girl.is_sex_type_allowed(SKILL_GROUP);
+    bool Allow_NORMALSEX = girl.is_sex_type_allowed(SKILL_NORMALSEX);
+    bool Allow_ANAL = girl.is_sex_type_allowed(SKILL_ANAL);
+    bool Allow_LESBIAN = girl.is_sex_type_allowed(SKILL_LESBIAN);
+    bool Allow_FOOTJOB = girl.is_sex_type_allowed(SKILL_FOOTJOB);
+    bool Allow_HANDJOB = girl.is_sex_type_allowed(SKILL_HANDJOB);
+    bool Allow_ORALSEX = girl.is_sex_type_allowed(SKILL_ORALSEX);
+    bool Allow_TITTYSEX = girl.is_sex_type_allowed(SKILL_TITTYSEX);
+    bool Allow_STRIP = girl.is_sex_type_allowed(SKILL_STRIP);
 
     // if everything is banned do nothing
     if (!Allow_BEAST && !Allow_BDSM && !Allow_GROUP && !Allow_NORMALSEX && !Allow_ANAL && !Allow_LESBIAN &&
@@ -531,42 +531,42 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
         ss << "She managed to gain " << skill << " Strip.\n \n";
         girl.AddMessage(ss.str(), EImageBaseType::STRIP, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (roll_b <= 20 && girl.lesbian() < 100 && brothel->is_sex_type_allowed(SKILL_LESBIAN))
+    else if (roll_b <= 20 && girl.lesbian() < 100 && Allow_LESBIAN)
     {
         girl.lesbian(skill);
         ss << "You decide to bring in another girl for her.\n \n";
         ss << "She managed to gain " << skill << " Lesbian.\n \n";
         girl.AddMessage(ss.str(), EImagePresets::LESBIAN, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (roll_b <= 27 && girl.tittysex() < 100 && brothel->is_sex_type_allowed(SKILL_TITTYSEX))
+    else if (roll_b <= 27 && girl.tittysex() < 100 && Allow_TITTYSEX)
     {
         girl.tittysex(skill);
         ss << "You decide to have her use her tits on you.\n \n";
         ss << "She managed to gain " << skill << " Titty.\n \n";
         girl.AddMessage(ss.str(), EImageBaseType::TITTY, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (roll_b <= 34 && girl.handjob() < 100 && brothel->is_sex_type_allowed(SKILL_HANDJOB))
+    else if (roll_b <= 34 && girl.handjob() < 100 && Allow_HANDJOB)
     {
         girl.handjob(skill);
         ss << "You decide to teach her the art of manual stimulation.\n \n";
         ss << "She managed to gain " << skill << " Hand Job.\n \n";
         girl.AddMessage(ss.str(), EImageBaseType::HAND, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (roll_b <= 40 && girl.footjob() < 100 && brothel->is_sex_type_allowed(SKILL_FOOTJOB))
+    else if (roll_b <= 40 && girl.footjob() < 100 && Allow_FOOTJOB)
     {
         girl.footjob(skill);
         ss << "You decide to teach her the art of manual stimulation with her feet.\n \n";
         ss << "She managed to gain " << skill << " Foot Job.\n \n";
         girl.AddMessage(ss.str(), EImageBaseType::FOOT, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (roll_b <= 50 && girl.oralsex() < 100 && brothel->is_sex_type_allowed(SKILL_ORALSEX))
+    else if (roll_b <= 50 && girl.oralsex() < 100 && Allow_ORALSEX)
     {
         girl.oralsex(skill);
         ss << "You decide to teach her the art of sucking a cock.\n \n";
         ss << "She managed to gain " << skill << " Oral.\n \n";
         girl.AddMessage(ss.str(), EImagePresets::BLOWJOB, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (roll_b <= 70 && girl.normalsex() < 100 && brothel->is_sex_type_allowed(SKILL_NORMALSEX))
+    else if (roll_b <= 70 && girl.normalsex() < 100 && Allow_NORMALSEX)
     {
         girl.normalsex(skill);
         ss << "You decide to teach her how to ride a dick like a pro.\n \n";
@@ -578,14 +578,14 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
         girl.AddMessage(ss.str(), EImageBaseType::VAGINAL, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
         girl.calc_pregnancy(&g_Game->player(), 1.0);
     }
-    else if (roll_b <= 80 && girl.anal() < 100 && brothel->is_sex_type_allowed(SKILL_ANAL))
+    else if (roll_b <= 80 && girl.anal() < 100 && Allow_ANAL)
     {
         girl.anal(skill);
         ss << "You decide to teach her how to use her ass.\n \n";
         ss << "She managed to gain " << skill << " Anal Sex.\n \n";
         girl.AddMessage(ss.str(), EImageBaseType::ANAL, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (roll_b <= 90 && girl.group() < 100 && brothel->is_sex_type_allowed(SKILL_GROUP))
+    else if (roll_b <= 90 && girl.group() < 100 && Allow_GROUP)
     {
         girl.group(skill);
         ss << "You decide to over see her skill in a gang bang.\n \n";
@@ -600,7 +600,7 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
         // TODO if we remove the virgin trait before the pregnancy calculation, it cannot affect preg chance!
         girl.calc_pregnancy(&g_Game->player(), 1.0);
     }
-    else if (roll_b <= 100 && girl.bdsm() < 100 && brothel->is_sex_type_allowed(SKILL_BDSM))
+    else if (roll_b <= 100 && girl.bdsm() < 100 && Allow_BDSM)
     {
         girl.bdsm(skill);
         ss << "You decide to teach her the fine art of BDSM.\n \n";
@@ -612,7 +612,7 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
         girl.AddMessage(ss.str(), EImageBaseType::BDSM, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
         girl.calc_pregnancy(&g_Game->player(), 1.0);
     }
-    else if (girl.beastiality() < 100 && brothel->is_sex_type_allowed(SKILL_BEASTIALITY))
+    else if (girl.beastiality() < 100 && Allow_BEAST)
     {
         girl.beastiality(skill);
         ss << "You decide to have her get acquainted with some animals.\n \n";
@@ -626,13 +626,13 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
     else
     {
         girl.strip(uniform(0, 2));
-        if (brothel->is_sex_type_allowed(SKILL_HANDJOB))        girl.handjob(uniform(0, 2));
-        if (brothel->is_sex_type_allowed(SKILL_ORALSEX))        girl.oralsex(uniform(0, 2));
-        if (brothel->is_sex_type_allowed(SKILL_TITTYSEX))        girl.tittysex(uniform(0, 2));
-        if (brothel->is_sex_type_allowed(SKILL_LESBIAN))        girl.lesbian(uniform(0, 2));
-        if (brothel->is_sex_type_allowed(SKILL_NORMALSEX))        girl.normalsex(uniform(0, 2));
-        if (brothel->is_sex_type_allowed(SKILL_ANAL))            girl.anal(uniform(0, 2));
-        if (brothel->is_sex_type_allowed(SKILL_BDSM))            girl.bdsm(uniform(0, 2));
+        if (Allow_HANDJOB)        girl.handjob(uniform(0, 2));
+        if (Allow_ORALSEX)        girl.oralsex(uniform(0, 2));
+        if (Allow_TITTYSEX)       girl.tittysex(uniform(0, 2));
+        if (Allow_LESBIAN)        girl.lesbian(uniform(0, 2));
+        if (Allow_NORMALSEX)      girl.normalsex(uniform(0, 2));
+        if (Allow_ANAL)           girl.anal(uniform(0, 2));
+        if (Allow_BDSM)           girl.bdsm(uniform(0, 2));
         ss << "You couldn't decide what to teach her so you just fooled around with her.\n \n";
         girl.AddMessage(ss.str(), EImageBaseType::ECCHI, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }

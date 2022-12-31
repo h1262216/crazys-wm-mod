@@ -1238,7 +1238,7 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
     }
 
     sCustomer Cust = g_Game->GetCustomer(brothel);
-    if (Cust.m_IsWoman && brothel.is_sex_type_allowed(SKILL_LESBIAN)) {
+    if (Cust.m_IsWoman && girl.is_sex_type_allowed(SKILL_LESBIAN)) {
         target_sex = SKILL_LESBIAN;
         target_part = ESexParticipants::LESBIAN;
     }
@@ -1764,7 +1764,7 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
         ss << "In one of the private shows, she ended up ";
         brothel.m_Happiness += 100;
         //int imageType = EBaseImage::SEX;
-        if (Cust.m_IsWoman && brothel.is_sex_type_allowed(SKILL_LESBIAN))
+        if (Cust.m_IsWoman && girl.is_sex_type_allowed(SKILL_LESBIAN))
         {
             n = SKILL_LESBIAN;
             ss << "licking the customer's clit until she screamed out in pleasure, making her very happy.";
@@ -3127,10 +3127,10 @@ bool SecurityJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
         int l = 0;
         switch (uniform(0, 4))        // `J` just roll for the 4 sex options and flash only if sex is restricted
         {
-            case 1:    if (brothel.is_sex_type_allowed(SKILL_ORALSEX))    { imagetype = EImagePresets::BLOWJOB;    ss << "She sucked them off";    break; }
-            case 2:    if (brothel.is_sex_type_allowed(SKILL_TITTYSEX))    { imagetype = EImageBaseType::TITTY;    ss << "She used her tits to get them off";    break; }
-            case 3:    if (brothel.is_sex_type_allowed(SKILL_HANDJOB))    { imagetype = EImageBaseType::HAND;    ss << "She jerked them off";    break; }
-            case 4:    if (brothel.is_sex_type_allowed(SKILL_FOOTJOB))    { imagetype = EImageBaseType::FOOT;    ss << "She used her feet to get them off";    break; }
+            case 1:    if (girl.is_sex_type_allowed(SKILL_ORALSEX))    { imagetype = EImagePresets::BLOWJOB;    ss << "She sucked them off";    break; }
+            case 2:    if (girl.is_sex_type_allowed(SKILL_TITTYSEX))    { imagetype = EImageBaseType::TITTY;    ss << "She used her tits to get them off";    break; }
+            case 3:    if (girl.is_sex_type_allowed(SKILL_HANDJOB))    { imagetype = EImageBaseType::HAND;    ss << "She jerked them off";    break; }
+            case 4:    if (girl.is_sex_type_allowed(SKILL_FOOTJOB))    { imagetype = EImageBaseType::FOOT;    ss << "She used her feet to get them off";    break; }
             default:/*                         */    { imagetype = EImageBaseType::STRIP;    ss << "She flashed them";    break; }
         }
         ss << ".\n \n";
@@ -3378,14 +3378,14 @@ bool CatacombJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
     girl.AddMessage(ss.str(), EImageBaseType::COMBAT, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     ss.str("");
-    if (girl.lust() > 90 && type_monster_girls + type_unique_monster_girls > 0 && brothel.is_sex_type_allowed(SKILL_LESBIAN))
+    if (girl.lust() > 90 && type_monster_girls + type_unique_monster_girls > 0 && girl.is_sex_type_allowed(SKILL_LESBIAN))
     {
         ss << "${name} was real horny so she had a little fun with the girl" << (type_monster_girls + type_unique_monster_girls > 1 ? "s" : "") << " she captured.";
         girl.lust_release_regular();
         girl.lesbian(type_monster_girls + type_unique_monster_girls);
         girl.AddMessage(ss.str(), EImagePresets::LESBIAN, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     }
-    else if (girl.lust() > 90 && type_beasts > 0 && brothel.is_sex_type_allowed(SKILL_BEASTIALITY))
+    else if (girl.lust() > 90 && type_beasts > 0 && girl.is_sex_type_allowed(SKILL_BEASTIALITY))
     {
         ss << "${name} was real horny so she had a little fun with the beast" << (type_beasts > 1 ? "s" : "") << " she captured.";
         girl.lust_release_regular();

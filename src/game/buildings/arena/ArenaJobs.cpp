@@ -217,7 +217,7 @@ bool FightBeasts::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
         ss << "${name} was unable to win the fight.";
         enjoy -= 1;
         //Crazy: I feel there needs to be more of a bad outcome for losses added this... Maybe could use some more
-        if (brothel.is_sex_type_allowed(SKILL_BEASTIALITY) && !is_virgin(girl))
+        if (girl.is_sex_type_allowed(SKILL_BEASTIALITY) && !is_virgin(girl))
         {
             ss << " So as punishment you allow the beast to have its way with her.";
             enjoy -= 5;

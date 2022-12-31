@@ -85,7 +85,7 @@ bool CommunityService::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
 
     if (sex)
     {
-        if (brothel.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || brothel.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
+        if (girl.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || girl.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
         {
             girl.normalsex(2);
             m_ImageType = EImageBaseType::VAGINAL;
@@ -98,7 +98,7 @@ bool CommunityService::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
             }
         }
-        else if (brothel.is_sex_type_allowed(SKILL_ANAL))
+        else if (girl.is_sex_type_allowed(SKILL_ANAL))
         {
             girl.anal(2);
             m_ImageType = EImageBaseType::ANAL;
@@ -192,7 +192,7 @@ bool FeedPoor::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
 
     if (sex)
     {
-        if (brothel.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || brothel.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
+        if (girl.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || girl.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
         {
             girl.AddMessage(ss.str(), EImageBaseType::VAGINAL, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             girl.normalsex(2);
@@ -205,7 +205,7 @@ bool FeedPoor::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
             }
         }
-        else if (brothel.is_sex_type_allowed(SKILL_ANAL))
+        else if (girl.is_sex_type_allowed(SKILL_ANAL))
         {
             girl.AddMessage(ss.str(), EImageBaseType::ANAL, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             girl.anal(2);

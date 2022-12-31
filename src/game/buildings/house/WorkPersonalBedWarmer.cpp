@@ -962,28 +962,28 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             imagetype = EImageBaseType::STRIP;
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::STRIP, Day0Night1);
         }
-        else if (roll_d <= 20 && brothel->is_sex_type_allowed(SKILL_TITTYSEX))
+        else if (roll_d <= 20 && girl.is_sex_type_allowed(SKILL_TITTYSEX))
         {
             girl.tittysex(2);
             ss << "uses her tits on you.\n \n";
             imagetype = EImageBaseType::TITTY;
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::TITTY, Day0Night1);
         }
-        else if (roll_d <= 30 && brothel->is_sex_type_allowed(SKILL_HANDJOB))
+        else if (roll_d <= 30 && girl.is_sex_type_allowed(SKILL_HANDJOB))
         {
             girl.handjob(2);
             ss << "gives you a hand job.\n \n";
             imagetype = EImageBaseType::HAND;
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::HAND, Day0Night1);
         }
-        else if (roll_d <= 40 && brothel->is_sex_type_allowed(SKILL_FOOTJOB))
+        else if (roll_d <= 40 && girl.is_sex_type_allowed(SKILL_FOOTJOB))
         {
             girl.footjob(2);
             ss << "gives you a foot job.\n \n";
             imagetype = EImageBaseType::FOOT;
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::FOOT, Day0Night1);
         }
-        else if (roll_d <= 50 && brothel->is_sex_type_allowed(SKILL_ORALSEX))
+        else if (roll_d <= 50 && girl.is_sex_type_allowed(SKILL_ORALSEX))
         {
             girl.oralsex(2);
             ss << "decided to suck your cock.\n \n";
@@ -992,7 +992,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::ORAL, Day0Night1);
 
         }
-        else if (roll_d <= 60 && brothel->is_sex_type_allowed(SKILL_ANAL))
+        else if (roll_d <= 60 && girl.is_sex_type_allowed(SKILL_ANAL))
         {
             girl.anal(2);
             ss << "lets you use her ass.\n \n";
@@ -1000,7 +1000,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             imagetype = EImageBaseType::ANAL;
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::ANAL, Day0Night1);
         }
-        else if (roll_d <= 70 && brothel->is_sex_type_allowed(SKILL_BDSM))
+        else if (roll_d <= 70 && girl.is_sex_type_allowed(SKILL_BDSM))
         {
             girl.bdsm(2);
             ss << "lets you tie her up.\n \n";
@@ -1013,7 +1013,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::BDSM, Day0Night1);
             girl.calc_pregnancy(&g_Game->player(), 1.0);
         }
-        else if (roll_d <= 80 && brothel->is_sex_type_allowed(SKILL_NORMALSEX))
+        else if (roll_d <= 80 && girl.is_sex_type_allowed(SKILL_NORMALSEX))
         {
             girl.normalsex(2);
             ss << "has sex with you.\n \n";
