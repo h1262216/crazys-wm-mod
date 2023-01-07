@@ -1335,7 +1335,7 @@ double calc_pilfering(sGirl& girl)
     return factor;    // otherwise, she stays honest (aside from addict factored-in earlier)
 }
 
-sPaymentData cJobManager::CalculatePay(sGirlShiftData shift)
+sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift)
 {
     sPaymentData retval{0, 0, 0, 0, 0};
     // no pay or tips, no need to continue

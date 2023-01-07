@@ -120,6 +120,7 @@ bool Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift){
         enjoy += uniform(0, 1);
         add_text("shift.neutral");
     }
+    auto& ss = active_shift().shift_message();
     ss << "\n\n";
 
     // slave girls not being paid for a job that normally you would pay directly for do less work
@@ -209,6 +210,7 @@ CleanFarm::CleanFarm() : Cleaning(JOB_FARMHAND, "FarmHand.xml") {
 }
 
 void CleanFarm::DoneEarly(sGirl& girl) {
+    auto& ss = active_shift().shift_message();
     ss << "${name} finished her cleaning early, so she ";
     int roll_c = d100();
     if (!is_night_shift() && chance(33))    // 33% chance she will watch the sunset when working day shift
@@ -240,6 +242,7 @@ CleanClinic::CleanClinic() : Cleaning(JOB_JANITOR, "Janitor.xml") {
 }
 
 void CleanClinic::DoneEarly(sGirl& girl) {
+    auto& ss = active_shift().shift_message();
     auto brothel = girl.m_Building;
     if (girl.is_pregnant() && girl.health() < 90)
     {
@@ -291,6 +294,7 @@ CleanBrothel::CleanBrothel() : Cleaning(JOB_CLEANING, "CleanBrothel.xml") {
 }
 
 void CleanBrothel::DoneEarly(sGirl& girl) {
+    auto& ss = active_shift().shift_message();
     auto brothel = girl.m_Building;
 
     int choice = uniform(0, 5);
@@ -389,6 +393,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) {
 }
 
 void CleanBrothel::BJEvent(sGirl& girl) {
+    auto& ss = active_shift().shift_message();
     auto brothel = girl.m_Building;
     ss << "${name} finished her cleaning early, so she hung out at the brothel, offering to \"clean off\" finished customers with her mouth.\n";//Made it actually use quote marks CRAZY
     int tips = uniform(-1, 4); //how many 'tips' she clean? <5 for now, considered adjusting to amount playtime - didn't seem worth complexity

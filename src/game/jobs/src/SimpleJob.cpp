@@ -89,6 +89,7 @@ void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
 
 
 void cSimpleJob::shift_enjoyment() {
+    auto& ss = active_shift().shift_message();
     ss << "\n";
     int roll = d100();
     if (roll <= 5)

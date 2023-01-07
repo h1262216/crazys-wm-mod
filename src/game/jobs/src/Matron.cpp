@@ -94,6 +94,7 @@ double MatronJob::GetPerformance(const sGirl& girl, bool estimate) const {
 }
 
 void MatronJob::DoWork(sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     auto& girl = shift.girl();
     bool is_night = shift.IsNightShift;
     // DisobeyCheck is done in the building flow.
@@ -138,6 +139,7 @@ int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
 }
 
 void MatronJob::HandleMatronResult(sGirl& girl, int &conf) {
+    auto& ss = active_shift().shift_message();
     int numgirls = num_girls(*girl.m_Building);
     int check = d100();
     if (check < 10 && numgirls >(girl.service() + girl.confidence()) * 3)
@@ -187,6 +189,7 @@ void MatronJob::ApplyMatronEffect(const sGirl& girl) {
 }
 
 void BrothelMatronJob::DoWork(sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     auto& girl = shift.girl();
     bool is_night = shift.IsNightShift;
 

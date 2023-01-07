@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -66,6 +66,7 @@ namespace {
 
         bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
         bool CheckCanWork(sGirl& girl, bool is_night) override;
+        std::unique_ptr<Combatant> CreateBeast(sGirlShiftData& shift) const;
     };
 
     class FightGirls : public FighterJob {
@@ -90,6 +91,7 @@ CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "CityGuard.xml", {ACTION_WORK
 }
 
 bool CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     int roll_a = d100();
     int enjoy = 0, enjoyc = 0, sus = 0;
 
@@ -170,6 +172,7 @@ FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "FightBeasts.xml", {ACT
 }
 
 bool FightBeasts::CheckCanWork(sGirl& girl, bool is_night) {
+    auto& ss = active_shift().shift_message();
     if (g_Game->storage().beasts() < 1)
     {
         add_text("no-beasts");
@@ -195,6 +198,7 @@ void FighterJob::on_pre_shift(sGirlShiftData& shift) {
 }
 
 bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     bool has_armor = girl.get_num_item_equiped(sInventoryItem::Armor);
     bool has_wpn = girl.get_num_item_equiped(sInventoryItem::Weapon) + girl.get_num_item_equiped(sInventoryItem::SmWeapon);
     int lack_of_equipment = 0;
@@ -396,11 +400,24 @@ bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     return false;
 }
 
+std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const {
+    if(shift.building().ActiveMatron()) {
+        if(shift.Performance < 120) {
+        }
+    } else {
+        auto beast = std::make_unique<Combatant>("Beast", 100, 0, 0,
+                                                 g_Dice.in_range(40, 80), g_Dice.in_range(40, 80), 0,
+                                                 g_Dice.in_range(40, 80), g_Dice.in_range(40, 80));
+    }
+
+}
+
 FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "FightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
     m_Info.NightOnly = true;
 }
 
 bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     int enjoy = 0, fame = 0;
     auto tempgirl = g_Game->CreateRandomGirl(SpawnReason::ARENA);
     if (tempgirl) {
@@ -558,6 +575,7 @@ void FightTraining::on_pre_shift(sGirlShiftData& shift) {
 }
 
 bool FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     int enjoy = 0;                                                //
     int train = 0;                                                // main skill trained
     int tcom = girl.combat();                                    // Starting level - train = 1
@@ -800,10 +818,12 @@ bool FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     return false;
 }
 
+void RegisterArenaProducers(cJobManager& mgr);
 
 void RegisterArenaJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<CityGuard>());
     mgr.register_job(std::make_unique<FightBeasts>());
     mgr.register_job(std::make_unique<FightGirls>());
     mgr.register_job(std::make_unique<FightTraining>());
+    RegisterArenaProducers(mgr);
 }

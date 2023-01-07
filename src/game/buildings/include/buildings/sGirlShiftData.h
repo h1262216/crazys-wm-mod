@@ -22,6 +22,7 @@
 
 #include "Constants.h"
 #include <array>
+#include <sstream>
 
 class sGirl;
 class IBuildingShift;
@@ -53,11 +54,15 @@ struct sGirlShiftData {
     [[nodiscard]] cRng& rng() { return *m_Rng; }
     [[nodiscard]] int get_var(int index) const { return m_ProcessingCache.at(index); }
     void set_var(int index, int value) { m_ProcessingCache.at(index) = value; }
+
+    std::stringstream& shift_message() { return m_PartialMessage; }
 private:
     sGirl* m_Girl = nullptr;
     IBuildingShift* m_BuildingShift = nullptr;
     cRng* m_Rng;
     std::array<int, NUM_JOB_VARIABLES> m_ProcessingCache;
+
+    std::stringstream m_PartialMessage;
 };
 
 #endif //WM_SGIRLSHIFTDATA_H

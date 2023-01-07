@@ -56,6 +56,7 @@ CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "Communit
 }
 
 bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     bool blow = false, sex = false;
     int fame = 0;
     auto msgtype = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
@@ -152,6 +153,7 @@ FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENT
 }
 
 bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     bool blow = false, sex = false;
     int feed = 0, fame = 0;
     int roll_b = d100();
@@ -254,6 +256,7 @@ Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORK
 }
 
 bool Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+    auto& ss = active_shift().shift_message();
     int roll_a = d100();
 
     if (roll_a <= 10)       { m_Enjoyment -= uniform(1, 3);    ss << "The addicts hassled her."; }

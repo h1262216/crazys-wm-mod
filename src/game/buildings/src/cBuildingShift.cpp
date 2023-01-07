@@ -273,7 +273,7 @@ void cBuildingShift::end_shift(bool is_night) {
     apply_to_girls([&](sGirl& current)
     {
         m_Building->GirlEndShift(current, is_night);
-        auto shift = get_girl_data(current);
+        auto& shift = get_girl_data(current);
         make_summary_message(shift);
     });
 }
@@ -281,7 +281,7 @@ void cBuildingShift::end_shift(bool is_night) {
 void cBuildingShift::update_girls(EJobPhase phase) {
     apply_to_girls(
     [&](auto& current) {
-        auto shift = get_girl_data(current);
+        auto& shift = get_girl_data(current);
         if(shift.Refused == ECheckWorkResult::ACCEPTS) {
             auto* job = g_Game->job_manager().get_job(shift.Job);
             if (job->phase() == phase) {

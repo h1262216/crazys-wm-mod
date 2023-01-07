@@ -32,7 +32,6 @@ class sBrothel;
 
 
 void IGenericJob::Work(sGirlShiftData& shift) {
-    ss.str("");
     auto& girl = shift.girl();
     m_ActiveData = &shift;
 

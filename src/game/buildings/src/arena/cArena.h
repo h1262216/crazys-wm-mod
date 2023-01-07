@@ -24,6 +24,8 @@
 
 #include "buildings/cBuilding.h"
 
+class cJobManager;
+
 // defines a single arena
 class sArena : public cBuilding
 {
@@ -38,7 +40,6 @@ public:
     void setup_customer(sCustomer& customer) const override;
     void AttractCustomers(IBuildingShift& shift, bool is_night) override;
     void EndShift(bool is_night) override;
-
 private:
     int m_Reputation = 0;
 };

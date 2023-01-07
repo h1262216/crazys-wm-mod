@@ -102,7 +102,6 @@ public:
     /// called by the job manager when the job gets registered.
     void OnRegisterJobManager(const cJobManager& manager);
 protected:
-    std::stringstream ss;
 
     // random functions
     cRng& rng() const;

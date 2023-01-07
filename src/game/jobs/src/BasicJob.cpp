@@ -101,6 +101,7 @@ bool cBasicJob::has_text(const std::string& prompt) const {
 
 std::stringstream& cBasicJob::add_text(const std::string& prompt) {
     auto& tpl = get_text(prompt);
+    auto& ss = active_shift().shift_message();
     interpolate_string(ss, tpl, [&](const std::string& var) -> std::string {
         if(var == "name") {
             return active_girl().FullName();
@@ -148,6 +149,7 @@ void cBasicJob::RegisterVariable(std::string name, sImagePreset& value) {
 }
 
 ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) {
+    auto& ss = active_shift().shift_message();
     if (girl.disobey_check(action, job()))
     {
         add_text("refuse");
@@ -158,6 +160,7 @@ ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action)
 }
 
 void cBasicJob::add_performance_text() {
+    auto& ss = active_shift().shift_message();
     if (active_shift().Performance >= 245)
     {
         add_text("work.perfect");

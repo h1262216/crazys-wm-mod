@@ -107,7 +107,7 @@ public:
 
     bool is_job_Paid_Player(JOBS Job);        //    WD:    Test for all jobs paid by player
     bool FullTimeJob(JOBS Job);            //    `J`    Test if job is takes both shifts
-    sPaymentData CalculatePay(sGirlShiftData shift);
+    sPaymentData CalculatePay(sGirlShiftData& shift);
 
     static bool is_Surgery_Job(int testjob);
 

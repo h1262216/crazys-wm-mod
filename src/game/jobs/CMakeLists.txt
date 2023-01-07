@@ -9,7 +9,7 @@ set(JOBS_SRC
         src/SimpleJob.cpp
         src/TextInterface.cpp
         src/WorkFreetime.cpp
-        src/Treatment.cpp
+        #src/Treatment.cpp
         )
 
 add_library(WmJobsInterface INTERFACE)

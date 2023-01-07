@@ -6,6 +6,7 @@ set(BUILDING_SRC
         src/IBuilding.cpp
         src/cBuilding.cpp
         src/arena/ArenaJobs.cpp
+        src/arena/Producers.cpp
         src/arena/cArena.cpp
         #src/brothel/BrothelJobs.cpp
         #src/brothel/Escort.cpp
