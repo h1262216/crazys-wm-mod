@@ -273,7 +273,7 @@ private:
 public:
     // END MOD
 
-    double job_performance(JOBS job, bool estimate=true) const;
+    [[deprecated]] double job_performance(JOBS job, bool estimate=true) const;
 
     // more useful functions
     int get_num_item_equiped(int Type) const;

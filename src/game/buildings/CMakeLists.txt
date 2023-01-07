@@ -33,11 +33,13 @@ set(BUILDING_SRC
         src/studio/StudioScenes.cpp
         )
 
+add_library(WmBuildingInterface INTERFACE)
+target_include_directories(WmBuildingInterface INTERFACE include)
 
 add_library(WmBuildingObjects OBJECT ${BUILDING_SRC})
-target_link_libraries(WmBuildingObjects PRIVATE WMEngineObjects lua::lua WmScriptingInterface WmCharacterInterface)
-target_include_directories(WmBuildingObjects PUBLIC include)
-target_include_directories(WmBuildingObjects PRIVATE include/buildings)
+target_link_libraries(WmBuildingObjects PRIVATE WMEngineObjects lua::lua WmScriptingInterface WmCharacterInterface WmJobsInterface)
+target_link_libraries(WmBuildingObjects PUBLIC WmBuildingInterface)
+target_include_directories(WmBuildingObjects PRIVATE include/buildings src)
 # TODO Fix includes!
 target_include_directories(WmBuildingObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
 set_target_properties(WmBuildingObjects PROPERTIES CXX_STANDARD 14)

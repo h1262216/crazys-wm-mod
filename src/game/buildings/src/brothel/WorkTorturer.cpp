@@ -20,7 +20,7 @@
 #include "cRng.h"
 #include <sstream>
 #include "IGame.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "buildings/cDungeon.h"
 #include "cGirls.h"
 

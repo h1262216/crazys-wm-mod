@@ -4,7 +4,7 @@
 #include "buildings/cDungeon.h"
 #include "cGold.h"
 #include "cGangManager.hpp"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "cObjectiveManager.hpp"
 #include "buildings/IBuilding.h"
 #include "sStorage.h"

@@ -21,7 +21,7 @@
 #include "cRng.h"
 #include <sstream>
 #include "IGame.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 
 #pragma endregion
 

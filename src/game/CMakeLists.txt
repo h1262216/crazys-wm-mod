@@ -1,6 +1,7 @@
 add_subdirectory(character)
 add_subdirectory(scripting)
 add_subdirectory(buildings)
+add_subdirectory(jobs)
 
 
 set(SCREENS_SRC
@@ -31,14 +32,6 @@ set(SCREENS_SRC
         screens/cGameWindow.cpp
         screens/cScreenGameConfig.cpp screens/cScreenInfoTraits.cpp)
 
-set(JOBS_SRC
-        jobs/WorkFreetime.cpp
-        jobs/Crafting.cpp
-        jobs/IGenericJob.cpp
-        jobs/Matron.cpp
-        jobs/JobData.cpp
-        jobs/Cleaning.cpp  jobs/BasicJob.cpp jobs/SimpleJob.cpp jobs/SimpleJob.h jobs/Treatment.cpp jobs/TextInterface.cpp)
-
 set(SRC cEvents.cpp
         cGangs.cpp
         cGangManager.cpp
@@ -47,7 +40,6 @@ set(SRC cEvents.cpp
         cGirlTorture.cpp
         cGold.cpp
         cInventory.cpp
-        cJobManager.cpp
         cNameList.cpp
         cObjectiveManager.cpp
         Constants.cpp
@@ -92,8 +84,8 @@ make_generated_header(
         SOURCE_FILE_TYPE "lua"
         OUTPUT "events.h")
 
-add_library(WmGameObjects OBJECT ${SCREENS_SRC} ${JOBS_SRC} ${SRC})
-target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects WmBuildingObjects)
+add_library(WmGameObjects OBJECT ${SCREENS_SRC} ${SRC})
+target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects WmBuildingObjects WmJobsObjects)
 add_dependencies(WmGameObjects generate_event_ids)
 set_target_properties(WmGameObjects PROPERTIES CXX_STANDARD 14)
 target_include_directories(WmGameObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -107,7 +99,9 @@ set(AllWmObjects
         $<TARGET_OBJECTS:WmScriptingObjects>
         $<TARGET_OBJECTS:WmCharacterObjects>
         $<TARGET_OBJECTS:WmBuildingObjects>
-        $<TARGET_OBJECTS:WMEngineObjects>)
+        $<TARGET_OBJECTS:WMEngineObjects>
+        $<TARGET_OBJECTS:WmJobsObjects>
+        )
 
 add_executable(WhoreMaster ${AllWmObjects} main.cpp)
 target_link_libraries(WhoreMaster PUBLIC WmGameObjects)

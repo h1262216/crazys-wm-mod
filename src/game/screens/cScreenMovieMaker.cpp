@@ -21,7 +21,7 @@
 #include "interface/cWindowManager.h"
 #include "widgets/IListBox.h"
 #include "cTariff.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include <sstream>
 #include "IGame.h"
 #include "buildings/studio/manager.h"

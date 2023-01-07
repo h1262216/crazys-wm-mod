@@ -10,7 +10,7 @@
 #include "character/cPlayer.h"
 #include <sstream>
 #include <CLog.h>
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "cGirls.h"
 
 namespace settings {

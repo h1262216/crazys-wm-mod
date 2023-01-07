@@ -35,7 +35,7 @@
 #include "events.h"
 #include "cNameList.h"
 #include "buildings/cDungeon.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 
 #include "utils/DirPath.h"
 #include "utils/FileList.h"

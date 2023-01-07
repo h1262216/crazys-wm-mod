@@ -22,7 +22,7 @@
 #include "house/cHouse.h"
 #include "cGangs.h"
 #include "IGame.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "character/predicates.h"
 #include "cGirls.h"
 extern cRng             g_Dice;

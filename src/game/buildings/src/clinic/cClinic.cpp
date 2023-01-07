@@ -21,7 +21,7 @@
 #include "cClinic.h"
 #include "cGangs.h"
 #include "IGame.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "utils/algorithms.hpp"
 #include "character/predicates.h"
 #include "events.h"

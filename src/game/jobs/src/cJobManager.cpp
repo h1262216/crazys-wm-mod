@@ -32,7 +32,7 @@
 #include "IGame.h"
 #include "events.h"
 #include "combat/combat.h"
-#include "jobs/Crafting.h"
+#include "Crafting.h"
 #include "Inventory.h"
 #include "cRival.h"
 #include "buildings/cDungeon.h"

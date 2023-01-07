@@ -23,7 +23,7 @@
 #include "cGangs.h"
 #include "IGame.h"
 #include "buildings/queries.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "character/predicates.h"
 
 extern cRng             g_Dice;

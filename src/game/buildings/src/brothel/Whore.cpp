@@ -30,7 +30,7 @@
 #include <algorithm>
 #include "IGame.h"
 #include "events.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "cGirls.h"
 #include "character/predicates.h"
 

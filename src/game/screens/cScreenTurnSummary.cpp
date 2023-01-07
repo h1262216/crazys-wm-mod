@@ -30,7 +30,7 @@
 
 #include "widgets/cImageItem.h"
 #include "IGame.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include <sstream>
 #include "cRival.h"
 #include "images/cImageLookup.h"

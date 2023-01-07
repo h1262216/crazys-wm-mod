@@ -18,7 +18,7 @@
  */
 
 #include "jobs/Treatment.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
 #include "buildings/IBuilding.h"

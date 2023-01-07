@@ -26,7 +26,7 @@
 #include "cGangs.h"
 #include <sstream>
 #include "xml/util.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "Inventory.h"
 #include "character/cPlayer.h"
 #include "character/cGirlPool.h"

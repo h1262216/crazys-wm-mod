@@ -2,7 +2,8 @@
 #include "character/sGirl.h"
 #include "CLog.h"
 #include "XmlMisc.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
+#include "jobs/IGenericJob.h"
 #include "cTariff.h"
 #include "buildings/IBuilding.h"
 #include "IGame.h"
@@ -20,7 +21,6 @@
 #include "traits/ITraitsCollection.h"
 #include "predicates.h"
 #include "pregnancy.h"
-#include "jobs/IGenericJob.h"
 #include "buildings/cDungeon.h"
 
 extern cRng g_Dice;

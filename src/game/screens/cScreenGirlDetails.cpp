@@ -21,7 +21,7 @@
 #include "cScreenGirlDetails.h"
 #include "interface/cWindowManager.h"
 #include "cTariff.h"
-#include "cJobManager.h"
+#include "jobs/cJobManager.h"
 #include "cGangs.h"
 #include "IGame.h"
 #include "CLog.h"
