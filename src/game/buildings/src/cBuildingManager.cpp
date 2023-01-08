@@ -220,3 +220,41 @@ bool cBuildingManager::has_any_girl_with(const cBuildingManager::girl_pred_fn& p
     }
     return false;
 }
+
+void cBuildingManager::next_week() {
+    for(auto& building: m_Buildings) {
+        try {
+            building->BeginWeek();
+        } catch (std::exception& exception) {
+            g_LogFile.error("girls", "Error when processing BeginWeek for building ", building->name(), ": ", exception.what());
+            g_Game->error("Error during Begin Week for building " + building->name() + ": " + exception.what());
+        }
+    }
+
+    for(auto& building: m_Buildings) {
+        try {
+            building->DayShift();
+        } catch (std::exception& exception) {
+            g_LogFile.error("girls", "Error when processing DayShift for building ", building->name(), ": ", exception.what());
+            g_Game->error("Error during the Day Shift for building " + building->name() + ": " + exception.what());
+        }
+    }
+
+    for(auto& building: m_Buildings) {
+        try {
+            building->NightShift();
+        } catch (std::exception& exception) {
+            g_LogFile.error("girls", "Error when processing NightShift for building ", building->name(), ": ", exception.what());
+            g_Game->error("Error during the Night Shift for building " + building->name() + ": " + exception.what());
+        }
+    }
+
+    for(auto& building: m_Buildings) {
+        try {
+            building->EndWeek();
+        } catch (std::exception& exception) {
+            g_LogFile.error("girls", "Error when processing EndWeek for building ", building->name(), ": ", exception.what());
+            g_Game->error("Error during End Week for building " + building->name() + ": " + exception.what());
+        }
+    }
+}

@@ -63,6 +63,15 @@ bool cBuilding::matron_on_shift(int shift) const
     return num_girls_on_job(*this, matron_job(), shift) > 0;
 }
 
+void cBuilding::DayShift() {
+    if(config().HasDayShift) {
+        m_Shift->run_shift(false);
+    }
+}
+void cBuilding::NightShift() {
+    m_Shift->run_shift(true);
+}
+
 void cBuilding::BeginWeek()
 {
     // reset the data
@@ -117,16 +126,6 @@ void cBuilding::BeginWeek()
     }
 
     onBeginWeek();
-}
-
-void cBuilding::Update()
-{
-    BeginWeek();
-    if(config().HasDayShift) {
-        m_Shift->run_shift(false);
-    }
-    m_Shift->run_shift(true);
-    EndWeek();
 }
 
 void cBuilding::GirlEndShift(sGirl& girl, bool is_night) {

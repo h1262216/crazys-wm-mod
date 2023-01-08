@@ -157,6 +157,8 @@ void cBuildingShift::run_shift(bool is_night) {
     g_LogFile.info("shift", "Running Prepare phase");
     update_girls(EJobPhase::PREPARE);
     m_Building->AttractCustomers(*this, is_night);
+    g_LogFile.info("shift", "Running Produce phase");
+    update_girls(EJobPhase::PRODUCE);
     debug_resources();
     g_LogFile.info("shift", "This shift attracted ", m_Customers.size(), " customers");
     g_LogFile.info("shift", "Running Main phase");

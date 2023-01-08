@@ -419,14 +419,7 @@ void cGame::NextWeek()
     gang_manager().GangStartOfShift();
 
     g_LogFile.info("turn", "Processing buildings");
-    for(auto& building : buildings().buildings()) {
-        try {
-            building->Update();
-        } catch (std::exception& exception) {
-            g_LogFile.error("girls", "Error when processing building ", building->name(), ": ", exception.what());
-            g_Game->error("Error when processing building " + building->name() + ": " + exception.what());
-        }
-    }
+    buildings().next_week();
 
     // clear the events of dungeon girls
     dungeon().ClearDungeonGirlEvents();
@@ -437,7 +430,7 @@ void cGame::NextWeek()
     // Update the bribe rate
     gold().bribes(GetBribeRate());
 
-    if (GetBankMoney() > 0)                                    // incraese the bank gold by 02%
+    if (GetBankMoney() > 0)                                    // increase the bank gold by 02%
     {
         int amount = (int)(GetBankMoney()*0.002f);
         m_Bank += amount;

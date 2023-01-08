@@ -184,6 +184,12 @@ public:
     virtual void AttractCustomers(IBuildingShift& shift, bool is_night);
 
     int get_variable(const std::string& name) const override;
+
+    // sub-functions for structuring the week processing
+    void BeginWeek();
+    void DayShift();
+    void NightShift();
+    void EndWeek();
 protected:
 
     // Calls `handler` for all girls that are not dead and are working in one of the given jobs during the shift.
@@ -192,10 +198,6 @@ protected:
     virtual void onBeginWeek() {};
 
 private:
-    // sub-functions for structuring the week processing
-    void BeginWeek();
-    void EndWeek();
-
 
     /// regain of health and decrease of tiredness every week, and runs item updates.
     void GirlEndWeek(sGirl& girl);

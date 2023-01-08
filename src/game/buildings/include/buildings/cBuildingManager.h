@@ -87,6 +87,8 @@ public:
         return m_Buildings;
     }
 
+    void next_week();
+
 private:
     std::unique_ptr<cBuilding> create_building(std::string type) const;
 
