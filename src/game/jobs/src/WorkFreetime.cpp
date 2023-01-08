@@ -29,6 +29,7 @@
 #include "cJobManager.h"
 #include "character/predicates.h"
 #include "buildings/cDungeon.h"
+#include "cGenericJob.h"
 
 /*    First we give her all the possible choices in the freetimechoice enum
    *    start each name with "FT_"
@@ -1357,9 +1358,9 @@ void WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
     girl.m_Money += U_Money;
 }
 
-class FreeTimeJob: public IGenericJob {
+class FreeTimeJob: public cGenericJob {
 public:
-    FreeTimeJob() : IGenericJob(JOB_RESTING) {
+    FreeTimeJob() : cGenericJob(JOB_RESTING) {
         m_Info.ShortName = "TOff";
         m_Info.Description = "She will take some time off, maybe do some shopping or walk around town. If the girl is unhappy she may try to escape.";
     }

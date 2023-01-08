@@ -22,16 +22,17 @@
 #define WM_TEXTINTERFACE_H
 
 #include <unordered_map>
+#include <unordered_set>
 #include <functional>
 #include "text/repo.h"
 
-class IGenericJob;
+class cGenericJob;
 class sImagePreset;
 
 class cJobTextInterface : public IInteractionInterface {
 public:
     cJobTextInterface() = delete;
-    explicit cJobTextInterface(IGenericJob* job) : m_Job(job) {}
+    explicit cJobTextInterface(cGenericJob* job) : m_Job(job) {}
 
     bool LookupBoolean(const std::string& name) const final;
 
@@ -41,12 +42,14 @@ public:
     void SetVariable(const std::string& name, int value) const final;
     void SetVariable(const std::string& name, std::string value) const final;
 
-    void RegisterVariable(std::string name, int& value);
+    void RegisterVariable(std::string name);
     void RegisterVariable(std::string name, sImagePreset& value);
 private:
-    std::unordered_map<std::string, int*> m_MappedIntValues;
+    int* SpecialVariable(const std::string& name) const;
+
+    std::unordered_set<std::string> m_MappedIntValues;
     std::unordered_map<std::string, std::function<void(std::string)>> m_MappedStringValues;
-    IGenericJob* m_Job;
+    cGenericJob* m_Job;
 };
 
 

@@ -380,7 +380,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     bool MadeChanges = true;  // whether a special case applies to specified job or not
 
     assert(m_OOPJobs[JobID] != nullptr);
-    auto check = m_OOPJobs[JobID]->is_job_valid(Girl, Day0Night1);
+    auto check = m_OOPJobs[JobID]->IsJobValid(Girl, Day0Night1);
     if(!check) {
         g_Game->push_message(check.Reason, 0);
         return false;
@@ -1516,7 +1516,7 @@ void cJobManager::CatchGirl(sGirl& girl, std::stringstream& fuckMessage, const s
     }
 }
 
-void cJobManager::register_job(std::unique_ptr<IGenericJob> job) {
+void cJobManager::register_job(std::unique_ptr<cGenericJob> job) {
     assert(job != nullptr);
     job->OnRegisterJobManager(*this);
     m_OOPJobs[job->job()] = std::move(job);

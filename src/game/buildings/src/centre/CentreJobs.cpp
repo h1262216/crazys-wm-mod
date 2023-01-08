@@ -28,6 +28,7 @@
 #include "character/cPlayer.h"
 #include "character/lust.h"
 #include "queries.h"
+#include "jobs/cJobManager.h"
 
 extern const char* const CounselingInteractionId;
 

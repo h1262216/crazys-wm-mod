@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "IGenericJob.h"
+#include "cGenericJob.h"
 #include <sstream>
 #include <cGirls.h>
 #include "character/sGirl.h"
@@ -26,11 +26,12 @@
 #include "IGame.h"
 #include "cInventory.h"
 #include "buildings/queries.h"
+#include "cJobManager.h"
 
-class MatronJob : public IGenericJob {
+class MatronJob : public cGenericJob {
 public:
     MatronJob(JOBS job, const char* WorkerTitle, const char* short_name, const char* description) :
-        IGenericJob(job), m_WorkerTitle(WorkerTitle) {
+        cGenericJob(job), m_WorkerTitle(WorkerTitle) {
         m_Info.Description = description;
         m_Info.ShortName = short_name;
         m_Info.FullTime = true;

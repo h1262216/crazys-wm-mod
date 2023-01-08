@@ -25,6 +25,7 @@
 #include "cInventory.h"
 #include "character/cPlayer.h"
 #include "buildings/IBuildingShift.h"
+#include "jobs/cJobManager.h"
 
 namespace settings {
     extern const char* MONEY_SELL_ITEM;
@@ -44,7 +45,8 @@ bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     {
         craftpoints -= dirtyloss * 2;
         shift.building().ProvideCleaning(dirtyloss * 10);
-        add_text("repair") << "\n\n";
+        add_text("repair");
+        add_literal("\n\n");
     }
 
     performance_msg();

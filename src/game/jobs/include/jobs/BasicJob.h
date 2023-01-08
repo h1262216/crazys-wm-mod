@@ -22,16 +22,14 @@
 
 #include <unordered_map>
 
-#include "IGenericJob.h"
+#include "cGenericJob.h"
 #include "JobData.h"
 
-
-class cBasicJob;
 class sImagePreset;
 class ITextRepository;
 class cJobTextInterface;
 
-class cBasicJob : public IGenericJob {
+class cBasicJob : public cGenericJob {
 public:
     explicit cBasicJob(JOBS job, std::string xml_file = {});
     ~cBasicJob() override;
@@ -40,38 +38,17 @@ public:
 protected:
     void apply_gains(sGirl& girl, int performance);
 
-    const std::string& get_text(const std::string& prompt) const;
-    bool has_text(const std::string& prompt) const;
-    std::stringstream& add_text(const std::string& prompt);
-
     void add_performance_text();
 
     // processing variables
     void InitWork(sGirlShiftData& shift) override;
-    int RegisterVariable(std::string name, int default_value);
-    void RegisterVariable(std::string name, sImagePreset& preset);
-
-    int GetVariable(int index) const;
-
-    void SetSubstitution(std::string key, std::string replace);
+    // void RegisterVariable(std::string name, sImagePreset& preset);
 
     ECheckWorkResult SimpleRefusalCheck(sGirl& girl, Action_Types action);
 
 private:
     cJobPerformance m_PerformanceData;
     cJobGains       m_Gains;
-
-    std::unique_ptr<ITextRepository> m_TextRepo;
-    std::unique_ptr<cJobTextInterface> m_Interface;
-
-    std::unordered_map<std::string, std::string> m_Replacements;
-    struct sVariableData {
-        std::string Name;
-        int Index;
-        int DefaultValue;
-    };
-    std::vector<sVariableData> m_Variables;
-    int m_VariableCounter = 0;
 protected:
     // protected, so derived classes can call the base-class version
     void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) override;

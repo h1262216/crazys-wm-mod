@@ -29,7 +29,8 @@ struct sGirl;
 struct sBrothel;
 struct sGang;
 class sCustomer;
-class cBuilding;
+class IBuilding;
+class cGenericJob;
 class IGenericJob;
 class sGirlShiftData;
 
@@ -91,7 +92,7 @@ public:
     void Setup();
 
     // - stuff that does processing for jobs
-    static bool AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, cBuilding* brothel, bool Day0Night1);
+    static bool AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, IBuilding* brothel, bool Day0Night1);
 
     // MYR: New code for security.  All the old code is still here, commented out.
     static bool work_related_violence(sGirl&, bool, bool);
@@ -103,7 +104,7 @@ public:
     static std::string GetGirlAttackedString(int attacktype = SKILL_COMBAT);    // `J` added attacktype to be used with sextype for more specific attacks defaulting to combat
 
 
-    static sCustomer GetMiscCustomer(cBuilding& brothel);
+    static sCustomer GetMiscCustomer(IBuilding& brothel);
 
     bool is_job_Paid_Player(JOBS Job);        //    WD:    Test for all jobs paid by player
     bool FullTimeJob(JOBS Job);            //    `J`    Test if job is takes both shifts
@@ -115,5 +116,5 @@ public:
 
     std::vector<std::unique_ptr<IGenericJob>> m_OOPJobs;
 
-    void register_job(std::unique_ptr<IGenericJob> job);
+    void register_job(std::unique_ptr<cGenericJob> job);
 };

@@ -24,6 +24,7 @@
 #include "cGirls.h"
 #include "character/predicates.h"
 #include "buildings/queries.h"
+#include "jobs/cJobManager.h"
 
 
 namespace {

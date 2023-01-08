@@ -18,9 +18,10 @@
  */
 
 #include "TextInterface.h"
-#include "IGenericJob.h"
+#include "cGenericJob.h"
 #include "character/sGirl.h"
 #include "CLog.h"
+#include <algorithm>
 
 bool cJobTextInterface::LookupBoolean(const std::string& name) const {
     return m_Job->active_girl().has_active_trait(name.c_str());
@@ -34,16 +35,14 @@ int cJobTextInterface::LookupNumber(const std::string& name) const {
     } else if(type == "skill") {
         return m_Job->active_girl().get_skill(get_skill_id(name.substr(split_point+1)));
     } else if (type.size() == name.size()) {
-        if(name == "Tips") {
-            return m_Job->m_ActiveData->Tips;
-        } else if (name == "Wages") {
-            return m_Job->m_ActiveData->Wages;
-        } else if (name == "Earnings") {
-            return m_Job->m_ActiveData->Earnings;
+        int* special = SpecialVariable(name);
+        if(special) {
+            return *special;
         }
-        try {
-            return *m_MappedIntValues.at(name);
-        } catch (const std::out_of_range& oor) {
+        int index = m_Job->FindVariable(name);
+        if(index != -1) {
+            return m_Job->active_shift().get_var(index);
+        } else {
             g_LogFile.error("job", "Unknown job variable '", name, '\'');
             BOOST_THROW_EXCEPTION(std::runtime_error("Unknown job variable: " + name));
         }
@@ -53,9 +52,29 @@ int cJobTextInterface::LookupNumber(const std::string& name) const {
     }
 }
 
+int* cJobTextInterface::SpecialVariable(const std::string& name) const {
+    if(name == "Tips") {
+        return &m_Job->m_ActiveData->Tips;
+    } else if (name == "Wages") {
+        return &m_Job->m_ActiveData->Wages;
+    } else if (name == "Earnings") {
+        return &m_Job->m_ActiveData->Earnings;
+    }
+    return nullptr;
+}
+
 void cJobTextInterface::SetVariable(const std::string& name, int value) const {
-    int* looked_up = m_MappedIntValues.at(name);
-    *looked_up = value;
+    int* special = SpecialVariable(name);
+    if(special) {
+        *special = value;
+        return;
+    }
+    int index = m_Job->FindVariable(name);
+    if(index != -1) {
+        return m_Job->active_shift().set_var(index, value);
+    } else {
+        BOOST_THROW_EXCEPTION(std::runtime_error("Could not find variable: " + name));
+    }
 }
 
 void cJobTextInterface::SetVariable(const std::string& name, std::string value) const {
@@ -66,8 +85,8 @@ void cJobTextInterface::TriggerEvent(const std::string& name) const {
     throw std::logic_error("Event triggers are not implemented yet");
 }
 
-void cJobTextInterface::RegisterVariable(std::string name, int& value) {
-    m_MappedIntValues[std::move(name)] = &value;
+void cJobTextInterface::RegisterVariable(std::string name) {
+    m_MappedIntValues.insert(std::move(name));
 }
 
 void cJobTextInterface::RegisterVariable(std::string name, sImagePreset& value) {

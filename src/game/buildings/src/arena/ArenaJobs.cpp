@@ -194,7 +194,7 @@ void FighterJob::on_pre_shift(sGirlShiftData& shift) {
         visitors += 2;
     }
     // TODO Trait-based arena visitors
-    shift.building().ProvideResource(DrawVisitorsId, visitors);
+    provide_resource(DrawVisitorsId, visitors);
 }
 
 bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
@@ -377,12 +377,12 @@ bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     {
         earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
     }
-    ProvideResource(FightsFameId, shift.Performance);
-    ProvideResource(BrutalityId, turn_brutality);
-    ProvideResource(SexualityId, turn_sexuality);
-    ProvideResource(CombatId, turn_combat);
-    ProvideResource(BeautyId, turn_beauty);
-    ProvideResource(ArenaFightId, 1);
+    provide_resource(FightsFameId, shift.Performance);
+    provide_resource(BrutalityId, turn_brutality);
+    provide_resource(SexualityId, turn_sexuality);
+    provide_resource(CombatId, turn_combat);
+    provide_resource(BeautyId, turn_beauty);
+    provide_resource(ArenaFightId, 1);
     shift.building().Finance().arena_income(earned);
     ss.str("");
     ss << "${name} drew in " << shift.Performance << " people to watch her and you earned " << earned << " from it.";
@@ -408,6 +408,7 @@ std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const
         auto beast = std::make_unique<Combatant>("Beast", 100, 0, 0,
                                                  g_Dice.in_range(40, 80), g_Dice.in_range(40, 80), 0,
                                                  g_Dice.in_range(40, 80), g_Dice.in_range(40, 80));
+        return beast;
     }
 
 }
@@ -463,7 +464,7 @@ bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
             }
             else
             {
-                add_text("victory") << "\n";
+                add_line("victory");
                 shift.Tips = uniform(100, 100 + girl.fame() + girl.charisma());
             }
         }
@@ -471,7 +472,7 @@ bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
         {
             enjoy = -uniform(1, 3);
             fame = -uniform(1, 3);
-            add_text("defeat") << "\n";
+            add_line("defeat");
             int cost = 150;
             shift.building().Finance().arena_costs(cost);
             ss << " You had to pay " << cost << " gold cause your girl lost.";
@@ -821,9 +822,9 @@ bool FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
 void RegisterArenaProducers(cJobManager& mgr);
 
 void RegisterArenaJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<CityGuard>());
-    mgr.register_job(std::make_unique<FightBeasts>());
-    mgr.register_job(std::make_unique<FightGirls>());
-    mgr.register_job(std::make_unique<FightTraining>());
+    cGenericJob::Register(mgr, std::make_unique<CityGuard>());
+    cGenericJob::Register(mgr, std::make_unique<FightBeasts>());
+    cGenericJob::Register(mgr, std::make_unique<FightGirls>());
+    cGenericJob::Register(mgr, std::make_unique<FightTraining>());
     RegisterArenaProducers(mgr);
 }

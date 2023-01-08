@@ -30,7 +30,8 @@ void cSimpleJob::DoWork(sGirlShiftData& shift)
     m_ImageType = m_Data.DefaultImage;
 
     if(has_text("work")) {
-        add_text("work") << "\n\n";
+        add_text("work");
+        add_literal("\n\n");
     }
 
     if(m_Data.IsCombatJob) {
@@ -45,7 +46,7 @@ void cSimpleJob::DoWork(sGirlShiftData& shift)
 cSimpleJob::cSimpleJob(JOBS job, const char* xml, sSimpleJobData data) : cBasicJob(job, xml), m_Data(data),
         m_ImageType(data.DefaultImage) {
     RegisterVariable("Enjoyment", m_Enjoyment);
-    RegisterVariable("Image", m_ImageType);
+    // RegisterVariable("Image", m_ImageType);
 }
 
 void cSimpleJob::HandleGains(sGirl& girl, int fame) {
@@ -70,7 +71,7 @@ ECheckWorkResult cSimpleJob::CheckWork(sGirl& girl, IBuildingShift& building, bo
 }
 
 void cSimpleJob::on_pre_shift(sGirlShiftData& shift) {
-    IGenericJob::on_pre_shift(shift);
+    cGenericJob::on_pre_shift(shift);
     if(shift.Refused == ECheckWorkResult::IMPOSSIBLE) return;
     if(!CheckCanWork(shift.girl(), shift.IsNightShift)) {
         shift.Refused = ECheckWorkResult::IMPOSSIBLE;

@@ -21,6 +21,7 @@
 #include "jobs/Crafting.h"
 #include "character/sGirl.h"
 #include "IGame.h"
+#include "cRng.h"
 
 class cBlacksmithJob : public GenericCraftingJob {
 public:
@@ -239,7 +240,7 @@ void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
 }
 
 void RegisterArenaProducers(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<cBlacksmithJob>());
-    mgr.register_job(std::make_unique<cCobblerJob>());
-    mgr.register_job(std::make_unique<cJewelerJob>());
+    cGenericJob::Register(mgr, std::make_unique<cBlacksmithJob>());
+    cGenericJob::Register(mgr, std::make_unique<cCobblerJob>());
+    cGenericJob::Register(mgr, std::make_unique<cJewelerJob>());
 }

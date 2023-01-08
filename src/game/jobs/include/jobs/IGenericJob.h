@@ -20,25 +20,13 @@
 #ifndef WM_IGENERICJOB_H
 #define WM_IGENERICJOB_H
 
-#include <vector>
-#include <memory>
-#include <sstream>
-#include "cJobManager.h"
 #include "Constants.h"
-#include "buildings/IBuildingShift.h"
-#include <boost/variant.hpp>
-
-namespace tinyxml2 {
-    class XMLElement;
-}
-
-
-using StatSkill = boost::variant<STATS, SKILLS>;
+#include <vector>
 
 class sGirl;
 class IBuildingShift;
-struct sGirlShiftData;
 class cRng;
+struct sGirlShiftData;
 
 enum class EJobPhase {
     PREPARE,  //!< Preparations to make the building ready for work: Cleaning, Security, Advertisement
@@ -74,94 +62,30 @@ public:
     enum class EJobClass {
         REGULAR_JOB, TREATMENT
     };
-    explicit IGenericJob(JOBS j, std::string xml_file = {}, EJobClass job_class = EJobClass::REGULAR_JOB);
     virtual ~IGenericJob() noexcept = default;
 
     // queries
-    const sJobInfo& get_info() const { return m_Info; }
-    JOBS job() const { return m_Info.JobId; }
-    EJobPhase phase() const { return m_Info.Phase; }
+    virtual const sJobInfo& get_info() const = 0;
+    JOBS job() const { return get_info().JobId; }
+    EJobPhase phase() const { return get_info().Phase; }
 
     /// Gets an estimate or actual value of how well the girl performs at this job
     virtual double GetPerformance(const sGirl& girl, bool estimate) const = 0;
 
     /// Checks whether the given girl can do this job.
-    virtual sJobValidResult is_job_valid(const sGirl& girl, bool night_shift) const;
+    virtual sJobValidResult IsJobValid(const sGirl& girl, bool night_shift) const = 0;
 
     /// Handles simple pre-shift setup, before any actual jobs are run.
     /// Note: This function cannot handle any
     /// stateful job processing. Multiple `PreShift` calls for different
     /// girls might happen before the corresponding `Work` calls.
-    void PreShift(sGirlShiftData& shift);
+    virtual void PreShift(sGirlShiftData& shift) = 0;
 
     /// Lets the girl do the job
-    void Work(sGirlShiftData& shift);
+    virtual void Work(sGirlShiftData& shift) = 0;
 
     virtual void HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night, cRng& rng) const {};
 
-    /// called by the job manager when the job gets registered.
-    void OnRegisterJobManager(const cJobManager& manager);
-protected:
-
-    // random functions
-    cRng& rng() const;
-    int d100() const;
-    bool chance(float percent) const;
-    int uniform(int min, int max) const;
-
-    sGirl& active_girl() const;
-    IBuildingShift& active_building() const;
-    bool is_night_shift() const;
-    sGirlShiftData& active_shift() const;
-
-    // resources
-    //  bulk resources
-    /// Consumes up to `amount` points of the given resource. If less is available,
-    /// that amount will we consumed. Returns the amount of actual consumption.
-    int ConsumeResource(const std::string& name, int amount);
-
-    /// Provides `amount` points of the given resource.
-    void ProvideResource(const std::string& name, int amount);
-
-    /// Tries to consume `amount` of the given resource. If not enough is available,
-    /// no resource is consumed and false is returned.
-    bool TryConsumeResource(const std::string& name, int amount);
-
-    //  one-on-one interactions
-    void ProvideInteraction(const std::string& name, int amount) const;
-    sGirl* RequestInteraction(const std::string& name);
-
-    bool HasInteraction(const std::string& name) const;
-
-    virtual void on_pre_shift(sGirlShiftData& shift);
-
-private:
-    virtual void InitWork(sGirlShiftData& shift) {}
-    virtual void DoWork(sGirlShiftData& shift) = 0;
-
-
-    /*! Checks whether the girl will work. There are two reasons why she might not:
-        She could refuse, or the job could not be possible because of external
-        circumstances. This function should report which reason applies.
-    */
-    virtual ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) = 0;
-
-    sGirlShiftData* m_ActiveData;
-
-    const cJobManager* m_JobManager = nullptr;
-
-    /// If the job has specified an xml file, this function will load the job data from there. If no file is
-    /// specified, nothing happens.
-    /// Note: Since this may call virtual functions, we cannot do this in the constructor.
-    /// Therefore, this is called when the job is registered to the JobManager
-    void load_job();
-    virtual void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) { };
-    std::string m_XMLFile;
-    EJobClass m_JobClass;
-protected:
-    sJobInfo m_Info;
-
-    friend class cJobTextInterface;
 };
 
 #endif //WM_IGENERICJOB_H
