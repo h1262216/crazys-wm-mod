@@ -31,8 +31,7 @@ namespace settings {
     extern const char* MONEY_SELL_ITEM;
 }
 
-bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     shift.Wages = m_Data.BaseWages * (1.0 + (shift.Performance - 70) / 100.0);
     auto msgtype = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
@@ -54,7 +53,7 @@ bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const
     //    Enjoyment and Tiredness        //
     DoWorkEvents(girl, shift);
     if(girl.is_dead())
-        return false;    // not refusing, she is dead
+        return;    // not refusing, she is dead
     // TODO tiredness
 
     // not receiving money reduces motivation
@@ -70,19 +69,13 @@ bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const
         }
     }
 
-    // Push out the turn report
-    girl.AddMessage(ss.str(), m_ImageType, msgtype);
-
     apply_gains(shift.Performance);
 
     // Update Enjoyment
     girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
-
-    return false;
 }
 
 float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) const {
-    auto& ss = active_shift().shift_message();
     int points_remaining = craft_points;
     int numitems = 0;
     float item_worth = 0.f;
@@ -103,10 +96,11 @@ float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) const {
         points_remaining -= item->m_Crafting.craft_cost();
         girl.mana(-item->m_Crafting.mana_cost());
         if (numitems == 0)    {
-            ss << "\n";
+            add_literal("\n");
             add_text("produce");
         }
-        ss << "\n" << item->m_Name;
+        add_literal("\n");
+        add_literal(item->m_Name);
         g_Game->player().add_item(item);
         numitems++;
 
@@ -136,7 +130,7 @@ cMakeItemJob::cMakeItemJob() :
 }
 
 void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
@@ -198,7 +192,7 @@ cMakePotionsJob::cMakePotionsJob() :
 }
 
 void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     int roll = uniform(0, 100) + (shift.Performance - 75) / 20;
     //enjoyed the work or not
     if (roll >= 90)
@@ -241,7 +235,7 @@ cTailorJob::cTailorJob() :
 }
 
 void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);

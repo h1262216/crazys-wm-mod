@@ -68,13 +68,15 @@ protected:
     bool is_night_shift() const;
     sGirlShiftData& active_shift() const;
 
-    // text
-    void add_literal(const std::string& prompt) const;
-
-    const std::string& get_text(const std::string& prompt) const;
+    // text and event messages
     bool has_text(const std::string& prompt) const;
+    const std::string& get_text(const std::string& prompt) const;
+
+    void add_literal(const std::string& text) const;
     void add_text(const std::string& prompt) const;
     void add_line(const std::string& prompt) const;
+
+    void generate_event() const;
 
     // resources -- just relay to the corresponding shift functions
     int consume_resource(const std::string& name, int amount) const;
@@ -84,7 +86,7 @@ protected:
     //  one-on-one interactions
     void provide_interaction(const std::string& name, int amount) const;
     sGirl* request_interaction(const std::string& name) const;
-    bool HasInteraction(const std::string& name) const;
+    bool has_interaction(const std::string& name) const;
 
     void SetSubstitution(std::string key, std::string replace);
 

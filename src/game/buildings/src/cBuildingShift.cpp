@@ -266,7 +266,7 @@ void cBuildingShift::handle_resting_girl(sGirlShiftData& shift) {
 }
 
 sGirlShiftData::sGirlShiftData(sGirl* girl, IBuildingShift* building, JOBS job, bool shift) :
-    Job(job), IsNightShift(shift), m_Girl(girl), m_BuildingShift(building), m_Rng(&g_Dice) {
+    Job(job), IsNightShift(shift), m_Girl(girl), m_BuildingShift(building), m_Rng(&g_Dice), EventImage(EImageBaseType::PROFILE) {
     m_ProcessingCache.fill(0);
 }
 

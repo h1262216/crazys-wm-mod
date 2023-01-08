@@ -65,7 +65,7 @@ struct sTraitChange {
     int Threshold;
     Action_Types Action;
     std::string Message;
-    EEventType EventType = EVENT_GOODNEWS;
+    ::EEventType EventType = EVENT_GOODNEWS;
 
     int PerformanceRequirement = -1000;        // minimum job performance to consider the trait
     int Chance = 100;

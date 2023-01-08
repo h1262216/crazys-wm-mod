@@ -3,6 +3,7 @@
 
 <!ELEMENT Description (#PCDATA)>
 <!ELEMENT Config ANY>
+<!ATTLIST Config Shift (both|day-only|night-only|full) FreeOnly (0|1) #IMPLIED>
 
 <!ELEMENT Performance (Factor|Trait|Mod)*>
 <!ATTLIST Performance Modifier CDATA #IMPLIED>

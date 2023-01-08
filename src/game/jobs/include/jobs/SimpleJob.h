@@ -37,8 +37,7 @@ class cSimpleJob : public cBasicJob {
 public:
     cSimpleJob(JOBS job, const char* xml, sSimpleJobData data);
     void DoWork(sGirlShiftData& shift) const override;
-    /// Run the job processing, and return whether the girl refused.
-    virtual bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const = 0;
+    virtual void JobProcessing(sGirl& girl, sGirlShiftData& shift) const = 0;
 
 protected:
     bool CheckCanWork(sGirl& girl) const override;
@@ -69,8 +68,6 @@ protected:
         }
     }
 
-    // TODO Fix these
-    mutable sImagePreset m_ImageType;
     mutable int m_Enjoyment;
 };
 

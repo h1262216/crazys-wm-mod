@@ -27,7 +27,7 @@
 void cSimpleJob::DoWork(sGirlShiftData& shift) const
 {
     shift.Wages = m_Data.BaseWages;
-    m_ImageType = m_Data.DefaultImage;
+    shift.EventImage = m_Data.DefaultImage;
 
     if(has_text("work")) {
         add_text("work");
@@ -41,10 +41,12 @@ void cSimpleJob::DoWork(sGirlShiftData& shift) const
     }
 
     JobProcessing(shift.girl(), shift);
+    if(!shift.EventMessage.str().empty()) {
+        generate_event();
+    }
 }
 
-cSimpleJob::cSimpleJob(JOBS job, const char* xml, sSimpleJobData data) : cBasicJob(job, xml), m_Data(data),
-        m_ImageType(data.DefaultImage) {
+cSimpleJob::cSimpleJob(JOBS job, const char* xml, sSimpleJobData data) : cBasicJob(job, xml), m_Data(data) {
     RegisterVariable("Enjoyment", m_Enjoyment);
     // RegisterVariable("Image", m_ImageType);
 }
@@ -73,18 +75,17 @@ void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
 
 
 void cSimpleJob::shift_enjoyment() const {
-    auto& ss = active_shift().shift_message();
-    ss << "\n";
+    add_literal("\n");
     int roll = d100();
     if (roll <= 5)
     {
         if(has_text("shift.bad")) {
             add_text("shift.bad");
         } else {
-            ss << rng().select_text({
+            add_literal(rng().select_text({
                                             "Some of the patrons abused her during the shift.",
                                             "Several patrons heckled her and made her shift generally unpleasant."
-                                    });
+                                    }));
         }
         m_Enjoyment -= 1;
     }
@@ -93,7 +94,7 @@ void cSimpleJob::shift_enjoyment() const {
         if(has_text("shift.good")) {
             add_text("shift.good");
         } else {
-            ss << "She had a pleasant time working.";
+            add_literal("She had a pleasant time working.");
         }
         m_Enjoyment += 3;
     }
@@ -102,7 +103,7 @@ void cSimpleJob::shift_enjoyment() const {
         if(has_text("shift.neutral")) {
             add_text("shift.neutral");
         } else {
-            ss << "Otherwise, the shift passed uneventfully.";
+            add_literal("Otherwise, the shift passed uneventfully.");
         }
         m_Enjoyment += 1;
     }

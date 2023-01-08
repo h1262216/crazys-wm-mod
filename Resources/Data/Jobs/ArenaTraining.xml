@@ -6,6 +6,8 @@
 
     <Performance />
 
+    <Config Shift="day-only" />
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>

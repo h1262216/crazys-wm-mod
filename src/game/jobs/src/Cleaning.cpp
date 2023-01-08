@@ -31,7 +31,7 @@ namespace {
     struct Cleaning : public cSimpleJob {
         Cleaning(JOBS job, const char* xml);
 
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+        void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
         void CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) const;
 
         virtual void DoneEarly(sGirl& girl) const = 0;
@@ -97,7 +97,7 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
         cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, ACTION_WORKCLEANING, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", is_night);
 }
 
-bool Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+void Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     double CleanAmt = shift.Performance;
     int enjoy = 0;
     bool playtime = false;
@@ -121,7 +121,7 @@ bool Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         enjoy += uniform(0, 1);
         add_text("shift.neutral");
     }
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     ss << "\n\n";
 
     // slave girls not being paid for a job that normally you would pay directly for do less work
@@ -143,11 +143,7 @@ bool Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         DoneEarly(girl);
     }
 
-    // do all the output
-    girl.AddMessage(ss.str(), m_ImageType, is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
     CleaningUpdateGirl(girl, is_night_shift(), enjoy, CleanAmt);
-    return false;
 }
 
 CleanArena::CleanArena() : Cleaning(JOB_CLEANARENA, "CleanArena.xml") {
@@ -211,7 +207,7 @@ CleanFarm::CleanFarm() : Cleaning(JOB_FARMHAND, "FarmHand.xml") {
 }
 
 void CleanFarm::DoneEarly(sGirl& girl) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     ss << "${name} finished her cleaning early, so she ";
     int roll_c = d100();
     if (!is_night_shift() && chance(33))    // 33% chance she will watch the sunset when working day shift
@@ -243,7 +239,7 @@ CleanClinic::CleanClinic() : Cleaning(JOB_JANITOR, "Janitor.xml") {
 }
 
 void CleanClinic::DoneEarly(sGirl& girl) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     auto brothel = girl.m_Building;
     if (girl.is_pregnant() && girl.health() < 90)
     {
@@ -295,7 +291,7 @@ CleanBrothel::CleanBrothel() : Cleaning(JOB_CLEANING, "CleanBrothel.xml") {
 }
 
 void CleanBrothel::DoneEarly(sGirl& girl) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     auto brothel = girl.m_Building;
 
     int choice = uniform(0, 5);
@@ -342,7 +338,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) const {
                 // TODO adjust tips
                 //tips = 20; // you tip her for cleaning you
                 ss << "she came to your room and cleaned you.\n \n${name} ran you a hot bath and bathed naked with you.";/* Need a check here so your daughters won't do this zzzzz FIXME*/
-                m_ImageType = EImageBaseType::BATH;
+                active_shift().EventImage = EImageBaseType::BATH;
 
                 if (girl.is_sex_type_allowed(SKILL_TITTYSEX))
                 {
@@ -367,7 +363,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) const {
                         girl.spirit(-uniform(0, 1));
                         // tips += (rng % 20);  // tip her for hotness
                     }
-                    m_ImageType = EImagePresets::BLOWJOB;
+                    active_shift().EventImage = EImagePresets::BLOWJOB;
                 }
                 girl.service(uniform(0, 4));
                 girl.medicine(uniform(0, 1));
@@ -394,7 +390,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) const {
 }
 
 void CleanBrothel::BJEvent(sGirl& girl) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     auto brothel = girl.m_Building;
     ss << "${name} finished her cleaning early, so she hung out at the brothel, offering to \"clean off\" finished customers with her mouth.\n";//Made it actually use quote marks CRAZY
     int tips = uniform(-1, 4); //how many 'tips' she clean? <5 for now, considered adjusting to amount playtime - didn't seem worth complexity
@@ -405,7 +401,7 @@ void CleanBrothel::BJEvent(sGirl& girl) const {
         // TODO Tips
         //tips *= 5; //customers tip 5 gold each
         //ss << "She got " << tips << " in tips for this extra service.\n";
-        m_ImageType = EImagePresets::BLOWJOB;
+        active_shift().EventImage = EImagePresets::BLOWJOB;
         girl.m_NumCusts += tips;
     }
     else

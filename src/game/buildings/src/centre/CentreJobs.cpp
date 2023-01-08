@@ -36,19 +36,19 @@ namespace {
     class CommunityService: public cSimpleJob {
     public:
         CommunityService();
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+        void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     };
 
     class FeedPoor : public cSimpleJob {
     public:
         FeedPoor();
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+        void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     };
 
     class Counselor : public cSimpleJob {
     public:
         Counselor();
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+        void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     };
 }
 
@@ -56,8 +56,8 @@ CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "Communit
 
 }
 
-bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+    auto& ss = active_shift().EventMessage;
     bool blow = false, sex = false;
     int fame = 0;
     auto msgtype = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
@@ -92,7 +92,7 @@ bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         if (girl.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || girl.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
         {
             girl.normalsex(2);
-            m_ImageType = EImageBaseType::VAGINAL;
+            shift.EventImage = EImageBaseType::VAGINAL;
             if (girl.lose_trait(traits::VIRGIN))
             {
                 ss << "\nShe is no longer a virgin.\n";
@@ -105,7 +105,7 @@ bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         else if (girl.is_sex_type_allowed(SKILL_ANAL))
         {
             girl.anal(2);
-            m_ImageType = EImageBaseType::ANAL;
+            shift.EventImage = EImageBaseType::ANAL;
         }
         //brothel.m_Happiness += 100;
         girl.lust_release_regular();
@@ -119,7 +119,7 @@ bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         dispo += 4;
         girl.oralsex(2);
         fame += 1;
-        m_ImageType = EImagePresets::BLOWJOB;
+        shift.EventImage = EImagePresets::BLOWJOB;
     }
 
     if (girl.is_slave())
@@ -135,7 +135,6 @@ bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     }
 
     g_Game->player().disposition(dispo);
-    girl.AddMessage(ss.str(), m_ImageType, msgtype);
 
     int help = shift.Performance / 10;        //  1 helped per 10 point of performance
 
@@ -145,21 +144,17 @@ bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 
     // Improve stats
     HandleGains(girl, fame);
-
-    return false;
 }
 
 FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENTRE, 20, EImageBaseType::PROFILE}) {
 
 }
 
-bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+    auto& ss = active_shift().EventMessage;
     bool blow = false, sex = false;
     int feed = 0, fame = 0;
     int roll_b = d100();
-
-    auto msg_type = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //Adding cust here for use in scripts...
     // sCustomer Cust = cJobManager::GetMiscCustomer(brothel);
@@ -199,7 +194,7 @@ bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     {
         if (girl.is_sex_type_allowed(SKILL_NORMALSEX) && (roll_b <= 50 || girl.is_sex_type_allowed(SKILL_ANAL))) //Tweak to avoid an issue when roll > 50 && anal is restricted
         {
-            girl.AddMessage(ss.str(), EImageBaseType::VAGINAL, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+            shift.EventImage = EImageBaseType::VAGINAL;
             girl.normalsex(2);
             if (girl.lose_trait(traits::VIRGIN))
             {
@@ -212,7 +207,7 @@ bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         }
         else if (girl.is_sex_type_allowed(SKILL_ANAL))
         {
-            girl.AddMessage(ss.str(), EImageBaseType::ANAL, msg_type);
+            shift.EventImage = EImageBaseType::ANAL;
             girl.anal(2);
         }
         //brothel.m_Happiness += 100;
@@ -227,11 +222,11 @@ bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         dispo += 4;
         girl.oralsex(2);
         fame += 1;
-        girl.AddMessage(ss.str(), EImagePresets::BLOWJOB, msg_type);
+        shift.EventImage = EImagePresets::BLOWJOB;
     }
     else
     {
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, msg_type);
+        shift.EventImage = EImageBaseType::PROFILE;
     }
 
     feed += shift.Performance / 10;        //  1 feed per 10 point of performance
@@ -242,13 +237,11 @@ bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         cost += uniform(2, 5); // 2-5 gold per customer
     }
     shift.building().Finance().centre_costs(cost);
-    ss.str("");
-    ss << "${name} feed " << feed << " costing you " << cost << " gold.";
-    girl.AddMessage(ss.str(), m_ImageType, msg_type);
+    std::stringstream summary;
+    summary << "${name} feed " << feed << " costing you " << cost << " gold.";
+    girl.AddMessage(summary.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
 
     HandleGains(girl, fame);
-
-    return false;
 }
 
 Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORKCOUNSELOR, 25}) {
@@ -256,8 +249,8 @@ Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORK
     m_Info.FreeOnly = true;
 }
 
-bool Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+void Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+    auto& ss = active_shift().EventMessage;
     int roll_a = d100();
 
     if (roll_a <= 10)       { m_Enjoyment -= uniform(1, 3);    ss << "The addicts hassled her."; }
@@ -274,8 +267,6 @@ bool Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     provide_interaction(CounselingInteractionId, 2);
 
     HandleGains(girl, 0);
-
-    return false;
 }
 
 void RegisterCentreJobs(cJobManager& mgr) {

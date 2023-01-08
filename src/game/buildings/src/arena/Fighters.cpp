@@ -38,25 +38,20 @@ void FighterJob::handle_combat_stat(const std::string& name, int value) const {
     provide_resource(name, std::min(std::max(0, value), 100));
 }
 
-FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "FightBeasts.xml", {ACTION_COMBAT, 100, EImageBaseType::COMBAT, true}) {
-    m_Info.NightOnly = true;
+FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml", {ACTION_COMBAT, 100, EImageBaseType::COMBAT, true}) {
 }
 
 bool FightBeasts::CheckCanWork(sGirl& girl) const {
-    auto& ss = active_shift().shift_message();
     if (g_Game->storage().beasts() < 1)
     {
         add_text("no-beasts");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
         return false;
     }
     if(girl.health() < 50) {
         add_text("low-health");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
         return false;
     } else if (girl.is_pregnant()) {
         add_text("is-pregnant");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
         return false;
     }
     return true;
@@ -77,11 +72,10 @@ void FighterJob::on_pre_shift(sGirlShiftData& shift) const {
     provide_resource(DrawVisitorsId, visitors);
 }
 
-bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     bool has_armor = girl.get_num_item_equiped(sInventoryItem::Armor);
     bool has_wpn = girl.get_num_item_equiped(sInventoryItem::Weapon) + girl.get_num_item_equiped(sInventoryItem::SmWeapon);
     int lack_of_equipment = 0;
-    sImagePreset image = m_ImageType;
     if(!has_armor && !has_wpn) {
         lack_of_equipment = 2;
         add_line("no-equipment");
@@ -249,7 +243,7 @@ bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 
             girl.lust_release_spent();
             girl.gain_attribute(SKILL_BEASTIALITY, 1, 2, 50);
-            image = EImageBaseType::RAPE_BEAST;
+            shift.EventImage = EImageBaseType::RAPE_BEAST;
             if (!girl.calc_insemination(cGirls::GetBeast(), 1.0))
             {
                 g_Game->push_message(girl.FullName() + " has gotten inseminated", 0);
@@ -267,8 +261,6 @@ bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     if (kills < 0) kills = 0;                // can't gain any
     g_Game->storage().add_to_beasts(-kills);
 
-    girl.AddMessage(shift.shift_message().str(), image, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
     int earned = 0;
     for (int i = 0; i < shift.Performance; i++)
     {
@@ -281,10 +273,6 @@ bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     handle_combat_stat(BeautyId, turn_beauty);
     provide_resource(ArenaFightId, 1);
     shift.building().Finance().arena_income(earned);
-    std::stringstream ss;
-    ss.str("");
-    ss << "${name} drew in " << shift.Performance << " people to watch her and you earned " << earned << " from it.";
-    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     girl.upd_Enjoyment(ACTION_COMBAT, turn_enjoy);
 
@@ -294,8 +282,6 @@ bool FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     {
         cGirls::PossiblyGainNewTrait(girl, "Strong", 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", shift.IsNightShift);
     }
-
-    return false;
 }
 
 std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const {
@@ -315,12 +301,10 @@ std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const
     }
 }
 
-FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "FightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
-    m_Info.NightOnly = true;
+FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
 }
 
-bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+void FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     int enjoy = 0, fame = 0;
     auto tempgirl = g_Game->CreateRandomGirl(SpawnReason::ARENA);
     if (tempgirl) {
@@ -358,7 +342,7 @@ bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
                 }
                 msg << Tmsg.str();
                 Umsg << Tmsg.str();
-                ss << msg.str();
+                add_literal(msg.str());
                 g_Game->push_message(msg.str(), 0);
                 ugirl->AddMessage(Umsg.str(), EImageBaseType::PROFILE, EVENT_DUNGEON);
 
@@ -377,7 +361,7 @@ bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
             add_line("defeat");
             int cost = 150;
             shift.building().Finance().arena_costs(cost);
-            ss << " You had to pay " << cost << " gold cause your girl lost.";
+            shift.EventMessage << " You had to pay " << cost << " gold cause your girl lost.";
             /*that should work but now need to make if you lose the girl if you dont have the gold zzzzz FIXME*/
         }
         else  // it was a draw
@@ -389,35 +373,34 @@ bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     }
     else {
         g_LogFile.log(ELogLevel::ERROR, "You have no Arena Girls for your girls to fight\n");
-        ss << "There were no Arena Girls for her to fight.\n \n(Error: You need an Arena Girl to allow WorkFightArenaGirls randomness)";
-        m_ImageType = EImageBaseType::PROFILE;
+        shift.EventMessage << "There were no Arena Girls for her to fight.\n \n(Error: You need an Arena Girl to allow WorkFightArenaGirls randomness)";
+        shift.EventImage = EImageBaseType::PROFILE;
     }
 
     if (girl.is_pregnant())
     {
         if (girl.strength() >= 60)
         {
-            ss << "\n \nAll that fighting proved to be quite exhausting for a pregnant girl, even for one as strong as ${name} .\n";
+            shift.EventMessage << "\n \nAll that fighting proved to be quite exhausting for a pregnant girl, even for one as strong as ${name} .\n";
         }
         else
         {
-            ss << "\n \nAll that fighting proved to be quite exhausting for a pregnant girl like ${name} .\n";
+            shift.EventMessage << "\n \nAll that fighting proved to be quite exhausting for a pregnant girl like ${name} .\n";
         }
         girl.tiredness(10 - girl.strength() / 20 );
     }
 
     if (girl.has_active_trait(traits::EXHIBITIONIST) && chance(15))
     {
-        ss << "A flamboyant fighter, ${name} fights with as little armor and clothing as possible, and sometimes takes something off in the middle of a match, to the enjoyment of many fans.\n";
+        shift.EventMessage << "A flamboyant fighter, ${name} fights with as little armor and clothing as possible, and sometimes takes something off in the middle of a match, to the enjoyment of many fans.\n";
     }
 
     if (girl.has_active_trait(traits::IDOL) && chance(15))
     {
-        ss << "${name} has quite the following, and the Arena is almost always packed when she fights.  People just love to watch her in action.\n";
+        shift.EventMessage << "${name} has quite the following, and the Arena is almost always packed when she fights.  People just love to watch her in action.\n";
     }
 
     // Improve girl
-    girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     girl.fame(fame);
     girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
 
@@ -430,10 +413,6 @@ bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
     }
     shift.building().Finance().arena_income(earned);
-    ss.str("");
-    ss << "${name} drew in " << shift.Performance << " people to watch her and you earned " << earned << " from it.";
-    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
 
     //gain traits
     if (chance(25) && girl.strength() >= 65 && girl.combat() > girl.magic())
@@ -444,13 +423,9 @@ bool FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     {
         cGirls::PossiblyGainNewTrait(girl, traits::BRAWLER, 60, ACTION_COMBAT, "${name} has become pretty good at fighting.", shift.IsNightShift);
     }
-
-#pragma endregion
-    return false;
 }
 
-FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "FightTrain.xml", {ACTION_COMBAT, 20, EImageBaseType::COMBAT, true}) {
-    m_Info.DayOnly = true;
+FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaTraining.xml", {ACTION_COMBAT, 20, EImageBaseType::COMBAT, true}) {
 }
 
 double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -477,8 +452,8 @@ void FightTraining::on_pre_shift(sGirlShiftData& shift) const {
     }
 }
 
-bool FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+void FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+    auto& ss = active_shift().EventMessage;
     int enjoy = 0;                                                //
     int train = 0;                                                // main skill trained
     int tcom = girl.combat();                                    // Starting level - train = 1
@@ -706,7 +681,6 @@ bool FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
     girl.upd_Enjoyment(ACTION_WORKTRAINING, enjoy);
 
-    girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     shift.building().GenerateFilth(2);
     shift.Wages += (skill * 5); // `J` Pay her more if she learns more
 
@@ -717,6 +691,4 @@ bool FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     else if (girl.has_active_trait(traits::SLOW_LEARNER))    { xp -= 2; }
 
     girl.exp(uniform(1, xp));
-
-    return false;
 }

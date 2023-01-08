@@ -23,6 +23,7 @@
 #include "Constants.h"
 #include <array>
 #include <sstream>
+#include "images/sImageSpec.h"
 
 class sGirl;
 class IBuildingShift;
@@ -55,14 +56,17 @@ struct sGirlShiftData {
     [[nodiscard]] int get_var(int index) const { return m_ProcessingCache.at(index); }
     void set_var(int index, int value) { m_ProcessingCache.at(index) = value; }
 
-    std::stringstream& shift_message() { return m_PartialMessage; }
+    // partial message building
+    std::stringstream EventMessage;
+    sImagePreset EventImage;
+    EEventType EventType;
 private:
     sGirl* m_Girl = nullptr;
     IBuildingShift* m_BuildingShift = nullptr;
     cRng* m_Rng;
     std::array<int, NUM_JOB_VARIABLES> m_ProcessingCache;
 
-    std::stringstream m_PartialMessage;
+
 };
 
 #endif //WM_SGIRLSHIFTDATA_H

@@ -33,7 +33,7 @@ public:
     }
 
 protected:
-    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
 
     // shift processing data
     mutable int craftpoints;

@@ -48,11 +48,11 @@ public:
 
     const std::string&  GetMessage() const { return m_Message; }
     const sImageSpec&   GetImage() const   { return m_Image; }
-    EEventType          GetEvent() const   { return m_Event; }
+    EEventType           GetEvent() const   { return m_Event; }
     std::shared_ptr<const CombatReport> GetReport() const { return m_Report; }
 
 private:
-    EEventType         m_Event;                  // type of event
+    EEventType          m_Event;                  // type of event
     sImageSpec         m_Image;
     std::string        m_Message;
     std::shared_ptr<CombatReport> m_Report = nullptr;

@@ -81,41 +81,27 @@ void cBasicJob::RegisterVariable(std::string name, sImagePreset& value) {
 }
 */
 ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) const {
-    auto& ss = active_shift().shift_message();
     if (girl.disobey_check(action, job()))
     {
         add_text("refuse");
-        girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
         return ECheckWorkResult::REFUSES;
     }
     return ECheckWorkResult::ACCEPTS;
 }
 
 void cBasicJob::add_performance_text() const {
-    auto& ss = active_shift().shift_message();
-    if (active_shift().Performance >= 245)
-    {
+    if (active_shift().Performance >= 245) {
         add_text("work.perfect");
-    }
-    else if (active_shift().Performance >= 185)
-    {
+    } else if (active_shift().Performance >= 185) {
         add_text("work.great");
-    }
-    else if (active_shift().Performance >= 145)
-    {
+    } else if (active_shift().Performance >= 145) {
         add_text("work.good");
-    }
-    else if (active_shift().Performance >= 100)
-    {
+    } else if (active_shift().Performance >= 100) {
         add_text("work.ok");
-    }
-    else if (active_shift().Performance >= 70)
-    {
+    } else if (active_shift().Performance >= 70) {
         add_text("work.bad");
-    }
-    else
-    {
+    } else {
         add_text("work.worst");
     }
-    ss << "\n\n";
+    add_literal("\n\n");
 }

@@ -25,13 +25,12 @@
 #include "cGirlGangFight.h"
 #include "jobs/cJobManager.h"
 
-CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "CityGuard.xml", {ACTION_WORKSECURITY, 10, EImageBaseType::SECURITY, true}) {
-    m_Info.FullTime = true;
+CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10, EImageBaseType::SECURITY, true}) {
     CatchThiefID = RegisterVariable("CatchThief", 0);
 }
 
-bool CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+void CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+    auto& ss = active_shift().EventMessage;
     int roll_a = d100();
     int enjoy = 0, enjoyc = 0, sus = 0;
 
@@ -66,7 +65,7 @@ bool CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         if (tempgirl)        // `J` reworked incase there are no Non-Human Random Girls
         {
             auto outcome = GirlFightsGirl(girl, *tempgirl);
-            m_ImageType = EImageBaseType::COMBAT;
+            shift.EventImage = EImageBaseType::COMBAT;
             if (outcome == EFightResult::VICTORY)    // she won
             {
                 enjoy += 3; enjoyc += 3;
@@ -91,7 +90,6 @@ bool CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         }
     }
 
-    girl.AddMessage(ss.str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     g_Game->player().suspicion(sus);
 
     // Improve girl
@@ -99,8 +97,6 @@ bool CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     girl.upd_Enjoyment(ACTION_COMBAT, enjoyc);
 
     apply_gains(shift.Performance);
-
-    return false;
 }
 
 int CityGuard::catch_thief() const {
@@ -119,15 +115,13 @@ sJobValidResult Medic::on_is_valid(const sGirl& girl, bool night_shift) const {
     return {true, {}};
 }
 
-bool Medic::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+void Medic::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     if(is_night_shift()) {
         add_text("work-night-shift");
         provide_interaction(ResuscitateId, 1);
         int surgery_amount = performance_based_lookup(0, 0, 10, 15, 25, 33);
         provide_resource(SurgeryId, surgery_amount);
     }
-    girl.AddMessage(shift.shift_message().str(), m_ImageType, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-    return true;
 }
 
 void Medic::HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const {
@@ -163,7 +157,7 @@ void Medic::HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target
         target.girl().constitution(-10);
         target.girl().health(15);
     }
-    target.shift_message() << healing_message.str();
+    target.EventMessage << healing_message.str();
     ss << healing_message.str();
     interactor.girl().tiredness(10);
     interactor.girl().exp(35);

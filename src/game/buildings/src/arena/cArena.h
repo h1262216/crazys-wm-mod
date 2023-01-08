@@ -61,7 +61,7 @@ void RegisterArenaJobs(cJobManager& mgr);
 class CityGuard : public cSimpleJob {
 public:
     CityGuard();
-    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
 private:
     int catch_thief() const;
     int CatchThiefID;
@@ -70,7 +70,7 @@ private:
 class Medic : public cSimpleJob {
 public:
     Medic();
-    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     sJobValidResult on_is_valid(const sGirl& girl, bool night_shift) const;
     void HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const override;
 };
@@ -88,7 +88,7 @@ class FightBeasts : public FighterJob {
 public:
     FightBeasts();
 
-    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     bool CheckCanWork(sGirl& girl) const override;
 private:
     std::unique_ptr<Combatant> CreateBeast(sGirlShiftData& shift) const;
@@ -97,14 +97,14 @@ private:
 class FightGirls : public FighterJob {
 public:
     FightGirls();
-    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
 };
 
 class FightTraining : public cSimpleJob {
 public:
     FightTraining();
 
-    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
     void on_pre_shift(sGirlShiftData& shift) const override;
 };

@@ -35,6 +35,8 @@
         </LoseTrait>
     </Gains>
 
+    <Config Shift="night-only" />
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to fight beasts today.</Text>

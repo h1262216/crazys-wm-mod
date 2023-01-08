@@ -24,13 +24,12 @@
 #include "cArena.h"
 
 cBlacksmithJob::cBlacksmithJob() :
-        GenericCraftingJob(JOB_BLACKSMITH, "Blacksmith.xml",
+        GenericCraftingJob(JOB_BLACKSMITH, "ArenaBlacksmith.xml",
                            ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
 
 }
 
 void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
@@ -44,11 +43,11 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
             shift.building().GenerateFilth(fire * 2);
             craftpoints *= (1 - fire * 0.1);
             if (girl.pcfear() > 20) girl.pcfear(fire / 2);    // she is afraid you will get mad at her
-            ss << "She accidentally started a fire";
-            /* */if (fire < 3)    ss << " but it was quickly put out.";
-            else if (fire < 6)    ss << " that destroyed several racks of equipment.";
-            else if (fire < 10)    ss << " that destroyed most of the equipment she had made.";
-            else /*          */    ss << " destroying everything she had made.";
+            add_literal("She accidentally started a fire");
+            /* */if (fire < 3) add_literal(" but it was quickly put out.");
+            else if (fire < 6) add_literal(" that destroyed several racks of equipment.");
+            else if (fire < 10) add_literal(" that destroyed most of the equipment she had made.");
+            else /*          */ add_literal(" destroying everything she had made.");
 
             if (fire > 5) g_Game->push_message(girl.FullName() + " accidentally started a large fire while working as a Blacksmith at the Arena.", COLOR_WARNING);
         }
@@ -59,21 +58,21 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
             if (girl.magic() > 50 && girl.mana() > 20)
             {
                 girl.mana(-uniform(10, 20));
-                ss << "While trying to enchant an item, the magic rebounded on her.";
+                add_literal("While trying to enchant an item, the magic rebounded on her.");
             }
             else
-                ss << "She burnt herself in the heat of the forge.";
+                add_literal("She burnt herself in the heat of the forge.");
             if (girl.is_dead())
             {
-                ss << " It killed her.";
+                add_literal(" It killed her.");
                 g_Game->push_message(girl.FullName() + " was killed in an accident while working as a Blacksmith at the Arena.", COLOR_WARNING);
             }
-            else ss << ".";
+            else add_literal(".");
         }
 
         else    // unhappy
         {
-            ss << "She did not like working in the arena today.";
+            add_literal("She did not like working in the arena today.");
             girl.happiness(-uniform(0, 11));
         }
     }
@@ -82,25 +81,25 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         tired /= 12;
         craftpoints *= 1.1;
         m_Enjoyment += uniform(0, 3);
-        /* */if (roll_b < 50)    ss << "She kept a steady pace of hammer blows by humming a pleasant tune.";
-        else /*            */    ss << "She had a great time working today.";
+        /* */if (roll_b < 50) add_literal("She kept a steady pace of hammer blows by humming a pleasant tune.");
+        else /*            */ add_literal("She had a great time working today.");
     }
     else
     {
         tired /= 10;
         m_Enjoyment += uniform(0, 2);
-        ss << "The shift passed uneventfully.";
+        add_literal("The shift passed uneventfully.");
     }
-    ss << "\n \n";
+    add_literal("\n\n");
 }
 
 cCobblerJob::cCobblerJob() :
-        GenericCraftingJob(JOB_COBBLER, "Cobbler.xml",
+        GenericCraftingJob(JOB_COBBLER, "ArenaCobbler.xml",
                            ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
 void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (10, 12 or 14) so it will end up around 0-23 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);
@@ -152,12 +151,12 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
 }
 
 cJewelerJob::cJewelerJob() :
-        GenericCraftingJob(JOB_JEWELER, "Jeweler.xml",
+        GenericCraftingJob(JOB_JEWELER, "ArenaJeweler.xml",
                            ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
 }
 
 void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
     int roll_b = uniform(0, 100);

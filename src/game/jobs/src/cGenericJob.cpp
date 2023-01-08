@@ -59,6 +59,8 @@ void cGenericJob::Work(sGirlShiftData& shift) {
         shift.set_var(var.Index, var.DefaultValue);
     }
 
+    shift.EventType = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+
     InitWork(shift);
     DoWork(shift);
     m_ActiveData = nullptr;
@@ -68,6 +70,16 @@ void cGenericJob::PreShift(sGirlShiftData& shift) {
     m_ActiveData = &shift;
     shift.Refused = ECheckWorkResult::ACCEPTS;
     on_pre_shift(shift);
+    if(shift.Refused == ECheckWorkResult::IMPOSSIBLE) {
+        shift.EventImage = EImageBaseType::PROFILE;
+        shift.EventType = EVENT_WARNING;
+        generate_event();
+    } else if(shift.Refused == ECheckWorkResult::REFUSES) {
+        shift.EventImage = EImageBaseType::REFUSE;
+        shift.EventType = EVENT_NOWORK;
+        generate_event();
+    }
+
     m_ActiveData = nullptr;
 }
 
@@ -122,7 +134,7 @@ sGirl* cGenericJob::request_interaction(const std::string& name) const {
     return active_building().RequestInteraction(name);
 }
 
-bool cGenericJob::HasInteraction(const std::string& name) const {
+bool cGenericJob::has_interaction(const std::string& name) const {
     return active_building().HasInteraction(name);
 }
 
@@ -134,7 +146,7 @@ cRng& cGenericJob::rng() const {
 void cGenericJob::on_pre_shift(sGirlShiftData& shift) const {
     auto valid = IsJobValid(shift.girl(), shift.IsNightShift);
     if(!valid.IsValid) {
-        shift.girl().AddMessage(valid.Reason, EImageBaseType::PROFILE, EVENT_WARNING);
+        add_literal(valid.Reason);
         shift.Refused = ECheckWorkResult::IMPOSSIBLE;
         return;
     }
@@ -215,6 +227,20 @@ void cGenericJob::load_job() {
             }
         }
 
+        // Configs
+        const auto* config_el = job_data->FirstChildElement("Config");
+        if(config_el) {
+            std::string shift = tolower(GetDefaultedStringAttribute(*config_el, "Shift", "both"));
+            if(shift == "day-only") {
+                m_Info.DayOnly = true;
+            } else if (shift == "night-only") {
+                m_Info.NightOnly = true;
+            } else if(shift == "full") {
+                m_Info.FullTime = true;
+            }
+            m_Info.FreeOnly = config_el->BoolAttribute("FreeOnly", false);
+        }
+
         load_from_xml_internal(*job_data, path.str());
     } catch (std::exception& error) {
         g_LogFile.error("job", "Error loading job xml '", m_XMLFile, "': ", error.what());
@@ -223,7 +249,7 @@ void cGenericJob::load_job() {
 }
 
 void cGenericJob::add_literal(const std::string& text) const {
-    active_shift().shift_message() << text;
+    active_shift().EventMessage << text;
 }
 
 
@@ -244,7 +270,7 @@ bool cGenericJob::has_text(const std::string& prompt) const {
 
 void cGenericJob::add_text(const std::string& prompt) const {
     auto& tpl = get_text(prompt);
-    auto& ss = active_shift().shift_message();
+    auto& ss = active_shift().EventMessage;
     interpolate_string(ss, tpl, [&](const std::string& var) -> std::string {
         if(var == "name") {
             return active_girl().FullName();
@@ -259,7 +285,7 @@ void cGenericJob::add_text(const std::string& prompt) const {
 
 void cGenericJob::add_line(const std::string& prompt) const {
     add_text(prompt);
-    active_shift().shift_message() << "\n";
+    active_shift().EventMessage << "\n";
 }
 
 void cGenericJob::SetSubstitution(std::string key, std::string replace) {
@@ -294,4 +320,9 @@ int cGenericJob::FindVariable(const std::string& name) const {
         return result->Index;
     }
     return -1;
+}
+
+void cGenericJob::generate_event() const {
+    active_girl().AddMessage(active_shift().EventMessage.str(), active_shift().EventImage, active_shift().EventType);
+    active_shift().EventMessage.str("");
 }
