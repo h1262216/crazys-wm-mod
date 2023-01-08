@@ -43,7 +43,7 @@ struct sGirlShiftData {
     // Not all variables are relevant for all jobs
     JOBS Job;
     bool IsNightShift;
-    ECheckWorkResult Refused;   // Whether she actually worked
+    ECheckWorkResult Refused = ECheckWorkResult::ACCEPTS;   // Whether she actually worked
     int Tips = 0;               // how much she received in tips
     int Earnings = 0;           // how much money did she make you directly
     int Wages = 0;              // how much do you pay her for the job

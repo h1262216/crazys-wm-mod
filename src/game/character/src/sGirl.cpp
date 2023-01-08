@@ -125,7 +125,7 @@ std::string stringtolowerj(std::string name)
     return s;
 }
 
-bool sGirl::disobey_check(Action_Types action, JOBS job)
+bool sGirl::disobey_check(Action_Types action, JOBS job, int offset)
 {
     int diff;
     int chance_to_obey = 0;                            // high value - more likely to obey
@@ -173,10 +173,10 @@ bool sGirl::disobey_check(Action_Types action, JOBS job)
         break;
     }
     chance_to_obey += m_Enjoyment[action];            // add in her enjoyment level
-    chance_to_obey += pclove() / 5;                     // let's add in some mods for love, fear and hate
+    chance_to_obey += pclove() / 5;                   // let's add in some mods for love, fear and hate
     chance_to_obey += pcfear() / 10;
-    chance_to_obey += 30;                                    // Let's add a blanket 30% to all of that
-    int roll = g_Dice.d100();                                // let's get a percentage roll
+    chance_to_obey += offset;                         // Let's add a blanket 30% to all of that
+    int roll = g_Dice.d100();                         // let's get a percentage roll
     diff = chance_to_obey - roll;
     bool girl_obeys = (diff >= 0);
     if (girl_obeys)                                            // there's a price to be paid for relying on love or fear

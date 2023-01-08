@@ -103,6 +103,7 @@ public:
     static void customer_rape(sGirl& girl, int numberofattackers);
     static std::string GetGirlAttackedString(int attacktype = SKILL_COMBAT);    // `J` added attacktype to be used with sextype for more specific attacks defaulting to combat
 
+    static const char* get_injury_trait(const sGirl& girl);
 
     static sCustomer GetMiscCustomer(IBuilding& brothel);
 

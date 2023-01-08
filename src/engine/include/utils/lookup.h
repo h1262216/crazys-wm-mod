@@ -40,11 +40,12 @@ inline id_lookup_t<T> create_lookup_table(const std::array<const char*, N>& name
 
 template<class T>
 inline auto lookup_with_error(const T& map, const std::string& name, const char* error_msg) {
-    try {
-        return map.at(name);
-    } catch (const std::out_of_range& oor ) {
+    auto found = map.find(name);
+    if(found == map.end()) {
         g_LogFile.error("lookup", error_msg, ": '", name, "'");
-        throw;
+        throw std::out_of_range(error_msg + (": '" + name + "'"));
+    } else {
+        return found->second;
     }
 }
 

@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WM_BASICJOB_H
-#define WM_BASICJOB_H
+#ifndef WM_CBASICJOB_H
+#define WM_CBASICJOB_H
 
 #include <unordered_map>
 
@@ -26,8 +26,6 @@
 #include "JobData.h"
 
 class sImagePreset;
-class ITextRepository;
-class cJobTextInterface;
 
 class cBasicJob : public cGenericJob {
 public:
@@ -36,15 +34,15 @@ public:
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 
 protected:
-    void apply_gains(sGirl& girl, int performance);
+    void apply_gains(int performance) const;
 
-    void add_performance_text();
+    void add_performance_text() const;
 
     // processing variables
     void InitWork(sGirlShiftData& shift) override;
     // void RegisterVariable(std::string name, sImagePreset& preset);
 
-    ECheckWorkResult SimpleRefusalCheck(sGirl& girl, Action_Types action);
+    ECheckWorkResult SimpleRefusalCheck(sGirl& girl, Action_Types action) const;
 
 private:
     cJobPerformance m_PerformanceData;
@@ -55,4 +53,4 @@ protected:
     virtual void load_from_xml_callback(const tinyxml2::XMLElement& job_element) {};
 };
 
-#endif //WM_BASICJOB_H
+#endif //WM_CBASICJOB_H

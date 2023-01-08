@@ -23,8 +23,20 @@
 #define __CARENA_H
 
 #include "buildings/cBuilding.h"
+#include "jobs/SimpleJob.h"
+#include "jobs/Crafting.h"
 
-class cJobManager;
+class Combatant;
+
+extern const char* const DrawVisitorsId;
+extern const char* const FightsFameId;
+extern const char* const BrutalityId;
+extern const char* const SexualityId;
+extern const char* const CombatId;
+extern const char* const BeautyId;
+extern const char* const ArenaFightId;
+extern const char* const ResuscitateId;
+extern const char* const SurgeryId;
 
 // defines a single arena
 class sArena : public cBuilding
@@ -44,5 +56,75 @@ private:
     int m_Reputation = 0;
 };
 
+void RegisterArenaJobs(cJobManager& mgr);
+
+class CityGuard : public cSimpleJob {
+public:
+    CityGuard();
+    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+private:
+    int catch_thief() const;
+    int CatchThiefID;
+};
+
+class Medic : public cSimpleJob {
+public:
+    Medic();
+    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    sJobValidResult on_is_valid(const sGirl& girl, bool night_shift) const;
+    void HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const override;
+};
+
+class FighterJob: public cSimpleJob {
+public:
+    using cSimpleJob::cSimpleJob;
+protected:
+    void handle_combat_stat(const std::string& name, int value) const;
+private:
+    void on_pre_shift(sGirlShiftData& shift) const override;
+};
+
+class FightBeasts : public FighterJob {
+public:
+    FightBeasts();
+
+    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    bool CheckCanWork(sGirl& girl) const override;
+private:
+    std::unique_ptr<Combatant> CreateBeast(sGirlShiftData& shift) const;
+};
+
+class FightGirls : public FighterJob {
+public:
+    FightGirls();
+    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+};
+
+class FightTraining : public cSimpleJob {
+public:
+    FightTraining();
+
+    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+    double GetPerformance(const sGirl& girl, bool estimate) const override;
+    void on_pre_shift(sGirlShiftData& shift) const override;
+};
+
+class cBlacksmithJob : public GenericCraftingJob {
+public:
+    cBlacksmithJob();
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const override;
+};
+
+class cCobblerJob : public GenericCraftingJob {
+public:
+    cCobblerJob();
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const override;
+};
+
+class cJewelerJob : public GenericCraftingJob {
+public:
+    cJewelerJob();
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const override;
+};
 
 #endif  /* __CARENA_H */

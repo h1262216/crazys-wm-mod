@@ -1365,12 +1365,15 @@ public:
         m_Info.Description = "She will take some time off, maybe do some shopping or walk around town. If the girl is unhappy she may try to escape.";
     }
 
-    ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override {
-        return ECheckWorkResult::ACCEPTS;
+    bool CheckCanWork(sGirl& girl) const override {
+        return true;
+    }
+    bool CheckRefuseWork(sGirl& girl) const override {
+        return false;
     }
 private:
     double GetPerformance(const sGirl& girl, bool estimate) const override { return 0; }
-    void DoWork(sGirlShiftData& shift) override {
+    void DoWork(sGirlShiftData& shift) const override {
         return WorkFreetime(shift.girl(), shift.IsNightShift, rng());
     }
 };

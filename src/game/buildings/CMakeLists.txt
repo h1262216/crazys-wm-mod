@@ -7,6 +7,7 @@ set(BUILDING_SRC
         src/cBuilding.cpp
         src/arena/Fighters.cpp
         src/arena/Producers.cpp
+        src/arena/Other.cpp
         src/arena/cArena.cpp
         #src/brothel/BrothelJobs.cpp
         #src/brothel/Escort.cpp
@@ -34,7 +35,7 @@ set(BUILDING_SRC
         #src/studio/StudioFilming.cpp
         #src/studio/StudioOther.cpp
         #src/studio/StudioScenes.cpp
-        include/buildings/sGirlShiftData.h)
+        )
 
 add_library(WmBuildingInterface INTERFACE)
 target_include_directories(WmBuildingInterface INTERFACE include)

@@ -186,6 +186,7 @@ enum JOBFILTER {
 
   JOBFILTER_ARENA,
   JOBFILTER_ARENASTAFF,
+  JOBFILTER_ARENA_PRODUCTION,
   JOBFILTER_COMMUNITYCENTRE,
   JOBFILTER_COUNSELINGCENTRE,
   JOBFILTER_CLINIC,    // teaches can train girls only up to their own skill level
@@ -307,10 +308,11 @@ enum JOBS {
     //JOB_ARMSDUEL        = ;
     //JOB_FIGHTBATTLE    = ;
     //JOB_ATHELETE        = ;
-    //JOB_RACING,                //    
+    //JOB_RACING,                //
+    JOB_CITYGUARD,            //
     // `J` Job Arena - Staff
     JOB_DOCTORE,            //Matron of arena
-    JOB_CITYGUARD,            //
+    JOB_MEDIC,
     JOB_BLACKSMITH,            //
     JOB_COBBLER,            //
     JOB_JEWELER,

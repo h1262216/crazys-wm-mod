@@ -57,6 +57,8 @@ public:
     virtual int GetInteractionProvided(const std::string& name) const = 0;
     virtual int GetInteractionConsumed(const std::string& name) const = 0;
 
+    virtual void TriggerInteraction(sGirl& interactor, sGirl& target) = 0;
+
     // Common resources
     virtual void ProvideCleaning(int amount) = 0;
     virtual void GenerateFilth(int amount) = 0;

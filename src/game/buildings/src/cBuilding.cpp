@@ -1798,6 +1798,9 @@ void cBuilding::AddMessage(std::string message, EEventType event) {
 }
 
 void cBuilding::GirlEndWeek(sGirl& girl) {
+    if(girl.is_dead())
+        return;
+
     // Myr: Automate the use of a number of different items. See the function itself for more comments.
     //      Enabled or disabled based on config option.
     if (g_Game->settings().get_bool(settings::USER_ITEMS_AUTO_USE))

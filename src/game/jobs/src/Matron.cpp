@@ -38,14 +38,17 @@ public:
         m_Info.FreeOnly = true;
     }
     double GetPerformance(const sGirl& girl, bool estimate) const override;
-    void DoWork(sGirlShiftData& shift) override;
+    void DoWork(sGirlShiftData& shift) const override;
 protected:
-    int MatronGains(sGirl& girl, bool Day0Night1, int conf);
-    void HandleMatronResult(sGirl& girl, int &conf);
-    ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override {
-        return ECheckWorkResult::ACCEPTS;
+    int MatronGains(sGirl& girl, bool Day0Night1, int conf) const;
+    void HandleMatronResult(sGirl& girl, int &conf) const;
+    bool CheckCanWork(sGirl& girl) const override {
+        return true;
     }
-    void ApplyMatronEffect(const sGirl& girl);
+    bool CheckRefuseWork(sGirl& girl) const override {
+        return false;
+    }
+    void ApplyMatronEffect(const sGirl& girl) const;
 
     const char* m_WorkerTitle;
 };
@@ -53,7 +56,7 @@ protected:
 class BrothelMatronJob : public MatronJob {
 public:
     using MatronJob::MatronJob;
-    void DoWork(sGirlShiftData& shift) override;
+    void DoWork(sGirlShiftData& shift) const override;
 };
 
 double MatronJob::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -94,7 +97,7 @@ double MatronJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return jobperformance;
 }
 
-void MatronJob::DoWork(sGirlShiftData& shift) {
+void MatronJob::DoWork(sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     auto& girl = shift.girl();
     bool is_night = shift.IsNightShift;
@@ -116,7 +119,7 @@ void MatronJob::DoWork(sGirlShiftData& shift) {
     shift.Wages = wages;
 }
 
-int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
+int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) const {
     int numgirls = num_girls(*girl.m_Building);
     int xp = numgirls / 10,  skill = 3;
 
@@ -139,7 +142,7 @@ int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
     return std::max(0, wages);
 }
 
-void MatronJob::HandleMatronResult(sGirl& girl, int &conf) {
+void MatronJob::HandleMatronResult(sGirl& girl, int &conf) const {
     auto& ss = active_shift().shift_message();
     int numgirls = num_girls(*girl.m_Building);
     int check = d100();
@@ -171,7 +174,7 @@ void MatronJob::HandleMatronResult(sGirl& girl, int &conf) {
     }
 }
 
-void MatronJob::ApplyMatronEffect(const sGirl& girl) {
+void MatronJob::ApplyMatronEffect(const sGirl& girl) const {
     auto brothel = girl.m_Building;
     int change;
     int perf = GetPerformance(girl, true);
@@ -189,7 +192,7 @@ void MatronJob::ApplyMatronEffect(const sGirl& girl) {
     });
 }
 
-void BrothelMatronJob::DoWork(sGirlShiftData& shift) {
+void BrothelMatronJob::DoWork(sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     auto& girl = shift.girl();
     bool is_night = shift.IsNightShift;

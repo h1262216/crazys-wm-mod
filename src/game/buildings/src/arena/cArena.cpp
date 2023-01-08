@@ -33,13 +33,20 @@
 #include "utils/streaming_random_selection.hpp"
 
 extern cRng             g_Dice;
-extern const char* const DrawVisitorsId;
-extern const char* const FightsFameId;
-extern const char* const BrutalityId;
-extern const char* const SexualityId;
-extern const char* const CombatId;
-extern const char* const BeautyId;
-extern const char* const ArenaFightId;
+
+extern const char* const DrawVisitorsId = "Visitors";
+extern const char* const FightsFameId = "FightFame";
+extern const char* const BrutalityId = "Brutality";
+extern const char* const SexualityId = "Sexuality";
+extern const char* const CombatId = "Combat";
+extern const char* const BeautyId = "Beauty";
+extern const char* const ArenaFightId = "ArenaFight";
+extern const char* const ResuscitateId = "Resuscitate";
+extern const char* const SurgeryId = "Surgery";
+
+namespace settings {
+    extern const char* USER_SHOW_NUMBERS;
+}
 
 namespace {
     sBuildingConfig ArenaConfig() {
@@ -58,6 +65,9 @@ sArena::sArena() : cBuilding("Arena", ArenaConfig())
     m_Shift->declare_resource(SexualityId);
     m_Shift->declare_resource(CombatId);
     m_Shift->declare_resource(BeautyId);
+    m_Shift->declare_resource(ArenaFightId);
+    m_Shift->declare_resource(SurgeryId);
+    m_Shift->declare_interaction(ResuscitateId);
     declare_variable("Fame", &m_Reputation);
 }
 
@@ -206,6 +216,7 @@ void sArena::AttractCustomers(IBuildingShift& shift, bool is_night) {
 
 void sArena::EndShift(bool is_night) {
     int entrance_fees = 0;
+    bool show_numbers = g_Game->settings().get_bool(settings::USER_SHOW_NUMBERS);
     for(auto& cust : m_Shift->customers()) {
         entrance_fees += 5;
     }
@@ -218,23 +229,29 @@ void sArena::EndShift(bool is_night) {
     int d_fame = f_fame - t_fame;
     if(d_fame < -3) {
         int loss = std::min(m_Reputation, -d_fame / 3);
-        ss << "The fights organised today (" << f_fame << " entertainment value ) were sub-par for what the spectators where expecting (";
+        ss << "The fights organised today";
+        if(show_numbers)
+            ss << "(" << f_fame << " entertainment)";
+        ss << "were sub-par for what the spectators where expecting (";
         ss << t_fame << ") for an Arena with a reputation of " << m_Reputation << ". ";
         ss << "Consequently, your Arena lost " << loss << " reputation points";
         m_Reputation -= loss;
     } else if (d_fame > 5) {
         m_TotalCustomers += m_Shift->customers().size();
         int gain = std::sqrt(d_fame / 2);
-        ss << "The fights organised today provided more entertainment (" << f_fame << ") than what spectators are expecting (";
+        ss << "The fights organised today provided more entertainment";
+        if(show_numbers)
+            ss << " (" << f_fame << ")";
+        ss << "than what spectators are expecting (";
         ss << t_fame << ") for an Arena with a reputation of " << m_Reputation << ". ";
-        ss << "Consequently, your Arena gained " << gain << " reputation points";
+        ss << "Consequently, your Arena gained " << gain << " reputation points.";
         m_Reputation += gain;
     }
 
     int num_fights = m_Shift->GetResourceAmount(ArenaFightId);
     auto get_normalized = [&](auto&& id)-> int {
         int value =  m_Shift->GetResourceAmount(id);
-        return std::log(1 + value) + value / num_fights;
+        return std::log(1 + value) + value / (1+num_fights);
     };
 
     int f_brutal = get_normalized(BrutalityId);
@@ -262,4 +279,16 @@ void sArena::setup_customer(sCustomer& customer) const {
     selector.process(rng, GOAL_RAPE, 0, 10);
     // Wants to see sex
     selector.process(rng, GOAL_SEX, 0, 10);
+}
+
+void RegisterArenaJobs(cJobManager& mgr) {
+    cGenericJob::Register(mgr, std::make_unique<CityGuard>());
+    cGenericJob::Register(mgr, std::make_unique<Medic>());
+    cGenericJob::Register(mgr, std::make_unique<FightBeasts>());
+    cGenericJob::Register(mgr, std::make_unique<FightGirls>());
+    cGenericJob::Register(mgr, std::make_unique<FightTraining>());
+
+    cGenericJob::Register(mgr, std::make_unique<cBlacksmithJob>());
+    cGenericJob::Register(mgr, std::make_unique<cCobblerJob>());
+    cGenericJob::Register(mgr, std::make_unique<cJewelerJob>());
 }

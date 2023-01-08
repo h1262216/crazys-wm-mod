@@ -24,7 +24,7 @@
 #include "xml/util.h"
 #include "buildings/IBuildingShift.h"
 
-void cSimpleJob::DoWork(sGirlShiftData& shift)
+void cSimpleJob::DoWork(sGirlShiftData& shift) const
 {
     shift.Wages = m_Data.BaseWages;
     m_ImageType = m_Data.DefaultImage;
@@ -49,7 +49,7 @@ cSimpleJob::cSimpleJob(JOBS job, const char* xml, sSimpleJobData data) : cBasicJ
     // RegisterVariable("Image", m_ImageType);
 }
 
-void cSimpleJob::HandleGains(sGirl& girl, int fame) {
+void cSimpleJob::HandleGains(sGirl& girl, int fame) const {
     // Update Enjoyment
     girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
 
@@ -60,24 +60,7 @@ void cSimpleJob::HandleGains(sGirl& girl, int fame) {
 
     girl.fame(fame);
 
-    apply_gains(girl, active_shift().Performance);
-}
-
-ECheckWorkResult cSimpleJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
-    if(!CheckCanWork(girl, is_night)) {
-        return ECheckWorkResult::IMPOSSIBLE;
-    }
-    return SimpleRefusalCheck(girl, m_Data.Action);
-}
-
-void cSimpleJob::on_pre_shift(sGirlShiftData& shift) {
-    cGenericJob::on_pre_shift(shift);
-    if(shift.Refused == ECheckWorkResult::IMPOSSIBLE) return;
-    if(!CheckCanWork(shift.girl(), shift.IsNightShift)) {
-        shift.Refused = ECheckWorkResult::IMPOSSIBLE;
-        return;
-    }
-    shift.Refused = SimpleRefusalCheck(shift.girl(), m_Data.Action);
+    apply_gains(active_shift().Performance);
 }
 
 void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element) {
@@ -89,7 +72,7 @@ void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
 
 
 
-void cSimpleJob::shift_enjoyment() {
+void cSimpleJob::shift_enjoyment() const {
     auto& ss = active_shift().shift_message();
     ss << "\n";
     int roll = d100();
@@ -141,4 +124,12 @@ int cSimpleJob::get_performance_class(int performance) {
     else if (performance >= 100) { return 2; }
     else if (performance >= 70) { return 1; }
     else { return 0;}
+}
+
+bool cSimpleJob::CheckCanWork(sGirl& girl) const {
+    return true;
+}
+
+bool cSimpleJob::CheckRefuseWork(sGirl& girl) const {
+    return SimpleRefusalCheck(girl, m_Data.Action) == ECheckWorkResult::REFUSES;
 }

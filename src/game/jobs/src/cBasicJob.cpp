@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BasicJob.h"
+#include "cBasicJob.h"
 #include "xml/util.h"
 #include "traits/ITraitsManager.h"
 #include "character/sGirl.h"
@@ -37,8 +37,8 @@ cBasicJob::cBasicJob(JOBS job, std::string xml_file) :
 
 cBasicJob::~cBasicJob() = default;
 
-void cBasicJob::apply_gains(sGirl& girl, int performance) {
-    m_Gains.apply(girl, performance);
+void cBasicJob::apply_gains(int performance) const {
+    m_Gains.apply(active_girl(), performance);
 }
 
 void cBasicJob::load_from_xml_internal(const tinyxml2::XMLElement& job_data, const std::string& file_name) {
@@ -80,7 +80,7 @@ void cBasicJob::RegisterVariable(std::string name, sImagePreset& value) {
     m_Interface->RegisterVariable(std::move(name), value);
 }
 */
-ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) {
+ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) const {
     auto& ss = active_shift().shift_message();
     if (girl.disobey_check(action, job()))
     {
@@ -91,7 +91,7 @@ ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action)
     return ECheckWorkResult::ACCEPTS;
 }
 
-void cBasicJob::add_performance_text() {
+void cBasicJob::add_performance_text() const {
     auto& ss = active_shift().shift_message();
     if (active_shift().Performance >= 245)
     {

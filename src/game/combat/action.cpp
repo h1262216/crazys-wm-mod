@@ -464,7 +464,7 @@ Rest::Rest(Combat* c) : ICombatAction(c, "Rest") {
 }
 
 ActionResult Rest::calc_score(Combatant& self, Combatant& target) const {
-    double goal = 5;
+    double goal = 1;
     if(self.get_vitality() < 100) {
         goal = 15;
     } else if(self.get_vitality() < 200) {
@@ -480,7 +480,7 @@ ActionResult Rest::calc_score(Combatant& self, Combatant& target) const {
 
     goal += self.get_trait_modifier(traits::modifiers::COMBAT_REST);
 
-    return ActionResult{0, 0.0, goal, 0,0};
+    return ActionResult{0, 0.0, goal, 0, 0};
 }
 
 void Rest::do_act(Combatant& self, Combatant& target) const {

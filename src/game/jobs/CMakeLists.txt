@@ -2,7 +2,7 @@ set(JOBS_SRC
         src/IGenericJob.cpp
         src/cGenericJob.cpp
         src/cJobManager.cpp
-        src/BasicJob.cpp
+        src/cBasicJob.cpp
         src/Cleaning.cpp
         src/Crafting.cpp
         src/JobData.cpp

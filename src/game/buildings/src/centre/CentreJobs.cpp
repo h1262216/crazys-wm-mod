@@ -36,19 +36,19 @@ namespace {
     class CommunityService: public cSimpleJob {
     public:
         CommunityService();
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     };
 
     class FeedPoor : public cSimpleJob {
     public:
         FeedPoor();
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     };
 
     class Counselor : public cSimpleJob {
     public:
         Counselor();
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     };
 }
 
@@ -56,7 +56,7 @@ CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "Communit
 
 }
 
-bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+bool CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     bool blow = false, sex = false;
     int fame = 0;
@@ -153,7 +153,7 @@ FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENT
 
 }
 
-bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+bool FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     bool blow = false, sex = false;
     int feed = 0, fame = 0;
@@ -256,7 +256,7 @@ Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORK
     m_Info.FreeOnly = true;
 }
 
-bool Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+bool Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     int roll_a = d100();
 
@@ -271,7 +271,7 @@ bool Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     int roll_max = (girl.spirit() + girl.intelligence()) / 4;
     shift.Wages += uniform(10, 10 + roll_max);
     shift.Wages += 5 * rehabers;    // `J` pay her 5 for each patient you send to her
-    ProvideInteraction(CounselingInteractionId, 2);
+    provide_interaction(CounselingInteractionId, 2);
 
     HandleGains(girl, 0);
 

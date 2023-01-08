@@ -39,13 +39,17 @@ namespace tinyxml2 {
 
 class cGenericJob : public IGenericJob {
 public:
+    enum class EJobClass {
+        REGULAR_JOB, TREATMENT
+    };
+
     explicit cGenericJob(JOBS j, std::string xml_file = {}, EJobClass job_class = EJobClass::REGULAR_JOB);
     ~cGenericJob() override;
 
     const sJobInfo& get_info() const final { return m_Info; }
 
-    void Work(sGirlShiftData& shift) override;
-    void PreShift(sGirlShiftData& shift) override;
+    void Work(sGirlShiftData& shift) final;
+    void PreShift(sGirlShiftData& shift) final;
 
     sJobValidResult IsJobValid(const sGirl& girl, bool night_shift) const override;
 
@@ -78,9 +82,8 @@ protected:
     bool try_consume_resource(const std::string& name, int amount) const;
 
     //  one-on-one interactions
-    void ProvideInteraction(const std::string& name, int amount) const;
-    sGirl* RequestInteraction(const std::string& name);
-
+    void provide_interaction(const std::string& name, int amount) const;
+    sGirl* request_interaction(const std::string& name) const;
     bool HasInteraction(const std::string& name) const;
 
     void SetSubstitution(std::string key, std::string replace);
@@ -89,16 +92,18 @@ protected:
     int GetVariable(int index) const;
     int FindVariable(const std::string& name) const;
 
-    virtual void on_pre_shift(sGirlShiftData& shift);
+    virtual void on_pre_shift(sGirlShiftData& shift) const;
+    virtual sJobValidResult on_is_valid(const sGirl& girl, bool night_shift) const;
 private:
     virtual void InitWork(sGirlShiftData& shift) {};
-    virtual void DoWork(sGirlShiftData& shift) = 0;
+    virtual void DoWork(sGirlShiftData& shift) const = 0;
 
     /*! Checks whether the girl will work. There are two reasons why she might not:
     She could refuse, or the job could not be possible because of external
     circumstances. This function should report which reason applies.
 */
-    virtual ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) = 0;
+    virtual bool CheckCanWork(sGirl& girl) const = 0;
+    virtual bool CheckRefuseWork(sGirl& girl) const = 0;
 
     sGirlShiftData* m_ActiveData;
     const cJobManager* m_JobManager = nullptr;

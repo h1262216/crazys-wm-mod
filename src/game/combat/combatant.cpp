@@ -275,6 +275,12 @@ void Combatant::set_female() {
     him_her = "her";
 }
 
+void Combatant::set_monster() {
+    he_she = "it";
+    his_her = "its";
+    him_her = "it";
+}
+
 void Combatant::set_weapon(std::string name, double strength) {
     weapon = std::move(name);
     weapon_strength = strength;

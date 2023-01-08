@@ -57,11 +57,16 @@ struct sJobValidResult {
     explicit operator bool() const { return IsValid; }
 };
 
+/*!
+ * \brief Base class for all girl jobs.
+ * \details Here, we use the word `job` in a wide sense. Girl jobs include having free time, or receiving treatment or
+ * surgery. Essentially, any activity the girls do during the day and night shifts. The `IGenericJob` interface
+ * defines the interface to be used for anything that interacts with a given job.
+ * Implementations of jobs should derive from `cGenericJob`, which also provides a variety of protected methods that
+ * are useful for job implementations, and contains the data that is required of all job objects.
+ */
 class IGenericJob {
 public:
-    enum class EJobClass {
-        REGULAR_JOB, TREATMENT
-    };
     virtual ~IGenericJob() noexcept = default;
 
     // queries
@@ -85,6 +90,7 @@ public:
     virtual void Work(sGirlShiftData& shift) = 0;
 
     virtual void HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night, cRng& rng) const {};
+    virtual void HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const {};
 
 };
 

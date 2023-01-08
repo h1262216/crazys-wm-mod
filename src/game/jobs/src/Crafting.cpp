@@ -31,7 +31,7 @@ namespace settings {
     extern const char* MONEY_SELL_ITEM;
 }
 
-bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
+bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     shift.Wages = m_Data.BaseWages * (1.0 + (shift.Performance - 70) / 100.0);
     auto msgtype = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
@@ -73,7 +73,7 @@ bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     // Push out the turn report
     girl.AddMessage(ss.str(), m_ImageType, msgtype);
 
-    apply_gains(girl, shift.Performance);
+    apply_gains(shift.Performance);
 
     // Update Enjoyment
     girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
@@ -81,7 +81,7 @@ bool GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) {
     return false;
 }
 
-float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) {
+float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) const {
     auto& ss = active_shift().shift_message();
     int points_remaining = craft_points;
     int numitems = 0;
@@ -116,18 +116,18 @@ float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) {
     return item_worth;
 }
 
-void GenericCraftingJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+void GenericCraftingJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     shift_enjoyment();
 }
 
-void GenericCraftingJob::performance_msg() {
+void GenericCraftingJob::performance_msg() const {
     add_performance_text();
 }
 
 
 struct cMakeItemJob : GenericCraftingJob {
     cMakeItemJob();
-    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const override;
 };
 
 cMakeItemJob::cMakeItemJob() :
@@ -135,7 +135,7 @@ cMakeItemJob::cMakeItemJob() :
                            ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
-void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
@@ -188,7 +188,7 @@ void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
 
 struct cMakePotionsJob : GenericCraftingJob {
     cMakePotionsJob();
-    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const override;
 };
 
 
@@ -197,7 +197,7 @@ cMakePotionsJob::cMakePotionsJob() :
                            ACTION_WORKMAKEPOTIONS, 20, EImageBaseType::CRAFT) {
 }
 
-void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     int roll = uniform(0, 100) + (shift.Performance - 75) / 20;
     //enjoyed the work or not
@@ -231,7 +231,7 @@ void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
 struct cTailorJob : GenericCraftingJob {
     cTailorJob();
 
-    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
+    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const override;
 };
 
 
@@ -240,7 +240,7 @@ cTailorJob::cTailorJob() :
                            ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
-void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;

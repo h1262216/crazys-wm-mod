@@ -47,6 +47,7 @@ public:
     int NumInteractors(const std::string& name) const override;
     int GetInteractionProvided(const std::string& name) const override;
     int GetInteractionConsumed(const std::string& name) const override;
+    void TriggerInteraction(sGirl& interactor, sGirl& target) override;
 
     void ProvideCleaning(int amount) override;
     void GenerateFilth(int amount) override;

@@ -60,28 +60,15 @@ void cGenericJob::Work(sGirlShiftData& shift) {
     }
 
     InitWork(shift);
-    auto checked_work = CheckWork(girl, active_building(), shift.IsNightShift);
-    shift.Refused = checked_work;
-    switch (checked_work) {
-        case ECheckWorkResult::ACCEPTS:
-            DoWork(shift);
-            break;
-        case ECheckWorkResult::REFUSES:
-            if(shift.IsNightShift) {
-                girl.m_Refused_To_Work_Night = true;
-            } else {
-                girl.m_Refused_To_Work_Day = true;
-            }
-            break;
-        case ECheckWorkResult::IMPOSSIBLE:
-            break;
-    }
+    DoWork(shift);
+    m_ActiveData = nullptr;
 }
 
 void cGenericJob::PreShift(sGirlShiftData& shift) {
     m_ActiveData = &shift;
     shift.Refused = ECheckWorkResult::ACCEPTS;
     on_pre_shift(shift);
+    m_ActiveData = nullptr;
 }
 
 
@@ -127,11 +114,11 @@ bool cGenericJob::try_consume_resource(const std::string& name, int amount) cons
     return active_building().TryConsumeResource(name, amount);
 }
 
-void cGenericJob::ProvideInteraction(const std::string& name, int amount) const {
+void cGenericJob::provide_interaction(const std::string& name, int amount) const {
     return active_building().ProvideInteraction(name, &active_girl(), amount);
 }
 
-sGirl* cGenericJob::RequestInteraction(const std::string& name) {
+sGirl* cGenericJob::request_interaction(const std::string& name) const {
     return active_building().RequestInteraction(name);
 }
 
@@ -144,15 +131,21 @@ cRng& cGenericJob::rng() const {
     return m_ActiveData->rng();
 }
 
-void cGenericJob::on_pre_shift(sGirlShiftData& shift) {
+void cGenericJob::on_pre_shift(sGirlShiftData& shift) const {
     auto valid = IsJobValid(shift.girl(), shift.IsNightShift);
     if(!valid.IsValid) {
         shift.girl().AddMessage(valid.Reason, EImageBaseType::PROFILE, EVENT_WARNING);
         shift.Refused = ECheckWorkResult::IMPOSSIBLE;
         return;
     }
-    auto checked_work = CheckWork(active_girl(), active_building(), is_night_shift());
-    shift.Refused = checked_work;
+
+    if(!CheckCanWork(shift.girl())) {
+        shift.Refused = ECheckWorkResult::IMPOSSIBLE;
+    } else if(CheckRefuseWork(shift.girl())) {
+        shift.Refused = ECheckWorkResult::REFUSES;
+    } else {
+        shift.Refused = ECheckWorkResult::ACCEPTS;
+    }
 }
 
 sGirlShiftData& cGenericJob::active_shift() const {
@@ -176,7 +169,10 @@ sJobValidResult cGenericJob::IsJobValid(const sGirl& girl, bool night_shift) con
         return {false, "The " + m_Info.Name + " job can only be assigned for the night shift."};
     }
 
+    return on_is_valid(girl, night_shift);
+}
 
+sJobValidResult cGenericJob::on_is_valid(const sGirl& girl, bool night_shift) const {
     return {true, {}};
 }
 

@@ -33,15 +33,15 @@ public:
     }
 
 protected:
-    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
+    bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
 
     // shift processing data
-    int craftpoints;
+    mutable int craftpoints;
 private:
-    virtual void performance_msg();
-    virtual void DoWorkEvents(sGirl& girl, sGirlShiftData& shift);
+    virtual void performance_msg() const;
+    virtual void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const;
 
-    float DoCrafting(sGirl& girl, int craft_points);
+    float DoCrafting(sGirl& girl, int craft_points) const;
 };
 
 #endif //WM_JOBS_CRAFTING_H

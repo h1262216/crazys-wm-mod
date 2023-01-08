@@ -284,7 +284,7 @@ public:
     bool unequip(const sInventoryItem* item) override;
     bool can_equip(const sInventoryItem* item) const override;
 
-    bool disobey_check(Action_Types action, JOBS job=NUM_JOBS);
+    bool disobey_check(Action_Types action, JOBS job=NUM_JOBS, int offset = 30);
 
     void add_tiredness();
 

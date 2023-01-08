@@ -544,6 +544,7 @@ cScreenArenaManagement::cScreenArenaManagement() :
 {
     add_job_filter(JOBFILTER_ARENASTAFF);
     add_job_filter(JOBFILTER_ARENA);
+    add_job_filter(JOBFILTER_ARENA_PRODUCTION);
 }
 
 // --------------------------------------------------------------------

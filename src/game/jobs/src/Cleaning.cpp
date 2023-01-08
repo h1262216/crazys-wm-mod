@@ -31,36 +31,36 @@ namespace {
     struct Cleaning : public cSimpleJob {
         Cleaning(JOBS job, const char* xml);
 
-        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) override;
-        void CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount);
+        bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+        void CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) const;
 
-        virtual void DoneEarly(sGirl& girl) = 0;
+        virtual void DoneEarly(sGirl& girl) const = 0;
     };
 
     struct CleanArena : public Cleaning {
         CleanArena();
-        void DoneEarly(sGirl& girl) override;
+        void DoneEarly(sGirl& girl) const override;
     };
     struct CleanCentre : public Cleaning {
         CleanCentre();
-        void DoneEarly(sGirl& girl) override;
+        void DoneEarly(sGirl& girl) const override;
     };
     struct CleanHouse : public Cleaning {
         CleanHouse();
-        void DoneEarly(sGirl& girl) override;
+        void DoneEarly(sGirl& girl) const override;
     };
     struct CleanBrothel : public Cleaning {
         CleanBrothel();
-        void DoneEarly(sGirl& girl) override;
-        void BJEvent(sGirl& girl);
+        void DoneEarly(sGirl& girl) const override;
+        void BJEvent(sGirl& girl) const;
     };
     struct CleanClinic : public Cleaning {
         CleanClinic();
-        void DoneEarly(sGirl& girl) override;
+        void DoneEarly(sGirl& girl) const override;
     };
     struct CleanFarm : public Cleaning {
         CleanFarm();
-        void DoneEarly(sGirl& girl) override;
+        void DoneEarly(sGirl& girl) const override;
     };
 }
 
@@ -68,7 +68,7 @@ Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml, {ACTION_WOR
     m_Info.Phase = EJobPhase::PREPARE;
 }
 
-void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) {
+void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) const {
     active_building().ProvideCleaning(clean_amount);
 
     // Base Improvement and trait modifiers
@@ -97,7 +97,7 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
         cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, ACTION_WORKCLEANING, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", is_night);
 }
 
-bool Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift){
+bool Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     double CleanAmt = shift.Performance;
     int enjoy = 0;
     bool playtime = false;
@@ -154,7 +154,7 @@ CleanArena::CleanArena() : Cleaning(JOB_CLEANARENA, "CleanArena.xml") {
 
 }
 
-void CleanArena::DoneEarly(sGirl& girl) {
+void CleanArena::DoneEarly(sGirl& girl) const {
     add_text("event.early");
     girl.combat(uniform(0, 2));
     girl.agility(uniform(0, 1));
@@ -167,7 +167,7 @@ CleanCentre::CleanCentre() : Cleaning(JOB_CLEANCENTRE, "CleanCentre.xml") {
 
 }
 
-void CleanCentre::DoneEarly(sGirl& girl) {
+void CleanCentre::DoneEarly(sGirl& girl) const {
     if(chance(girl.tiredness())) {
         add_text("event.nap");
         girl.happiness(uniform(0, 2));
@@ -193,7 +193,7 @@ CleanHouse::CleanHouse() : Cleaning(JOB_CLEANHOUSE, "CleanHouse.xml") {
 
 }
 
-void CleanHouse::DoneEarly(sGirl& girl) {
+void CleanHouse::DoneEarly(sGirl& girl) const {
     if(chance(girl.tiredness())) {
         add_text("event.nap");
         girl.happiness(uniform(0, 2));
@@ -210,7 +210,7 @@ CleanFarm::CleanFarm() : Cleaning(JOB_FARMHAND, "FarmHand.xml") {
 
 }
 
-void CleanFarm::DoneEarly(sGirl& girl) {
+void CleanFarm::DoneEarly(sGirl& girl) const {
     auto& ss = active_shift().shift_message();
     ss << "${name} finished her cleaning early, so she ";
     int roll_c = d100();
@@ -242,7 +242,7 @@ CleanClinic::CleanClinic() : Cleaning(JOB_JANITOR, "Janitor.xml") {
 
 }
 
-void CleanClinic::DoneEarly(sGirl& girl) {
+void CleanClinic::DoneEarly(sGirl& girl) const {
     auto& ss = active_shift().shift_message();
     auto brothel = girl.m_Building;
     if (girl.is_pregnant() && girl.health() < 90)
@@ -294,7 +294,7 @@ CleanBrothel::CleanBrothel() : Cleaning(JOB_CLEANING, "CleanBrothel.xml") {
 
 }
 
-void CleanBrothel::DoneEarly(sGirl& girl) {
+void CleanBrothel::DoneEarly(sGirl& girl) const {
     auto& ss = active_shift().shift_message();
     auto brothel = girl.m_Building;
 
@@ -393,7 +393,7 @@ void CleanBrothel::DoneEarly(sGirl& girl) {
     }
 }
 
-void CleanBrothel::BJEvent(sGirl& girl) {
+void CleanBrothel::BJEvent(sGirl& girl) const {
     auto& ss = active_shift().shift_message();
     auto brothel = girl.m_Building;
     ss << "${name} finished her cleaning early, so she hung out at the brothel, offering to \"clean off\" finished customers with her mouth.\n";//Made it actually use quote marks CRAZY

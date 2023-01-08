@@ -131,11 +131,14 @@ void cJobManager::Setup()
 
 
     // - Arena Jobs
-    JobFilters[JOBFILTER_ARENA] = sJobFilter{"Arena", "These are jobs for running an arena."};
-    register_filter(JOBFILTER_ARENA, JOB_FIGHTBEASTS, JOB_FIGHTTRAIN, {});
+    JobFilters[JOBFILTER_ARENA] = sJobFilter{"Fighters", "These are jobs for the fighters in the arena."};
+    register_filter(JOBFILTER_ARENA, JOB_FIGHTBEASTS, JOB_FIGHTTRAIN, {JOB_RESTING});
     //- Arena Staff
-    JobFilters[JOBFILTER_ARENASTAFF] = sJobFilter{"Arena Staff", "These are jobs that help run an arena."};
-    register_filter(JOBFILTER_ARENASTAFF, JOB_DOCTORE, JOB_CLEANARENA, {JOB_RESTING});
+    JobFilters[JOBFILTER_ARENASTAFF] = sJobFilter{"Staff", "These are jobs that help run an arena."};
+    register_filter(JOBFILTER_ARENASTAFF, JOB_DOCTORE, JOB_MEDIC, {JOB_RESTING, JOB_CLEANARENA});
+    //- Arena Production
+    JobFilters[JOBFILTER_ARENA_PRODUCTION] = sJobFilter{"Production", "These are jobs that produce things."};
+    register_filter(JOBFILTER_ARENA_PRODUCTION, JOB_BLACKSMITH, JOB_JEWELER, {});
 
     // - Community Centre Jobs
     JobFilters[JOBFILTER_COMMUNITYCENTRE] = sJobFilter{"Community Centre", "These are jobs for running a community centre."};
@@ -382,7 +385,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     assert(m_OOPJobs[JobID] != nullptr);
     auto check = m_OOPJobs[JobID]->IsJobValid(Girl, Day0Night1);
     if(!check) {
-        g_Game->push_message(check.Reason, 0);
+        g_Game->push_message(Girl.Interpolate(check.Reason), 0);
         return false;
     }
 
@@ -1045,6 +1048,60 @@ bool cJobManager::girl_fights_rape(sGirl& girl, sGang *enemy_gang, int day_night
 
     // Losing is dealt with later in customer_rapes (called from work_related_violence)
     return res;
+}
+
+const char* cJobManager::get_injury_trait(const sGirl& girl) {
+    std::mt19937 rnd;
+    rnd.seed(g_Dice.random(10000));
+    // TODO make a dedicated function for this
+    RandomSelectorV2<const char*> gained_trait;
+    gained_trait.process(rnd, nullptr, 0, 200);
+
+    bool no_arms = girl.has_active_trait(traits::NO_ARMS);
+    bool no_hands = girl.has_active_trait(traits::NO_HANDS);
+
+    if(!no_hands && !no_arms) {
+        if (girl.has_active_trait(traits::MISSING_FINGER)) {
+            gained_trait.process(rnd, traits::MISSING_FINGERS, 0, 50);
+        } else {
+            gained_trait.process(rnd, traits::MISSING_FINGER, 0, 100);
+            gained_trait.process(rnd, traits::MISSING_FINGERS, 0, 20);
+        }
+        if (girl.has_active_trait(traits::ONE_HAND)) {
+            gained_trait.process(rnd, traits::NO_HANDS, 0, 5);
+        } else {
+            gained_trait.process(rnd, traits::ONE_HAND, 0, 10);
+        }
+    }
+
+    if(!no_arms) {
+        if (girl.has_active_trait(traits::ONE_ARM)) {
+            gained_trait.process(rnd, traits::NO_ARMS, 0, 3);
+        } else {
+            gained_trait.process(rnd, traits::ONE_ARM, 0, 5);
+        }
+    }
+
+    bool no_legs = girl.has_active_trait(traits::NO_LEGS);
+    bool no_feet = girl.has_active_trait(traits::NO_FEET);
+    if(!no_legs && !no_feet) {
+        if(girl.has_active_trait(traits::MISSING_TOE)) {
+            gained_trait.process(rnd, traits::MISSING_TOES, 0, 50);
+        } else  {
+            gained_trait.process(rnd, traits::MISSING_TOE, 0, 100);
+            gained_trait.process(rnd, traits::MISSING_TOES, 0, 20);
+        }
+    }
+
+    if(!no_legs) {
+        if(girl.has_active_trait(traits::ONE_LEG)) {
+            gained_trait.process(rnd, traits::NO_LEGS, 0, 5);
+        } else {
+            gained_trait.process(rnd, traits::ONE_LEG, 0, 10);
+        }
+    }
+
+    return gained_trait.selection().value();
 }
 
 /*

@@ -18,16 +18,10 @@
  */
 
 
-#include "jobs/Crafting.h"
 #include "character/sGirl.h"
 #include "IGame.h"
 #include "cRng.h"
-
-class cBlacksmithJob : public GenericCraftingJob {
-public:
-    cBlacksmithJob();
-    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
-};
+#include "cArena.h"
 
 cBlacksmithJob::cBlacksmithJob() :
         GenericCraftingJob(JOB_BLACKSMITH, "Blacksmith.xml",
@@ -35,7 +29,7 @@ cBlacksmithJob::cBlacksmithJob() :
 
 }
 
-void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
@@ -100,18 +94,12 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
     ss << "\n \n";
 }
 
-class cCobblerJob : public GenericCraftingJob {
-public:
-    cCobblerJob();
-    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
-};
-
 cCobblerJob::cCobblerJob() :
         GenericCraftingJob(JOB_COBBLER, "Cobbler.xml",
                            ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
-void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (10, 12 or 14) so it will end up around 0-23 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
@@ -163,18 +151,12 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
     ss << "\n \n";
 }
 
-class cJewelerJob : public GenericCraftingJob {
-public:
-    cJewelerJob();
-    void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) override;
-};
-
 cJewelerJob::cJewelerJob() :
         GenericCraftingJob(JOB_JEWELER, "Jeweler.xml",
                            ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
 }
 
-void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
+void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().shift_message();
     int tired = (300 - (int)shift.Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
     int roll_a = uniform(0, 100) + (shift.Performance - 75) / 20;
@@ -237,10 +219,4 @@ void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) {
         ss << "The shift passed uneventfully.";
     }
     ss << "\n \n";
-}
-
-void RegisterArenaProducers(cJobManager& mgr) {
-    cGenericJob::Register(mgr, std::make_unique<cBlacksmithJob>());
-    cGenericJob::Register(mgr, std::make_unique<cCobblerJob>());
-    cGenericJob::Register(mgr, std::make_unique<cJewelerJob>());
 }

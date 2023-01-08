@@ -22,7 +22,7 @@
         <Stat Name="Agility" Weight="1"/>
 
         <GainTrait Trait="Tough" Threshold="20" Action="COMBAT">
-            She has become pretty Tough from all of the fights she's been in.
+            She has become pretty Tough from all the fights she's been in.
         </GainTrait>
         <GainTrait Trait="Aggressive" Threshold="60" Action="COMBAT">
             She is getting rather Aggressive from her enjoyment of combat.
@@ -42,5 +42,72 @@
         <Message Name="no-beasts">
             <Text>${name} had no beasts to fight.</Text>
         </Message>
+        <Message Name="low-health">
+            <Text>${name} cannot Fight Beasts today, because she is not healthy enough for such a dangerous job.</Text>
+        </Message>
+        <Message Name="is-pregnant">
+            <Text>${name} cannot Fight Beasts today, because she is pregnant.</Text>
+        </Message>
+        <Message Name="no-armor">
+            <Text>The crowd can't believe you sent ${name} out to fight beasts without armor. But at least she had a weapon.</Text>
+        </Message>
+        <Message Name="no-weapon">
+            <Text>${name} came out in armor, but didn't have a weapon.</Text>
+        </Message>
+        <Message Name="no-equipment">
+            <Text>The crowd can't believe you sent ${name} out to fight with neither armor nor a weapon.</Text>
+        </Message>
+        <Message Name="fully-equipped">
+            <Text>${name} came out in armor and with a weapon in hand. The crowd felt she was ready for battle.</Text>
+        </Message>
+        <Message Name="beast-won-horny">
+            <Text>As it turns out, she seems to welcome her 'punishment' very much. The same goes for the crowd.</Text>
+        </Message>
+        <Message Name="beast-won-masochist">
+            <Text>Being a masochist, she doesn't actually mind.</Text>
+        </Message>
+        <Message Name="beast-won-bad">
+            <Text>Her screams as the beast ravishes her already battered body are bone-chilling to all but the most bloodthirsty spectators.
+                Maybe you took this a step too far.</Text>
+        </Message>
+        <Message Name="beast-kills-girl">
+            <Text>
+                ${name} proved no match for this vicious beast!
+                You send your men in to cage it.
+                In their attempt to get to her before it's too late, they kill the beast, but not before it mortally
+                wounds ${name}. They can only watch helplessly as she coughs up blood with her last breaths.
+
+                If you'd had a Medic on standby, you might have been able to save her.
+            </Text>
+        </Message>
+        <Message Name="beast-wins-girl-rescued">
+            <Text>
+                ${name} proved no match for this vicious beast!
+                As it becomes clear that it is about to kill her, your men manage to distract it long enough for a
+                Medic to get to her.
+            </Text>
+        </Message>
+        <Message Name="beast-wins-girl-survives">
+            <Text>
+                ${name} proved no match for this vicious beast!
+                The bloody mess your goons carry out of the arena floor barely resembles a human being, but her shallow
+                breaths indicate that she is still alive.
+            </Text>
+        </Message>
+
+        <Message Name="beast-wins-girl-survives.healing">
+            <Text>
+                She is immediately brought to the surgery room in the Arena's catacombs, and your Medics start treating
+                her wounds. She will need weeks to recover, but the quick medical intervention prevented more serious
+                complications.
+            </Text>
+        </Message>
+        <Message Name="beast-wins-girl-survives.no-healing">
+            <Text>
+                She is immediately brought to the surgery room in the Arena's catacombs, but no Medic is available to treat
+                her wounds.
+            </Text>
+        </Message>
+
     </Messages>
 </Job>

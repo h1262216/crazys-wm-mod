@@ -21,7 +21,7 @@
 #ifndef WM_SIMPLEJOB_H
 #define WM_SIMPLEJOB_H
 
-#include "BasicJob.h"
+#include "cBasicJob.h"
 #include "utils/piecewise_linear.h"
 #include "images/sImageSpec.h"
 
@@ -36,34 +36,28 @@ struct sSimpleJobData {
 class cSimpleJob : public cBasicJob {
 public:
     cSimpleJob(JOBS job, const char* xml, sSimpleJobData data);
-    void DoWork(sGirlShiftData& shift) override;
+    void DoWork(sGirlShiftData& shift) const override;
     /// Run the job processing, and return whether the girl refused.
-    virtual bool JobProcessing(sGirl& girl, sGirlShiftData& shift) = 0;
+    virtual bool JobProcessing(sGirl& girl, sGirlShiftData& shift) const = 0;
 
 protected:
-    ECheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
-
-    void on_pre_shift(sGirlShiftData& shift) override;
-
-    /// This function should check if `girl` is, in principle, available to do this job.
-    /// It should return false if she could not work even if she wanted to, due to external circumstances.
-    /// In that case a message should be attached to girl.
-    virtual bool CheckCanWork(sGirl& girl, bool is_night) { return true; };
+    bool CheckCanWork(sGirl& girl) const override;
+    bool CheckRefuseWork(sGirl& girl) const override;
 
     void InitWork(sGirlShiftData& shift) override;
-    void HandleGains(sGirl& girl, int fame);
+    void HandleGains(sGirl& girl, int fame) const;
     sSimpleJobData m_Data;
 
     PiecewiseLinearFunction m_PerformanceToEarnings;
 
     void load_from_xml_callback(const tinyxml2::XMLElement& job_element) override;
-    void shift_enjoyment();
+    void shift_enjoyment() const;
 
     /// Returns a number between 0 and 5 (inclusive) that classifies the given performance, from worst (0) to perfect (5)
     static int get_performance_class(int performance);
 
     template<class T>
-    T performance_based_lookup(T worst, T bad, T ok, T good, T great, T perfect) {
+    T performance_based_lookup(T worst, T bad, T ok, T good, T great, T perfect) const {
         switch(get_performance_class(active_shift().Performance)) {
             case 0: return worst;
             case 1: return bad;
@@ -75,8 +69,9 @@ protected:
         }
     }
 
-    int m_Enjoyment;
-    sImagePreset m_ImageType;
+    // TODO Fix these
+    mutable sImagePreset m_ImageType;
+    mutable int m_Enjoyment;
 };
 
 

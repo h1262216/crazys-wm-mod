@@ -19,7 +19,7 @@
 
 #include "BrothelJobs.h"
 #include <character/predicates.h>
-#include "jobs/BasicJob.h"
+#include "jobs/cBasicJob.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 

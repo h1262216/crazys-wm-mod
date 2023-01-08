@@ -25,6 +25,7 @@
 #include "CLog.h"
 #include "jobs/cJobManager.h"
 #include "cGirls.h"
+#include "utils/lookup.h"
 
 namespace settings{
     extern const char* PREG_COOL_DOWN;
@@ -54,11 +55,11 @@ void cBuildingShift::setup_resources() {
 }
 
 int cBuildingShift::GetResourceAmount(const std::string& name) const {
-    return m_ShiftResources.at(name);
+    return lookup_with_error(m_ShiftResources, name, "Could not find resource");
 }
 
 int cBuildingShift::ConsumeResource(const std::string& name, int amount) {
-    int has = m_ShiftResources.at(name);
+    int has = GetResourceAmount(name);
     if(has >= amount) {
         m_ShiftResources[name] -= amount;
         return amount;
@@ -69,7 +70,7 @@ int cBuildingShift::ConsumeResource(const std::string& name, int amount) {
 }
 
 bool cBuildingShift::TryConsumeResource(const std::string& name, int amount) {
-    int has = m_ShiftResources.at(name);
+    int has = GetResourceAmount(name);
     if(has >= amount) {
         m_ShiftResources[name] -= amount;
         return true;
@@ -122,6 +123,13 @@ int cBuildingShift::GetInteractionProvided(const std::string& name) const {
 int cBuildingShift::GetInteractionConsumed(const std::string& name) const {
     return m_ShiftInteractions.at(name).TotalConsumed;
 }
+
+void cBuildingShift::TriggerInteraction(sGirl& interactor, sGirl& target) {
+    auto& iad = get_girl_data(interactor);
+    auto& iat = get_girl_data(target);
+    g_Game->job_manager().get_job(iad.Job)->HandleInteraction(iad, iat);
+}
+
 
 cGold& cBuildingShift::Finance() {
     return m_Building->m_Finance;
