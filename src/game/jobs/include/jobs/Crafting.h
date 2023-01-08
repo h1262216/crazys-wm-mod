@@ -30,18 +30,20 @@ class GenericCraftingJob : public cSimpleJob {
 public:
     explicit GenericCraftingJob(JOBS id, const char* xml, Action_Types action, int BaseWages, EImageBaseType image) :
         cSimpleJob(id, xml, {action, BaseWages, image}) {
+        m_CraftPointsID = RegisterVariable("CraftingPoints", 0);
     }
 
 protected:
     void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
 
-    // shift processing data
-    mutable int craftpoints;
+    int& craft_points() const;
 private:
     virtual void performance_msg() const;
     virtual void DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const;
 
-    float DoCrafting(sGirl& girl, int craft_points) const;
+    float DoCrafting(sGirl& girl) const;
+
+    int m_CraftPointsID;
 };
 
 #endif //WM_JOBS_CRAFTING_H

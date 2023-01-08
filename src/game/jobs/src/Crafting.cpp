@@ -31,18 +31,17 @@ namespace settings {
     extern const char* MONEY_SELL_ITEM;
 }
 
+int& GenericCraftingJob::craft_points() const {
+    return active_shift().get_var_ref(m_CraftPointsID);
+}
+
 void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     shift.Wages = m_Data.BaseWages * (1.0 + (shift.Performance - 70) / 100.0);
-    auto msgtype = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
-
-    //    Job Performance            //
-
-    craftpoints = shift.Performance;
+    craft_points() = shift.Performance;
 
     int dirtyloss = shift.building().Filthiness() / 10;        // craftpoints lost due to repairing equipment
-    if (dirtyloss > 0)
-    {
-        craftpoints -= dirtyloss * 2;
+    if (dirtyloss > 0) {
+        craft_points() -= dirtyloss * 2;
         shift.building().ProvideCleaning(dirtyloss * 10);
         add_text("repair");
         add_literal("\n\n");
@@ -50,22 +49,20 @@ void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const
 
     performance_msg();
 
-    //    Enjoyment and Tiredness        //
+    // special events
     DoWorkEvents(girl, shift);
     if(girl.is_dead())
-        return;    // not refusing, she is dead
-    // TODO tiredness
+        return;
 
     // not receiving money reduces motivation
     float girl_pay = girl.is_unpaid() ? 0.f : 1.f - girl.house() / 100.f;
-    craftpoints *= std::min(1.0, girl_pay / 2 + 0.66);
+    craft_points() *= std::min(1.f, girl_pay / 2 + 0.66f);
 
-    if (craftpoints > 0)
+    if (craft_points() > 0)
     {
-        float item_worth = DoCrafting(girl, craftpoints);
+        float item_worth = DoCrafting(girl);
         if(item_worth > 0) {
-            msgtype = EVENT_GOODNEWS;
-            shift.Earnings += item_worth * girl_pay;
+            shift.Wages += item_worth;
         }
     }
 
@@ -75,8 +72,8 @@ void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const
     girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
 }
 
-float GenericCraftingJob::DoCrafting(sGirl& girl, int craft_points) const {
-    int points_remaining = craft_points;
+float GenericCraftingJob::DoCrafting(sGirl& girl) const {
+    int points_remaining = craft_points();
     int numitems = 0;
     float item_worth = 0.f;
 
@@ -141,7 +138,7 @@ void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         if (roll_b < 30)    // injury
         {
             girl.health(-uniform(1, 5));
-            craftpoints *= 0.8;
+            craft_points() *= 0.8;
             if (girl.magic() > 50 && girl.mana() > 20)
             {
                 girl.mana(-uniform(10, 20));
@@ -165,7 +162,7 @@ void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     else if (roll_a >= 90)
     {
         tired /= 20;
-        craftpoints *= 1.1;
+        craft_points() *= 1.1;
         m_Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";
@@ -246,7 +243,7 @@ void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         if (roll_b < 20)    // injury
         {
             girl.health(-uniform(1, 6));
-            craftpoints *= 0.8;
+            craft_points() *= 0.8;
             if (girl.magic() > 50 && girl.mana() > 20)
             {
                 girl.mana(-uniform(10, 20));
@@ -271,7 +268,7 @@ void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     else if (roll_a >= 90)
     {
         tired /= 12;
-        craftpoints *= 1.1;
+        craft_points() *= 1.1;
         m_Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace with her needle work by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";

@@ -41,7 +41,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         {
             int fire = std::max(0, rng().bell(-2, 10));
             shift.building().GenerateFilth(fire * 2);
-            craftpoints *= (1 - fire * 0.1);
+            craft_points() *= (1 - fire * 0.1);
             if (girl.pcfear() > 20) girl.pcfear(fire / 2);    // she is afraid you will get mad at her
             add_literal("She accidentally started a fire");
             /* */if (fire < 3) add_literal(" but it was quickly put out.");
@@ -54,7 +54,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         else if (roll_b < 30)    // injury
         {
             girl.health(-(1 + uniform(0, 5)));
-            craftpoints *= 0.8;
+            craft_points() *= 0.8;
             if (girl.magic() > 50 && girl.mana() > 20)
             {
                 girl.mana(-uniform(10, 20));
@@ -79,7 +79,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     else if (roll_a >= 90)
     {
         tired /= 12;
-        craftpoints *= 1.1;
+        craft_points() *= 1.1;
         m_Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50) add_literal("She kept a steady pace of hammer blows by humming a pleasant tune.");
         else /*            */ add_literal("She had a great time working today.");
@@ -110,7 +110,7 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         if (roll_b < 20)    // injury
         {
             girl.health(-uniform(1, 5));
-            craftpoints *= 0.8;
+            craft_points() *= 0.8;
             if (girl.magic() > 50 && girl.mana() > 20)
             {
                 girl.mana(-uniform(10, 20));
@@ -136,7 +136,7 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     else if (roll_a >= 90)
     {
         tired /= 14;
-        craftpoints *= 1.1;
+        craft_points() *= 1.1;
         m_Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace with her needle work by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";
@@ -168,9 +168,9 @@ void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         {
             int fire = std::max(0, rng().bell(-2, 10));
             shift.building().GenerateFilth(fire * 2);
-            craftpoints -= (craftpoints * (fire * 0.1));
+            craft_points() *= 1.0 - fire * 0.1;
             if (girl.pcfear() > 20) girl.pcfear(fire / 2);    // she is afraid you will get mad at her
-            ss << "She accidently started a fire";
+            ss << "She accidentally started a fire";
             /* */if (fire < 3)    ss << " but it was quickly put out.";
             else if (fire < 6)    ss << " that destroyed several racks of equipment.";
             else if (fire < 10)    ss << " that destroyed most of the equipment she had made.";
@@ -181,7 +181,7 @@ void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
         else if (roll_b < 30)    // injury
         {
             girl.health(-uniform(1, 6));
-            craftpoints *= 0.8;
+            craft_points() *= 0.8;
             if (girl.magic() > 50 && girl.mana() > 20)
             {
                 girl.mana(-uniform(10, 20));
@@ -206,7 +206,7 @@ void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     else if (roll_a >= 90)
     {
         tired /= 12;
-        craftpoints *= 1.1;
+        craft_points() *= 1.1;
         m_Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace of hammer blows by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";

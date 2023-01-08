@@ -54,6 +54,7 @@ struct sGirlShiftData {
     [[nodiscard]] IBuildingShift& building() { return *m_BuildingShift; }
     [[nodiscard]] cRng& rng() { return *m_Rng; }
     [[nodiscard]] int get_var(int index) const { return m_ProcessingCache.at(index); }
+    [[nodiscard]] int& get_var_ref(int index) { return m_ProcessingCache.at(index); }
     void set_var(int index, int value) { m_ProcessingCache.at(index) = value; }
 
     // partial message building
