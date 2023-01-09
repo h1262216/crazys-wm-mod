@@ -16,6 +16,8 @@
         <Skill Name="Service" Weight="1"/>
     </Gains>
 
+    <Config DefaultImage="Craft" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked making and mending clothes at the farm.</Text>

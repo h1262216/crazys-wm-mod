@@ -52,7 +52,7 @@ namespace {
     };
 }
 
-CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "CommunityService.xml", {ACTION_WORKCENTRE, 100, EImageBaseType::PROFILE}) {
+CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "CommunityService.xml", {ACTION_WORKCENTRE, 100}) {
 
 }
 
@@ -146,7 +146,7 @@ void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     HandleGains(girl, fame);
 }
 
-FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENTRE, 20, EImageBaseType::PROFILE}) {
+FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENTRE, 20}) {
 
 }
 
@@ -245,8 +245,6 @@ void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 }
 
 Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORKCOUNSELOR, 25}) {
-    m_Info.FullTime = true;
-    m_Info.FreeOnly = true;
 }
 
 void Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {

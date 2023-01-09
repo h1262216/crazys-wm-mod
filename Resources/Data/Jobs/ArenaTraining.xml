@@ -6,7 +6,7 @@
 
     <Performance />
 
-    <Config Shift="day-only" />
+    <Config Shift="day-only" DefaultImage="Combat" />
 
     <Messages>
         <Message Name="refuse">

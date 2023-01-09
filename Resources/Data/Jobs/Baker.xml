@@ -33,6 +33,8 @@
         <Skill Name="Service" Weight="1" Max="50"/>
     </Gains>
 
+    <Config DefaultImage="Bake" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked as a baker on the farm.</Text>

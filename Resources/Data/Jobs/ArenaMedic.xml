@@ -46,6 +46,8 @@
         <Skill Name="Medicine" Weight="2"/>
         <Stat Name="Intelligence" Weight="1" />
     </Gains>
+
+    <Config DefaultImage="Nurse" Phase="prepare"/>
     
     <Messages>
         <Message Name="work">

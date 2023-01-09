@@ -23,6 +23,8 @@
         </GainTrait>
     </Gains>
 
+    <Config DefaultImage="Craft" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked as a Jeweler at the arena.</Text>

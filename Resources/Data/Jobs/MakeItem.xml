@@ -16,6 +16,8 @@
         <Skill Name="Service" Weight="1" />
     </Gains>
 
+    <Config DefaultImage="Craft" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} was assigned to make items at the farm.</Text>

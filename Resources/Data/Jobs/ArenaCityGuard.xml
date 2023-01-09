@@ -28,7 +28,7 @@
         <Stat Name="Constitution" Weight="1"/>
     </Gains>
 
-    <Config Shift="full" />
+    <Config Shift="full" DefaultImage="Security" />
 
     <Messages>
         <Message Name="work">

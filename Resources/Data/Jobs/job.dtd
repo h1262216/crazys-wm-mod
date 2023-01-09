@@ -3,7 +3,8 @@
 
 <!ELEMENT Description (#PCDATA)>
 <!ELEMENT Config ANY>
-<!ATTLIST Config Shift (both|day-only|night-only|full) FreeOnly (0|1) #IMPLIED>
+<!ATTLIST Config Shift (both|day-only|night-only|full) FreeOnly (0|1) #IMPLIED DefaultImage CDATA #IMPLIED
+        Phase (prepare|produce|main|late) #IMPLIED>
 
 <!ELEMENT Performance (Factor|Trait|Mod)*>
 <!ATTLIST Performance Modifier CDATA #IMPLIED>

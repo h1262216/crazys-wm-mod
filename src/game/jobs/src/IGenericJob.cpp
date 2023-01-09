@@ -27,8 +27,24 @@
 #include "buildings/IBuildingShift.h"
 #include "xml/util.h"
 #include "xml/getattr.h"
+#include "utils/lookup.h"
 
 class sBrothel;
+
+const std::array<const char*, 4>& get_all_phases() {
+    static std::array<const char*, 4> phases {
+        "prepare", "produce", "main", "late"};
+    return phases;
+}
+
+const id_lookup_t<EJobPhase>& get_phase_lookup() {
+    static auto lookup = create_lookup_table<EJobPhase>(get_all_phases());
+    return lookup;
+}
+
+EJobPhase get_phase_id(const std::string& name) {
+    return lookup_with_error(get_phase_lookup(), name, "Unknown Job Phase: ");
+}
 
 /*
 class cJobWrapper: public IGenericJob {

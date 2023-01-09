@@ -31,6 +31,8 @@
         <Skill Name="Magic" Weight="1"/>
     </Gains>
 
+    <Config DefaultImage="Craft" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked as a potions maker on the farm.</Text>

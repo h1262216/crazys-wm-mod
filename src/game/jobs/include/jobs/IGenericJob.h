@@ -21,6 +21,7 @@
 #define WM_IGENERICJOB_H
 
 #include "Constants.h"
+#include "images/sImageSpec.h"
 #include <vector>
 
 class sGirl;
@@ -35,6 +36,8 @@ enum class EJobPhase {
     LATE
 };
 
+EJobPhase get_phase_id(const std::string& name);
+
 struct sJobInfo {
     JOBS        JobId;
     std::string Name;
@@ -46,6 +49,8 @@ struct sJobInfo {
     bool DayOnly = false;
     bool NightOnly = false;
     EJobPhase Phase = EJobPhase::MAIN;
+
+    sImagePreset DefaultImage = EImageBaseType::PROFILE;
 
     std::vector<std::string> Consumes;
     std::vector<std::string> Provides;

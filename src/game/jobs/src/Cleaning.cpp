@@ -64,8 +64,7 @@ namespace {
     };
 }
 
-Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml, {ACTION_WORKCLEANING, 0, EImageBaseType::MAID}) {
-    m_Info.Phase = EJobPhase::PREPARE;
+Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml, {ACTION_WORKCLEANING, 0}) {
 }
 
 void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) const {

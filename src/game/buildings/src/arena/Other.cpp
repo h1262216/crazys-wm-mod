@@ -25,7 +25,7 @@
 #include "cGirlGangFight.h"
 #include "jobs/cJobManager.h"
 
-CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10, EImageBaseType::SECURITY, true}) {
+CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10, true}) {
     CatchThiefID = RegisterVariable("CatchThief", 0);
 }
 
@@ -103,8 +103,7 @@ int CityGuard::catch_thief() const {
     return GetVariable(CatchThiefID);
 }
 
-Medic::Medic() : cSimpleJob(JOB_MEDIC, "Medic.xml", {ACTION_WORKDOCTOR, 25, EImageBaseType::NURSE, false}) {
-    m_Info.Phase = EJobPhase::PREPARE;
+Medic::Medic() : cSimpleJob(JOB_MEDIC, "ArenaMedic.xml", {ACTION_WORKDOCTOR, 25, false}) {
 }
 
 sJobValidResult Medic::on_is_valid(const sGirl& girl, bool night_shift) const {

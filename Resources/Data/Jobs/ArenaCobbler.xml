@@ -17,6 +17,8 @@
         <Skill Name="Magic" Weight="1"/>
     </Gains>
 
+    <Config DefaultImage="Craft" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked making shoes and other leather items at the arena.</Text>

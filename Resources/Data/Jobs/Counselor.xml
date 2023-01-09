@@ -23,6 +23,8 @@
         </LoseTrait>
     </Gains>
 
+    <Config Shift="full" FreeOnly="1" />
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to counsel anyone.</Text>

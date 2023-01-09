@@ -25,7 +25,7 @@
 
 cBlacksmithJob::cBlacksmithJob() :
         GenericCraftingJob(JOB_BLACKSMITH, "ArenaBlacksmith.xml",
-                           ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
+                           ACTION_WORKMAKEITEMS, 40) {
 
 }
 
@@ -95,7 +95,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
 
 cCobblerJob::cCobblerJob() :
         GenericCraftingJob(JOB_COBBLER, "ArenaCobbler.xml",
-                           ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
+                           ACTION_WORKMAKEITEMS, 20) {
 }
 
 void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
@@ -152,7 +152,7 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
 
 cJewelerJob::cJewelerJob() :
         GenericCraftingJob(JOB_JEWELER, "ArenaJeweler.xml",
-                           ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
+                           ACTION_WORKMAKEITEMS, 40) {
 }
 
 void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {

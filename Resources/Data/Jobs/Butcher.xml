@@ -52,6 +52,8 @@
         </GainTrait>
     </Gains>
 
+    <Config DefaultImage="Cook" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked as a butcher on the farm.</Text>

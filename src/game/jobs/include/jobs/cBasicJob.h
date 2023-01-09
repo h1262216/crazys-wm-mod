@@ -38,7 +38,6 @@ protected:
 
     void add_performance_text() const;
 
-    // processing variables
     void InitWork(sGirlShiftData& shift) override;
     // void RegisterVariable(std::string name, sImagePreset& preset);
 

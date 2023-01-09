@@ -28,8 +28,8 @@
 
 class GenericCraftingJob : public cSimpleJob {
 public:
-    explicit GenericCraftingJob(JOBS id, const char* xml, Action_Types action, int BaseWages, EImageBaseType image) :
-        cSimpleJob(id, xml, {action, BaseWages, image}) {
+    explicit GenericCraftingJob(JOBS id, const char* xml, Action_Types action, int BaseWages) :
+        cSimpleJob(id, xml, {action, BaseWages}) {
         m_CraftPointsID = RegisterVariable("CraftingPoints", 0);
     }
 

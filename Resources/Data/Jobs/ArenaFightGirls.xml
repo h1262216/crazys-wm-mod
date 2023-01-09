@@ -22,7 +22,7 @@
         <Stat Name="Agility" Weight="1"/>
 
         <GainTrait Trait="Tough" Threshold="20" Action="COMBAT">
-            She has become pretty Tough from all of the fights she's been in.
+            She has become pretty Tough from all the fights she's been in.
         </GainTrait>
         <GainTrait Trait="Aggressive" Threshold="60" Action="COMBAT">
             She is getting rather Aggressive from her enjoyment of combat.
@@ -35,7 +35,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config Shift="night-only" />
+    <Config Shift="night-only" DefaultImage="Combat" />
 
     <Messages>
         <Message Name="refuse">

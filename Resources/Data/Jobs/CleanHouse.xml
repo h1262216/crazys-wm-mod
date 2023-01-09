@@ -13,6 +13,8 @@
         <Mod>work.cleaning</Mod>
     </Performance>
 
+    <Config DefaultImage="Maid"  Phase="prepare"/>
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked cleaning your house.</Text>

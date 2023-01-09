@@ -10,6 +10,8 @@
         <Factor Stat="Agility" Weight="1"/>
     </Performance>
 
+    <Config DefaultImage="Maid"  Phase="prepare"/>
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked cleaning the Clinic.</Text>

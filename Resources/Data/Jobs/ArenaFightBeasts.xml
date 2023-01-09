@@ -35,7 +35,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config Shift="night-only" />
+    <Config Shift="night-only" DefaultImage="Combat"/>
 
     <Messages>
         <Message Name="refuse">

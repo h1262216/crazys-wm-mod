@@ -28,6 +28,8 @@
         <Stat Name="Constitution" Weight="1"/>
     </Gains>
 
+    <Config DefaultImage="Farm" />
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked as a gardener on the farm.</Text>

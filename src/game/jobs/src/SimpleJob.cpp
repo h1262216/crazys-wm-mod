@@ -27,7 +27,6 @@
 void cSimpleJob::DoWork(sGirlShiftData& shift) const
 {
     shift.Wages = m_Data.BaseWages;
-    shift.EventImage = m_Data.DefaultImage;
 
     if(has_text("work")) {
         add_text("work");

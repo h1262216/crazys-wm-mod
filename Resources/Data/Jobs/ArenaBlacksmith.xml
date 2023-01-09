@@ -13,6 +13,8 @@
         <Factor Stat="Constitution" Weight="1"/>
     </Performance>
 
+    <Config DefaultImage="Craft" />
+
     <Gains XP="10" Skill="3">
         <Skill Name="Crafting" Weight="2" />
         <Stat Name="Strength" Weight="2" />

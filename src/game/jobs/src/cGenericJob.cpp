@@ -60,6 +60,7 @@ void cGenericJob::Work(sGirlShiftData& shift) {
     }
 
     shift.EventType = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    shift.EventImage = m_Info.DefaultImage;
 
     InitWork(shift);
     DoWork(shift);
@@ -239,6 +240,14 @@ void cGenericJob::load_job() {
                 m_Info.FullTime = true;
             }
             m_Info.FreeOnly = config_el->BoolAttribute("FreeOnly", false);
+
+            const char* image_preset_name = config_el->Attribute("DefaultImage");
+            if(image_preset_name) {
+                m_Info.DefaultImage = get_image_preset(image_preset_name);
+            }
+
+            std::string phase = GetDefaultedStringAttribute(*config_el, "Phase", "main");
+            m_Info.Phase = get_phase_id(phase);
         }
 
         load_from_xml_internal(*job_data, path.str());
