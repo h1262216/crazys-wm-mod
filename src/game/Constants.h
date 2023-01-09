@@ -303,6 +303,7 @@ enum JOBS {
     JOB_FIGHTBEASTS,        // customers come to place bets on who will win, girl may die (uses beasts resource)
     JOB_FIGHTARENAGIRLS,
     JOB_FIGHTTRAIN,
+    JOB_RECUPERATE,
     //JOB_JOUSTING        = ;
     //JOB_MAGICDUEL        = ;
     //JOB_ARMSDUEL        = ;
@@ -313,17 +314,17 @@ enum JOBS {
     // `J` Job Arena - Staff
     JOB_DOCTORE,            //Matron of arena
     JOB_MEDIC,
-    JOB_BLACKSMITH,            //
-    JOB_COBBLER,            //
+    JOB_INTERMISSION_SHOW,
+    JOB_BLACKSMITH,
+    JOB_COBBLER,
     JOB_JEWELER,
     //JOB_BATTLEMASTER    = ;
     //JOB_ARENAPROMOTER    = ;
     //JOB_BEASTMASTER    = ;
     //JOB_VENDOR            = ;
     //JOB_BOOKIE            = ;
-    //JOB_GROUNDSKEEPER    = ;
     //JOB_MINER            = ;
-    JOB_CLEANARENA,            //
+    JOB_GROUNDSKEEPER,
 
     // `J` Job Centre - General
     JOB_CENTREMANAGER,        // matron of centre    
@@ -603,7 +604,7 @@ enum Goals{                                // `J` new
     GOAL_FREAKSHOW,                        // They want to see something strange, nonhuman or just different
     GOAL_CULTURALEXPLORER,                // They want to have sex with something strange, nonhuman or just different
     GOAL_OTHER,                            // The customer wants to do something different
-    NUM_GOALS                            // 
+    NUM_GOALS                            //
 };
 
 

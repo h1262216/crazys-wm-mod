@@ -51,7 +51,7 @@ namespace settings {
 namespace {
     sBuildingConfig ArenaConfig() {
         return sBuildingConfig{BuildingType::ARENA, JOB_FIGHTBEASTS,
-                               JOB_CLEANARENA, JOB_DOCTORE}
+                               JOB_GROUNDSKEEPER, JOB_DOCTORE}
                 .spawn(SpawnReason::ARENA, events::GIRL_MEET_ARENA);
     }
 }
@@ -87,9 +87,9 @@ void sArena::auto_assign_job(sGirl& target, std::stringstream& message, bool is_
         target.m_DayJob = target.m_NightJob = JOB_CITYGUARD;
         ss << "work helping the city guard.";
     }
-    else if (num_girls_on_job(*this, JOB_CLEANARENA, is_night) < 1)
+    else if (num_girls_on_job(*this, JOB_GROUNDSKEEPER, is_night) < 1)
     {
-        target.m_DayJob = target.m_NightJob = JOB_CLEANARENA;
+        target.m_DayJob = target.m_NightJob = JOB_GROUNDSKEEPER;
         ss << "work cleaning the arena.";
     }
     else if (num_girls_on_job(*this, JOB_BLACKSMITH, is_night) < 1)
@@ -114,9 +114,9 @@ void sArena::auto_assign_job(sGirl& target, std::stringstream& message, bool is_
         target.m_DayJob = target.m_NightJob = JOB_CITYGUARD;
         ss << "work helping the city guard.";
     }
-    else if (num_girls_on_job(*this, JOB_CLEANARENA, is_night) < num_girls() / 20)
+    else if (num_girls_on_job(*this, JOB_GROUNDSKEEPER, is_night) < num_girls() / 20)
     {
-        target.m_DayJob = target.m_NightJob = JOB_CLEANARENA;
+        target.m_DayJob = target.m_NightJob = JOB_GROUNDSKEEPER;
         ss << "work cleaning the arena.";
     }
     else if (num_girls_on_job(*this, JOB_BLACKSMITH, is_night) < num_girls() / 20)
@@ -200,29 +200,37 @@ std::string sArena::meet_no_luck() const {
 }
 
 void sArena::AttractCustomers(IBuildingShift& shift, bool is_night) {
+    if(!is_night) return;
+
     int direct_visitor_bonus = shift.GetResourceAmount(DrawVisitorsId);
-    int num_viewers = (int)std::round(std::log(1 + direct_visitor_bonus));
-    num_viewers += g_Dice.closed_uniform(1, 5);
+    int num_viewers = 2 * (int)std::round(std::log(1 + direct_visitor_bonus));
+    num_viewers += g_Dice.closed_uniform(2, 10);
 
     // Fame-based viewers
-    int fame_viewers = std::sqrt(1 + m_Reputation);
+    int fame_viewers = 2 * std::sqrt(1 + m_Reputation);
     num_viewers += g_Dice.closed_uniform(fame_viewers / 2, fame_viewers);
+    int has_viewers = 0;
 
-    for (int i = 0; i < num_viewers; i++)
+    while(has_viewers < num_viewers)
     {
-        shift.AttractCustomer();
+        auto& cust = shift.AttractCustomer();
+        cust.m_Amount = g_Dice.closed_uniform(1, 10);
+        has_viewers += cust.m_Amount;
     }
 }
 
 void sArena::EndShift(bool is_night) {
+    if(!is_night) return;
     int entrance_fees = 0;
     bool show_numbers = g_Game->settings().get_bool(settings::USER_SHOW_NUMBERS);
+    int num_viewers = 0;
     for(auto& cust : m_Shift->customers()) {
-        entrance_fees += 5;
+        entrance_fees += 5 * cust->m_Amount;
+        num_viewers += cust->m_Amount;
     }
-    m_TotalCustomers += m_Shift->customers().size();
+    m_TotalCustomers += num_viewers;
     std::stringstream ss;
-    ss << "Today, your Arena drew in " << m_Shift->customers().size() << " customers, who paid " << entrance_fees << " in entrance fees.\n";
+    ss << "Today, your Arena drew in " << num_viewers << " customers, who paid " << entrance_fees << " in entrance fees.\n";
 
     int f_fame = m_Shift->GetResourceAmount(FightsFameId);
     int t_fame = std::sqrt(10 + m_Reputation) + g_Dice.closed_uniform(5, 10);
@@ -231,7 +239,7 @@ void sArena::EndShift(bool is_night) {
         int loss = std::min(m_Reputation, -d_fame / 3);
         ss << "The fights organised today";
         if(show_numbers)
-            ss << "(" << f_fame << " entertainment)";
+            ss << " (" << f_fame << " entertainment)";
         ss << "were sub-par for what the spectators where expecting (";
         ss << t_fame << ") for an Arena with a reputation of " << m_Reputation << ". ";
         ss << "Consequently, your Arena lost " << loss << " reputation points";
@@ -259,6 +267,11 @@ void sArena::EndShift(bool is_night) {
     int f_combat = get_normalized(CombatId);
     int f_beauty = get_normalized(BeautyId);
 
+    ss << "\nBrutality: " << f_brutal;
+    ss << "\nSexuality: " << f_sexual;
+    ss << "\nCombat:    " << f_combat;
+    ss << "\nBeauty:    " << f_beauty;
+
     for(auto& cust : m_Shift->customers()) {
         
     }
@@ -268,6 +281,7 @@ void sArena::EndShift(bool is_night) {
 }
 
 void sArena::setup_customer(sCustomer& customer) const {
+    /*
     RandomSelectorV2<Goals> selector;
     std::mt19937 rng;
     rng.seed(g_Dice.random(10000));
@@ -279,6 +293,7 @@ void sArena::setup_customer(sCustomer& customer) const {
     selector.process(rng, GOAL_RAPE, 0, 10);
     // Wants to see sex
     selector.process(rng, GOAL_SEX, 0, 10);
+     */
 }
 
 void RegisterArenaJobs(cJobManager& mgr) {
@@ -287,6 +302,8 @@ void RegisterArenaJobs(cJobManager& mgr) {
     cGenericJob::Register(mgr, std::make_unique<FightBeasts>());
     cGenericJob::Register(mgr, std::make_unique<FightGirls>());
     cGenericJob::Register(mgr, std::make_unique<FightTraining>());
+    cGenericJob::Register(mgr, std::make_unique<IntermissionStripper>());
+    cGenericJob::Register(mgr, std::make_unique<Recuperate>());
 
     cGenericJob::Register(mgr, std::make_unique<cBlacksmithJob>());
     cGenericJob::Register(mgr, std::make_unique<cCobblerJob>());

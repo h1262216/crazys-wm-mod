@@ -43,6 +43,10 @@ protected:
 
     ECheckWorkResult SimpleRefusalCheck(sGirl& girl, Action_Types action) const;
 
+    bool CheckCanWork(sGirl& girl) const override {
+        return true;
+    }
+
 private:
     cJobPerformance m_PerformanceData;
     cJobGains       m_Gains;

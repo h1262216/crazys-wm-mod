@@ -39,7 +39,6 @@ public:
     virtual void JobProcessing(sGirl& girl, sGirlShiftData& shift) const = 0;
 
 protected:
-    bool CheckCanWork(sGirl& girl) const override;
     bool CheckRefuseWork(sGirl& girl) const override;
 
     void InitWork(sGirlShiftData& shift) override;

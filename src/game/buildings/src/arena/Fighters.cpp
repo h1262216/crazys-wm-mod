@@ -49,6 +49,7 @@ bool FightBeasts::CheckCanWork(sGirl& girl) const {
     }
     if(girl.health() < 50) {
         add_text("low-health");
+        active_shift().Job = JOB_RECUPERATE;
         return false;
     } else if (girl.is_pregnant()) {
         add_text("is-pregnant");
@@ -294,9 +295,9 @@ std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const
         }
     } else {
         auto beast = std::make_unique<Combatant>("Beast", 100, 0, 0,
-                                                 g_Dice.in_range(30, 70), g_Dice.in_range(40, 80), 0,
+                                                 g_Dice.in_range(20, 50), g_Dice.in_range(20, 60), 0,
                                                  g_Dice.in_range(40, 80), g_Dice.in_range(40, 80));
-        beast->set_weapon("Claws", 20);
+        beast->set_weapon("Claws", 3);
         return beast;
     }
 }

@@ -126,10 +126,6 @@ int cSimpleJob::get_performance_class(int performance) {
     else { return 0;}
 }
 
-bool cSimpleJob::CheckCanWork(sGirl& girl) const {
-    return true;
-}
-
 bool cSimpleJob::CheckRefuseWork(sGirl& girl) const {
     return SimpleRefusalCheck(girl, m_Data.Action) == ECheckWorkResult::REFUSES;
 }

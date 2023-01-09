@@ -27,8 +27,8 @@
 #include "utils/string.hpp"
 #include <tinyxml2.h>
 
-ITreatmentJob::ITreatmentJob(JOBS job, std::string xml_file) : IGenericJob(job, std::move(xml_file), EJobClass::TREATMENT),
-    m_Interface(std::make_unique<cJobTextInterface>(this)) {
+ITreatmentJob::ITreatmentJob(JOBS job, std::string xml_file) : cGenericJob(job, std::move(xml_file), EJobClass::TREATMENT)
+{
     m_Info.FullTime = true;
     m_Info.Phase = EJobPhase::LATE;
 }
@@ -36,50 +36,13 @@ ITreatmentJob::ITreatmentJob(JOBS job, std::string xml_file) : IGenericJob(job, 
 ITreatmentJob::~ITreatmentJob() = default;
 
 void ITreatmentJob::load_from_xml_internal(const tinyxml2::XMLElement& job_data, const std::string& file_name) {
-    // Texts
-    const auto* text_el = job_data.FirstChildElement("Messages");
-    if(text_el) {
-        m_TextRepo = ITextRepository::create();
-        m_TextRepo->load(*text_el);
-        if(!m_TextRepo->verify()) {
-            g_LogFile.error("jobs", "Detected some problems when loading ", file_name);
-            g_Game->error("Detected some problems when loading " + file_name);
-        }
-    }
-
     const auto* config_el = job_data.FirstChildElement(specific_config_element());
     if(config_el) {
         load_from_xml_callback(*config_el);
     }
 }
 
-const std::string& ITreatmentJob::get_text(const std::string& prompt) const {
-    assert(m_TextRepo);
-    try {
-        return m_TextRepo->get_text(prompt, *m_Interface);
-    } catch (const std::out_of_range& oor) {
-        g_LogFile.error("job", "Trying to get missing text '", prompt, "\' in job ", m_Info.Name);
-        throw;
-    }
-}
-
-bool ITreatmentJob::has_text(const std::string& prompt) const {
-    if(!m_TextRepo) return false;
-    return m_TextRepo->has_text(prompt);
-}
-
-std::stringstream& ITreatmentJob::add_text(const std::string& prompt) {
-    auto& tpl = get_text(prompt);
-    interpolate_string(ss, tpl, [&](const std::string& var) -> std::string {
-        if(var == "name") {
-            return active_girl().FullName();
-        }
-        assert(false);
-    }, rng());
-    return ss;
-}
-
-void ITreatmentJob::DoWork(sGirlShiftData& shift) {
+void ITreatmentJob::DoWork(sGirlShiftData& shift) const {
     cGirls::UnequipCombat(active_girl());    // not for patient
     if(active_girl().get_active_treatment() != job()) {
         active_girl().start_treatment(job());

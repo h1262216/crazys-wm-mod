@@ -65,7 +65,7 @@ public:
     virtual int Filthiness() const = 0;
 
     // Customers
-    virtual void AttractCustomer() = 0;
+    virtual sCustomer& AttractCustomer() = 0;
 
     virtual void AddMessage(std::string message, EEventType event) = 0;
 

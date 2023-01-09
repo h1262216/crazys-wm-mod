@@ -29,12 +29,19 @@
 class Combatant;
 
 extern const char* const DrawVisitorsId;
+extern const char* const ArenaFightId;
+
+// Girl-vs-Girl fights
+extern const char* const FightGirlId;
+
+// Tracking the success of the arena spectacle
 extern const char* const FightsFameId;
 extern const char* const BrutalityId;
 extern const char* const SexualityId;
 extern const char* const CombatId;
 extern const char* const BeautyId;
-extern const char* const ArenaFightId;
+
+// For the medic
 extern const char* const ResuscitateId;
 extern const char* const SurgeryId;
 
@@ -73,6 +80,21 @@ public:
     void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
     sJobValidResult on_is_valid(const sGirl& girl, bool night_shift) const;
     void HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const override;
+};
+
+class IntermissionStripper : public cSimpleJob {
+public:
+    IntermissionStripper();
+    void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
+};
+
+class Recuperate : public cBasicJob {
+public:
+    Recuperate();
+private:
+    void DoWork(sGirlShiftData& shift) const override;
+    bool CheckRefuseWork(sGirl& girl) const override;
+    void on_pre_shift(sGirlShiftData& shift) const override;
 };
 
 class FighterJob: public cSimpleJob {

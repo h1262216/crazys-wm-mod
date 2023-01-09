@@ -115,11 +115,18 @@ sJobValidResult Medic::on_is_valid(const sGirl& girl, bool night_shift) const {
 }
 
 void Medic::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    if(is_night_shift()) {
-        add_text("work-night-shift");
+    if(get_performance_class(shift.Performance) >= 2) {
         provide_interaction(ResuscitateId, 1);
+    }
+    if(is_night_shift()) {
         int surgery_amount = performance_based_lookup(0, 0, 10, 15, 25, 33);
         provide_resource(SurgeryId, surgery_amount);
+        add_text("work-night-shift");
+    } else {
+        int surgery_amount = performance_based_lookup(5, 10, 15, 20, 30, 40);
+        provide_resource(SurgeryId, surgery_amount);
+        add_text("work-day-shift");
+        add_performance_text();
     }
 }
 
@@ -162,4 +169,91 @@ void Medic::HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target
     interactor.girl().exp(35);
     interactor.girl().medicine(2);
     interactor.girl().AddMessage(ss.str(), EImageBaseType::NURSE, EVENT_NIGHTSHIFT);
+}
+
+IntermissionStripper::IntermissionStripper() : cSimpleJob(JOB_INTERMISSION_SHOW, "ArenaIntermission.xml",
+                                                          {ACTION_WORKSTRIP, 25, false}) {
+
+}
+
+void IntermissionStripper::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
+    add_performance_text();
+
+    shift_enjoyment();
+
+    int turn_beauty = shift.Performance / 10;
+    int turn_sex = std::max(0, (shift.Performance - 100) / 10);
+    provide_resource(BeautyId, turn_beauty);
+    provide_resource(SexualityId, turn_sex);
+
+    // Improve stats
+    HandleGains(girl, 0);
+}
+
+Recuperate::Recuperate(): cBasicJob(JOB_RECUPERATE, "ArenaRecuperate.xml") {
+
+}
+
+void Recuperate::DoWork(sGirlShiftData& shift) const {
+    if(shift.girl().health() < 10) {
+        auto* medic = request_interaction(ResuscitateId);
+        if(medic) {
+            add_text("medic-near-death");
+            shift.girl().health(uniform(3, 8));
+            shift.girl().tiredness(uniform(5, 10));
+        } else {
+            add_text("healing-near-death");
+            shift.girl().health(uniform(2, 5));
+            shift.girl().strength(-uniform(0, 2));
+            shift.girl().constitution(-uniform(0, 2));
+            shift.girl().tiredness(uniform(10, 15));
+        }
+    } else if (shift.girl().health() < 33) {
+        add_text("healing-low-health");
+        shift.girl().health(uniform(3, 8));
+        shift.girl().tiredness(uniform(2, 5));
+        int med = consume_resource(SurgeryId, 10);
+        if(med > 0) {
+            add_text("medics-help");
+            shift.girl().health(med);
+        }
+    } else if (shift.girl().health() < 66) {
+        add_text("healing-mid-health");
+        shift.girl().health(uniform(3, 8));
+        shift.girl().tiredness(uniform(2, 5));
+    } else {
+        if(shift.girl().tiredness() > 75) {
+            add_text("resting-very-tired");
+            shift.girl().tiredness(-uniform(10, 15));
+        } else if(shift.girl().tiredness() > 50) {
+            add_text("resting-tired");
+            shift.girl().tiredness(-uniform(8, 12));
+            shift.girl().health(uniform(1, 4));
+        } else {
+            add_text("meditate");
+            shift.girl().tiredness(-uniform(8, 12));
+            shift.girl().health(uniform(1, 4));
+        }
+        if (shift.girl().health() < 90) {
+            int med = consume_resource(SurgeryId, 5);
+            if(med > 0) {
+                add_literal("\n\n");
+                add_text("medics-help");
+                shift.girl().health(med);
+            }
+        }
+    }
+
+    generate_event();
+}
+bool Recuperate::CheckRefuseWork(sGirl& girl) const {
+    return false;
+}
+
+void Recuperate::on_pre_shift(sGirlShiftData& shift) const {
+    cBasicJob::on_pre_shift(shift);
+    if(shift.girl().health() == 100 && shift.girl().tiredness() == 0) {
+        add_text("full-health");
+        shift.Job = JOB_RESTING;
+    }
 }

@@ -9,6 +9,7 @@ set(JOBS_SRC
         src/Matron.cpp
         src/SimpleJob.cpp
         src/TextInterface.cpp
+        src/Treatment.cpp
         src/WorkFreetime.cpp
         #src/Treatment.cpp
         )

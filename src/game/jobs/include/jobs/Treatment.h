@@ -20,21 +20,13 @@
 #ifndef WM_TREATMENT_H
 #define WM_TREATMENT_H
 
-#include "IGenericJob.h"
+#include "cGenericJob.h"
 
-class ITextRepository;
-class cJobTextInterface;
-
-class ITreatmentJob : public IGenericJob {
+class ITreatmentJob : public cGenericJob {
 public:
     ITreatmentJob(JOBS job, std::string xml_file);
     ~ITreatmentJob() override;
-    void DoWork(sGirlShiftData& shift) override;
-
-protected:
-    const std::string& get_text(const std::string& prompt) const;
-    bool has_text(const std::string& prompt) const;
-    std::stringstream& add_text(const std::string& prompt);
+    void DoWork(sGirlShiftData& shift) const override;
 
 private:
     virtual const char* specific_config_element() const { return nullptr; }
@@ -43,10 +35,7 @@ private:
     // For reading the custom data in the <Treatment> tag
     virtual void load_from_xml_callback(const tinyxml2::XMLElement& job_element) {};
 
-    virtual void ReceiveTreatment(sGirl& girl, bool is_night) = 0;
-
-    std::unique_ptr<ITextRepository> m_TextRepo;
-    std::unique_ptr<cJobTextInterface> m_Interface;
+    virtual void ReceiveTreatment(sGirl& girl, bool is_night) const = 0;
 };
 
 #endif //WM_TREATMENT_H

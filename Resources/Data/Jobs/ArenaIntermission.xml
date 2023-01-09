@@ -1,0 +1,109 @@
+<!DOCTYPE Job SYSTEM "job.dtd">
+<Job ShortName="AStp">
+    <Description>
+        She will entertain the spectators during intermissions between fights. Clothes are optional.
+    </Description>
+
+    <Performance>
+        <Factor Stat="Beauty" Weight="2"/>
+        <Factor Stat="Charisma" Weight="2"/>
+        <Factor Skill="Performance" Weight="1"/>
+        <Factor Skill="Strip" Weight="2"/>
+
+        <Mod>work.stripper</Mod>
+
+        <!--
+        The original code had a fame bonus and a pregnancy malus
+        -->
+    </Performance>
+
+    <Config Shift="night-only" DefaultImage="Strip">
+        <WageFunction>
+            <Point Performance="245" Wages="155" />
+            <Point Performance="185" Wages="95" />
+            <Point Performance="145" Wages="55" />
+            <Point Performance="100" Wages="15" />
+            <Point Performance="70" Wages="-5" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
+    <Gains XP="20" Skill="3">
+        <LoseTrait Trait="Nervous" Threshold="30" Action="WORKSTRIP">
+            ${name} has had so many people see her naked she is no longer nervous about anything.
+        </LoseTrait>
+        <GainTrait Trait="Sexy Air" Threshold="80" Action="WORKSTRIP">
+            ${name} has been stripping and having to be sexy for so long she now reeks of sexyness.
+        </GainTrait>
+        <GainTrait Trait="Exhibitionist" Threshold="60" Action="WORKSTRIP">
+            ${name} has been stripping for so long she loves to be naked now.
+        </GainTrait>
+        <GainTrait Trait="Agile" Threshold="40" Action="WORKSTRIP" Chance="25" MinPerformance="140">
+            ${name} has been working the pole long enough to become quite Agile.
+        </GainTrait>
+
+        <Skill Name="Performance" Weight="2" />
+        <Skill Name="Strip" Weight="2" />
+    </Gains>
+
+    <Messages>
+        <Message Name="work">
+            <Text>${name} stripped in the arena to entertain the spectators during the intermissions.</Text>
+        </Message>
+        <Message Name="refuse">
+            <Text>"${name} refused to strip for the spectators in your Arena to${shift}</Text>
+        </Message>
+
+        <Message Name="work.perfect">
+            She must be the perfect stripper - she might be drawing more spectators than the actual fights.
+
+            <Text>${name} throws her bra into the crowd causing a fight to erupt over who got to take it home. They just love her.</Text>
+            <Text>People push and shove to get to the front row for ${name}'s intermission dance.</Text>
+            <Text>${name} choreographed a martial arts kata that seamlessly removed pieces of clothing between kicks and punches, driving the crowd wild.</Text>
+        </Message>
+
+        <Message Name="work.great">
+            She's unbelievable at this and is always getting praised by the spectators for her work.
+
+            <Text>${name} throws her bra into the crowd causing an uproar of hooting and screaming. She knows how to drive them crazy.</Text>
+            <Text>All male members of ${name}'s audience had trouble standing after she finished her set.</Text>
+            <Text>From start to finish, every move ${name} makes practically sweats sexuality.</Text>
+        </Message>
+
+        <Message Name="work.good">
+            She's good at this job and gets praised by the spectators often.
+
+            <Text>${name}'s sly smile and slow striptease drives the crowd crazy.</Text>
+            <Text>You watched with amusement as members of her audience made a disproportionate number of trips to the bathroom after her performance.</Text>
+            <Text Updates="Tips+=10">
+                Seeing the large crowd waiting eagerly, ${name} smirked and slowly strode out onto the arena floor, knowing she was going get good tips today.
+            </Text>
+        </Message>
+
+        <Message Name="work.ok">
+            She made a few mistakes but overall she is okay at this.
+
+            <Text>While she won't win any contests, ${name} isn't a terrible stripper.</Text>
+            <Text>${name} is not the best erotic dancer you've ever seen, but the drunks enjoy the eyecandy.</Text>
+            <Text>Somehow, ${name} managed to get a decent amount of tips as she slowly took her clothes of during her intermission show.</Text>
+        </Message>
+
+        <Message Name="work.bad">
+            She was nervous and made a few mistakes. She isn't that good at this.
+
+            <Text>${name}'s hair got tangled up in her shirt when she tried to take it off, making her reel about the arena floor like a drunk.</Text>
+            <Text>For all the reaction she's getting, you could probably replace ${name} with a simple mannequin.</Text>
+            <Text>${name} at least managed to get all her clothes off in time before the next bout.</Text>
+            <Text>${name} isn't qualified as a stripper, which might explain why she couldn't successfully detach her bra.</Text>
+        </Message>
+
+        <Message Name="work.worst">
+            ${name} was stiff and nervous, constantly making mistakes. She really isn't good at this job.
+
+            <Text>${name}'s hair got tangled up in her shirt when she tried to take it off, making her reel about the arena floor like a drunk.</Text>
+            <Text>Seeing the large crowd waiting, ${name}'s nerve broke, and she wouldn't take the stage.</Text>
+            <Text>Somehow, ${name} forgot that she was a stripper and finished her set with her clothes still on.</Text>
+            <Text>Somehow, ${name} managed to be so unsexy that the audience barely seemed to notice her presence.</Text>
+        </Message>
+    </Messages>
+</Job>

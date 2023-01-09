@@ -155,8 +155,9 @@ void cBuildingShift::GenerateFilth(int amount) {
     m_Building->m_Filthiness += amount;
 }
 
-void cBuildingShift::AttractCustomer() {
+sCustomer& cBuildingShift::AttractCustomer() {
     m_Customers.push_back(g_Game->customers().CreateCustomer(*m_Building));
+    return *m_Customers.back();
 }
 
 void cBuildingShift::run_shift(bool is_night) {
@@ -194,7 +195,13 @@ void cBuildingShift::begin_shift(bool is_night) {
         cGirls::UpdateAskPrice(girl, true);    // Calculate the girls asking price
         auto& shift = get_girl_data(girl);
         handle_resting_girl(shift);
-        g_Game->job_manager().handle_pre_shift(shift);
+
+        // call pre-shift until we've settled on a job
+        auto old_job = JOB_UNSET;
+        while(shift.Job != old_job) {
+            old_job = shift.Job;
+            g_Game->job_manager().handle_pre_shift(shift);
+        }
     });
 };
 

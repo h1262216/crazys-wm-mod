@@ -1,0 +1,45 @@
+<!DOCTYPE Job SYSTEM "job.dtd">
+<Job ShortName="Recu">
+    <Description>
+        She will prepare for her coming battles, healing and gathering strength.
+    </Description>
+
+    <Config DefaultImage="Rest" Phase="main"/>
+
+    <Messages>
+        <Message Name="full-health">
+            <Text>${name} is fully healed and rested, so she decides to relax.</Text>
+        </Message>
+        <Message Name="healing-near-death">
+            <Text>${name}'s health is in critical condition. She's feverish, going in and out of consciousness.
+                You should have a Medic looking after her.</Text>
+        </Message>
+        <Message Name="medic-near-death">
+            <Text>${name}'s health is in critical condition. </Text>
+        </Message>
+        <Message Name="healing-low-health">
+            <Text>${name} is bruised and battered from her previous fights. She spends the entire ${shift} in bed.</Text>
+        </Message>
+        <Message Name="healing-mid-health">
+            <Text>${name} still has some scrapes and bruises from previous fights. She spends most of her time recovering, and doing
+            light physical therapy to ensure a successful healing process.</Text>
+        </Message>
+        <Message Name="resting-very-tired">
+            <Text>${name} is exhausted due to her previous fights.
+                She spends the entire ${shift} resting in bed.</Text>
+        </Message>
+        <Message Name="resting-tired">
+            <Text>${name} is tired because of her previous fights.
+                She spends most of the ${shift} resting, and does some light physical exercises.
+            </Text>
+        </Message>
+        <Message Name="meditate">
+            <Text>${name} spends the day meditating and doing light physical exercise to prepare for her next fight.
+            </Text>
+        </Message>
+
+        <Message Name="medics-help">
+            <Text>The administrations of your Medics help her to recover faster.</Text>
+        </Message>
+    </Messages>
+</Job>

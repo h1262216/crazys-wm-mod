@@ -59,5 +59,35 @@
         <Message Name="work-night-shift">
             <Text>She prepares her tools, so she is ready to intervene should any of your girls get dangerously hurt.</Text>
         </Message>
+        <Message Name="work-day-shift">
+            <Text>She tends to your recuperating girls.</Text>
+        </Message>
+        <Message Name="work.perfect">
+            <Text>Her vast medical knowledge and skills lets your fighters recover faster than you thought possible.</Text>
+        </Message>
+        <Message Name="work.great">
+            <Text>She skillfully dresses wounds and administers healing concoctions she has prepared.
+                Your girls will be up and fighting again in no time.</Text>
+        </Message>
+        <Message Name="work.good">
+            <Text>
+                She applies clean dressings to any open wounds, and administers basic healing concoctions. The girls in the
+                infirmary are in good hands with her.
+            </Text>
+        </Message>
+        <Message Name="work.ok">
+            <Text>You don't think she'd be able to handle any life-threatening injuries, but at least she knows how to
+                apply salve to prevent wounds from getting infected.
+            </Text>
+        </Message>
+        <Message Name="work.bad">
+            <Text>Unfortunately, ${name}'s idea of medicine is to pump your girls full of morphium. </Text>
+        </Message>
+        <Message Name="work.worst">
+            <Text>${name} does not wash her hands before touching open wounds,
+                and seems to be unsure of what to do with the bandages she's been provided.
+
+            </Text>
+        </Message>
     </Messages>
 </Job>

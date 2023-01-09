@@ -145,7 +145,7 @@ void Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     CleaningUpdateGirl(girl, is_night_shift(), enjoy, CleanAmt);
 }
 
-CleanArena::CleanArena() : Cleaning(JOB_CLEANARENA, "CleanArena.xml") {
+CleanArena::CleanArena() : Cleaning(JOB_GROUNDSKEEPER, "CleanArena.xml") {
 
 }
 

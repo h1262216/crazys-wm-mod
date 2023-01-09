@@ -53,7 +53,7 @@ public:
     void GenerateFilth(int amount) override;
     int Filthiness() const override;
 
-    void AttractCustomer() override;
+    sCustomer& AttractCustomer() override;
 
     // declarations
     void declare_resource(const std::string& name);

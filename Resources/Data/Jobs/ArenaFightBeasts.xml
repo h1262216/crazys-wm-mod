@@ -45,10 +45,10 @@
             <Text>${name} had no beasts to fight.</Text>
         </Message>
         <Message Name="low-health">
-            <Text>${name} cannot Fight Beasts today, because she is not healthy enough for such a dangerous job.</Text>
+            <Text>${name} cannot Fight Beasts to${shift}, because she is not healthy enough for such a dangerous job.</Text>
         </Message>
         <Message Name="is-pregnant">
-            <Text>${name} cannot Fight Beasts today, because she is pregnant.</Text>
+            <Text>${name} cannot Fight Beasts to${shift}, because she is pregnant.</Text>
         </Message>
         <Message Name="no-armor">
             <Text>The crowd can't believe you sent ${name} out to fight beasts without armor. But at least she had a weapon.</Text>

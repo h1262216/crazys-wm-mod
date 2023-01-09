@@ -109,7 +109,7 @@ void cBuilding::BeginWeek()
         }
         else
         {
-
+            GirlBeginWeek(cgirl);
         }
     });
 
@@ -723,7 +723,7 @@ int cBuilding::total_fame() const
 bool is_she_cleaning(sGirl& girl)
 {
     if (girl.m_DayJob == JOB_CLEANING || girl.m_NightJob == JOB_CLEANING ||
-        girl.m_DayJob == JOB_CLEANARENA || girl.m_NightJob == JOB_CLEANARENA ||
+        girl.m_DayJob == JOB_GROUNDSKEEPER || girl.m_NightJob == JOB_GROUNDSKEEPER ||
         girl.m_DayJob == JOB_STAGEHAND || girl.m_NightJob == JOB_STAGEHAND ||
         girl.m_DayJob == JOB_JANITOR || girl.m_NightJob == JOB_JANITOR ||
         girl.m_DayJob == JOB_CLEANCENTRE || girl.m_NightJob == JOB_CLEANCENTRE ||

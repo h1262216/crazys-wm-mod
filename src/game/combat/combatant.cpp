@@ -145,7 +145,7 @@ Combatant::Combatant(ICharacter& character) :
         auto item = entry.first;
         if (item->m_Type == sInventoryItem::Weapon && entry.second.equipped) {
             // found an equipped weapon -- damage is currently only based on weapon cost.
-            double dmg = 1 + std::min(1.0, std::sqrt(item->m_Cost / 1000.0));
+            double dmg = 1.5 + std::sqrt(item->m_Cost / 1000.0);
             set_weapon(item->m_Name, dmg);
         }
     }

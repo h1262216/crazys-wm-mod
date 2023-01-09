@@ -132,10 +132,10 @@ void cJobManager::Setup()
 
     // - Arena Jobs
     JobFilters[JOBFILTER_ARENA] = sJobFilter{"Fighters", "These are jobs for the fighters in the arena."};
-    register_filter(JOBFILTER_ARENA, JOB_FIGHTBEASTS, JOB_FIGHTTRAIN, {JOB_RESTING});
+    register_filter(JOBFILTER_ARENA, JOB_FIGHTBEASTS, JOB_RECUPERATE, {JOB_RESTING});
     //- Arena Staff
     JobFilters[JOBFILTER_ARENASTAFF] = sJobFilter{"Staff", "These are jobs that help run an arena."};
-    register_filter(JOBFILTER_ARENASTAFF, JOB_DOCTORE, JOB_MEDIC, {JOB_RESTING, JOB_CLEANARENA});
+    register_filter(JOBFILTER_ARENASTAFF, JOB_DOCTORE, JOB_INTERMISSION_SHOW, {JOB_RESTING, JOB_GROUNDSKEEPER});
     //- Arena Production
     JobFilters[JOBFILTER_ARENA_PRODUCTION] = sJobFilter{"Production", "These are jobs that produce things."};
     register_filter(JOBFILTER_ARENA_PRODUCTION, JOB_BLACKSMITH, JOB_JEWELER, {});
@@ -267,18 +267,18 @@ bool cJobManager::is_job_Paid_Player(JOBS Job)
         Job ==    JOB_CAMERAMAGE            ||    // Uses magic to record the scenes to crystals (requires at least 1)
         Job ==    JOB_CRYSTALPURIFIER        ||    // Post editing to get the best out of the film (requires at least 1)
         Job ==    JOB_FLUFFER                ||    // Keeps the porn stars and animals aroused
-        Job ==    JOB_STAGEHAND            ||    // Sets up equipment, and keeps studio clean
+        Job ==    JOB_STAGEHAND ||    // Sets up equipment, and keeps studio clean
 
         // - Community Centre
-        Job ==    JOB_FEEDPOOR            ||    // work in a soup kitchen
-        Job ==    JOB_COMUNITYSERVICE        ||    // Goes around town helping where they can
-        Job ==    JOB_CENTREMANAGER        ||    // work in a soup kitchen
-        Job ==    JOB_CLEANCENTRE            ||    // Goes around town helping where they can
+        Job ==    JOB_FEEDPOOR ||    // work in a soup kitchen
+        Job ==    JOB_COMUNITYSERVICE ||    // Goes around town helping where they can
+        Job ==    JOB_CENTREMANAGER ||    // work in a soup kitchen
+        Job ==    JOB_CLEANCENTRE ||    // Goes around town helping where they can
 
         //arena
-        Job ==    JOB_DOCTORE                ||    //
-        Job ==    JOB_CLEANARENA            ||    //
-        Job ==    JOB_FIGHTTRAIN            ||    //
+        Job ==    JOB_DOCTORE ||    //
+        Job == JOB_GROUNDSKEEPER ||    //
+        Job ==    JOB_FIGHTTRAIN ||    //
         Job ==    JOB_FIGHTARENAGIRLS        ||    //
         Job ==    JOB_FIGHTBEASTS            ||    //
 
@@ -1590,7 +1590,7 @@ const IGenericJob* cJobManager::get_job(JOBS job) const {
     if(!ptr) {
       g_LogFile.error("jobmgr",
 		      "Job ", job, " has not been registered.");
-      throw std::invalid_argument(std::string("cJobManager::get_job(") + std::to_string(job) + ")");
+      throw std::invalid_argument(std::string("cJobManager::get_job(") + ::get_job_name(job) + ")");
     }
 
     return ptr.get();
