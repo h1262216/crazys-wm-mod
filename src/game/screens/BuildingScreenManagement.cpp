@@ -328,7 +328,7 @@ void IBuildingScreenManagement::init(bool back)
 
     // add the job filters
     for(auto filter : m_JobFilters) {
-        AddToListBox(jobtypelist_id, filter, g_Game->job_manager().JobFilters[filter].Name);
+        AddToListBox(jobtypelist_id, filter, g_Game->job_manager().JobFilters[filter].Display);
     }
     SetSelectedItemInList(jobtypelist_id, m_JobFilters.front());
 
@@ -349,7 +349,7 @@ std::string IBuildingScreenManagement::jobname_with_count(JOBS job_id, bool is_n
     return text.str();
 }
 
-void IBuildingScreenManagement::add_job_filter(JOBFILTER filter)
+void IBuildingScreenManagement::add_job_filter(EJobFilter filter)
 {
     m_JobFilters.push_back(filter);
 }
@@ -626,7 +626,7 @@ cScreenGirlManagement::cScreenGirlManagement() :
 {
     // add the job filters
     for (unsigned int i = 0; i <= JOBFILTER_BROTHEL; i++)  // temporary limit to job types shown
-        add_job_filter((JOBFILTER)i);
+        add_job_filter((EJobFilter)i);
 }
 
 

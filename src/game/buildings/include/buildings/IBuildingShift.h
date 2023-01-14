@@ -48,7 +48,7 @@ public:
 
     //  one-on-one interactions
     virtual void ProvideInteraction(const std::string& name, sGirl* source, int amount) = 0;
-    virtual sGirl* RequestInteraction(const std::string& name) = 0;
+    virtual sGirl* RequestInteraction(const std::string& name, const sGirl* requester) = 0;
 
     virtual bool HasInteraction(const std::string& name) const = 0;
     /// Returns how many girls are working as "interactors" of the given type.

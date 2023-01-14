@@ -4,7 +4,9 @@
         She will prepare for her coming battles, healing and gathering strength.
     </Description>
 
-    <Config DefaultImage="Rest" Phase="main"/>
+    <Config DefaultImage="Rest" Phase="main">
+        <Filter>ArenaFight</Filter>
+    </Config>
 
     <Messages>
         <Message Name="full-health">

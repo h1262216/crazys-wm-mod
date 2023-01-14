@@ -2,9 +2,10 @@
 <!ATTLIST Job ShortName CDATA #REQUIRED>
 
 <!ELEMENT Description (#PCDATA)>
-<!ELEMENT Config ANY>
+<!ELEMENT Config (Filter)>
 <!ATTLIST Config Shift (both|day-only|night-only|full) FreeOnly (0|1) #IMPLIED DefaultImage CDATA #IMPLIED
-        Phase (prepare|produce|main|late) #IMPLIED>
+        Phase (prepare|produce|main|late) #IMPLIED FightingJob (0|1) #IMPLIED>
+<!ELEMENT Filter (#PCDATA)>
 
 <!ELEMENT Performance (Factor|Trait|Mod)*>
 <!ATTLIST Performance Modifier CDATA #IMPLIED>

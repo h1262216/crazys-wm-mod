@@ -35,7 +35,7 @@ namespace {
     const float STAGEHAND_MAX_MALUS = 0.1f;
 
     sGirl& select_worker(IBuildingShift& studio, const char* id) {
-        auto wrk = studio.RequestInteraction(id);
+        auto wrk = studio.RequestInteraction(id, nullptr);
         if(wrk == nullptr) throw std::logic_error("Tried to film a scene, but crew could not be found");
         return *wrk;
     }

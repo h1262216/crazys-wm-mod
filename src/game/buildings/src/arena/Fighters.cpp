@@ -38,7 +38,7 @@ void FighterJob::handle_combat_stat(const std::string& name, int value) const {
     provide_resource(name, std::min(std::max(0, value), 100));
 }
 
-FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml", {ACTION_COMBAT, 100, true}) {
+FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml", {ACTION_COMBAT, 100}) {
 }
 
 bool FightBeasts::CheckCanWork(sGirl& girl) const {
@@ -73,6 +73,29 @@ void FighterJob::on_pre_shift(sGirlShiftData& shift) const {
     provide_resource(DrawVisitorsId, visitors);
 }
 
+void FighterJob::setup_job() {
+    m_TurnBeautyId = RegisterVariable("TurnBeauty", 0);
+    m_TurnCombatId = RegisterVariable("TurnCombat", 0);
+    m_TurnSexualityId = RegisterVariable("TurnSexuality", 0);
+    m_TurnBrutalityId = RegisterVariable("TurnBrutality", 0);
+}
+
+int& FighterJob::turn_brutality() const {
+    return active_shift().get_var_ref(m_TurnBrutalityId);
+}
+
+int& FighterJob::turn_sexuality() const {
+    return active_shift().get_var_ref(m_TurnSexualityId);
+}
+
+int& FighterJob::turn_combat() const {
+    return active_shift().get_var_ref(m_TurnCombatId);
+}
+
+int& FighterJob::turn_beauty() const {
+    return active_shift().get_var_ref(m_TurnBeautyId);
+}
+
 void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     bool has_armor = girl.get_num_item_equiped(sInventoryItem::Armor);
     bool has_wpn = girl.get_num_item_equiped(sInventoryItem::Weapon) + girl.get_num_item_equiped(sInventoryItem::SmWeapon);
@@ -93,14 +116,11 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     add_literal("\n");
 
     int turn_enjoy = 0;
-    int turn_fame = girl.fame() / 2;
-    int turn_brutality = 0;
-    int turn_sexuality = 0;
-    int turn_beauty = uniform(girl.beauty() / 2, girl.beauty()) / 2;
-    int turn_combat = uniform(girl.combat() / 2, girl.combat()) / 2;
+    turn_beauty() = uniform(girl.beauty() / 2, girl.beauty()) / 2;
+    turn_combat() = uniform(girl.combat() / 2, girl.combat()) / 2;
     if(lack_of_equipment > 0) {
-        turn_brutality += uniform(10, 40);
-        turn_combat -= uniform(10, 40);
+        turn_brutality() += uniform(10, 40);
+        turn_combat() -= uniform(10, 40);
     }
 
     // TODO need better dialog
@@ -117,30 +137,26 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 
     int kills = 0;
 
-    auto punishment_fn = [&](){
-
-    };
-
     if (result == ECombatResult::VICTORY)    // she won
     {
         int duration = combat.round_summaries().size();
         if(duration + lack_of_equipment > 8) {
-            turn_combat += uniform(50, 100);
+            turn_combat() += uniform(50, 100);
         } else {
-            turn_combat += uniform(20, 60);
+            turn_combat() += uniform(20, 60);
         }
 
         add_literal("${name} fought against a beast. ");
         if(girl.health() < 25) {
-            turn_brutality += uniform(10, 20);
+            turn_brutality() += uniform(10, 20);
             add_literal("She barely won the fight.");
         } else {
             add_literal("She won the fight.");
         }
         add_literal("\n");
         if(!combat.get_attackers().members.at(0)->is_dead()) {
-            turn_combat -= uniform(10, 20);
-            turn_brutality -= uniform(20, 40);
+            turn_combat() -= uniform(10, 20);
+            turn_brutality() -= uniform(20, 40);
             add_literal("Your beast survived, and can be used for another fight. Some of the more bloodthirsty spectators are disappointed.");
         }
 
@@ -152,7 +168,7 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
                 add_literal("flashing the crowd her boobs.");
             }
             turn_enjoy += 3;
-            turn_beauty += girl.beauty() / 10;
+            turn_beauty() += girl.beauty() / 10;
         }
 
         turn_enjoy += 3;
@@ -168,26 +184,29 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
             if(resuscitate) {
                 add_line("beast-wins-girl-rescued");
                 girl.health(1);
+                turn_brutality() += uniform(20, 40);
                 shift.building().TriggerInteraction(*resuscitate, girl);
             } else {
                 add_text("beast-kills-girl");
-                turn_brutality += 100;
-                turn_beauty -= uniform(20, 40);
+                turn_brutality() += 100;
+                turn_beauty() -= uniform(20, 40);
                 girl.AddMessage("${name} has been killed in her fight against a beast.", EImageBaseType::DEATH, EVENT_DANGER);
                 kills = 1;
             }
         } else {
             add_text("beast-wins-girl-survives");
-            int emergency_healing = consume_resource(SurgeryId, 20);
-            if(emergency_healing > 0) {
-                add_text("beast-wins-girl-survives.healing");
-                girl.health(emergency_healing);
-            } else {
-                add_text("beast-wins-girl-survives.no-healing");
-                const char* injury = cJobManager::get_injury_trait(girl);
-                if(injury) {
-                    girl.gain_trait(injury);
-                    add_literal(std::string("She now has ") + injury + ".");
+            if(girl.health() < 50) {
+                int emergency_healing = consume_resource(SurgeryId, 20);
+                if (emergency_healing > 0) {
+                    add_text("girl-survives.healing");
+                    girl.health(emergency_healing);
+                } else {
+                    add_text("girl-survives.no-healing");
+                    const char* injury = cJobManager::get_injury_trait(girl);
+                    if (injury) {
+                        girl.gain_trait(injury);
+                        add_literal(std::string("She now has ") + injury + ".");
+                    }
                 }
             }
         }
@@ -196,12 +215,12 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     {
         kills = 0;
         if(combat.get_defenders().members.at(0)->is_escaped()) {
-            turn_combat -= uniform(10, 40);
-            turn_brutality -= uniform(10, 20);
+            turn_combat() -= uniform(10, 40);
+            turn_brutality() -= uniform(10, 20);
             add_literal("${name} ended up running away from the beast.");
         } else {
-            turn_combat += uniform(girl.agility() / 2, girl.agility()) / 4;
-            turn_combat -= uniform(10, 40);
+            turn_combat() += uniform(girl.agility() / 2, girl.agility()) / 4;
+            turn_combat() -= uniform(10, 40);
             add_literal("${name} was unable to win the fight.");
         }
         turn_enjoy -= 1;
@@ -213,13 +232,13 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
             // she wants/likes it
             if(chance(chance_horny_public(girl, ESexParticipants::GANGBANG, SKILL_BEASTIALITY, false).as_percentage())) {
                 add_text("beast-won-horny");
-                turn_brutality += uniform(0, 10);
-                turn_sexuality += uniform(30, 80);
+                turn_brutality() += uniform(0, 10);
+                turn_sexuality() += uniform(30, 80);
             } else if(girl.has_active_trait(traits::MASOCHIST) && girl.beastiality() > 33) {
                 add_text("beast-won-masochist");
                 make_horny(girl, 10);
-                turn_brutality += uniform(10, 40);
-                turn_sexuality += uniform(50, 100);
+                turn_brutality() += uniform(10, 40);
+                turn_sexuality() += uniform(50, 100);
             } else if (girl.beastiality() < 33) {
                 add_text("beast-won-bad");
                 if(girl.health() > 33) {
@@ -229,17 +248,17 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
                 girl.pcfear(5);
                 turn_enjoy -= 15;
                 girl.libido(-5);
-                turn_brutality += uniform(50, 100);
-                turn_sexuality += uniform(20, 60);
-                turn_beauty -= uniform(20, 60);
+                turn_brutality() += uniform(50, 100);
+                turn_sexuality() += uniform(20, 60);
+                turn_beauty() -= uniform(20, 60);
             } else {
                 add_text("beast-won-regular");
                 turn_enjoy -= 5;
                 girl.pclove(-4);
                 girl.pcfear(2);
                 girl.libido(-2);
-                turn_brutality += uniform(20, 60);
-                turn_sexuality += uniform(50, 100);
+                turn_brutality() += uniform(20, 60);
+                turn_sexuality() += uniform(50, 100);
             }
 
             girl.lust_release_spent();
@@ -268,10 +287,10 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
     }
     provide_resource(FightsFameId, shift.Performance);
-    handle_combat_stat(BrutalityId, turn_brutality);
-    handle_combat_stat(SexualityId, turn_sexuality);
-    handle_combat_stat(CombatId, turn_combat);
-    handle_combat_stat(BeautyId, turn_beauty);
+    handle_combat_stat(BrutalityId, turn_brutality());
+    handle_combat_stat(SexualityId, turn_sexuality());
+    handle_combat_stat(CombatId, turn_combat());
+    handle_combat_stat(BeautyId, turn_beauty());
     provide_resource(ArenaFightId, 1);
     shift.building().Finance().arena_income(earned);
 
@@ -302,93 +321,119 @@ std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const
     }
 }
 
-FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml", {ACTION_COMBAT, 50, true}) {
+FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml", {ACTION_COMBAT, 50}) {
 }
+
+bool FightGirls::CheckCanWork(sGirl& girl) const {
+    if(girl.health() < 50) {
+        add_text("low-health");
+        active_shift().Job = JOB_RECUPERATE;
+        return false;
+    } else if (girl.is_pregnant()) {
+        add_text("is-pregnant");
+        return false;
+    }
+    return true;
+}
+
 
 void FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     int enjoy = 0, fame = 0;
-    auto tempgirl = g_Game->CreateRandomGirl(SpawnReason::ARENA);
-    if (tempgirl) {
-        auto fight_outcome = GirlFightsGirl(girl, *tempgirl);
-        if (fight_outcome == EFightResult::VICTORY)    // she won
+    turn_beauty() = uniform(girl.beauty() / 2, girl.beauty()) / 2;
+    turn_combat() = uniform(girl.combat() / 2, girl.combat()) / 2;
+
+    int pot = 50;
+
+    auto opponent = g_Game->CreateRandomGirl(SpawnReason::ARENA);
+    if (opponent) {
+        Combat combat(ECombatObjective::KILL, ECombatObjective::KILL);
+        combat.add_combatant(ECombatSide::ATTACKER, girl);
+        combat.add_combatant(ECombatSide::DEFENDER, *opponent);
+        turn_combat() += uniform(opponent->combat() / 2, opponent->combat()) / 2;
+        turn_combat() /= 2;
+
+        pot += girl.fame() + opponent->combat();
+        pot += uniform(0, 50);
+
+        auto result = combat.run(15);
+        auto report = std::make_shared<CombatReport>();
+        report->rounds = combat.round_summaries();
+        girl.GetEvents().AddMessage(combat.round_summaries().back(), EVENT_GANG, report);
+
+        if (result == ECombatResult::VICTORY)
         {
             enjoy = uniform(1, 3);
             fame = uniform(1, 3);
-            std::shared_ptr<sGirl> ugirl = nullptr;
-            if (chance(10))        // chance of getting unique girl
-            {
-                ugirl = g_Game->GetRandomUniqueGirl(false, false, true);
-            }
-            if (ugirl)
-            {
-                std::stringstream msg;    // goes to the girl and the g_MessageQue
-                std::stringstream Umsg;    // goes to the new girl
-                std::stringstream Tmsg;    // temp msg
-                ugirl->set_stat(STAT_HEALTH, uniform(1, 50));
-                ugirl->set_stat(STAT_HAPPINESS, uniform(1, 80));
-                ugirl->set_stat(STAT_TIREDNESS, uniform(50, 100));
-                ugirl->set_status(STATUS_ARENA);
-                msg << "${name} won her fight against " << ugirl->FullName() << ".\n \n";
-                Umsg << ugirl->FullName() << " lost her fight against your girl ${name}.\n \n";
-                Tmsg << ugirl->FullName();
-                if (chance(10))
-                {
-                    ugirl->set_status(STATUS_SLAVE);
-                    Tmsg << "'s owner could not afford to pay you your winnings so he gave her to you instead.\n \n";
-                }
-                else
-                {
-                    Tmsg << " put up a good fight so you let her live as long as she came work for you.\n \n";
-                    shift.Tips = uniform(100, 100 + girl.fame() + girl.charisma());
-                }
-                msg << Tmsg.str();
-                Umsg << Tmsg.str();
-                add_literal(msg.str());
-                g_Game->push_message(msg.str(), 0);
-                ugirl->AddMessage(Umsg.str(), EImageBaseType::PROFILE, EVENT_DUNGEON);
-
-                g_Game->dungeon().AddGirl(ugirl, DUNGEON_NEWARENA);
-            }
-            else
-            {
+            if(opponent->is_dead()) {
+                turn_brutality() += 100;
+                add_line("victory-kill-opponent");
+            } else {
                 add_line("victory");
-                shift.Tips = uniform(100, 100 + girl.fame() + girl.charisma());
             }
+            shift.Earnings = pot;
+            shift.Tips = uniform(20, 50 + girl.fame() + girl.charisma());
         }
-        else if (fight_outcome == EFightResult::DEFEAT) // she lost
+        else if (result == ECombatResult::DEFEAT)
         {
             enjoy = -uniform(1, 3);
             fame = -uniform(1, 3);
-            add_line("defeat");
-            int cost = 150;
-            shift.building().Finance().arena_costs(cost);
-            shift.EventMessage << " You had to pay " << cost << " gold cause your girl lost.";
-            /*that should work but now need to make if you lose the girl if you dont have the gold zzzzz FIXME*/
+            if(girl.is_dead()) {
+                add_literal("\n");
+                auto resuscitate = request_interaction(ResuscitateId);
+                if(resuscitate) {
+                    add_line("opponent-wins-girl-rescued");
+                    girl.health(1);
+                    turn_brutality() += uniform(20, 40);
+                    shift.building().TriggerInteraction(*resuscitate, girl);
+                } else {
+                    add_text("opponent-kills-girl");
+                    turn_brutality() += 100;
+                    turn_beauty() -= uniform(20, 40);
+                    girl.AddMessage("${name} has been killed in her fight against " + opponent->FullName() + "." , EImageBaseType::DEATH, EVENT_DANGER);
+                }
+            } else {
+                add_text("opponent-wins-girl-survives");
+                if(girl.health() < 50) {
+                    int emergency_healing = consume_resource(SurgeryId, 20);
+                    if (emergency_healing > 0) {
+                        add_text("girl-survives.healing");
+                        girl.health(emergency_healing);
+                    } else {
+                        add_text("girl-survives.no-healing");
+                        const char* injury = cJobManager::get_injury_trait(girl);
+                        if (injury) {
+                            girl.gain_trait(injury);
+                            add_literal(std::string("She now has ") + injury + ".");
+                        }
+                    }
+                }
+            }
         }
         else  // it was a draw
         {
             enjoy = uniform(-2, 2);
             fame = uniform(-2, 2);
-            add_text("draw");
+            if(combat.get_attackers().members.at(0)->is_escaped()) {
+                turn_combat() -= uniform(10, 40);
+                turn_brutality() -= uniform(10, 20);
+                add_text("draw-ran-away");
+                shift.Earnings -= pot;
+            } else if(combat.get_defenders().members.at(0)->is_escaped()) {
+                turn_combat() -= uniform(10, 40);
+                turn_brutality() -= uniform(10, 20);
+                add_text("draw-opponent-ran");
+                shift.Earnings += pot;
+            } else {
+                turn_combat() += uniform(girl.agility() / 2, girl.agility()) / 4;
+                turn_combat() -= uniform(10, 40);
+                add_text("draw-fight-ended");
+            }
         }
     }
     else {
         g_LogFile.log(ELogLevel::ERROR, "You have no Arena Girls for your girls to fight\n");
         shift.EventMessage << "There were no Arena Girls for her to fight.\n \n(Error: You need an Arena Girl to allow WorkFightArenaGirls randomness)";
         shift.EventImage = EImageBaseType::PROFILE;
-    }
-
-    if (girl.is_pregnant())
-    {
-        if (girl.strength() >= 60)
-        {
-            shift.EventMessage << "\n \nAll that fighting proved to be quite exhausting for a pregnant girl, even for one as strong as ${name} .\n";
-        }
-        else
-        {
-            shift.EventMessage << "\n \nAll that fighting proved to be quite exhausting for a pregnant girl like ${name} .\n";
-        }
-        girl.tiredness(10 - girl.strength() / 20 );
     }
 
     if (girl.has_active_trait(traits::EXHIBITIONIST) && chance(15))
@@ -405,16 +450,6 @@ void FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     girl.fame(fame);
     girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
 
-    /* `J` this will be a placeholder until a better payment system gets done
-    *
-    */
-    int earned = 0;
-    for (int i = 0; i < shift.Performance; i++)
-    {
-        earned += uniform(5, 15); // 5-15 gold per customer  This may need tweaked to get it where it should be for the pay
-    }
-    shift.building().Finance().arena_income(earned);
-
     //gain traits
     if (chance(25) && girl.strength() >= 65 && girl.combat() > girl.magic())
     {
@@ -426,7 +461,7 @@ void FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     }
 }
 
-FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaTraining.xml", {ACTION_COMBAT, 20, true}) {
+FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaTraining.xml", {ACTION_COMBAT, 20}) {
 }
 
 double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -447,6 +482,7 @@ void FightTraining::on_pre_shift(sGirlShiftData& shift) const {
         girl.constitution() + girl.strength() >= 500)
     {
         shift.Refused = ECheckWorkResult::IMPOSSIBLE;
+        shift.Job = JOB_RESTING;
         girl.m_NightJob = girl.m_DayJob = JOB_RESTING;
         girl.AddMessage("There is nothing more she can learn here, so ${name} takes the rest of the day off.",
                         EImageBaseType::PROFILE, EVENT_WARNING);

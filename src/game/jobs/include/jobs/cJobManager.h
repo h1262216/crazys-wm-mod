@@ -52,6 +52,7 @@ struct sFilm
 
 struct sJobFilter {
     std::string Name;
+    std::string Display;
     std::string Description;
     std::vector<JOBS> Contents;
 };
@@ -85,6 +86,8 @@ public:
     void handle_main_shift(sGirlShiftData& shift);
 
     std::array<sJobFilter, NUMJOBTYPES> JobFilters;
+
+    EJobFilter get_filter_id(const std::string& name) const;
 
     // return a job description along with a count of how many girls are on it
     bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments

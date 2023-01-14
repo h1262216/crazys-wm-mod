@@ -93,14 +93,18 @@ void cBuildingShift::ProvideInteraction(const std::string& name, sGirl* source, 
     data.Workers.push_back(sInteractionWorker{source, amount});
 }
 
-sGirl* cBuildingShift::RequestInteraction(const std::string& name) {
+sGirl* cBuildingShift::RequestInteraction(const std::string& name, const sGirl* requester) {
     sInteractionData& data = m_ShiftInteractions.at(name);
     auto& candidates = data.Workers;
     data.TotalConsumed += 1;
     auto res = std::max_element(begin(candidates), end(candidates),
-                                [](auto&& a, auto&& b){ return a.Amount < b.Amount; });
+                                [&](auto&& a, auto&& b){
+        if(a.Worker == requester) return true;
+        if(b.Worker == requester) return false;
+        return a.Amount < b.Amount;
+    });
     if(res == end(candidates))  return nullptr;
-    if(res->Amount == 0) return nullptr;
+    if(res->Amount == 0 || res->Worker == requester) return nullptr;
     res->Amount -= 1;
     return res->Worker;
 }

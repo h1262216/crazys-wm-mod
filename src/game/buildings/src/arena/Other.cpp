@@ -25,7 +25,7 @@
 #include "cGirlGangFight.h"
 #include "jobs/cJobManager.h"
 
-CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10, true}) {
+CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10}) {
     CatchThiefID = RegisterVariable("CatchThief", 0);
 }
 
@@ -103,7 +103,7 @@ int CityGuard::catch_thief() const {
     return GetVariable(CatchThiefID);
 }
 
-Medic::Medic() : cSimpleJob(JOB_MEDIC, "ArenaMedic.xml", {ACTION_WORKDOCTOR, 25, false}) {
+Medic::Medic() : cSimpleJob(JOB_MEDIC, "ArenaMedic.xml", {ACTION_WORKDOCTOR, 25}) {
 }
 
 sJobValidResult Medic::on_is_valid(const sGirl& girl, bool night_shift) const {
@@ -115,8 +115,9 @@ sJobValidResult Medic::on_is_valid(const sGirl& girl, bool night_shift) const {
 }
 
 void Medic::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    if(get_performance_class(shift.Performance) >= 2) {
-        provide_interaction(ResuscitateId, 1);
+    int re_sus = performance_based_lookup(0, 0, 1, 1, 2, 2);
+    if(re_sus > 0) {
+        provide_interaction(ResuscitateId, re_sus);
     }
     if(is_night_shift()) {
         int surgery_amount = performance_based_lookup(0, 0, 10, 15, 25, 33);
@@ -172,7 +173,7 @@ void Medic::HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target
 }
 
 IntermissionStripper::IntermissionStripper() : cSimpleJob(JOB_INTERMISSION_SHOW, "ArenaIntermission.xml",
-                                                          {ACTION_WORKSTRIP, 25, false}) {
+                                                          {ACTION_WORKSTRIP, 25}) {
 
 }
 

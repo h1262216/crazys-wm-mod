@@ -28,7 +28,6 @@
 struct sSimpleJobData {
     Action_Types Action;
     int BaseWages = 0;
-    bool IsCombatJob = false;
 };
 
 

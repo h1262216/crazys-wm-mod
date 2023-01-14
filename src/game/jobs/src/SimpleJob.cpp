@@ -33,12 +33,6 @@ void cSimpleJob::DoWork(sGirlShiftData& shift) const
         add_literal("\n\n");
     }
 
-    if(m_Data.IsCombatJob) {
-        cGirls::EquipCombat(shift.girl());
-    } else {
-        cGirls::UnequipCombat(shift.girl());  // put that shit away, you'll scare off the customers!
-    }
-
     JobProcessing(shift.girl(), shift);
     if(!shift.EventMessage.str().empty()) {
         generate_event();

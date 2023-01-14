@@ -35,7 +35,9 @@
         </LoseTrait>
     </Gains>
 
-    <Config Shift="night-only" DefaultImage="Combat" />
+    <Config Shift="night-only" DefaultImage="Combat" FightingJob="1">
+        <Filter>ArenaFight</Filter>
+    </Config>
 
     <Messages>
         <Message Name="refuse">
@@ -46,19 +48,19 @@
         </Message>
 
         <Message Name="victory">
-            <Text Condition="Exhibitionist">
+            <Text Condition="Exhibitionist" Updates="TurnSexuality+=20">
                 As she enjoys showing off her body, ${name} lets her opponent cut away her already-skimpy clothing,
                 ending her match all but naked - but victorious.  Many of the patrons seem to enjoy the show.
             </Text>
-            <Text Condition="Sadistic">
+            <Text Condition="Sadistic" Updates="TurnBrutality+=20">
                 As the match draws to a close, ${name} stops trying to win and simply toys with her opponent,
                 practically torturing her in front of the audience.  Many patrons disapprove, although a few respond favorably.
             </Text>
-            <Text Condition="Dominatrix">
+            <Text Condition="Dominatrix" Updates="TurnBrutality+=10">
                 ${name}'s verbal abuse, along with her combat prowess, lead to a dramatic defeat of her opponent,
                 although her behavior towards the loser disappoints many patrons.
             </Text>
-            <Text Condition="Brawler">
+            <Text Condition="Brawler" Updates="TurnCombat-=10">
                 ${name}'s preference for grappling and clinch-fighting throws her opponent off-balance and gives her an easy,
                 if somewhat boring, victory.
             </Text>
@@ -66,12 +68,12 @@
                 Being able to fly is an almost-unfair advantage that most opponents can't counter.
                 Thanks to that, ${name} wins handily.
             </Text>
-            <Text Condition="Assassin">
+            <Text Condition="Assassin" Updates="TurnCombat+=10">
                 Utilizing a no-rules, victory-at-any-cost combat style,
                 ${name} won a decisive victory over her orthodox opponent.
                 This was not unnoticed by some people in the audience.
             </Text>
-            <Text Condition="Masochist">
+            <Text Condition="Masochist" Updates="TurnBrutality+=20">
                 ${name}'s cries of joy and outright pleasure upon being injured distract her opponent,
                 and the pain-loving girl comes back from apparent defeat to achieve a dramatic victory.
                 Despite her many injuries, she smiles happily as she thanks her opponent for the match.
@@ -90,8 +92,8 @@
             </Text>
         </Message>
 
-        <Message Name="defeat">
-            <Text Condition="Exhibitionist">
+        <Message Name="opponent-wins-girl-survives">
+            <Text Condition="Exhibitionist" Updates="TurnSexuality+=10">
                 As she enjoys showing off her body, ${name} lets her opponent cut away her already-skimpy clothing,
                 but either because of her lack of skill or just bad luck, she takes a real hit and is defeated.
             </Text>
@@ -119,10 +121,31 @@
             </Text>
         </Message>
 
-        <Message Name="draw">
+        <Message Name="opponent-wins-girl-rescued">
+            <Text>The fighting left ${name} gravely injured. Thankfully, you have a Medic to take care of her.</Text>
+        </Message>ge>
+
+        <Message Name="opponent-kills-girl">
+            <Text>The fighting left ${name} gravely injured. With no Medic to take care of her, she bleeds out on the sand.</Text>
+        </Message>
+
+        <Message Name="draw-fight-ended">
             <Text>
                 The fight ended in a draw.
             </Text>
         </Message>
+        <Message Name="draw-ran-away">
+            <Text>
+                To the jeers and boos of the audience, ${name} ran away from her opponent. The match is forfeit, and
+                you have to pay the loser's fee.
+            </Text>
+        </Message>
+        <Message Name="draw-opponent-ran">
+            <Text>
+                To the jeers and boos of the audience, ${name}'s opponent ran away. She is thus declared the winner of
+                the match, and you get the prize money. Still, the audience would have liked to see more combat.
+            </Text>
+        </Message>
+        <Include>DefaultArenaFightMessages.xml</Include>
     </Messages>
 </Job>

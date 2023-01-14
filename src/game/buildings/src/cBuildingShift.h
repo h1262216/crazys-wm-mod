@@ -42,7 +42,7 @@ public:
 
     //  one-on-one interactions
     void ProvideInteraction(const std::string& name, sGirl* source, int amount) override;
-    sGirl* RequestInteraction(const std::string& name) override;
+    sGirl* RequestInteraction(const std::string& name, const sGirl* requester) override;
     bool HasInteraction(const std::string& name) const override;
     int NumInteractors(const std::string& name) const override;
     int GetInteractionProvided(const std::string& name) const override;

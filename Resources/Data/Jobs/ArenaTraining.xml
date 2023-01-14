@@ -6,7 +6,9 @@
 
     <Performance />
 
-    <Config Shift="day-only" DefaultImage="Combat" />
+    <Config Shift="day-only" DefaultImage="Combat" FightingJob="1">
+        <Filter>ArenaFight</Filter>
+    </Config>
 
     <Messages>
         <Message Name="refuse">

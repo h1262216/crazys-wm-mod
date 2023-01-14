@@ -35,7 +35,9 @@
         </LoseTrait>
     </Gains>
 
-    <Config Shift="night-only" DefaultImage="Combat"/>
+    <Config Shift="night-only" DefaultImage="Combat" FightingJob="1">
+        <Filter>ArenaFight</Filter>
+    </Config>
 
     <Messages>
         <Message Name="refuse">
@@ -43,12 +45,6 @@
         </Message>
         <Message Name="no-beasts">
             <Text>${name} had no beasts to fight.</Text>
-        </Message>
-        <Message Name="low-health">
-            <Text>${name} cannot Fight Beasts to${shift}, because she is not healthy enough for such a dangerous job.</Text>
-        </Message>
-        <Message Name="is-pregnant">
-            <Text>${name} cannot Fight Beasts to${shift}, because she is pregnant.</Text>
         </Message>
         <Message Name="no-armor">
             <Text>The crowd can't believe you sent ${name} out to fight beasts without armor. But at least she had a weapon.</Text>
@@ -96,20 +92,6 @@
                 breaths indicate that she is still alive.
             </Text>
         </Message>
-
-        <Message Name="beast-wins-girl-survives.healing">
-            <Text>
-                She is immediately brought to the surgery room in the Arena's catacombs, and your Medics start treating
-                her wounds. She will need weeks to recover, but the quick medical intervention prevented more serious
-                complications.
-            </Text>
-        </Message>
-        <Message Name="beast-wins-girl-survives.no-healing">
-            <Text>
-                She is immediately brought to the surgery room in the Arena's catacombs, but no Medic is available to treat
-                her wounds.
-            </Text>
-        </Message>
-
+        <Include>DefaultArenaFightMessages.xml</Include>
     </Messages>
 </Job>

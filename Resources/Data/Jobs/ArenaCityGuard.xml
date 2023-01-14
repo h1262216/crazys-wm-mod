@@ -14,7 +14,7 @@
 
     <Gains XP="13" Skill="3">
         <GainTrait Trait="Tough" Threshold="20" Action="WORKSECURITY">
-            She has become pretty Tough from all of the fights she's been in.
+            She has become pretty Tough from all the fights she's been in.
         </GainTrait>
         <GainTrait Trait="Aggressive" Threshold="60" Action="WORKSECURITY">
             She is getting rather Aggressive from her enjoyment of combat.
@@ -28,7 +28,9 @@
         <Stat Name="Constitution" Weight="1"/>
     </Gains>
 
-    <Config Shift="full" DefaultImage="Security" />
+    <Config Shift="full" DefaultImage="Security" FightingJob="1">
+        <Filter>ArenaFight</Filter>
+    </Config>
 
     <Messages>
         <Message Name="work">

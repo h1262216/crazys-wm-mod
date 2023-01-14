@@ -48,12 +48,14 @@ struct sJobInfo {
     bool FreeOnly = false;
     bool DayOnly = false;
     bool NightOnly = false;
+    bool IsFightingJob = false;
     EJobPhase Phase = EJobPhase::MAIN;
 
     sImagePreset DefaultImage = EImageBaseType::PROFILE;
 
     std::vector<std::string> Consumes;
     std::vector<std::string> Provides;
+    std::vector<EJobFilter> Filters;
 };
 
 struct sJobValidResult {

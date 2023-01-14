@@ -102,8 +102,18 @@ public:
     using cSimpleJob::cSimpleJob;
 protected:
     void handle_combat_stat(const std::string& name, int value) const;
-private:
     void on_pre_shift(sGirlShiftData& shift) const override;
+
+    int& turn_brutality() const;
+    int& turn_sexuality() const;
+    int& turn_combat() const;
+    int& turn_beauty() const;
+private:
+    void setup_job() override;
+    int m_TurnBrutalityId;
+    int m_TurnSexualityId;
+    int m_TurnCombatId;
+    int m_TurnBeautyId;
 };
 
 class FightBeasts : public FighterJob {
@@ -119,6 +129,7 @@ private:
 class FightGirls : public FighterJob {
 public:
     FightGirls();
+    bool CheckCanWork(sGirl& girl) const override;
     void JobProcessing(sGirl& girl, sGirlShiftData& shift) const override;
 };
 

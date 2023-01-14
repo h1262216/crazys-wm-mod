@@ -24,6 +24,7 @@
 #include "IGame.h"
 #include "CLog.h"
 #include "cRng.h"
+#include "cGirls.h"
 
 #include "character/sGirl.h"
 #include "text/repo.h"
@@ -61,6 +62,12 @@ void cGenericJob::Work(sGirlShiftData& shift) {
 
     shift.EventType = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
     shift.EventImage = m_Info.DefaultImage;
+
+    if(m_Info.IsFightingJob) {
+        cGirls::EquipCombat(shift.girl());
+    } else {
+        cGirls::UnequipCombat(shift.girl());
+    }
 
     InitWork(shift);
     DoWork(shift);
@@ -132,7 +139,7 @@ void cGenericJob::provide_interaction(const std::string& name, int amount) const
 }
 
 sGirl* cGenericJob::request_interaction(const std::string& name) const {
-    return active_building().RequestInteraction(name);
+    return active_building().RequestInteraction(name, &active_girl());
 }
 
 bool cGenericJob::has_interaction(const std::string& name) const {
@@ -170,6 +177,7 @@ void cGenericJob::OnRegisterJobManager(const cJobManager& manager) {
     assert(m_JobManager == nullptr);
     m_JobManager = &manager;
     load_job();
+    setup_job();
 }
 
 sJobValidResult cGenericJob::IsJobValid(const sGirl& girl, bool night_shift) const {
@@ -240,6 +248,7 @@ void cGenericJob::load_job() {
                 m_Info.FullTime = true;
             }
             m_Info.FreeOnly = config_el->BoolAttribute("FreeOnly", false);
+            m_Info.IsFightingJob = config_el->BoolAttribute("FightingJob", false);
 
             const char* image_preset_name = config_el->Attribute("DefaultImage");
             if(image_preset_name) {
@@ -248,6 +257,12 @@ void cGenericJob::load_job() {
 
             std::string phase = GetDefaultedStringAttribute(*config_el, "Phase", "main");
             m_Info.Phase = get_phase_id(phase);
+
+            // Filters
+            for(auto& filter_el : IterateChildElements(*config_el, "Filter")) {
+                std::string filter_name = filter_el.GetText();
+                m_Info.Filters.push_back(m_JobManager->get_filter_id(filter_name));
+            }
         }
 
         load_from_xml_internal(*job_data, path.str());
@@ -311,6 +326,7 @@ int cGenericJob::RegisterVariable(std::string name, int default_value) {
         throw std::runtime_error(std::string("Ran out of variables for job ") + get_job_name(job()));
     }
     sVariableData data = {std::move(name), index, default_value};
+    m_Variables.push_back(data);
     return index;
 }
 

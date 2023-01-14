@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Messages>
+    <Message Name="low-health">
+        <Text>${name} cannot fight to${shift}, because she is not healthy enough for such a dangerous job.</Text>
+    </Message>
+    <Message Name="is-pregnant">
+        <Text>${name} cannot fight to${shift}, because she is pregnant.</Text>
+    </Message>
+
+    <Message Name="girl-survives.healing">
+        <Text>
+            She is immediately brought to the surgery room in the Arena's catacombs, and your Medics start treating
+            her wounds. She will need weeks to recover, but the quick medical intervention prevented more serious
+            complications.
+        </Text>
+    </Message>
+    <Message Name="girl-survives.no-healing">
+        <Text>
+            She is immediately brought to the surgery room in the Arena's catacombs, but no Medic is available to treat
+            her wounds.
+        </Text>
+    </Message>
+</Messages>

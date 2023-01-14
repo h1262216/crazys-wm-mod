@@ -166,7 +166,7 @@ STATUS get_status_id(const std::string& name);
 // `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >> Constants.h
 
 // Job Filter Enum
-enum JOBFILTER {
+enum EJobFilter {
   JOBFILTER_GENERAL = 0,
   JOBFILTER_BAR,
   JOBFILTER_GAMBHALL,

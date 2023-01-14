@@ -194,7 +194,7 @@ void cScreenGirlDetails::init(bool back)
         AddToListBox(jobtypelist_id, -1, "Languishing in dungeon");
         SetSelectedItemInList(jobtypelist_id, 0, false);
     } else if(pBuilding) {
-        std::vector<JOBFILTER> jobfilters;
+        std::vector<EJobFilter> jobfilters;
         switch (pBuilding->type()) {
             case BuildingType::ARENA:
                 jobfilters.push_back(JOBFILTER_ARENASTAFF);
@@ -235,7 +235,7 @@ void cScreenGirlDetails::init(bool back)
         }
 
         for(auto& f : jobfilters) {
-            AddToListBox(jobtypelist_id, f, g_Game->job_manager().JobFilters[f].Name);
+            AddToListBox(jobtypelist_id, f, g_Game->job_manager().JobFilters[f].Display);
         }
         RefreshJobList();
         for(auto& f : jobfilters) {

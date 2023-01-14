@@ -118,6 +118,7 @@ private:
     /// Therefore, this is called when the job is registered to the JobManager
     void load_job();
     virtual void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) { };
+    virtual void setup_job() {}
     std::string m_XMLFile;
     EJobClass m_JobClass;
 

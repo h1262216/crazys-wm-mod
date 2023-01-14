@@ -47,7 +47,9 @@
         <Stat Name="Intelligence" Weight="1" />
     </Gains>
 
-    <Config DefaultImage="Nurse" Phase="prepare"/>
+    <Config DefaultImage="Nurse" Phase="prepare">
+        <Filter>ArenaStaff</Filter>
+    </Config>
     
     <Messages>
         <Message Name="work">

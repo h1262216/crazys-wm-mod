@@ -13,7 +13,9 @@
         <Mod>work.cleaning</Mod>
     </Performance>
 
-    <Config DefaultImage="Maid"  Phase="prepare"/>
+    <Config DefaultImage="Maid"  Phase="prepare">
+        <Filter>ArenaStaff</Filter>
+    </Config>
 
     <Messages>
         <Message Name="work">
