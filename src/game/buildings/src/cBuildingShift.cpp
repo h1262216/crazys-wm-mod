@@ -23,7 +23,7 @@
 #include "character/cCustomers.h"
 #include "IGame.h"
 #include "CLog.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "cGirls.h"
 #include "utils/lookup.h"
 

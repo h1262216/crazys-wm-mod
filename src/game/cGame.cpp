@@ -20,7 +20,7 @@
 #include "cGame.h"
 #include "CLog.h"
 #include "sConfig.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "cGold.h"
 #include "cShop.h"
 #include "cGangs.h"

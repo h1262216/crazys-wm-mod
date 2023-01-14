@@ -99,6 +99,8 @@ public:
     virtual void HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night, cRng& rng) const {};
     virtual void HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const {};
 
+    virtual bool has_text(const std::string& prompt) const = 0;
+    virtual const std::string& get_text(const std::string& prompt) const = 0;
 };
 
 #endif //WM_IGENERICJOB_H

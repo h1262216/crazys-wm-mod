@@ -23,6 +23,7 @@
 #include <functional>
 #include "Constants.h"
 #include "cRng.h"
+#include "IJobManager.h"
 
 //I need a better place for this
 struct sGirl;
@@ -50,13 +51,6 @@ struct sFilm
     }
 };
 
-struct sJobFilter {
-    std::string Name;
-    std::string Display;
-    std::string Description;
-    std::vector<JOBS> Contents;
-};
-
 struct sPaymentData {
     int Tips;
     int Earnings;
@@ -66,24 +60,23 @@ struct sPaymentData {
 };
 
 //mainly a list of functions 
-class cJobManager
+class cJobManager : public IJobManager
 {
 public:
     cJobManager();
-    ~cJobManager();
+    ~cJobManager() override;
     bool job_filter(int Filter, JOBS jobs) const;
 
-    const IGenericJob* get_job(JOBS job) const;
-    const std::string& get_job_name(JOBS job) const;
-    const std::string& get_job_brief(JOBS job) const;
-    const std::string& get_job_description(JOBS job) const;
+    const IGenericJob* get_job(JOBS job) const override;
 
     bool is_free_only(JOBS job) const;
 
     /// does the pre-shift setup part of the job processing
-    void handle_pre_shift(sGirlShiftData& shift);
+    void handle_pre_shift(sGirlShiftData& shift) override;
 
-    void handle_main_shift(sGirlShiftData& shift);
+    void handle_main_shift(sGirlShiftData& shift) override;
+
+    const sJobFilter& get_filter(EJobFilter filter) const override;
 
     std::array<sJobFilter, NUMJOBTYPES> JobFilters;
 

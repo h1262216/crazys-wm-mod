@@ -139,7 +139,7 @@ cGangManager& IGame::gang_manager()
     return *m_Gangs;
 }
 
-cJobManager& IGame::job_manager()
+IJobManager& IGame::job_manager()
 {
     return *m_JobManager;
 }

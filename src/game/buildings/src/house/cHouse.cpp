@@ -22,7 +22,7 @@
 #include "cHouse.h"
 #include "cGangs.h"
 #include "IGame.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "character/predicates.h"
 #include "cGirls.h"
 #include "queries.h"

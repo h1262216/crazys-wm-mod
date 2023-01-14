@@ -23,7 +23,7 @@
 #define __CMOVIESTUDIO_H
 
 #include "buildings/cBuilding.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "studio/fwd.h"
 #include <vector>
 

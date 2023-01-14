@@ -22,7 +22,7 @@
 #include "cFarm.h"
 #include "cGangs.h"
 #include "IGame.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 
 extern cRng             g_Dice;
 

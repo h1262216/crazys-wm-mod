@@ -23,7 +23,7 @@
 #include "cGangs.h"
 #include "IGame.h"
 #include "buildings/queries.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "character/predicates.h"
 #include "cBuildingShift.h"
 

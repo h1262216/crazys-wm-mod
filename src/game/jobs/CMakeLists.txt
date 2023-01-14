@@ -1,6 +1,7 @@
 set(JOBS_SRC
         src/IGenericJob.cpp
         src/cGenericJob.cpp
+        src/IJobManager.cpp
         src/cJobManager.cpp
         src/cBasicJob.cpp
         src/Cleaning.cpp

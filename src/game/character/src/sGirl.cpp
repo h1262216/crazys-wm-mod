@@ -2,7 +2,7 @@
 #include "character/sGirl.h"
 #include "CLog.h"
 #include "XmlMisc.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "jobs/IGenericJob.h"
 #include "cTariff.h"
 #include "buildings/cBuilding.h"
@@ -1368,7 +1368,7 @@ void sGirl::remove_status(STATUS stat) {
 }
 
 double sGirl::job_performance(JOBS job, bool estimate) const {
-    const auto& job_handler = g_Game->job_manager().m_OOPJobs.at(job);
+    const auto& job_handler = g_Game->job_manager().get_job(job);
     assert(job_handler);
     return job_handler->GetPerformance(*this, estimate);
 }

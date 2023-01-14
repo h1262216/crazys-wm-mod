@@ -21,7 +21,7 @@
 #include "cScreenGirlDetails.h"
 #include "interface/cWindowManager.h"
 #include "cTariff.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "cGangs.h"
 #include "IGame.h"
 #include "CLog.h"
@@ -235,11 +235,11 @@ void cScreenGirlDetails::init(bool back)
         }
 
         for(auto& f : jobfilters) {
-            AddToListBox(jobtypelist_id, f, g_Game->job_manager().JobFilters[f].Display);
+            AddToListBox(jobtypelist_id, f, g_Game->job_manager().get_filter(f).Display);
         }
         RefreshJobList();
         for(auto& f : jobfilters) {
-            if (g_Game->job_manager().job_filter(f, (JOBS)job))
+            if (g_Game->job_manager().is_in_filter(f, (JOBS)job))
                 SetSelectedItemInList(jobtypelist_id, f);
         }
     }
@@ -371,7 +371,7 @@ void cScreenGirlDetails::RefreshJobList()
 
     std::string text;
     // populate Jobs listbox with jobs in the selected category
-    for (auto i : g_Game->job_manager().JobFilters[job_filter].Contents)
+    for (auto i : g_Game->job_manager().get_filter((EJobFilter) job_filter).Contents)
     {
         if (g_Game->job_manager().get_job_name(i).empty()) continue;
         std::stringstream btext;

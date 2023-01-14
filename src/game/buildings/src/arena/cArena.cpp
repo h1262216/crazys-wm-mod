@@ -24,7 +24,7 @@
 #include "buildings/cBuilding.h"
 #include "IGame.h"
 #include "sStorage.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "events.h"
 #include "queries.h"
 #include "cGirls.h"

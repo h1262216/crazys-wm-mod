@@ -56,6 +56,11 @@ public:
     /// called by the job manager when the job gets registered.
     void OnRegisterJobManager(const cJobManager& manager);
     static void Register(cJobManager& manager, std::unique_ptr<cGenericJob> job);
+
+    // text and event messages
+    bool has_text(const std::string& prompt) const override;
+    const std::string& get_text(const std::string& prompt) const override;
+
 protected:
     // random functions
     cRng& rng() const;
@@ -68,10 +73,7 @@ protected:
     bool is_night_shift() const;
     sGirlShiftData& active_shift() const;
 
-    // text and event messages
-    bool has_text(const std::string& prompt) const;
-    const std::string& get_text(const std::string& prompt) const;
-
+    // building text
     void add_literal(const std::string& text) const;
     void add_text(const std::string& prompt) const;
     void add_line(const std::string& prompt) const;

@@ -47,7 +47,7 @@ class sObjective;
 class cPlayer;
 class cDungeon;
 class cGold;
-class cJobManager;
+class IJobManager;
 class cCustomers;
 class sCustomer;
 class cInventory;
@@ -182,7 +182,7 @@ public:
     /// returns true if the player owns a building of the given type.
     bool has_building(BuildingType type) const;
 
-    cJobManager& job_manager();
+    IJobManager& job_manager();
 
     scripting::IScriptManager& script_manager();
     virtual void PushEvent(const scripting::sEventID& event) = 0;
@@ -239,7 +239,7 @@ private:
     std::unique_ptr<cDungeon> m_Dungeon;
     std::unique_ptr<cGold> m_Gold;
     std::unique_ptr<cGangManager> m_Gangs;
-    std::unique_ptr<cJobManager> m_JobManager;
+    std::unique_ptr<IJobManager> m_JobManager;
     std::unique_ptr<sStorage> m_Storage;
     std::unique_ptr<cBuildingManager> m_Buildings;
     std::unique_ptr<cCustomers> m_Customers;

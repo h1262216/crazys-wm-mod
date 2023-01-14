@@ -24,7 +24,7 @@
 #include "cGameWindow.h"
 #include "Constants.h"
 
-class cJobManager;
+class IJobManager;
 
 class IBuildingScreenManagement : public cGameWindow
 {
@@ -38,7 +38,7 @@ protected:
     void RefreshJobList();
 
     void add_job_filter(EJobFilter filter);
-    cJobManager& job_manager();
+    IJobManager& job_manager();
 
 
     int curbrothel_id = -1;        // Current Brothel text
@@ -72,7 +72,7 @@ private:
     int viewdetails_id;        // View Details button
 
     virtual std::string update_job_description(const sGirl& girl) { return ""; };
-    virtual std::string get_job_description(int selection);
+    virtual std::string get_job_description(EJobFilter selection);
 
     void SetShift(int shift);
 
@@ -124,7 +124,7 @@ class cScreenCentreManagement : public IBuildingScreenManagement
 {
 private:
     std::string update_job_description(const sGirl& girl) override;
-    std::string get_job_description(int selection) override;
+    std::string get_job_description(EJobFilter selection) override;
 public:
     cScreenCentreManagement();
 };
@@ -133,7 +133,7 @@ class cScreenClinicManagement : public IBuildingScreenManagement
 {
 private:
     std::string update_job_description(const sGirl& girl) override;
-    std::string get_job_description(int selection) override;
+    std::string get_job_description(EJobFilter selection) override;
 public:
     cScreenClinicManagement();
 };
@@ -156,7 +156,7 @@ class cScreenStudioManagement : public IBuildingScreenManagement
 {
 private:
     void set_ids() override;
-    std::string get_job_description(int selection) override;
+    std::string get_job_description(EJobFilter selection) override;
 public:
     cScreenStudioManagement();
 };

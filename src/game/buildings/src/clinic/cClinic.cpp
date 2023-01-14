@@ -21,7 +21,7 @@
 #include "cClinic.h"
 #include "cGangs.h"
 #include "IGame.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "utils/algorithms.hpp"
 #include "character/predicates.h"
 #include "events.h"
@@ -226,7 +226,7 @@ bool sClinic::handle_back_to_work(sGirl& girl, std::stringstream& ss, bool is_ni
     }
     else if (psw != JOB_RESTING && psw >= firstjob && psw<=lastjob)
     {    // if she had a previous job that shift, put her back to work.
-        if (g_Game->job_manager().FullTimeJob(psw))
+        if (g_Game->job_manager().get_job_info(psw).FullTime)
         {
             girl.m_DayJob = girl.m_NightJob = psw;
         }

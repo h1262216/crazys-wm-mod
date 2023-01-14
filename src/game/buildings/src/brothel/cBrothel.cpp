@@ -28,7 +28,7 @@
 #include "XmlMisc.h"
 #include "cObjectiveManager.hpp"
 #include "IGame.h"
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "cTariff.h"
 #include "utils/string.hpp"
 #include "cGirls.h"

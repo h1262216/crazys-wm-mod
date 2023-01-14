@@ -10,7 +10,7 @@
 #include "character/cPlayer.h"
 #include <sstream>
 #include <CLog.h>
-#include "jobs/cJobManager.h"
+#include "jobs/IJobManager.h"
 #include "cGirls.h"
 #include "jobs/IGenericJob.h"
 
@@ -84,7 +84,7 @@ void IBuildingScreenManagement::RefreshJobList()
     int job_filter = GetSelectedItemFromList(jobtypelist_id);
     if (job_filter == -1) return;
     // populate Jobs listbox with jobs in the selected category
-    for (auto i : g_Game->job_manager().JobFilters.at(job_filter).Contents)
+    for (auto i : g_Game->job_manager().get_filter((EJobFilter)job_filter).Contents)
     {
         if (g_Game->job_manager().get_job_name(i).empty()) continue;
         if (g_Game->job_manager().get_job(i)->get_info().DayOnly && Day0Night1 ||
@@ -97,7 +97,7 @@ void IBuildingScreenManagement::RefreshJobList()
     {
         JOBS sel_job = selected_girl->get_job(Day0Night1);
         SetSelectedItemInList(joblist_id, sel_job, false);
-        EditTextItem(g_Game->job_manager().get_job_description(sel_job) + update_job_description(*selected_girl), jobdesc_id);
+        EditTextItem(g_Game->job_manager().get_job_info(sel_job).Description + update_job_description(*selected_girl), jobdesc_id);
         SetSelectedItemText(joblist_id, sel_job, jobname_with_count((JOBS)sel_job, Day0Night1));
     }
 }
@@ -190,7 +190,7 @@ void IBuildingScreenManagement::set_ids() {
         else
         {
             RefreshJobList();    // populate Jobs listbox with jobs in the selected category
-            EditTextItem(get_job_description(selection), jobtypedesc_id);
+            EditTextItem(get_job_description((EJobFilter)selection), jobtypedesc_id);
         }
     });
     SetListBoxHotKeys(jobtypelist_id, SDLK_w, SDLK_s);
@@ -210,10 +210,10 @@ void IBuildingScreenManagement::on_select_job(int selection)
     if (selection != -1)
     {
         JOBS new_job = static_cast<JOBS>(selection);
-        EditTextItem(job_manager().get_job_description((JOBS)selection), jobdesc_id);        // first handle the descriptions
+        EditTextItem(job_manager().get_job_info((JOBS)selection).Description, jobdesc_id);        // first handle the descriptions
         ForAllSelectedItems(girllist_id, [&](int sel) {
             auto girl = active_building().get_girl(sel);
-            if(job_manager().FullTimeJob(new_job))
+            if(job_manager().get_job_info(new_job).FullTime)
                 fulltime = true;
 
             if (girl)
@@ -254,7 +254,7 @@ void IBuildingScreenManagement::assign_job(sGirl& girl, JOBS new_job, int girl_s
     // are we changing the job of the active treatment to something different?
     if(!job_change.empty()) {
         ss.str("");
-        ss << job_manager().get_job_description(new_job) << "\n** " << job_change;
+        ss << job_manager().get_job_info(new_job).Description << "\n** " << job_change;
         EditTextItem(job_change, jobdesc_id);
     }
 }
@@ -328,7 +328,7 @@ void IBuildingScreenManagement::init(bool back)
 
     // add the job filters
     for(auto filter : m_JobFilters) {
-        AddToListBox(jobtypelist_id, filter, g_Game->job_manager().JobFilters[filter].Display);
+        AddToListBox(jobtypelist_id, filter, g_Game->job_manager().get_filter(filter).Display);
     }
     SetSelectedItemInList(jobtypelist_id, m_JobFilters.front());
 
@@ -361,7 +361,7 @@ void IBuildingScreenManagement::RefreshSelectedJobType()
     selected_girl = active_building().get_girl(selection);
     int job = selected_girl->get_job(Day0Night1);
     for(auto& filter : m_JobFilters) {
-        if(job_manager().job_filter(filter, (JOBS)job)) {
+        if(job_manager().is_in_filter(filter, (JOBS)job)) {
             SetSelectedItemInList(jobtypelist_id, filter);
             return;
         }
@@ -369,7 +369,7 @@ void IBuildingScreenManagement::RefreshSelectedJobType()
     SetSelectedItemInList(jobtypelist_id, m_JobFilters.back());
 }
 
-cJobManager& IBuildingScreenManagement::job_manager()
+IJobManager& IBuildingScreenManagement::job_manager()
 {
     return g_Game->job_manager();
 }
@@ -394,9 +394,9 @@ void IBuildingScreenManagement::SetShift(int shift)
     RefreshSelectedJobType();
 }
 
-std::string IBuildingScreenManagement::get_job_description(int selection)
+std::string IBuildingScreenManagement::get_job_description(EJobFilter selection)
 {
-    return job_manager().JobFilters[selection].Description;
+    return job_manager().get_filter(selection).Description;
 }
 
 void IBuildingScreenManagement::free_girls() {
@@ -582,9 +582,9 @@ std::string cScreenCentreManagement::update_job_description(const sGirl& girl)
     return "";
 }
 
-std::string cScreenCentreManagement::get_job_description(int selection)
+std::string cScreenCentreManagement::get_job_description(EJobFilter selection)
 {
-    std::stringstream jdmessage; jdmessage << job_manager().JobFilters[selection].Description;
+    std::stringstream jdmessage; jdmessage << job_manager().get_filter(selection).Description;
     auto& centre = active_building();
     if ((num_girls_on_job(centre, JOB_COUNSELOR, 0) < 1 && Num_Patients(centre, 0) > 0) ||
          (num_girls_on_job(centre, JOB_COUNSELOR, 1) < 1 && Num_Patients(centre, 1) > 0))
@@ -613,9 +613,9 @@ std::string cScreenClinicManagement::update_job_description(const sGirl& girl)
     return "";
 }
 
-std::string cScreenClinicManagement::get_job_description(int selection)
+std::string cScreenClinicManagement::get_job_description(EJobFilter selection)
 {
-    std::stringstream jdmessage; jdmessage << job_manager().JobFilters[selection].Description;
+    std::stringstream jdmessage; jdmessage << job_manager().get_filter(selection).Description;
     if (DoctorNeeded(active_building()))
         jdmessage << "\n*** A Doctor is required to perform any surgeries. ";
     return jdmessage.str();
@@ -666,9 +666,9 @@ void cScreenStudioManagement::set_ids()
     SetButtonHotKey(createmovie_id, SDLK_c);
 }
 
-std::string cScreenStudioManagement::get_job_description(int selection)
+std::string cScreenStudioManagement::get_job_description(EJobFilter selection)
 {
-    std::stringstream jdmessage;        jdmessage << job_manager().JobFilters[selection].Description;
+    std::stringstream jdmessage;        jdmessage << job_manager().get_filter(selection).Description;
     if (CrewNeeded(active_building()))    jdmessage << "\n** At least one Camera Mage and one Crystal Purifier are required to film a scene. ";
     return jdmessage.str();
 }

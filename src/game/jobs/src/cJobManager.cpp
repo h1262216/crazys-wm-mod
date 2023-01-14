@@ -1599,18 +1599,6 @@ const IGenericJob* cJobManager::get_job(JOBS job) const {
     return ptr.get();
 }
 
-const std::string& cJobManager::get_job_name(JOBS job) const {
-    return get_job(job)->get_info().Name;
-}
-
-const std::string& cJobManager::get_job_brief(JOBS job) const {
-    return get_job(job)->get_info().ShortName;
-}
-
-const std::string& cJobManager::get_job_description(JOBS job) const {
-    return get_job(job)->get_info().Description;
-}
-
 bool cJobManager::is_free_only(JOBS job) const {
     return get_job(job)->get_info().FreeOnly;
 }
@@ -1647,4 +1635,8 @@ EJobFilter cJobManager::get_filter_id(const std::string& name) const {
         }
     }
     return EJobFilter::NUMJOBTYPES;
+}
+
+const sJobFilter& cJobManager::get_filter(EJobFilter filter) const {
+    return JobFilters.at(filter);
 }
