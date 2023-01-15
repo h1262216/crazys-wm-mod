@@ -296,7 +296,7 @@ void sArena::setup_customer(sCustomer& customer) const {
      */
 }
 
-void RegisterArenaJobs(cJobManager& mgr) {
+void RegisterArenaJobs(IJobManager& mgr) {
     cGenericJob::Register(mgr, std::make_unique<CityGuard>());
     cGenericJob::Register(mgr, std::make_unique<Medic>());
     cGenericJob::Register(mgr, std::make_unique<FightBeasts>());

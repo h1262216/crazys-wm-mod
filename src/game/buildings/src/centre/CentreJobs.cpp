@@ -53,7 +53,7 @@ namespace {
 }
 
 CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "CommunityService.xml") {
-    m_Info.BaseAction = ACTION_WORKCENTRE;
+    m_Info.PrimaryAction = EBasicActionType::SOCIAL;
 }
 
 void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
@@ -147,7 +147,7 @@ void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 }
 
 FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml") {
-    m_Info.BaseAction = ACTION_WORKCENTRE;
+    m_Info.PrimaryAction = EBasicActionType::SOCIAL;
 }
 
 void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
@@ -245,16 +245,16 @@ void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 }
 
 Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml") {
-    m_Info.BaseAction = ACTION_WORKCOUNSELOR;
+    m_Info.PrimaryAction = EBasicActionType::SOCIAL;
 }
 
 void Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     auto& ss = active_shift().EventMessage;
     int roll_a = d100();
 
-    if (roll_a <= 10)       { m_Enjoyment -= uniform(1, 3);    ss << "The addicts hassled her."; }
-    else if (roll_a >= 90)  { m_Enjoyment += uniform(1, 3);    ss << "She had a pleasant time working."; }
-    else                    { m_Enjoyment += uniform(0, 1);    ss << "Otherwise, the shift passed uneventfully."; }
+    if (roll_a <= 10)       { shift.Enjoyment -= uniform(1, 3);    ss << "The addicts hassled her."; }
+    else if (roll_a >= 90)  { shift.Enjoyment += uniform(1, 3);    ss << "She had a pleasant time working."; }
+    else                    { shift.Enjoyment += uniform(0, 1);    ss << "Otherwise, the shift passed uneventfully."; }
 
     girl.AddMessage(ss.str(), EImageBaseType::TEACHER, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 

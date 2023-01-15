@@ -58,7 +58,7 @@ void RegisterClinicJobs(cJobManager& mgr);
 void RegisterFilmCrewJobs(cJobManager& mgr);
 void RegisterFilmingJobs(cJobManager& mgr);
 void RegisterOtherStudioJobs(cJobManager& mgr);
-void RegisterArenaJobs(cJobManager& mgr);
+void RegisterArenaJobs(IJobManager& mgr);
 void RegisterCleaningJobs(cJobManager& mgr);
 void RegisterHouseJobs(cJobManager& mgr);
 void RegisterCentreJobs(cJobManager& mgr);
@@ -596,8 +596,8 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
                     custgirl->add_temporary_trait(traits::EMPRISONED_CUSTOMER, std::max(5, g_Dice.bell(0, 20)));
                     custgirl->pclove(-(g_Dice % 100 + 100));
                     custgirl->pcfear(g_Dice % 50 + 50);
-                    custgirl->m_Enjoyment[ACTION_COMBAT] -= (g_Dice % 50 + 20);
-                    custgirl->m_Enjoyment[ACTION_SEX] -= (g_Dice % 50 + 20);
+                    //custgirl->m_Enjoyment[ACTION_COMBAT] -= (g_Dice % 50 + 20);
+                    //custgirl->m_Enjoyment[ACTION_SEX] -= (g_Dice % 50 + 20);
                     g_Game->player().suspicion(g_Dice % 10);
                     g_Game->player().disposition(-(g_Dice % 10));
                     g_Game->player().customerfear(g_Dice % 10);
@@ -1281,8 +1281,8 @@ void cJobManager::CatchGirl(sGirl& girl, std::stringstream& fuckMessage, const s
         int emprisontraittime = 1;
         custgirl->pclove(-(g_Dice % 100 + 100));
         custgirl->pcfear(g_Dice % 50 + 50);
-        custgirl->m_Enjoyment[ACTION_COMBAT] -= (g_Dice % 50 + 20);
-        custgirl->m_Enjoyment[ACTION_SEX] -= (g_Dice % 50 + 20);
+        //custgirl->m_Enjoyment[ACTION_COMBAT] -= (g_Dice % 50 + 20);
+        //custgirl->m_Enjoyment[ACTION_SEX] -= (g_Dice % 50 + 20);
 
         if (!item)    // no item
         {

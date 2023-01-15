@@ -609,54 +609,29 @@ enum Goals{                                // `J` new
 
 
 // actions girls can disobey against
-// `J` When modifying Action types, search for "J-Change-Action-Types"  :  found in >> Constants.h
-enum Action_Types{
-    ACTION_COMBAT = 0,
-    ACTION_SEX,
-    ACTION_WORKESCORT,
-    ACTION_WORKCLEANING,
-    ACTION_WORKMATRON,
-    ACTION_WORKBAR,
-    ACTION_WORKHALL,
-    ACTION_WORKSHOW,
-    ACTION_WORKSECURITY,
-    ACTION_WORKADVERTISING,
-    ACTION_WORKTORTURER,
-    ACTION_WORKCARING,
-    ACTION_WORKDOCTOR,
-    ACTION_ACTRESS,
-    ACTION_PORNSTAR,
-    ACTION_MOVIECREW,
-    ACTION_WORKCUSTSERV,
-    ACTION_WORKCENTRE,
-    ACTION_WORKCLUB,
-    ACTION_WORKHAREM,
-    ACTION_WORKRECRUIT,
-    ACTION_WORKNURSE,
-    ACTION_WORKMECHANIC,
-    ACTION_WORKCOUNSELOR,
-    ACTION_WORKMUSIC,
-    ACTION_WORKSTRIP,
-    ACTION_WORKMILK,
-    ACTION_WORKMASSEUSE,
-    ACTION_WORKFARM,
-    ACTION_WORKTRAINING,
-    ACTION_WORKREHAB,
-    ACTION_WORKMAKEPOTIONS,
-    ACTION_WORKMAKEITEMS,
-    ACTION_WORKCOOKING,
-    ACTION_WORKTHERAPY,
-    ACTION_WORKHOUSEPET,
-    
-    // ACTION_GENERAL must be the last sction type
-    ACTION_GENERAL,
-    NUM_ACTIONTYPES
+enum class EBasicActionType {
+    FIGHTING,         // fighting activities
+    FUCKING,            // fucking activities
+    STRIPPING,      // no-touching sexual activities
+    CRAFTING,       // any sort of production job, including cooking
+    FARMING,        // caring for plants or animals
+    PHYSICAL,       // activities mainly consisting of physical labor
+    SOCIAL,         // non-sexual interaction activities
+    MENTAL,         // activities that mainly exercise the brain
+    MEDICAL,        // nurse, doctor, medic etc.
+    PERFORMANCE,    // singing, dancing, acting, etc.
+    SERVICE,        // maid, cleaning, etc.
+    GENERIC,
 };
 
-const std::array<const char*, NUM_ACTIONTYPES>& get_action_names();
-const char* get_action_name(Action_Types stat);
-Action_Types get_action_id(const std::string& name);
-const char* get_action_descr(Action_Types action);
+constexpr const int NUM_BASIC_ACTION_TYPES = int(EBasicActionType::GENERIC);
+
+constexpr const EnumRange<EBasicActionType, EBasicActionType::FIGHTING, EBasicActionType::GENERIC> BasicActionRange = {};
+
+const std::array<const char*, NUM_BASIC_ACTION_TYPES>& get_activity_names();
+const char* get_activity_name(EBasicActionType activity);
+EBasicActionType get_activity_id(const std::string& name);
+const char* get_activity_descr(EBasicActionType action);
 
 // training girls can under take
 // When modifying Training types, search for "Change-Traning-Types"  :  found in >> Constants.h

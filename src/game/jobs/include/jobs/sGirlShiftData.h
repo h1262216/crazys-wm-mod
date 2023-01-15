@@ -44,6 +44,7 @@ struct sGirlShiftData {
     int Earnings = 0;           // how much money did she make you directly
     int Wages = 0;              // how much do you pay her for the job
     int Performance = 0;        // How well did she perform this shift
+    int Enjoyment = 0;          // How much did she enjoy working this job
 
     [[nodiscard]] sGirl& girl() { return *m_Girl; }
     [[nodiscard]] IBuildingShift& building() { return *m_BuildingShift; }

@@ -182,9 +182,9 @@ void WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
 
                         // if there are restrictions for a choice, check them here
                     case FT_Cook:
-                        if (girl.m_Enjoyment[ACTION_WORKCOOKING] > -10) {
+                        /*if (girl.m_Enjoyment[ACTION_WORKCOOKING] > -10) {
                             choicemade = true;    // She is not going to cook if she hates it
-                        }
+                        }*/
                         break;
                     case FT_Shopping:
                         if (girl.m_Money >= 10) {

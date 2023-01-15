@@ -36,7 +36,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     if (roll_a <= 10)
     {
         tired /= 8;
-        m_Enjoyment -= uniform(0, 3);
+        shift.Enjoyment -= uniform(0, 3);
         if (roll_b < 10)    // fire
         {
             int fire = std::max(0, rng().bell(-2, 10));
@@ -80,14 +80,14 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     {
         tired /= 12;
         craft_points() *= 1.1;
-        m_Enjoyment += uniform(0, 3);
+        shift.Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50) add_literal("She kept a steady pace of hammer blows by humming a pleasant tune.");
         else /*            */ add_literal("She had a great time working today.");
     }
     else
     {
         tired /= 10;
-        m_Enjoyment += uniform(0, 2);
+        shift.Enjoyment += uniform(0, 2);
         add_literal("The shift passed uneventfully.");
     }
     add_literal("\n\n");
@@ -106,7 +106,7 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     if (roll_a <= 10)
     {
         tired /= 10;
-        m_Enjoyment -= uniform(0, 3);
+        shift.Enjoyment -= uniform(0, 3);
         if (roll_b < 20)    // injury
         {
             girl.health(-uniform(1, 5));
@@ -137,14 +137,14 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     {
         tired /= 14;
         craft_points() *= 1.1;
-        m_Enjoyment += uniform(0, 3);
+        shift.Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace with her needle work by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";
     }
     else
     {
         tired /= 12;
-        m_Enjoyment += uniform(0, 2);
+        shift.Enjoyment += uniform(0, 2);
         ss << "The shift passed uneventfully.";
     }
     ss << "\n \n";
@@ -163,7 +163,7 @@ void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     if (roll_a <= 10)
     {
         tired /= 8;
-        m_Enjoyment -= uniform(0, 3);
+        shift.Enjoyment -= uniform(0, 3);
         if (roll_b < 10)    // fire
         {
             int fire = std::max(0, rng().bell(-2, 10));
@@ -207,14 +207,14 @@ void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     {
         tired /= 12;
         craft_points() *= 1.1;
-        m_Enjoyment += uniform(0, 3);
+        shift.Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace of hammer blows by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";
     }
     else
     {
         tired /= 10;
-        m_Enjoyment += uniform(0, 2);
+        shift.Enjoyment += uniform(0, 2);
         ss << "The shift passed uneventfully.";
     }
     ss << "\n \n";

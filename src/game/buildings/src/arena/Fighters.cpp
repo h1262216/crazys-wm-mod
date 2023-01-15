@@ -39,7 +39,7 @@ void FighterJob::handle_combat_stat(const std::string& name, int value) const {
 }
 
 FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml") {
-    m_Info.BaseAction = ACTION_COMBAT;
+    m_Info.PrimaryAction = EBasicActionType::FIGHTING;
 }
 
 bool FightBeasts::CheckCanWork(sGirl& girl) const {
@@ -323,7 +323,7 @@ std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const
 }
 
 FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml") {
-    m_Info.BaseAction = ACTION_COMBAT;
+    m_Info.PrimaryAction = EBasicActionType::FIGHTING;
 }
 
 bool FightGirls::CheckCanWork(sGirl& girl) const {
@@ -464,7 +464,7 @@ void FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 }
 
 FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaTraining.xml") {
-    m_Info.BaseAction = ACTION_COMBAT;
+    m_Info.PrimaryAction = EBasicActionType::FIGHTING;
 }
 
 double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {

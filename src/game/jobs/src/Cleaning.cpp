@@ -65,7 +65,7 @@ namespace {
 }
 
 Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml) {
-    m_Info.BaseAction = ACTION_WORKCLEANING;
+    m_Info.PrimaryAction = EBasicActionType::PHYSICAL;
 }
 
 void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) const {
@@ -88,13 +88,10 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
 
 
     // Update Enjoyment
-    girl.upd_Enjoyment(ACTION_WORKCLEANING, enjoy);
-    // Gain Traits
-    if (chance(girl.service()))
-        cGirls::PossiblyGainNewTrait(girl, "Maid", 70, ACTION_WORKCLEANING, "${name} has cleaned enough that she could work professionally as a Maid anywhere.", is_night);
-    // Lose Traits
-    if (chance(girl.service()))
-        cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, ACTION_WORKCLEANING, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", is_night);
+    // girl.upd_Enjoyment(ACTION_WORKCLEANING, enjoy);
+    // Gain and Lose Traits
+    cGirls::PossiblyGainNewTrait(girl, traits::MAID, girl.service() / 7, "${name} has cleaned enough that she could work professionally as a Maid anywhere.", EImageBaseType::PROFILE);
+    cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, girl.service() / 3, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", EImageBaseType::PROFILE);
 }
 
 void Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
@@ -156,7 +153,7 @@ void CleanArena::DoneEarly(sGirl& girl) const {
     girl.agility(uniform(0, 1));
     girl.constitution(uniform(0, 1));
     girl.confidence(uniform(0, 1));
-    girl.upd_Enjoyment(ACTION_COMBAT, 1);
+    // girl.upd_Enjoyment(ACTION_COMBAT, 1);
 }
 
 CleanCentre::CleanCentre() : Cleaning(JOB_CLEANCENTRE, "CleanCentre.xml") {

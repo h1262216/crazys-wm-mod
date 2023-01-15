@@ -100,8 +100,8 @@ public:
     static double GetAverageOfSexSkills(const sGirl& girl);    // `J` added
     static double GetAverageOfNSxSkills(const sGirl& girl);    // `J` added
 
-    static bool PossiblyGainNewTrait(sGirl& girl, std::string Trait, int Threshold, int ActionType, std::string Message, bool Day0Night1, EEventType eventtype = EVENT_GOODNEWS);
-    static bool PossiblyLoseExistingTrait(sGirl& girl, std::string Trait, int Threshold, int ActionType, std::string Message, bool Day0Night1);
+    static bool PossiblyGainNewTrait(sGirl& girl, std::string Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_GOODNEWS);
+    static bool PossiblyLoseExistingTrait(sGirl& girl, std::string Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_GOODNEWS);
 
     // `J` adding these to allow single step adjustment of linked traits
     static std::string AdjustTraitGroupGagReflex(sGirl& girl, int steps, bool showmessage = false);
@@ -110,7 +110,7 @@ public:
 
     int GetNumYourDaughterGirls();
 
-    static int GetRebelValue(const sGirl& girl, JOBS job=NUM_JOBS);
+    static int GetRebelValue(const sGirl& girl);
     static void EquipCombat(sGirl& girl);        // girl makes sure best armor and weapons are equipped, ready for combat
     static void UnequipCombat(sGirl& girl);    // girl unequips armor and weapons, ready for brothel work or other non-aggressive jobs
 
@@ -145,11 +145,8 @@ public:
 
     // end mod
 
-    static void updateTemp(sGirl& girl);        // `J` group all the temp updates into one area
-
     // WD:    Consolidate common code in BrothelUpdate and DungeonUpdate to fn's
     static void updateGirlAge(sGirl& girl, bool inc_inService = false);
-    static void updateTempEnjoyment(sGirl& girl);
     static void updateSTD(sGirl& girl);
     static void updateHappyTraits(sGirl& girl);
     static void updateGirlTurnStats(sGirl& girl);

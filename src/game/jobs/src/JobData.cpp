@@ -137,15 +137,10 @@ void cJobGains::gain_traits(sGirl& girl, int performance) const {
         if(trait.PerformanceRequirement > performance)
             continue;
 
-        if(trait.Chance < 100 && !g_Dice.percent(trait.Chance))
-            continue;
-
         if(trait.Gain) {
-            cGirls::PossiblyGainNewTrait(girl, trait.TraitName, trait.Threshold, trait.Action,
-                                         trait.Message, false, trait.EventType);
+            cGirls::PossiblyGainNewTrait(girl, trait.TraitName, trait.Amount, trait.Message, EImageBaseType::PROFILE, trait.EventType);
         } else {
-            cGirls::PossiblyLoseExistingTrait(girl, trait.TraitName, trait.Threshold, trait.Action,
-                                              trait.Message, false);
+            cGirls::PossiblyLoseExistingTrait(girl, trait.TraitName, trait.Amount, trait.Message, EImageBaseType::PROFILE, trait.EventType);
         }
     }
 }
@@ -156,18 +151,32 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
 
     auto load_trait_change = [&](const tinyxml2::XMLElement& element, bool gain) {
         std::string trait = GetStringAttribute(element, "Trait");
-        int threshold = GetIntAttribute(element, "Threshold", -100, 100);
+        int amount = GetIntAttribute(element, "Amount", -100, 100);
         int performance = element.IntAttribute("MinPerformance", -1000);
-        int chance = element.IntAttribute("Chance", 100);
-        Action_Types action = get_action_id(GetStringAttribute(element, "Action"));
         const char* msg_text = element.GetText();
         std::string message = (gain ? "${name} has gained the trait " : "${name} has lost the trait ") + trait;
         if(msg_text) {
             // TODO trim
             message = msg_text;
         }
-        EEventType event_type = (EEventType)element.IntAttribute("Event", EVENT_GOODNEWS);
-        TraitChanges.push_back({gain, trait, threshold, action, message, event_type, performance, chance});
+
+        auto event_type = (EEventType)element.IntAttribute("Event", EVENT_GOODNEWS);
+        TraitChanges.emplace_back(gain, trait, amount, message, event_type, performance);
+
+        for(auto& cond_el : IterateChildElements(element, "Condition")) {
+            int lower = -1;
+            int upper = -1;
+            if(cond_el.Attribute("Value")) {
+                int val = GetIntAttribute(cond_el, "Value");
+                lower = val;
+                upper = val;
+            } else {
+                lower = GetIntAttribute(cond_el, "Lower");
+                upper = GetIntAttribute(cond_el, "Upper");
+            }
+            std::string what = GetStringAttribute(cond_el, "What");
+            TraitChanges.back().Conditions.push_back(sTraitChange::sAttributeCondition{get_stat_skill_id(what), lower, upper});
+        }
     };
 
     for(const auto& trait_change : IterateChildElements(source, "GainTrait")) {

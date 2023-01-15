@@ -42,8 +42,6 @@ protected:
 
     void load_from_xml_callback(const tinyxml2::XMLElement& job_element) override;
     void shift_enjoyment() const;
-
-    mutable int m_Enjoyment;
 };
 
 

@@ -42,7 +42,7 @@ protected:
     void InitWork(sGirlShiftData& shift) override;
     // void RegisterVariable(std::string name, sImagePreset& preset);
 
-    bool check_refuse_action(sGirl& girl, Action_Types action) const;
+    bool check_refuse_action(sGirl& girl, EBasicActionType action) const;
 
     bool CheckCanWork(sGirl& girl) const override {
         return true;

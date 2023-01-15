@@ -89,8 +89,10 @@ sGirl::sGirl(bool unique) : ICharacter( g_Game->create_traits_collection(), uniq
     m_Spotted = 0;
 
     // Enjoyment
-    for (int i = 0; i < NUM_ACTIONTYPES; i++)    // `J` Added m_Enjoyment here to zero out any that are not specified
+    for (auto activity : BasicActionRange) {
+        int i = static_cast<int>(activity);
         m_Enjoyment[i] = m_EnjoymentMods[i] = m_EnjoymentTemps[i] = 0;
+    }
     for (int& enjoy : m_Enjoyment)    // `J` randomize starting likes -10 to 10 most closer to 0
         enjoy = g_Dice.bell(-10, 10);
 
@@ -129,7 +131,7 @@ bool sGirl::disobey_check(Action_Types action, JOBS job, int offset)
 {
     int diff;
     int chance_to_obey = 0;                            // high value - more likely to obey
-    chance_to_obey = -cGirls::GetRebelValue(*this, job);    // let's start out with the basic rebelliousness
+    chance_to_obey = -cGirls::GetRebelValue(*this);    // let's start out with the basic rebelliousness
     chance_to_obey += 100;                            // make it range from 0 to 200
     chance_to_obey /= 2;                            // get a conventional percentage value
     /*
@@ -1225,15 +1227,6 @@ int sGirl::upd_temp_Enjoyment(Action_Types stat_id, int amount)
     return get_enjoyment(stat_id);
 }
 
-int sGirl::upd_Enjoyment(Action_Types stat_id, int amount)
-{
-    assert(stat_id >= 0);
-    m_Enjoyment[stat_id] += amount;
-    /* */if (m_Enjoyment[stat_id] > 100)     m_Enjoyment[stat_id] = 100;
-    else if (m_Enjoyment[stat_id] < -100)     m_Enjoyment[stat_id] = -100;
-    return get_enjoyment(stat_id);
-}
-
 int sGirl::upd_Training(int stat_id, int amount, bool usetraits)
 {
     m_Training[stat_id] += amount;
@@ -1322,15 +1315,31 @@ void sGirl::set_default_house_percent() {
     house(g_Game->settings().get_integer(is_slave() ? settings::USER_HOUSE_PERCENT_SLAVE : settings::USER_HOUSE_PERCENT_FREE));
 }
 
-int sGirl::get_enjoyment(Action_Types actiontype) const {
-    if (actiontype < 0) return 0;
+int sGirl::enjoyment(EBasicActionType activity) const {
+    if(activity == EBasicActionType::GENERIC) return 0;
+    int index = static_cast<int>(activity);
     // Generic calculation
-    int value = m_Enjoyment[actiontype] + get_trait_modifier(("enjoy:" + std::string(get_action_name(actiontype))).c_str()) +
-                m_EnjoymentMods[actiontype] + m_EnjoymentTemps[actiontype];
+    int value = m_Enjoyment[index] + get_trait_modifier(("enjoy:" + std::string(get_activity_name(activity))).c_str()) +
+                m_EnjoymentMods[index];
 
     if (value < -100) value = -100;
     else if (value > 100) value = 100;
     return value;
+}
+
+void sGirl::enjoyment(EBasicActionType activity, int delta) {
+    if(activity == EBasicActionType::GENERIC) return;
+    int index = static_cast<int>(activity);
+    int new_value = m_Enjoyment[index] + delta;
+    if(new_value < -100) new_value = -100;
+    else if (new_value > 100) new_value = 100;
+    m_Enjoyment[index] = new_value;
+}
+
+void sGirl::temp_enjoyment(EBasicActionType activity, int delta) {
+    if(activity == EBasicActionType::GENERIC) return;
+    int index = static_cast<int>(activity);
+    m_EnjoymentTemps[index] += delta;
 }
 
 int sGirl::get_training(int actiontype) const {
@@ -1434,3 +1443,60 @@ bool sGirl::is_sex_type_allowed(SKILLS sex_type) const {
     }
     return true;
 }
+
+int sGirl::progress_trait(const std::string& trait_name, int amount) {
+    auto found = m_PartialTraits.find(trait_name);
+    if(found != m_PartialTraits.end()) {
+        auto& progress = found->second;
+        // dampen amount
+        if(amount > 0 && progress.Progress > 0) {
+            amount = std::max(1, amount - progress.Progress / 10);
+        } else if(amount < 0 && progress.Progress < 0) {
+            amount = std::min(-1, amount - progress.Progress / 10);
+        }
+        // make progress
+        progress.Progress += amount;
+        // reset timer if we are going in the same direction as current value
+        if(amount * progress.Progress > 0) {
+            progress.Timer = 10;
+        }
+        return progress.Progress;
+    } else {
+        m_PartialTraits[trait_name] = sTraitProgress{amount, 10};
+        return amount;
+    }
+}
+
+void sGirl::DecayTemp() {
+    ICharacter::DecayTemp();
+
+    for (auto activity : BasicActionRange)
+    {
+        int i = static_cast<int>(activity);
+        if (m_EnjoymentTemps[i] != 0)
+        {                                            // normalize towards 0 by 30% each week
+            int newEnjoy = (m_EnjoymentTemps[i] * 70) / 100;
+            if (newEnjoy != m_EnjoymentTemps[i])    m_EnjoymentTemps[i] = newEnjoy;
+            else
+            {                                        // if 30% did nothing, go with 1 instead
+                if (m_EnjoymentTemps[i] > 0)    m_EnjoymentTemps[i]--;
+                else if (m_EnjoymentTemps[i] < 0)    m_EnjoymentTemps[i]++;
+            }
+        }
+    }
+
+    // time down traits progress, and remove unused ones
+    for(auto it = m_PartialTraits.begin(); it != m_PartialTraits.end();) {
+        it->second.Timer -= 1;
+        if(it->second.Timer <= 0) {
+            it->second.Progress = (it->second.Progress * 70) / 100;
+            if(it->second.Progress == 0) {
+                it = m_PartialTraits.erase(it);
+                continue;
+            }
+        }
+        ++it;
+    }
+
+}
+

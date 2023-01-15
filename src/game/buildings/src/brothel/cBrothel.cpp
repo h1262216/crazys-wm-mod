@@ -292,7 +292,8 @@ bool sBrothel::runaway_check(sGirl& girl)
     */
     if (girl.disobey_check(ACTION_GENERAL))    // check if the girl will run away
     {
-        if (g_Dice.percent(g_Game->job_manager().guard_coverage() - girl.m_DaysUnhappy)) return false;
+        // TODO Re-enable guards
+        //if (g_Dice.percent(g_Game->job_manager().guard_coverage() - girl.m_DaysUnhappy)) return false;
 
         girl.AddMessage("She ran away.", EImageBaseType::PROFILE, EVENT_DANGER);
         girl.set_stat(STAT_TIREDNESS, 0);

@@ -621,7 +621,7 @@ void cInventory::Equip(sGirl& girl, const sInventoryItem* item, bool force)
                     break;
 
                 case sEffect::Enjoy:            // affects enjoyment
-                    girl.upd_temp_Enjoyment((Action_Types)eff_id, amount);
+                    girl.temp_enjoyment((Action_Types)eff_id, amount);
                     break;
 
                 case sEffect::Trait:            // affects skill

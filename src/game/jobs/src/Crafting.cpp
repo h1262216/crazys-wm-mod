@@ -67,9 +67,6 @@ void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const
     }
 
     apply_gains(shift.Performance);
-
-    // Update Enjoyment
-    girl.upd_Enjoyment(m_Info.BaseAction, m_Enjoyment);
 }
 
 float GenericCraftingJob::DoCrafting(sGirl& girl) const {
@@ -134,7 +131,7 @@ void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     if (roll_a <= 10)
     {
         tired /= 14;
-        m_Enjoyment -= uniform(0, 3);
+        shift.Enjoyment -= uniform(0, 3);
         if (roll_b < 30)    // injury
         {
             girl.health(-uniform(1, 5));
@@ -163,14 +160,14 @@ void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     {
         tired /= 20;
         craft_points() *= 1.1;
-        m_Enjoyment += uniform(0, 3);
+        shift.Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";
     }
     else
     {
         tired /= 17;
-        m_Enjoyment += uniform(0, 2);
+        shift.Enjoyment += uniform(0, 2);
         ss << "The shift passed uneventfully.";
     }
     ss << "\n \n";
@@ -194,12 +191,12 @@ void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     //enjoyed the work or not
     if (roll >= 90)
     {
-        m_Enjoyment += uniform(1, 4);
+        shift.Enjoyment += uniform(1, 4);
         ss << "She had a great time making potions today.";
     }
     else if (roll <= 10)
     {
-        m_Enjoyment -= uniform(1, 6);
+        shift.Enjoyment -= uniform(1, 6);
         ss << "Some potions blew up in her face today.";
         girl.health(-uniform(0, 10));
         girl.happiness(-uniform(0, 20));
@@ -208,12 +205,12 @@ void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     }
     else if (roll <= 20)
     {
-        m_Enjoyment -= uniform(1, 4);
+        shift.Enjoyment -= uniform(1, 4);
         ss << "She did not like making potions today.";
     }
     else
     {
-        m_Enjoyment += uniform(0, 2);
+        shift.Enjoyment += uniform(0, 2);
         ss << "The shift passed uneventfully.";
     }
     ss << "\n \n";
@@ -239,7 +236,7 @@ void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     if (roll_a <= 10)
     {
         tired /= 8;
-        m_Enjoyment -= uniform(0, 3);
+        shift.Enjoyment -= uniform(0, 3);
         if (roll_b < 20)    // injury
         {
             girl.health(-uniform(1, 6));
@@ -269,14 +266,14 @@ void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
     {
         tired /= 12;
         craft_points() *= 1.1;
-        m_Enjoyment += uniform(0, 3);
+        shift.Enjoyment += uniform(0, 3);
         /* */if (roll_b < 50)    ss << "She kept a steady pace with her needle work by humming a pleasant tune.";
         else /*            */    ss << "She had a great time working today.";
     }
     else
     {
         tired /= 10;
-        m_Enjoyment += uniform(0, 2);
+        shift.Enjoyment += uniform(0, 2);
         ss << "The shift passed uneventfully.";
     }
     ss << "\n \n";

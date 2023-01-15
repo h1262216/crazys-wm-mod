@@ -52,7 +52,8 @@ struct sJobInfo {
     EJobPhase Phase = EJobPhase::MAIN;
 
     int BaseWages = 0;
-    Action_Types BaseAction = Action_Types::ACTION_GENERAL;
+    EBasicActionType PrimaryAction = EBasicActionType::GENERIC;
+    EBasicActionType SecondaryAction = EBasicActionType::GENERIC;
 
     sImagePreset DefaultImage = EImageBaseType::PROFILE;
 

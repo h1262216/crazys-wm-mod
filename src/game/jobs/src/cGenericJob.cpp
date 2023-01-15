@@ -70,6 +70,8 @@ void cGenericJob::Work(sGirlShiftData& shift) {
         cGirls::UnequipCombat(shift.girl());
     }
 
+    // Setting up enjoyment
+
     InitWork(shift);
     DoWork(shift);
     m_ActiveData = nullptr;
@@ -326,8 +328,8 @@ void cGenericJob::SetSubstitution(std::string key, std::string replace) {
     m_Replacements[std::move(key)] = std::move(replace);
 }
 
-void cGenericJob::Register(cJobManager& manager, std::unique_ptr<cGenericJob> job) {
-    manager.register_job(std::move(job));
+void cGenericJob::Register(IJobManager& manager, std::unique_ptr<cGenericJob> job) {
+    dynamic_cast<cJobManager&>(manager).register_job(std::move(job));
 }
 
 int cGenericJob::RegisterVariable(std::string name, int default_value) {
@@ -368,4 +370,42 @@ void cGenericJob::on_post_shift(sGirlShiftData& shift) const {
 
 const cJobManager& cGenericJob::job_manager() const {
     return *m_JobManager;
+}
+
+int cGenericJob::CalculateBasicEnjoyment(sGirl& girl) const {
+    int enjoy = 0;
+    if(m_Info.PrimaryAction != EBasicActionType::GENERIC) {
+        enjoy = girl.enjoyment(m_Info.PrimaryAction);
+        if(m_Info.SecondaryAction != EBasicActionType::GENERIC) {
+            enjoy *= 2;
+            enjoy += girl.enjoyment(m_Info.SecondaryAction);
+            enjoy /= 3;
+        }
+
+        // happiness modifier
+        int happy = girl.happiness();
+        if (happy > 80 && enjoy < 50 && enjoy > -50) {
+            enjoy += 1;
+        } else if (happy < 33) {
+            enjoy -= 2;
+        } else if (happy < 50) {
+            enjoy -= 1;
+        }
+
+        // tiredness modifier
+        if(girl.tiredness() > 80) {
+            enjoy -= 1;
+        }
+
+        // optimist or pessimist
+        if(chance(33)) {
+            if(girl.has_active_trait(traits::OPTIMIST)) {
+                enjoy += 1;
+            } else if(girl.has_active_trait(traits::PESSIMIST)) {
+                enjoy -= 1;
+            }
+        }
+
+    }
+    return enjoy;
 }

@@ -56,19 +56,28 @@ private:
 
 struct sTraitChange {
     // explicit constructor needed for mingw
-    sTraitChange(bool g, std::string trait, int th, Action_Types a, std::string message, EEventType e = EVENT_GOODNEWS,
-                 int perf = -1000, int chance = 100) :
-            Gain(g), TraitName(std::move(trait)), Threshold(th), Action(a), Message(std::move(message)), EventType(e),
-            PerformanceRequirement(perf), Chance(chance) {}
+    sTraitChange(bool g, std::string trait, int amount, std::string message, EEventType e = EVENT_GOODNEWS,
+                 int perf = -1000) :
+            Gain(g), TraitName(std::move(trait)), Amount(amount), Message(std::move(message)), EventType(e),
+            PerformanceRequirement(perf) {}
+    // target change
     bool Gain;
     std::string TraitName;
-    int Threshold;
-    Action_Types Action;
-    std::string Message;
-    ::EEventType EventType = EVENT_GOODNEWS;
+    int Amount;
 
+    // message
+    std::string Message;
+    EEventType EventType = EVENT_GOODNEWS;
+
+    // Conditions
     int PerformanceRequirement = -1000;        // minimum job performance to consider the trait
-    int Chance = 100;
+
+    struct sAttributeCondition {
+        StatSkill Attribute;
+        int LowerBound;
+        int UpperBound;
+    };
+    std::vector<sAttributeCondition> Conditions;
 };
 
 class cJobGains {

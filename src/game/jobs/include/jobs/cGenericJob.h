@@ -56,7 +56,7 @@ public:
 
     /// called by the job manager when the job gets registered.
     void OnRegisterJobManager(const cJobManager& manager);
-    static void Register(cJobManager& manager, std::unique_ptr<cGenericJob> job);
+    static void Register(IJobManager& manager, std::unique_ptr<cGenericJob> job);
 
     // text and event messages
     bool has_text(const std::string& prompt) const override;
@@ -112,6 +112,8 @@ private:
 */
     virtual bool CheckCanWork(sGirl& girl) const = 0;
     virtual bool CheckRefuseWork(sGirl& girl) const = 0;
+
+    virtual int CalculateBasicEnjoyment(sGirl& girl) const;
 
     sGirlShiftData* m_ActiveData;
     const cJobManager* m_JobManager = nullptr;

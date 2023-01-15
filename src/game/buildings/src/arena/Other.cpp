@@ -27,7 +27,7 @@
 
 CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml") {
     CatchThiefID = RegisterVariable("CatchThief", 0);
-    m_Info.BaseAction = ACTION_WORKSECURITY;
+    m_Info.PrimaryAction = EBasicActionType::FIGHTING;
 }
 
 void CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
@@ -105,7 +105,7 @@ int CityGuard::catch_thief() const {
 }
 
 Medic::Medic() : cSimpleJob(JOB_MEDIC, "ArenaMedic.xml") {
-    m_Info.BaseAction = ACTION_WORKDOCTOR;
+    m_Info.PrimaryAction = EBasicActionType::MEDICAL;
 }
 
 sJobValidResult Medic::on_is_valid(const sGirl& girl, bool night_shift) const {
@@ -175,7 +175,7 @@ void Medic::HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target
 }
 
 IntermissionStripper::IntermissionStripper() : cSimpleJob(JOB_INTERMISSION_SHOW, "ArenaIntermission.xml") {
-    m_Info.BaseAction = ACTION_WORKSTRIP;
+    m_Info.PrimaryAction = EBasicActionType::STRIPPING;
 }
 
 void IntermissionStripper::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {

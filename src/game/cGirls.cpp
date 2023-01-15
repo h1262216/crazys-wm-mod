@@ -1029,19 +1029,9 @@ sGirl* cGirls::GetGirl(int girl)
     return m_Girls->get_girl(girl);
 }
 
-int cGirls::GetRebelValue(const sGirl& girl, JOBS job)
+int cGirls::GetRebelValue(const sGirl& girl)
 {
-    /*
-    *    WD:    Added test to ignore STAT_HOUSE value
-    *    if doing a job that the player is paying
-    *    only when processing Day or Night Shift
-    *
-    *    This is to make it so that the jobs that
-    *    cost the player support where the house take
-    *    has no effect has no impact on the chance of
-    *    refusal.
-    */
-
+    // TODO rework this function
     if (girl.has_active_trait(traits::BROKEN_WILL))    return -100;
     int chanceNo = 0;
     int houseStat = girl.house();
@@ -1051,10 +1041,6 @@ int cGirls::GetRebelValue(const sGirl& girl, JOBS job)
     chanceNo -= girl.pclove() / 5;
     chanceNo += girl.spirit() / 2;
     chanceNo -= girl.obedience() / 5;
-
-    // having a guarding gang will enforce order
-    sGang* gang = g_Game->gang_manager().GetGangOnMission(MISS_GUARDING);
-    if (gang)    chanceNo -= 10;
 
     chanceNo += std::max(0, girl.tiredness() / 10 - 3);    // Tired girls increase Rebel
 
@@ -1133,12 +1119,6 @@ int cGirls::GetNumYourDaughterGirls()
 }
 
 // ----- Stat
-
-void cGirls::updateTemp(sGirl& girl)    // `J` group all the temp updates into one area
-{
-    girl.DecayTemp();        // update temp stats
-    updateTempEnjoyment(girl);        // update temp enjoyment
-}
 
 // ----- Skill
 
@@ -1599,32 +1579,25 @@ int cGirls::GetNumItemType(const sGirl& girl, int Type, bool splitsubtype)
 // ----- Traits
 
 // If a girl enjoys a job enough, she has a chance of gaining traits associated with it
-bool cGirls::PossiblyGainNewTrait(sGirl& girl, string Trait, int Threshold, int ActionType, string Message, bool Day0Night1, EEventType eventtype)
+bool cGirls::PossiblyGainNewTrait(sGirl& girl, string Trait, int Amount, const string& Message, sImagePreset image, EEventType eventtype)
 {
-    if (girl.m_Enjoyment[ActionType] > Threshold)
-    {
-        int chance = (girl.m_Enjoyment[ActionType] - Threshold);
-        if (girl.gain_trait(Trait.c_str(), chance))
-        {
-            girl.AddMessage(Message, EImageBaseType::PROFILE, eventtype);
-            return true;
-        }
-    }
+    if(girl.has_active_trait(Trait.c_str())) return false;
+
+    if(girl.progress_trait(Trait, Amount) >= 1000) {
+        girl.AddMessage(Message, image, eventtype);
+        return true;
+    };
     return false;
 }
 
-// If a girl enjoys a job enough, she has a chance of losing bad traits associated with it
-bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, string Trait, int Threshold, int ActionType, string Message, bool Day0Night1)
+bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, string Trait, int Amount, const std::string& Message, sImagePreset image, EEventType eventtype)
 {
-    if (girl.m_Enjoyment[ActionType] > Threshold && girl.has_active_trait(Trait.c_str()))
-    {
-        int chance = (girl.m_Enjoyment[ActionType] - Threshold);
-        if (girl.lose_trait(Trait.c_str(), chance))
-        {
-            girl.AddMessage(Message, EImageBaseType::PROFILE, EVENT_GOODNEWS);
-            return true;
-        }
-    }
+    if(!girl.has_active_trait(Trait.c_str())) return false;
+
+    if(girl.progress_trait(Trait, -Amount) <= -1000) {
+        girl.AddMessage(Message, image, eventtype);
+        return true;
+    };
     return false;
 }
 
@@ -2052,8 +2025,8 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     else
     {
         if (currentjob == JOB_PEEP){}
-        else if ((girl->has_active_trait(traits::NERVOUS) && girl->m_Enjoyment[ACTION_SEX] < 10) ||
-            girl->m_Enjoyment[ACTION_SEX] < -20)
+        else if ((girl->has_active_trait(traits::NERVOUS) && girl->enjoyment(EBasicActionType::FUCKING) < 10) ||
+                 girl->enjoyment(EBasicActionType::FUCKING) < -20)
         {
             introtext += "She is clearly uncomfortable with the arrangement, and it makes the customer feel uncomfortable.\n";
             customer->happiness(-5);
@@ -3315,30 +3288,8 @@ bool cGirls::GirlInjured(sGirl& girl, unsigned int unModifier, std::function<voi
 
 void cGirls::UpdateEnjoymentMod(sGirl& girl, int whatSheEnjoys, int amount)
 {
-    girl.m_EnjoymentMods[whatSheEnjoys] += amount;
+    //girl.m_EnjoymentMods[whatSheEnjoys] += amount;
 }
-
-// Normalise to zero by 30%
-void cGirls::updateTempEnjoyment(sGirl& girl)
-{
-    // Sanity check. Abort on dead girl
-    if (girl.is_dead()) return;
-
-    for (int i = 0; i < NUM_ACTIONTYPES; i++)
-    {
-        if (girl.m_EnjoymentTemps[i] != 0)
-        {                                            // normalize towards 0 by 30% each week
-            int newEnjoy = (int)(float(girl.m_EnjoymentTemps[i]) * 0.7);
-            if (newEnjoy != girl.m_EnjoymentTemps[i])    girl.m_EnjoymentTemps[i] = newEnjoy;
-            else
-            {                                        // if 30% did nothing, go with 1 instead
-                /* */if (girl.m_EnjoymentTemps[i] > 0)    girl.m_EnjoymentTemps[i]--;
-                else if (girl.m_EnjoymentTemps[i] < 0)    girl.m_EnjoymentTemps[i]++;
-            }
-        }
-    }
-}
-
 
 // Increment birthday counter and update Girl's age if needed
 void cGirls::updateGirlAge(sGirl& girl, bool inc_inService)

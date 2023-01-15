@@ -349,3 +349,15 @@ const char* get_building_type_name(BuildingType type) {
     }
     assert(false);
 }
+
+const std::array<const char*, NUM_BASIC_ACTION_TYPES>& get_activity_names() {
+    static std::array<const char*, NUM_BASIC_ACTION_TYPES> names {
+        "Fighting", "Fucking", "Stripping", "Crafting", "Farming",
+        "Physical", "Social", "Mental", "Medical", "Performance", "Service"
+    };
+    return names;
+}
+
+const char* get_activity_name(EBasicActionType activity) {
+    return get_activity_names().at(static_cast<int>(activity));
+}
