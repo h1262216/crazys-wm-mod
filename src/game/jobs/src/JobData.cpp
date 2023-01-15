@@ -166,7 +166,7 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
             // TODO trim
             message = msg_text;
         }
-        EventType event_type = (EventType)element.IntAttribute("Event", EVENT_GOODNEWS);
+        EEventType event_type = (EEventType)element.IntAttribute("Event", EVENT_GOODNEWS);
         TraitChanges.push_back({gain, trait, threshold, action, message, event_type, performance, chance});
     };
 

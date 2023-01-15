@@ -56,7 +56,7 @@ private:
 
 struct sTraitChange {
     // explicit constructor needed for mingw
-    sTraitChange(bool g, std::string trait, int th, Action_Types a, std::string message, EventType e = EVENT_GOODNEWS,
+    sTraitChange(bool g, std::string trait, int th, Action_Types a, std::string message, EEventType e = EVENT_GOODNEWS,
                  int perf = -1000, int chance = 100) :
             Gain(g), TraitName(std::move(trait)), Threshold(th), Action(a), Message(std::move(message)), EventType(e),
             PerformanceRequirement(perf), Chance(chance) {}
@@ -65,7 +65,7 @@ struct sTraitChange {
     int Threshold;
     Action_Types Action;
     std::string Message;
-    ::EventType EventType = EVENT_GOODNEWS;
+    EEventType EventType = EVENT_GOODNEWS;
 
     int PerformanceRequirement = -1000;        // minimum job performance to consider the trait
     int Chance = 100;

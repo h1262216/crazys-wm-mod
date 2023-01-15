@@ -1047,7 +1047,7 @@ void cRivalManager::peace_breaks_out()
     return;
 }
 
-void cRivalManager::AddMessage(std::string message, EventType event_type) {
+void cRivalManager::AddMessage(std::string message, EEventType event_type) {
     m_Events.AddMessage(std::move(message), event_type);
 }
 

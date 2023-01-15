@@ -19,7 +19,7 @@
 #pragma once
 
 struct sGirl;
-class IBuilding;
+class cBuilding;
 
 class cTariff {
     double slave_base_price(sGirl& girl) const;
@@ -32,7 +32,7 @@ public:
     int nets_price(int n);
     int anti_preg_price(int n);
 
-    int empty_room_cost(IBuilding& brothel);
+    int empty_room_cost(cBuilding& brothel);
 
     int advertising_costs(int budget);
     int add_room_cost(int n);

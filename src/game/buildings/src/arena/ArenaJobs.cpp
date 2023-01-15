@@ -30,14 +30,14 @@
 #include "cInventory.h"
 #include "combat/combat.h"
 #include "combat/combatant.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "buildings/cDungeon.h"
 
 namespace {
     class CityGuard : public cSimpleJob {
     public:
         CityGuard();
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     private:
         int CatchThief;
     };
@@ -46,21 +46,21 @@ namespace {
     public:
         FightBeasts();
 
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
         bool CheckCanWork(sGirl& girl, bool is_night) override;
     };
 
     class FightGirls : public cSimpleJob {
     public:
         FightGirls();
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     };
 
     class FightTraining : public cSimpleJob {
     public:
         FightTraining();
 
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
         double GetPerformance(const sGirl& girl, bool estimate) const override;
         void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
     };
@@ -71,7 +71,7 @@ CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "CityGuard.xml", {ACTION_WORK
     RegisterVariable("CatchThief", CatchThief);
 }
 
-bool CityGuard::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool CityGuard::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_a = d100();
     int enjoy = 0, enjoyc = 0, sus = 0;
 
@@ -157,7 +157,7 @@ bool FightBeasts::CheckCanWork(sGirl& girl, bool is_night) {
 }
 
 
-bool FightBeasts::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     bool has_armor = girl.get_num_item_equiped(sInventoryItem::Armor);
     bool has_wpn = girl.get_num_item_equiped(sInventoryItem::Weapon) + girl.get_num_item_equiped(sInventoryItem::SmWeapon);
 
@@ -302,7 +302,7 @@ FightGirls::FightGirls() : cSimpleJob(JOB_FIGHTARENAGIRLS, "FightGirls.xml", {AC
 
 }
 
-bool FightGirls::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int enjoy = 0, fame = 0;
     auto tempgirl = g_Game->CreateRandomGirl(SpawnReason::ARENA);
     if (tempgirl) {
@@ -456,7 +456,7 @@ void FightTraining::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
     }
 }
 
-bool FightTraining::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool FightTraining::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int enjoy = 0;                                                //
     int train = 0;                                                // main skill trained
     int tcom = girl.combat();                                    // Starting level - train = 1

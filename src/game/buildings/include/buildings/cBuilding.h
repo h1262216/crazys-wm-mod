@@ -40,13 +40,13 @@
 
 struct sWorkJobResult;
 
-class IBuilding
+class cBuilding
 {
 public:
-    explicit IBuilding(BuildingType type, std::string name);
-    virtual ~IBuilding();
+    explicit cBuilding(BuildingType type, std::string name);
+    virtual ~cBuilding();
 
-    IBuilding(const IBuilding&) = delete;
+    cBuilding(const cBuilding&) = delete;
 
     virtual void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) = 0;
 
@@ -203,7 +203,7 @@ public:
     int GetInteractionProvided(const std::string& name) const;
     int GetInteractionConsumed(const std::string& name) const;
 
-    void AddMessage(std::string message, EventType event = EventType::EVENT_BUILDING);
+    void AddMessage(std::string message, EEventType event = EEventType::EVENT_BUILDING);
 protected:
     std::string m_Name;
     std::unique_ptr<cGirlPool> m_Girls;

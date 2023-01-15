@@ -27,7 +27,7 @@
 extern cRng             g_Dice;
 
 // // ----- Strut sFarm Create / destroy
-sFarm::sFarm() : IBuilding(BuildingType::FARM, "Farm")
+sFarm::sFarm() : cBuilding(BuildingType::FARM, "Farm")
 {
     m_FirstJob = JOB_FARMMANGER;
     m_LastJob = JOB_MAKEPOTIONS;

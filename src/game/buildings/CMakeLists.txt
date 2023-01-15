@@ -2,7 +2,7 @@ set(BUILDING_SRC
         src/cDungeon.cpp
         src/cBuildingManager.cpp
         src/queries.cpp
-        src/IBuilding.cpp
+        src/cBuilding.cpp
         src/arena/ArenaJobs.cpp
         src/arena/cArena.cpp
         src/brothel/BrothelJobs.cpp

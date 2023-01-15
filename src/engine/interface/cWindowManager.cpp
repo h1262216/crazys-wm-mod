@@ -205,12 +205,12 @@ void cWindowManager::add_window(std::string name, std::shared_ptr<cInterfaceWind
     windows[std::move(name)] = std::move(win);
 }
 
-IBuilding * cWindowManager::GetActiveBuilding() const
+cBuilding * cWindowManager::GetActiveBuilding() const
 {
     return m_ActiveBuilding;
 }
 
-void cWindowManager::SetActiveBuilding(IBuilding * building)
+void cWindowManager::SetActiveBuilding(cBuilding * building)
 {
     m_ActiveBuilding = building;
 }

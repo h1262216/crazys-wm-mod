@@ -33,7 +33,7 @@ struct CombatReport {
 class CEvent
 {
 public:
-    CEvent(EventType event, const sImageSpec&, std::string message, std::shared_ptr<CombatReport> rep);
+    CEvent(EEventType event, const sImageSpec&, std::string message, std::shared_ptr<CombatReport> rep);
 
     std::string     TitleText()     const;        //    Default listbox Text
     unsigned int    ListboxColour() const;        //    Default Listbox Colour
@@ -48,11 +48,11 @@ public:
 
     const std::string&  GetMessage() const { return m_Message; }
     const sImageSpec&   GetImage() const   { return m_Image; }
-    EventType           GetEvent() const   { return m_Event; }
+    EEventType          GetEvent() const   { return m_Event; }
     std::shared_ptr<const CombatReport> GetReport() const { return m_Report; }
 
 private:
-    EventType          m_Event;                  // type of event
+    EEventType         m_Event;                  // type of event
     sImageSpec         m_Image;
     std::string        m_Message;
     std::shared_ptr<CombatReport> m_Report = nullptr;
@@ -66,9 +66,9 @@ public:
 
     void            Clear();
 
-    void            AddMessage(std::string message, sImageSpec image, EventType event_type);
-    void            AddMessage(std::string summary, EventType event, std::shared_ptr<CombatReport> rep);
-    void            AddMessage(std::string summary, EventType event);
+    void            AddMessage(std::string message, sImageSpec image, EEventType event_type);
+    void            AddMessage(std::string summary, EEventType event, std::shared_ptr<CombatReport> rep);
+    void            AddMessage(std::string summary, EEventType event);
     const CEvent&   GetMessage(int id) const;
     int             GetNumEvents() const { return events.size(); }
     bool            IsEmpty()      const { return events.empty() ; }

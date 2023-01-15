@@ -18,7 +18,7 @@
  */
 #include <algorithm>
 #include "cJobManager.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "buildings/queries.h"
 #include "character/cCustomers.h"
 #include "cRng.h"
@@ -189,7 +189,7 @@ void cJobManager::Setup()
     RegisterCentreJobs(*this);
 }
 
-sCustomer cJobManager::GetMiscCustomer(IBuilding& brothel)
+sCustomer cJobManager::GetMiscCustomer(cBuilding& brothel)
 {
     sCustomer cust = g_Game->GetCustomer(brothel);
     brothel.m_MiscCustomers+=1;
@@ -626,7 +626,7 @@ bool cJobManager::work_related_violence(sGirl& girl, bool Day0Night1, bool stree
     // the base chance of an attempted rape is higher on the streets
     float rape_chance = (float)g_Game->settings().get_percent(streets ? settings::WORLD_RAPE_STREETS : settings::WORLD_RAPE_BROTHEL);
 
-    IBuilding * Brothl = girl.m_Building;
+    cBuilding * Brothl = girl.m_Building;
 
     // `J` adjusted this a bit so gangs spying on the girl can help also
     std::vector<sGang *> gangs_guarding = g_Game->gang_manager().gangs_watching_girls();
@@ -743,7 +743,7 @@ int cJobManager::guard_coverage(std::vector<sGang*> *vpt)
 // True means security intercepted the perp(s)
 bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_night)
 {
-    IBuilding* Brothl = girl.m_Building;
+    cBuilding* Brothl = girl.m_Building;
     int SecLev = Brothl->m_SecurityLevel, OrgNumMem = enemy_gang->m_Num;
 
     int p_seclev = 90 + (SecLev / 1000);
@@ -1609,7 +1609,7 @@ bool cJobManager::job_filter(int Filter, JOBS job) const {
     return std::count(begin(filter.Contents), end(filter.Contents), job) > 0;
 }
 
-bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, IBuilding * brothel, bool Day0Night1)
+bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, cBuilding * brothel, bool Day0Night1)
 {
     int avail = g_Game->shop().CountItem(Drug);
     if(avail == 0) return false;                        // quit if the shop does not have the item

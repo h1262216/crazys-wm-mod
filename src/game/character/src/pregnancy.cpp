@@ -21,7 +21,7 @@
 #include <cGirls.h>
 #include "pregnancy.h"
 #include "ICharacter.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "sGirl.h"
 #include "predicates.h"
 #include "cTariff.h"

@@ -51,7 +51,7 @@ class cJobManager;
 class cCustomers;
 class sCustomer;
 class cInventory;
-class IBuilding;
+class cBuilding;
 class cTariff;
 class cShop;
 class cGirlPool;
@@ -162,7 +162,7 @@ public:
     // customers
     cCustomers& customers();
     int GetNumCustomers() const;
-    sCustomer GetCustomer(IBuilding& brothel); // Creates a new customer.
+    sCustomer GetCustomer(cBuilding& brothel); // Creates a new customer.
 
     // girls
     cGirls& girl_pool();

@@ -40,7 +40,7 @@ class cGirlPool;
 extern cRng g_Dice;
 
 // Prototypes
-class   IBuilding;
+class   cBuilding;
 struct  sInventoryItem;
 struct  sBrothel;
 class   cPlayer;
@@ -89,7 +89,7 @@ public:
     /// Changes to the girl's stats when you enslave her
     static void SetSlaveStats(sGirl& girl);
 
-    static void EndDayGirls(IBuilding& brothel, sGirl& girl);
+    static void EndDayGirls(cBuilding& brothel, sGirl& girl);
 
     // updates what she enjoys
     static void UpdateEnjoymentMod(sGirl& girl, int whatSheEnjoys, int amount);                            // `J` added for traits
@@ -100,7 +100,7 @@ public:
     static double GetAverageOfSexSkills(const sGirl& girl);    // `J` added
     static double GetAverageOfNSxSkills(const sGirl& girl);    // `J` added
 
-    static bool PossiblyGainNewTrait(sGirl& girl, std::string Trait, int Threshold, int ActionType, std::string Message, bool Day0Night1, EventType eventtype = EVENT_GOODNEWS);
+    static bool PossiblyGainNewTrait(sGirl& girl, std::string Trait, int Threshold, int ActionType, std::string Message, bool Day0Night1, EEventType eventtype = EVENT_GOODNEWS);
     static bool PossiblyLoseExistingTrait(sGirl& girl, std::string Trait, int Threshold, int ActionType, std::string Message, bool Day0Night1);
 
     // `J` adding these to allow single step adjustment of linked traits
@@ -155,7 +155,7 @@ public:
     static void updateGirlTurnStats(sGirl& girl);
 
     static bool girl_has_matron(const sGirl& girl, int shift = 0);
-    static bool detect_disease_in_customer(IBuilding * brothel, sGirl& girl, sCustomer * Cust, double mod = 0.0);
+    static bool detect_disease_in_customer(cBuilding * brothel, sGirl& girl, sCustomer * Cust, double mod = 0.0);
 
     static std::string Accommodation(int acc);
     static int PreferredAccom(const sGirl& girl);

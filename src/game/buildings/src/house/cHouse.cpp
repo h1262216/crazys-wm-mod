@@ -30,7 +30,7 @@ extern cRng             g_Dice;
 extern const char* const TrainingInteractionId = "TrainingInteraction";
 
 // // ----- Strut sHouse Create / destroy
-sHouse::sHouse() : IBuilding(BuildingType::HOUSE, "House")
+sHouse::sHouse() : cBuilding(BuildingType::HOUSE, "House")
 {
     m_FirstJob = JOB_HEADGIRL;
     m_LastJob = JOB_HOUSEPET;

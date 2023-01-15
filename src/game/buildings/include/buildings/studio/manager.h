@@ -28,7 +28,7 @@ namespace tinyxml2 {
     class XMLElement;
 }
 
-class IBuilding;
+class cBuilding;
 
 class cMovieManager {
 public:
@@ -36,7 +36,7 @@ public:
     void init();
     void load_xml(const tinyxml2::XMLElement& element);
     void save_xml(tinyxml2::XMLElement& element) const;
-    int step(IBuilding& studio);
+    int step(cBuilding& studio);
 
     // creating movies
     void add_scene(MovieScene scene);

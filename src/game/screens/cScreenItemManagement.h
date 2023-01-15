@@ -76,7 +76,7 @@ private:
 
     std::vector<std::unique_ptr<IInventoryProvider>> m_OwnerList;
 
-    void AddGirlsFromBuilding(IBuilding * brothel);
+    void AddGirlsFromBuilding(cBuilding * brothel);
 public:
     cScreenItemManagement();
 

@@ -22,7 +22,7 @@
 #include "cGirls.h"
 #include "IGame.h"
 #include "sStorage.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "buildings/cBuildingManager.h"
 #include "character/sGirl.h"
 #include "character/predicates.h"
@@ -63,13 +63,13 @@ IGenericJob::eCheckWorkResult cBarJob::CheckWork(sGirl& girl, bool is_night) {
 
 struct cBarCookJob : public cBarJob {
     cBarCookJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cBarCookJob::cBarCookJob() : cBarJob(JOB_BARCOOK, "BarCook.xml", {ACTION_WORKBAR}) {
 }
 
-bool cBarCookJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
+bool cBarCookJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
 {
     int fame = 0;
     m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
@@ -99,13 +99,13 @@ bool cBarCookJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 
 struct cBarMaidJob : public cBarJob {
     cBarMaidJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cBarMaidJob::cBarMaidJob() : cBarJob(JOB_BARMAID, "BarMaid.xml", {ACTION_WORKBAR}) {
 }
 
-bool cBarMaidJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cBarMaidJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     //    Job setup                //
     Action_Types actiontype = ACTION_WORKBAR;
     int roll_jp = d100(), roll_e = d100(), roll_c = d100();
@@ -424,13 +424,13 @@ bool cBarMaidJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
 
 struct cBarWaitressJob : public cBarJob {
     cBarWaitressJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cBarWaitressJob::cBarWaitressJob() : cBarJob(JOB_WAITRESS, "BarWaitress.xml",{ACTION_WORKBAR}) {
 }
 
-bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cBarWaitressJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_a = d100(), roll_c = d100();
 
     const sGirl* barmaidonduty = random_girl_on_job(*girl.m_Building, JOB_BARMAID, is_night);
@@ -564,13 +564,13 @@ bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
 
 struct cBarPianoJob : public cBarJob {
     cBarPianoJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cBarPianoJob::cBarPianoJob() : cBarJob(JOB_PIANO, "BarPiano.xml", {ACTION_WORKMUSIC}) {
 }
 
-bool cBarPianoJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cBarPianoJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_a = d100(), roll_b = d100();
 
     const sGirl* singeronduty = random_girl_on_job(brothel, JOB_SINGER, is_night);
@@ -659,19 +659,19 @@ bool cBarPianoJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 
 struct cBarSingerJob : public cBarJob {
     cBarSingerJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cBarSingerJob::cBarSingerJob() : cBarJob(JOB_SINGER, "BarSinger.xml",{ACTION_WORKMUSIC}) {
 }
 
-bool cBarSingerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
+bool cBarSingerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
 {
     int roll_a = d100(), roll_b = d100();
 
     int happy = 0, fame = 0;
     EImageBaseType imagetype = EImageBaseType::SINGING;
-    EventType msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    EEventType msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
 
@@ -726,14 +726,14 @@ bool cBarSingerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night
 class cDealerJob : public cSimpleJob {
 public:
     cDealerJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 // TODO rename this, I would expect 'Dealer' to refer to a different job
 cDealerJob::cDealerJob() : cSimpleJob(JOB_DEALER, "Dealer.xml", {ACTION_WORKHALL}) {
 }
 
-bool cDealerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cDealerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_a = d100();
 
     m_Earnings = 25;
@@ -902,14 +902,14 @@ bool cDealerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
 class cEntertainerJob : public cSimpleJob {
 public:
     cEntertainerJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cEntertainerJob::cEntertainerJob() : cSimpleJob(JOB_ENTERTAINMENT, "Entertainer.xml", {ACTION_WORKHALL}) {
 }
 
 
-bool cEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cEntertainerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 #pragma region //    Job setup                //
 
     const sGirl* dealeronduty = random_girl_on_job(*girl.m_Building, JOB_DEALER, is_night);
@@ -994,14 +994,14 @@ bool cEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nig
 class cXXXEntertainerJob : public cSimpleJob {
 public:
     cXXXEntertainerJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 
 cXXXEntertainerJob::cXXXEntertainerJob() : cSimpleJob(JOB_XXXENTERTAINMENT, "XXXEntertainer.xml", {ACTION_WORKSTRIP}) {
 }
 
-bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cXXXEntertainerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     m_Earnings = 25;
     int fame = 0;
     sImagePreset imagetype = EImageBaseType::BUNNY;
@@ -1209,13 +1209,13 @@ bool cXXXEntertainerJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_
 class cMasseuseJob : public cSimpleJob {
 public:
     cMasseuseJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml", {ACTION_WORKMASSEUSE, 0, EImageBaseType::MASSAGE}) {
 }
 
-bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cMasseuseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     m_Earnings = girl.askprice() + 40;
     int fame = 0;
 
@@ -1324,13 +1324,13 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 class cPeepShowJob : public cSimpleJob {
 public:
     cPeepShowJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cPeepShowJob::cPeepShowJob() : cSimpleJob(JOB_PEEP, "PeepShow.xml", {ACTION_WORKSTRIP}) {
 }
 
-bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cPeepShowJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_c = d100();
     m_Earnings = girl.askprice() + uniform(0, 50);
     m_Tips = std::max(uniform(-10, 40), 0);
@@ -1568,13 +1568,13 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 class cBrothelStripper : public cSimpleJob {
 public:
     cBrothelStripper();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cBrothelStripper::cBrothelStripper() : cSimpleJob(JOB_BROTHELSTRIPPER, "BrothelStripper.xml", {ACTION_WORKSTRIP}) {
 }
 
-bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cBrothelStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int fame = 0;
     sImagePreset imagetype = EImageBaseType::STRIP;
     m_Earnings = 45;
@@ -1875,7 +1875,7 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_ni
 class ClubBarmaid : public cSimpleJob {
 public:
     ClubBarmaid();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 
@@ -1883,7 +1883,7 @@ ClubBarmaid::ClubBarmaid() : cSimpleJob(JOB_SLEAZYBARMAID, "StripBarMaid.xml", {
 
 }
 
-bool ClubBarmaid::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool ClubBarmaid::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int fame = 0;
     sImagePreset imagetype = EImageBaseType::ECCHI;
 
@@ -1969,13 +1969,13 @@ bool ClubBarmaid::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) 
 class ClubStripper : public cSimpleJob {
 public:
     ClubStripper();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 ClubStripper::ClubStripper() : cSimpleJob(JOB_BARSTRIPPER, "StripStripper.xml", {ACTION_WORKSTRIP}) {
 }
 
-bool ClubStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool ClubStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_c = d100();
 
     m_Earnings = 30;
@@ -2137,14 +2137,14 @@ bool ClubStripper::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 class ClubWaitress : public cSimpleJob {
 public:
     ClubWaitress();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 ClubWaitress::ClubWaitress() : cSimpleJob(JOB_SLEAZYWAITRESS, "StripWaitress.xml", {ACTION_WORKCLUB}) {
 
 }
 
-bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool ClubWaitress::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     m_Earnings = 25;
     int anal = 0, oral = 0, hand = 0, fame = 0;
     sImagePreset imagetype = EImageBaseType::ECCHI;
@@ -2659,14 +2659,14 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 class AdvertisingJob : public cSimpleJob {
 public:
     AdvertisingJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 AdvertisingJob::AdvertisingJob() : cSimpleJob(JOB_ADVERTISING, "Advertising.xml", {ACTION_WORKADVERTISING}) {
 
 }
 
-bool AdvertisingJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool AdvertisingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     //    Job setup                //
     int fame = 0;
     EImageBaseType imagetype = EImageBaseType::ADVERTISE;
@@ -2788,14 +2788,14 @@ bool AdvertisingJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nigh
 class CustServiceJob : public cSimpleJob {
 public:
     CustServiceJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 CustServiceJob::CustServiceJob() : cSimpleJob(JOB_CUSTOMERSERVICE, "CustService.xml", {ACTION_WORKCUSTSERV}) {
 
 }
 
-bool CustServiceJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool CustServiceJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     Action_Types actiontype = ACTION_WORKCUSTSERV;
     // Note: Customer service needs to be done last, after all the whores have worked.
 
@@ -2908,13 +2908,13 @@ bool CustServiceJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_nigh
 class BeastCareJob : public cSimpleJob {
 public:
     BeastCareJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 BeastCareJob::BeastCareJob() : cSimpleJob(JOB_BEASTCARER, "BeastCarer.xml", {ACTION_WORKCARING, 20}) {
 }
 
-bool BeastCareJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool BeastCareJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     if (g_Game->storage().beasts() < 1) {
         add_text("no-beasts") << "\n\n";
     }
@@ -3019,7 +3019,7 @@ bool BeastCareJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night)
 class SecurityJob : public cSimpleJob {
 public:
     SecurityJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
 
@@ -3027,7 +3027,7 @@ SecurityJob::SecurityJob() : cSimpleJob(JOB_SECURITY, "Security.xml", {ACTION_WO
 
 }
 
-bool SecurityJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool SecurityJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_a = d100();
     sImagePreset imagetype = EImageBaseType::SECURITY;
 
@@ -3192,10 +3192,10 @@ double SecurityJob::GetPerformance(const sGirl& girl, bool estimate) const {
 class CatacombJob : public cSimpleJob {
 public:
     CatacombJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-bool CatacombJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int num_monsters = 0;
     int type_monster_girls = 0;
     int type_unique_monster_girls = 0;

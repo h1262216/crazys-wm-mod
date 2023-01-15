@@ -35,7 +35,7 @@ extern const char* const CarePointsGoodId = "CarePointsGood";
 extern const char* const DoctorInteractionId = "DoctorInteraction";
 
 // // ----- Strut sClinic Create / destroy
-sClinic::sClinic() : IBuilding(BuildingType::CLINIC, "Clinic")
+sClinic::sClinic() : cBuilding(BuildingType::CLINIC, "Clinic")
 {
     m_FirstJob = JOB_GETHEALING;
     m_LastJob = JOB_JANITOR;
@@ -142,11 +142,11 @@ void sClinic::UpdateGirls(bool is_night)    // Start_Building_Process_B
     if(total_doctor_actions > possible_doctor_actions) {
         std::stringstream msg;
         msg << "You tried to get " << total_doctor_actions << " girls treated, but doctors could only take care of " << possible_doctor_actions << ".\n";
-        AddMessage(msg.str(), EventType::EVENT_WARNING);
+        AddMessage(msg.str(), EEventType::EVENT_WARNING);
     } else if(possible_doctor_actions > 0) {
         std::stringstream msg;
         msg << "Your clinic has enough doctors for " << possible_doctor_actions << " patients. This week you requested treatment for " << total_doctor_actions << " girls.\n";
-        AddMessage(msg.str(), EventType::EVENT_BUILDING);
+        AddMessage(msg.str(), EEventType::EVENT_BUILDING);
     }
 
 }
@@ -312,7 +312,7 @@ std::string sClinic::meet_no_luck() const {
 }
 
 void sClinic::GirlBeginShift(sGirl& girl, bool is_night) {
-    IBuilding::GirlBeginShift(girl, is_night);
+    cBuilding::GirlBeginShift(girl, is_night);
 
     if (girl.has_active_trait(traits::AIDS) && (
             is_in((JOBS)girl.m_DayJob, {JOB_DOCTOR, JOB_INTERN, JOB_NURSE}) ||

@@ -17,7 +17,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "InterfaceProcesses.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "interface/cWindowManager.h"
 #include "character/cPlayer.h"
 #include "cScreenBrothelManagement.h"
@@ -30,7 +30,7 @@ namespace settings {
     extern const char* USER_SHOW_NUMBERS;
 }
 
-static std::string get_building_summary(const IBuilding& building);
+static std::string get_building_summary(const cBuilding& building);
 
 // -------------------------------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ void IBuildingScreen::try_walk()
     }
 }
 
-static std::string fame_text(const IBuilding* brothel)
+static std::string fame_text(const cBuilding* brothel)
 {
     std::stringstream ss;
     /* */if (brothel->m_Fame >= 90)/*     */    ss << "World Renowned";
@@ -141,7 +141,7 @@ static std::string fame_text(const IBuilding* brothel)
     return ss.str();
 }
 
-static std::string happiness_text(const IBuilding* brothel)
+static std::string happiness_text(const cBuilding* brothel)
 {
     std::stringstream ss;
     /* */if (brothel->m_Happiness >= 80)/* */    ss << "High";
@@ -151,7 +151,7 @@ static std::string happiness_text(const IBuilding* brothel)
     return ss.str();
 }
 
-static std::string get_building_summary(const IBuilding& building)
+static std::string get_building_summary(const cBuilding& building)
 {
     std::stringstream ss;
     long profit = building.m_Finance.total_profit();

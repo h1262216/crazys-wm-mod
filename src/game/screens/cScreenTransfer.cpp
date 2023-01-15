@@ -135,7 +135,7 @@ void cScreenTransfer::select_brothel(Side side, int selected)
     (side == Side::Right ? rightBrothel : leftBrothel) = selected;
     if (selected != -1)
     {
-        IBuilding* temp = getBuilding(selected);
+        cBuilding* temp = getBuilding(selected);
 
         int selection = 0;
         int i = 0;
@@ -149,9 +149,9 @@ void cScreenTransfer::select_brothel(Side side, int selected)
     }
 }
 
-IBuilding * cScreenTransfer::getBuilding(int index) const
+cBuilding * cScreenTransfer::getBuilding(int index) const
 {
-    IBuilding * temp = nullptr;
+    cBuilding * temp = nullptr;
     if (index > 5) { temp = g_Game->buildings().building_with_type(BuildingType::BROTHEL, index - 6); }
     else if (index == 5) { temp = g_Game->buildings().building_with_type(BuildingType::HOUSE); }
     else if (index == 4) { temp = g_Game->buildings().building_with_type(BuildingType::FARM); }
@@ -171,7 +171,7 @@ void cScreenTransfer::TransferGirlsRightToLeft(bool rightfirst, int rightBrothel
     int lista_id    = rightfirst ? listright_id        :    listleft_id        ;
     int listb_id    = rightfirst ? listleft_id        :    listright_id    ;
 
-    IBuilding* brothel = getBuilding(brothela);
+    cBuilding* brothel = getBuilding(brothela);
 
     if (brothela != brothelb && brothel->num_girls() == brothel->m_NumRooms)
     {
@@ -183,7 +183,7 @@ void cScreenTransfer::TransferGirlsRightToLeft(bool rightfirst, int rightBrothel
         bool is_full = false;
         ForAllSelectedItems(listb_id, [&](int girlSelection) {
             if(is_full)  return;
-            IBuilding* bb = getBuilding(brothelb);
+            cBuilding* bb = getBuilding(brothelb);
             sGirl* temp = bb->get_girl(girlSelection - NumRemoved);
             // check there is still room
             if (brothela != brothelb && brothel->num_girls() + 1 > brothel->m_NumRooms)

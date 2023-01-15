@@ -39,7 +39,7 @@ namespace {
     };
 }
 
-bool cEscortJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     Action_Types actiontype = ACTION_WORKESCORT;
     m_Escort = 0;
     m_Prepare = (girl.agility() + girl.service() / 2);

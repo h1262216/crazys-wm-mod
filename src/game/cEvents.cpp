@@ -192,13 +192,13 @@ bool CEvent::IsCombat() const {
     return m_Report != nullptr;
 }
 
-void cEvents::AddMessage(std::string message, sImageSpec image, EventType event_type)
+void cEvents::AddMessage(std::string message, sImageSpec image, EEventType event_type)
 {
     events.emplace_back(event_type, image, std::move(message), nullptr);
     m_bSorted = false;
 }
 
-void cEvents::AddMessage(std::string summary, EventType event, std::shared_ptr<CombatReport> rep) {
+void cEvents::AddMessage(std::string summary, EEventType event, std::shared_ptr<CombatReport> rep) {
     events.emplace_back(event, sImageSpec{EImageBaseType::COMBAT, ESexParticipants::ANY,
                                           ETriValue::Maybe, ETriValue::Maybe, ETriValue::Maybe},
                         std::move(summary), std::move(rep));
@@ -229,11 +229,11 @@ void cEvents::DoSort()
     }
 }
 
-void cEvents::AddMessage(std::string summary, EventType event) {
+void cEvents::AddMessage(std::string summary, EEventType event) {
     AddMessage(std::move(summary), sImageSpec(), event);
 }
 
-CEvent::CEvent(EventType event, const sImageSpec& spec, std::string message, std::shared_ptr<CombatReport> rep) :
+CEvent::CEvent(EEventType event, const sImageSpec& spec, std::string message, std::shared_ptr<CombatReport> rep) :
         m_Event(event), m_Image(spec), m_Message(std::move(message)), m_Report(std::move(rep))
 {
 }

@@ -22,10 +22,10 @@
 #ifndef __CARENA_H
 #define __CARENA_H
 
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 
 // defines a single arena
-class sArena : public IBuilding
+class sArena : public cBuilding
 {
 public:
     sArena();

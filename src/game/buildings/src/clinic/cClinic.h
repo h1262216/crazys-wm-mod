@@ -22,10 +22,10 @@
 #ifndef __CCLINIC_H
 #define __CCLINIC_H
 
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 
 // defines a single clinic
-struct sClinic : public IBuilding
+struct sClinic : public cBuilding
 {
     sClinic();
     ~sClinic() override;

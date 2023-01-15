@@ -21,7 +21,7 @@
 #include "character/sGirl.h"
 #include "character/cCustomers.h"
 #include "character/predicates.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "cGirls.h"
 #include "IGame.h"
 #include "character/cPlayer.h"
@@ -33,19 +33,19 @@ namespace {
     class CommunityService: public cSimpleJob {
     public:
         CommunityService();
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     };
 
     class FeedPoor : public cSimpleJob {
     public:
         FeedPoor();
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     };
 
     class Counselor : public cSimpleJob {
     public:
         Counselor();
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     };
 }
 
@@ -53,7 +53,7 @@ CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "Communit
 
 }
 
-bool CommunityService::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool CommunityService::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     bool blow = false, sex = false;
     int fame = 0;
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
@@ -149,7 +149,7 @@ FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENT
 
 }
 
-bool FeedPoor::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool FeedPoor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     bool blow = false, sex = false;
     int feed = 0, fame = 0;
     int roll_b = d100();
@@ -251,7 +251,7 @@ Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORK
     m_Info.FreeOnly = true;
 }
 
-bool Counselor::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool Counselor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_a = d100();
 
     if (roll_a <= 10)       { m_Enjoyment -= uniform(1, 3);    ss << "The addicts hasseled her."; }

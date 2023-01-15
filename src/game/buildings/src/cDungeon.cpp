@@ -18,7 +18,7 @@
 */
 #include <sstream>
 #include "character/sGirl.h"
-#include "IBuilding.h"
+#include "cBuilding.h"
 #include "buildings/cBuildingManager.h"
 #include "interface/constants.h"
 
@@ -508,7 +508,7 @@ void cDungeon::Update()
         //    `J` set the basics
         msg.str(""); ss.str("");
         msg << girlName << " is languishing in the dungeon.\n \n";
-        EventType msgtype = EVENT_DUNGEON;
+        EEventType msgtype = EVENT_DUNGEON;
         EImageBaseType imgtype = EImageBaseType::JAIL;
         int    nHealth = girl->health();
         int    nTired = girl->tiredness();
@@ -749,7 +749,7 @@ void cDungeon::SetFeeding(int num, bool allow) {
     }
 }
 
-void cDungeon::ReleaseGirl(int index, IBuilding& target) {
+void cDungeon::ReleaseGirl(int index, cBuilding& target) {
     auto girl = RemoveGirl(GetGirl(index));
     target.add_girl(std::move(girl));
 }

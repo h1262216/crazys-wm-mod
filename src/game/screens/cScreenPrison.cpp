@@ -16,7 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "buildings/cDungeon.h"
 #include "cScreenPrison.h"
 #include "interface/cWindowManager.h"
@@ -121,7 +121,7 @@ void cScreenPrison::release_button()
     g_Game->gold().item_cost((double)cost);
     g_Game->gold().girl_support((double)cost);
     auto girl = g_Game->GetPrison().TakeGirl(pgirls);
-    IBuilding& bld = active_building();
+    cBuilding& bld = active_building();
     if (bld.free_rooms() < 1)
     {
         std::string text = pgirls->FullName();

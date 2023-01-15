@@ -24,7 +24,7 @@
 #include "utils/algorithms.hpp"
 #include "cGangs.h"
 #include "cGangManager.hpp"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 #include "sStorage.h"
 #include "character/sGirl.h"
@@ -247,7 +247,7 @@ void cGirls::LevelUpStats(sGirl& girl)
 *    if a sex type is banned, 10% chance she will lose 1 point in it
 *   all other skills have a 5% chance to lose 1 point
 */
-void cGirls::EndDayGirls(IBuilding& brothel, sGirl& girl)
+void cGirls::EndDayGirls(cBuilding& brothel, sGirl& girl)
 {
     stringstream goodnews;
     /* */if (girl.m_NumCusts == girl.m_NumCusts_old)    {}    // no customers
@@ -1597,7 +1597,7 @@ int cGirls::GetNumItemType(const sGirl& girl, int Type, bool splitsubtype)
 // ----- Traits
 
 // If a girl enjoys a job enough, she has a chance of gaining traits associated with it
-bool cGirls::PossiblyGainNewTrait(sGirl& girl, string Trait, int Threshold, int ActionType, string Message, bool Day0Night1, EventType eventtype)
+bool cGirls::PossiblyGainNewTrait(sGirl& girl, string Trait, int Threshold, int ActionType, string Message, bool Day0Night1, EEventType eventtype)
 {
     if (girl.m_Enjoyment[ActionType] > Threshold)
     {
@@ -3681,7 +3681,7 @@ int cGirls::PreferredAccom(const sGirl& girl)
 }
 
 // `J` the girl will check the customer for diseases before continuing.
-bool cGirls::detect_disease_in_customer(IBuilding * brothel, sGirl& girl, sCustomer * Cust, double mod)
+bool cGirls::detect_disease_in_customer(cBuilding * brothel, sGirl& girl, sCustomer * Cust, double mod)
 {
     stringstream ss;
     if (g_Dice.percent(0.1))    // 0.001 chance of false positive

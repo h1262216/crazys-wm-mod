@@ -29,7 +29,7 @@
 #include "utils/string.hpp"
 #include "IGame.h"
 #include "CLog.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 
 extern cRng g_Dice;
 
@@ -192,7 +192,7 @@ void cMovieManager::init() {
     }
 }
 
-int cMovieManager::step(IBuilding& studio) {
+int cMovieManager::step(cBuilding& studio) {
     float total_income = 0.0;
     const float sated_chance = g_Game->settings().get_float(settings::MOVIES_AUDIENCE_SATED_CHANCE);
 

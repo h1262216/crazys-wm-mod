@@ -44,7 +44,7 @@ extern cRng                    g_Dice;
 
 // // ----- Strut sBrothel Create / destroy
 sBrothel::sBrothel() :
-    IBuilding(BuildingType::BROTHEL, "Brothel")
+    cBuilding(BuildingType::BROTHEL, "Brothel")
 {
     m_TotalCustomers = m_RejectCustomersRestrict = m_RejectCustomersDisease = m_MiscCustomers = 0;
 

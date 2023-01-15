@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "IBuilding.h"
+#include "cBuilding.h"
 
 #include <memory>
 #include "cTariff.h"
@@ -65,24 +65,24 @@ const char* building_type_to_str(BuildingType type) {
     assert(false);
 }
 
-const char* IBuilding::type_str() const
+const char* cBuilding::type_str() const
 {
     return building_type_to_str(type());
 }
 
-int IBuilding::get_girl_index(const sGirl& girl) const
+int cBuilding::get_girl_index(const sGirl& girl) const
 {
     return m_Girls->get_index(&girl);
 }
 
 // ----- Matron  // `J` added building checks
-bool IBuilding::matron_on_shift(int shift) const
+bool cBuilding::matron_on_shift(int shift) const
 {
     return num_girls_on_job(m_MatronJob, shift) > 0;
 }
 
 //int sBrothel::matron_count
-int IBuilding::matron_count() const
+int cBuilding::matron_count() const
 {
     int sum = 0;
     for (int i = 0; i < 2; i++)
@@ -95,7 +95,7 @@ int IBuilding::matron_count() const
 }
 
 
-void IBuilding::BeginWeek()
+void cBuilding::BeginWeek()
 {
     // reset the data
     m_Happiness = m_MiscCustomers = m_TotalCustomers = 0;
@@ -177,7 +177,7 @@ void IBuilding::BeginWeek()
     }
 }
 
-void IBuilding::HandleRestingGirls(bool is_night)
+void cBuilding::HandleRestingGirls(bool is_night)
 {
     std::stringstream ss;
     m_Girls->apply([&](sGirl& current){
@@ -244,7 +244,7 @@ void IBuilding::HandleRestingGirls(bool is_night)
     });
 }
 
-void IBuilding::Update()
+void cBuilding::Update()
 {
     BeginWeek();
     UpdateGirls(false);       // Run the Day Shift
@@ -253,7 +253,7 @@ void IBuilding::Update()
 }
 
 
-void IBuilding::EndShift(bool Day0Night1)
+void cBuilding::EndShift(bool Day0Night1)
 {
     m_Girls->apply([&](sGirl& current)
     {
@@ -263,7 +263,7 @@ void IBuilding::EndShift(bool Day0Night1)
     });
 }
 
-void IBuilding::GirlEndShift(sGirl& girl, bool is_night) {
+void cBuilding::GirlEndShift(sGirl& girl, bool is_night) {
     auto sum = EVENT_SUMMARY;
     std::stringstream ss;
 
@@ -390,19 +390,19 @@ void IBuilding::GirlEndShift(sGirl& girl, bool is_night) {
     if (ss.str().length() > 0)    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, sum);
 }
 
-IBuilding::~IBuilding() = default;
+cBuilding::~cBuilding() = default;
 
-int IBuilding::num_girls() const
+int cBuilding::num_girls() const
 {
     return m_Girls->num();
 }
 
-int IBuilding::num_girls_on_job(JOBS jobID, int is_night) const
+int cBuilding::num_girls_on_job(JOBS jobID, int is_night) const
 {
     return m_Girls->count(HasJob(jobID, is_night));
 }
 
-void IBuilding::add_girl(std::shared_ptr<sGirl> girl, bool keep_job)
+void cBuilding::add_girl(std::shared_ptr<sGirl> girl, bool keep_job)
 {
     girl->m_Building = this;
     if (!keep_job) {
@@ -412,20 +412,20 @@ void IBuilding::add_girl(std::shared_ptr<sGirl> girl, bool keep_job)
     m_Girls->AddGirl(std::move(girl));
 }
 
-std::shared_ptr<sGirl> IBuilding::remove_girl(sGirl* girl)
+std::shared_ptr<sGirl> cBuilding::remove_girl(sGirl* girl)
 {
     auto girl_sptr = m_Girls->TakeGirl(girl);
     girl->m_Building = nullptr;
     return girl_sptr;
 }
 
-void IBuilding::save_girls_xml(tinyxml2::XMLElement& target) const
+void cBuilding::save_girls_xml(tinyxml2::XMLElement& target) const
 {
     auto& elGirls = PushNewElement(target, "Girls");
     m_Girls->SaveXML(elGirls);
 }
 
-void IBuilding::load_girls_xml(const tinyxml2::XMLElement& root)
+void cBuilding::load_girls_xml(const tinyxml2::XMLElement& root)
 {
     auto pGirls = root.FirstChildElement("Girls");
     m_Girls->LoadXML(*pGirls);
@@ -434,7 +434,7 @@ void IBuilding::load_girls_xml(const tinyxml2::XMLElement& root)
     });
 }
 
-IBuilding::IBuilding(BuildingType type, std::string name) :
+cBuilding::cBuilding(BuildingType type, std::string name) :
     m_Type(type), m_Finance(0),
     m_Name(std::move(name)),
     m_Girls(std::make_unique<cGirlPool>())
@@ -442,7 +442,7 @@ IBuilding::IBuilding(BuildingType type, std::string name) :
 
 }
 
-bool IBuilding::provide_anti_preg() {
+bool cBuilding::provide_anti_preg() {
     int cost = g_Game->tariff().anti_preg_price(1);
 
     if (m_KeepPotionsStocked) {
@@ -459,17 +459,17 @@ bool IBuilding::provide_anti_preg() {
     return false;
 }
 
-bool IBuilding::is_sex_type_allowed(SKILLS sex_type) const
+bool cBuilding::is_sex_type_allowed(SKILLS sex_type) const
 {
     return m_ForbiddenSexType.count(sex_type) == 0;
 }
 
-bool IBuilding::nothing_banned() const
+bool cBuilding::nothing_banned() const
 {
     return m_ForbiddenSexType.empty();
 }
 
-void IBuilding::set_sex_type_allowed(SKILLS sex_type, bool is_allowed)
+void cBuilding::set_sex_type_allowed(SKILLS sex_type, bool is_allowed)
 {
     if(is_allowed) {
         m_ForbiddenSexType.erase(sex_type);
@@ -478,7 +478,7 @@ void IBuilding::set_sex_type_allowed(SKILLS sex_type, bool is_allowed)
     }
 }
 
-void IBuilding::save_settings_xml(tinyxml2::XMLElement& root) const
+void cBuilding::save_settings_xml(tinyxml2::XMLElement& root) const
 {
     root.SetAttribute("Name", m_Name.c_str());
     root.SetAttribute("BackgroundImage", m_BackgroundImage.c_str());
@@ -501,7 +501,7 @@ void IBuilding::save_settings_xml(tinyxml2::XMLElement& root) const
     }
 }
 
-void IBuilding::load_settings_xml(const tinyxml2::XMLElement& root)
+void cBuilding::load_settings_xml(const tinyxml2::XMLElement& root)
 {
     const char* name_attribute = root.Attribute("Name");
     if (name_attribute)
@@ -541,34 +541,34 @@ void IBuilding::load_settings_xml(const tinyxml2::XMLElement& root)
     root.QueryBoolAttribute("Encounter", &m_HasDoneEncounter);
 }
 
-int IBuilding::filthiness() const
+int cBuilding::filthiness() const
 {
     return m_Filthiness;
 }
 
-int IBuilding::security() const
+int cBuilding::security() const
 {
     return m_SecurityLevel;
 }
 
-void IBuilding::load_xml(const tinyxml2::XMLElement& root)
+void cBuilding::load_xml(const tinyxml2::XMLElement& root)
 {
     load_settings_xml(root);
     load_girls_xml(root);
 }
 
-void IBuilding::save_xml(tinyxml2::XMLElement& root) const
+void cBuilding::save_xml(tinyxml2::XMLElement& root) const
 {
     save_settings_xml(root);
     save_girls_xml(root);
 }
 
-sGirl* IBuilding::get_girl(int index)
+sGirl* cBuilding::get_girl(int index)
 {
     return m_Girls->get_girl(index);
 }
 
-void IBuilding::BeginShift(bool is_night)
+void cBuilding::BeginShift(bool is_night)
 {
     setup_resources();
 
@@ -583,14 +583,14 @@ void IBuilding::BeginShift(bool is_night)
 }
 
 //void cBrothelManager::AddAntiPreg(int amount)
-void IBuilding::AddAntiPreg(int amount) // unused
+void cBuilding::AddAntiPreg(int amount) // unused
 {
     m_AntiPregPotions += amount;
     if (m_AntiPregPotions > 700)
         m_AntiPregPotions = 700;
 }
 
-bool IBuilding::SetupMatron(bool is_night)
+bool cBuilding::SetupMatron(bool is_night)
 {
     m_ActiveMatron = nullptr;
     int has_matron = num_girls_on_job(m_MatronJob, is_night);
@@ -674,7 +674,7 @@ bool IBuilding::SetupMatron(bool is_night)
     }
 }
 
-std::vector<sGirl*> IBuilding::girls_on_job(JOBS jobID, int is_night) const
+std::vector<sGirl*> cBuilding::girls_on_job(JOBS jobID, int is_night) const
 {
     std::vector<sGirl*> result;
     auto predicate = HasJob(jobID, is_night);
@@ -685,14 +685,14 @@ std::vector<sGirl*> IBuilding::girls_on_job(JOBS jobID, int is_night) const
     return std::move(result);
 }
 
-void IBuilding::update_all_girls_stat(STATS stat, int amount)
+void cBuilding::update_all_girls_stat(STATS stat, int amount)
 {
     m_Girls->apply([&](sGirl& girl) {
         girl.upd_base_stat(stat, amount);
     });
 }
 
-int IBuilding::total_fame() const
+int cBuilding::total_fame() const
 {
     int total_fame = 0;
     m_Girls->visit([&](const sGirl& girl) {
@@ -716,7 +716,7 @@ bool is_she_cleaning(sGirl& girl)
     return false;
 }
 
-void IBuilding::do_daily_items(sGirl& girl)
+void cBuilding::do_daily_items(sGirl& girl)
 {
     if (girl.inventory().empty()) return;    // no items so skip it
 
@@ -1645,22 +1645,22 @@ void IBuilding::do_daily_items(sGirl& girl)
     }
 }
 
-int IBuilding::free_rooms() const
+int cBuilding::free_rooms() const
 {
     return m_NumRooms - m_Girls->num();
 }
 
-int IBuilding::num_rooms() const
+int cBuilding::num_rooms() const
 {
     return m_NumRooms;
 }
 
-void IBuilding::set_background_image(std::string img)
+void cBuilding::set_background_image(std::string img)
 {
     m_BackgroundImage = std::move(img);
 }
 
-std::shared_ptr<sGirl> IBuilding::meet_girl() const
+std::shared_ptr<sGirl> cBuilding::meet_girl() const
 {
     std::shared_ptr<sGirl> girl;
     if(g_Dice.percent( g_Game->settings().get_percent(settings::WORLD_ENCOUNTER_UNIQUE) )) {
@@ -1674,7 +1674,7 @@ std::shared_ptr<sGirl> IBuilding::meet_girl() const
     return girl;
 }
 
-void IBuilding::EndWeek() {
+void cBuilding::EndWeek() {
     // update the global cash
     g_Game->gold().brothel_accounts(m_Finance, m_id);
 
@@ -1688,7 +1688,7 @@ void IBuilding::EndWeek() {
     if (m_SecurityLevel < 0)    m_SecurityLevel = 0;
 }
 
-std::shared_ptr<sGirl> IBuilding::TryEncounter() {
+std::shared_ptr<sGirl> cBuilding::TryEncounter() {
     if (m_HasDoneEncounter && !g_Game->allow_cheats())
     {
         g_Game->push_message("You can only do this once per week.", COLOR_WARNING);
@@ -1714,27 +1714,27 @@ std::shared_ptr<sGirl> IBuilding::TryEncounter() {
     return std::move(girl);
 }
 
-std::string IBuilding::meet_no_luck() const {
+std::string cBuilding::meet_no_luck() const {
     return "You don't encounter any suitable girls";
 }
 
-bool IBuilding::CanEncounter() const {
+bool cBuilding::CanEncounter() const {
     return !m_HasDoneEncounter;
 }
 
-void IBuilding::GirlBeginShift(sGirl& girl, bool is_night) {
+void cBuilding::GirlBeginShift(sGirl& girl, bool is_night) {
     cGirls::UseItems(girl);
     cGirls::CalculateGirlType(girl);        // update the fetish traits
     cGirls::UpdateAskPrice(girl, true);    // Calculate the girls asking price
     g_Game->job_manager().handle_pre_shift(girl, is_night);
 }
 
-void IBuilding::declare_resource(const std::string& name) {
+void cBuilding::declare_resource(const std::string& name) {
     auto result = m_ShiftResources.insert(std::make_pair(name, 0));
     assert(result.second);
 }
 
-void IBuilding::setup_resources() {
+void cBuilding::setup_resources() {
     for(auto& res : m_ShiftResources) {
         res.second = 0;
     }
@@ -1746,11 +1746,11 @@ void IBuilding::setup_resources() {
     }
 }
 
-int IBuilding::GetResourceAmount(const std::string& name) const {
+int cBuilding::GetResourceAmount(const std::string& name) const {
     return m_ShiftResources.at(name);
 }
 
-int IBuilding::ConsumeResource(const std::string& name, int amount) {
+int cBuilding::ConsumeResource(const std::string& name, int amount) {
     int has = m_ShiftResources.at(name);
     if(has >= amount) {
         m_ShiftResources[name] -= amount;
@@ -1761,7 +1761,7 @@ int IBuilding::ConsumeResource(const std::string& name, int amount) {
     }
 }
 
-bool IBuilding::TryConsumeResource(const std::string& name, int amount) {
+bool cBuilding::TryConsumeResource(const std::string& name, int amount) {
     int has = m_ShiftResources.at(name);
     if(has >= amount) {
         m_ShiftResources[name] -= amount;
@@ -1770,22 +1770,22 @@ bool IBuilding::TryConsumeResource(const std::string& name, int amount) {
     return false;
 }
 
-void IBuilding::ProvideResource(const std::string& name, int amount) {
+void cBuilding::ProvideResource(const std::string& name, int amount) {
     m_ShiftResources.at(name) += amount;
 }
 
-void IBuilding::declare_interaction(const std::string& name) {
+void cBuilding::declare_interaction(const std::string& name) {
     auto result = m_ShiftInteractions.insert(std::make_pair(name, sInteractionData{}));
     assert(result.second);
 }
 
-void IBuilding::ProvideInteraction(const std::string& name, sGirl* source, int amount) {
+void cBuilding::ProvideInteraction(const std::string& name, sGirl* source, int amount) {
     sInteractionData& data = m_ShiftInteractions.at(name);
     data.TotalProvided += amount;
     data.Workers.push_back(sInteractionWorker{source, amount});
 }
 
-sGirl* IBuilding::RequestInteraction(const std::string& name) {
+sGirl* cBuilding::RequestInteraction(const std::string& name) {
     sInteractionData& data = m_ShiftInteractions.at(name);
     auto& candidates = data.Workers;
     data.TotalConsumed += 1;
@@ -1797,26 +1797,26 @@ sGirl* IBuilding::RequestInteraction(const std::string& name) {
     return res->Worker;
 }
 
-bool IBuilding::HasInteraction(const std::string& name) const {
+bool cBuilding::HasInteraction(const std::string& name) const {
     const sInteractionData& data = m_ShiftInteractions.at(name);
     auto& candidates = data.Workers;
     return std::any_of(begin(candidates), end(candidates),[](auto&& a){ return a.Amount > 0; });
 }
 
-int IBuilding::NumInteractors(const std::string& name) const {
+int cBuilding::NumInteractors(const std::string& name) const {
     const sInteractionData& data = m_ShiftInteractions.at(name);
     return data.Workers.size();
 }
 
-int IBuilding::GetInteractionProvided(const std::string& name) const {
+int cBuilding::GetInteractionProvided(const std::string& name) const {
     return m_ShiftInteractions.at(name).TotalProvided;
 }
 
-int IBuilding::GetInteractionConsumed(const std::string& name) const {
+int cBuilding::GetInteractionConsumed(const std::string& name) const {
     return m_ShiftInteractions.at(name).TotalConsumed;
 }
 
-void IBuilding::IterateGirls(bool is_night, std::initializer_list<JOBS> jobs, const std::function<void(sGirl&)>& handler) {
+void cBuilding::IterateGirls(bool is_night, std::initializer_list<JOBS> jobs, const std::function<void(sGirl&)>& handler) {
     m_Girls->apply([&](sGirl& girl) {
         if(girl.is_dead()) return;
         JOBS job = girl.get_job(is_night);
@@ -1836,11 +1836,11 @@ void IBuilding::IterateGirls(bool is_night, std::initializer_list<JOBS> jobs, co
     });
 }
 
-void IBuilding::AddMessage(std::string message, EventType event) {
+void cBuilding::AddMessage(std::string message, EEventType event) {
     m_Events.AddMessage(std::move(message), event);
 }
 
-void IBuilding::end_of_week_update(sGirl& girl) {
+void cBuilding::end_of_week_update(sGirl& girl) {
     do_daily_items(girl);
 
     // Natural healing, 2% health and 4% tiredness per day
@@ -1848,7 +1848,7 @@ void IBuilding::end_of_week_update(sGirl& girl) {
     girl.upd_base_stat(STAT_TIREDNESS, -g_Game->settings().get_integer(settings::BALANCING_FATIGUE_REGAIN), false);
 }
 
-void IBuilding::handle_accommodation(sGirl& girl) {
+void cBuilding::handle_accommodation(sGirl& girl) {
     std::stringstream ss;
 
     // Gold per accommodation level

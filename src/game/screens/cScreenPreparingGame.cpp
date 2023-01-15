@@ -128,14 +128,14 @@ bool cScreenPreparingGame::NewGame(std::string name) {
 
     callback("Setting Up Buildings");
     g_LogFile.info("prepare", "Adding Brothel");
-    auto& new_brot = g_Game->buildings().AddBuilding(std::unique_ptr<IBuilding>(new sBrothel()));
+    auto& new_brot = g_Game->buildings().AddBuilding(std::unique_ptr<cBuilding>(new sBrothel()));
     new_brot.m_NumRooms = 20;
     new_brot.m_MaxNumRooms = 250;
     new_brot.set_name(name);
     new_brot.set_background_image("Brothel0.jpg");
 
     g_LogFile.info("prepare", "Adding House");
-    auto& new_house = g_Game->buildings().AddBuilding(std::unique_ptr<IBuilding>(new sHouse()));
+    auto& new_house = g_Game->buildings().AddBuilding(std::unique_ptr<cBuilding>(new sHouse()));
     new_house.m_NumRooms = 20;
     new_house.m_MaxNumRooms = 200;
     new_house.set_background_image("House.jpg");

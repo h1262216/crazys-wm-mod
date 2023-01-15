@@ -126,7 +126,7 @@ public:
     // actions
     void SetFeeding(int num, bool allow);
 
-    void ReleaseGirl(int index, IBuilding& target);
+    void ReleaseGirl(int index, cBuilding& target);
 
 private:
     void PlaceDungeonGirl(sDungeonGirl newGirl);

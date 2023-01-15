@@ -32,7 +32,7 @@ extern "C" {
 #include "character/sGirl.h"
 #include "IGame.h"
 #include "buildings/cDungeon.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "sLuaGirl.h"
 #include "cLuaState.h"
 #include "utils/string.hpp"
@@ -393,7 +393,7 @@ int sLuaGirl::acquire_girl(lua_State* L) {
 *    let's get some numbers
 */
     /// TODO this accesses a global window manager; should not!
-    IBuilding& building = *window_manager().GetActiveBuilding();
+    cBuilding& building = *window_manager().GetActiveBuilding();
     int total_rooms = building.m_NumRooms;
     int rooms_used  = building.num_girls();
     int diff = total_rooms - rooms_used;
@@ -496,7 +496,7 @@ int sLuaGirl::add_message(lua_State *L) {
     auto& girl = check_type(L, 1);
     std::string message = luaL_checkstring(L, 2);
     int imgtype = luaL_checkinteger(L, 3);
-    auto evtype = static_cast<EventType>(luaL_checkinteger(L, 4));
+    auto evtype = static_cast<EEventType>(luaL_checkinteger(L, 4));
     girl.AddMessage(message, (EImageBaseType)imgtype, evtype);
     return 0;
 }

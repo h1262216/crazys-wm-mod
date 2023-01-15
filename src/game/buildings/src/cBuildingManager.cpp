@@ -66,7 +66,7 @@ void cBuildingManager::LoadXML(const tinyxml2::XMLElement& root)
     }
 }
 
-IBuilding& cBuildingManager::AddBuilding(std::unique_ptr<IBuilding> building)
+cBuilding& cBuildingManager::AddBuilding(std::unique_ptr<cBuilding> building)
 {
     m_Buildings.emplace_back(std::move(building));
     return *m_Buildings.back();
@@ -81,7 +81,7 @@ int cBuildingManager::total_girls() const
     return total;
 }
 
-std::unique_ptr<IBuilding> cBuildingManager::create_building(std::string type) const
+std::unique_ptr<cBuilding> cBuildingManager::create_building(std::string type) const
 {
     // TODO cmp based on std::string is very wasteful here!
     if(iequals(type, "Arena")) {
@@ -103,12 +103,12 @@ std::unique_ptr<IBuilding> cBuildingManager::create_building(std::string type) c
     return nullptr;
 }
 
-const IBuilding& cBuildingManager::get_building(int pos) const
+const cBuilding& cBuildingManager::get_building(int pos) const
 {
     return *m_Buildings.at(pos);
 }
 
-IBuilding& cBuildingManager::get_building(int pos)
+cBuilding& cBuildingManager::get_building(int pos)
 {
     return *m_Buildings.at(pos);
 }
@@ -118,7 +118,7 @@ int cBuildingManager::num_buildings() const
     return m_Buildings.size();
 }
 
-IBuilding * cBuildingManager::building_with_type(BuildingType type, int index)
+cBuilding * cBuildingManager::building_with_type(BuildingType type, int index)
 {
     int counter = 0;
     for(auto& b : m_Buildings) {
@@ -165,24 +165,24 @@ sGirl* random_girl_on_job(const cBuildingManager& mgr, JOBS job, bool at_night)
 }
 
 
-sGirl* random_girl_on_job(IBuilding& building, JOBS job, bool at_night)
+sGirl* random_girl_on_job(cBuilding& building, JOBS job, bool at_night)
 {
     return building.girls().get_random_girl(HasJob(job, at_night));
 }
 
 int cBuildingManager::num_buildings(BuildingType type) const
 {
-    return std::count_if(begin(m_Buildings), end(m_Buildings), [type](const std::unique_ptr<IBuilding>& b){ return b->type() == type; });
+    return std::count_if(begin(m_Buildings), end(m_Buildings), [type](const std::unique_ptr<cBuilding>& b){ return b->type() == type; });
 }
 
 bool cBuildingManager::has_building(BuildingType type) const
 {
-    return std::any_of(begin(m_Buildings), end(m_Buildings), [type](const std::unique_ptr<IBuilding>& b){ return b->type() == type; });
+    return std::any_of(begin(m_Buildings), end(m_Buildings), [type](const std::unique_ptr<cBuilding>& b){ return b->type() == type; });
 }
 
-IBuilding * cBuildingManager::random_building_with_type(BuildingType type)
+cBuilding * cBuildingManager::random_building_with_type(BuildingType type)
 {
-    RandomSelector<IBuilding> selector;
+    RandomSelector<cBuilding> selector;
     for(auto& bld : m_Buildings) {
         if(bld->type() == type) {
             selector.process(bld.get());
@@ -191,17 +191,17 @@ IBuilding * cBuildingManager::random_building_with_type(BuildingType type)
     return selector.selection();
 }
 
-std::size_t cBuildingManager::find(const IBuilding * target) const
+std::size_t cBuildingManager::find(const cBuilding * target) const
 {
     auto found = std::find_if(begin(m_Buildings), end(m_Buildings),
-                              [target](const std::unique_ptr<IBuilding>& b){ return b.get() == target; });
+                              [target](const std::unique_ptr<cBuilding>& b){ return b.get() == target; });
     if(found == m_Buildings.end()) {
         throw std::logic_error("Invalid building");
     }
     return std::distance(begin(m_Buildings), found);
 }
 
-IBuilding& cBuildingManager::AddBuilding(const BrothelCreationData& data)
+cBuilding& cBuildingManager::AddBuilding(const BrothelCreationData& data)
 {
     auto building = create_building(building_type_to_str(data.type));
     building->m_NumRooms = data.rooms;

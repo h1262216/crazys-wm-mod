@@ -99,7 +99,7 @@ public:
     void BoostRandomSkill(const std::vector<int*>& possible_skills, int count = 1, int boost_count = 1);  // chooses from the passed skills/stats and raises one or more of them
 
     cEvents& GetEvents() { return m_Events; }
-    void AddMessage(std::string message, EventType event_type = EventType::EVENT_GANG);
+    void AddMessage(std::string message, EEventType event_type = EEventType::EVENT_GANG);
 public:
     static int max_members(); // number of memberts a gang can have
     int m_Num = 0;    // number in the gang

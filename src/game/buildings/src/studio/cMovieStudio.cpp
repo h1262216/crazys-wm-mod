@@ -45,7 +45,7 @@ namespace settings
 }
 
 // // ----- Strut sMovieStudio Create / destroy
-sMovieStudio::sMovieStudio() : IBuilding(BuildingType::STUDIO, "Studio")
+sMovieStudio::sMovieStudio() : cBuilding(BuildingType::STUDIO, "Studio")
 {
     m_FirstJob = JOB_EXECUTIVE;
     m_LastJob = JOB_FILMRANDOM;
@@ -262,6 +262,6 @@ void sMovieStudio::check_overuse(const std::string& resource, const std::string&
             assert(false);
         };
         ;
-        AddMessage(interpolate_string(message, lookup, g_Dice),EventType::EVENT_WARNING);
+        AddMessage(interpolate_string(message, lookup, g_Dice), EEventType::EVENT_WARNING);
     }
 }

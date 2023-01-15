@@ -41,7 +41,7 @@ class cScrollBar;
 class cSlider;
 class cWindowManager;
 class sGirl;
-class IBuilding;
+class cBuilding;
 
 namespace tinyxml2 {
     class XMLElement;

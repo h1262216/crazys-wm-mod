@@ -38,7 +38,7 @@ public:
     cSimpleJob(JOBS job, const char* xml, sSimpleJobData data);
     sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
     /// Run the job processing, and return whether the girl refused.
-    virtual bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) = 0;
+    virtual bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) = 0;
 
 protected:
     eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;

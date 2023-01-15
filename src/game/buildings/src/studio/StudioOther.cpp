@@ -37,14 +37,14 @@ namespace {
     public:
         cJobMarketResearch();
 
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     };
 
 
     cJobMarketResearch::cJobMarketResearch() : cJobMovieOther(JOB_MARKET_RESEARCH, "MarketResearch.xml") {
     }
 
-    bool cJobMarketResearch::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+    bool cJobMarketResearch::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         m_Wages = 50;
 
         // slave girls not being paid for a job that normally you would pay directly for do less work
@@ -110,13 +110,13 @@ namespace {
 class cJobMoviePromoter : public cJobMovieOther {
 public:
     cJobMoviePromoter();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
 cJobMoviePromoter::cJobMoviePromoter() : cJobMovieOther(JOB_PROMOTER, "Promoter.xml") {
 }
 
-bool cJobMoviePromoter::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cJobMoviePromoter::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     bool movies = !g_Game->movie_manager().get_movies().empty();
     if (!movies)    ss << "There were no movies for her to promote, so she just promoted the studio in general.\n \n";
 

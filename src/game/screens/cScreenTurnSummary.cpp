@@ -45,7 +45,7 @@ static int summarysortorder = 0;    // the order girls get sorted in the summary
 #pragma endregion
 
 
-const sGirl* find_girl_by_name(IBuilding& source, std::string name)
+const sGirl* find_girl_by_name(cBuilding& source, std::string name)
 {
     return source.girls().get_first_girl(HasName(std::move(name))) ;
 }
@@ -251,7 +251,7 @@ void cScreenTurnSummary::change_event(int selection)
         auto building_id = GetSelectedItemFromList(item_id);
         if(building_id < 0 || building_id >= g_Game->buildings().num_buildings())
             building_id = 0;
-        IBuilding * brothel = &g_Game->buildings().get_building(building_id);
+        cBuilding * brothel = &g_Game->buildings().get_building(building_id);
         if (!brothel->m_Events.IsEmpty()) {
             text = brothel->m_Events.GetMessage(selection).GetMessage();
             EditTextItem(brothel->name(), brothel_id);
@@ -373,7 +373,7 @@ void cScreenTurnSummary::Fill_Items_GANGS()
 void cScreenTurnSummary::Fill_Items_BUILDINGS()
 {
     for (int i = 0; i < g_Game->buildings().num_buildings(); i++) {
-        IBuilding& next = g_Game->buildings().get_building(i);
+        cBuilding& next = g_Game->buildings().get_building(i);
         AddToListBox(item_id, i, next.name());
     }
 }
@@ -559,7 +559,7 @@ EventRating studio_rating_default(const sGirl& g)
 
 
 
-void cScreenTurnSummary::Fill_Items_GIRLS(IBuilding * building)
+void cScreenTurnSummary::Fill_Items_GIRLS(cBuilding * building)
 {
     std::vector<const sGirl*> all_girls;
     all_girls.reserve(building->num_girls());

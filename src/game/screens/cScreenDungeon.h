@@ -65,7 +65,7 @@ private:
 
     void set_ids() override;
 
-    IBuilding* m_ReleaseBuilding = nullptr;
+    cBuilding* m_ReleaseBuilding = nullptr;
 public:
     cScreenDungeon();
 

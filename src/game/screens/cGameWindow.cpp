@@ -35,19 +35,19 @@
 extern cConfig cfg;
 
 
-IBuilding& cGameWindow::active_building() const {
+cBuilding& cGameWindow::active_building() const {
     auto bld = window_manager().GetActiveBuilding();
     if(bld)
         return *bld;
     throw std::logic_error("No active building");
 }
 
-void cGameWindow::set_active_building(IBuilding* building)
+void cGameWindow::set_active_building(cBuilding* building)
 {
     window_manager().SetActiveBuilding(building);
 }
 
-IBuilding& cGameWindow::cycle_building(int direction)
+cBuilding& cGameWindow::cycle_building(int direction)
 {
     auto& buildings = g_Game->buildings();
     int current = buildings.find(&active_building());

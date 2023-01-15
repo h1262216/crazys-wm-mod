@@ -23,7 +23,7 @@
 #include "CLog.h"
 #include "cRng.h"
 #include "character/sGirl.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "xml/util.h"
 #include "xml/getattr.h"
 

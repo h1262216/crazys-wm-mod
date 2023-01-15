@@ -20,7 +20,7 @@
 #include <algorithm>
 
 #include "cGangs.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "character/cCustomers.h"
 #include "cGirls.h"
 #include "cTariff.h"
@@ -295,7 +295,7 @@ void sGang::use_potion()
     }
 }
 
-void sGang::AddMessage(std::string message, EventType event_type) {
+void sGang::AddMessage(std::string message, EEventType event_type) {
     m_Events.AddMessage(std::move(message), event_type);
 }
 

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "BuildingScreenManagement.h"
 #include "interface/cWindowManager.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "widgets/IListBox.h"
 #include "cTariff.h"
 #include "InterfaceProcesses.h"

@@ -106,7 +106,7 @@ protected:
 
 class cCrewJob : public cSimpleJob {
 public:
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     using cSimpleJob::cSimpleJob;
 protected:
     bool CheckCanWork(sGirl& girl, bool is_night) override;

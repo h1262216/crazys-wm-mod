@@ -22,10 +22,10 @@
 #ifndef __CFARM_H
 #define __CFARM_H
 
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 
 // defines a single farm
-struct sFarm : public IBuilding
+struct sFarm : public cBuilding
 {
     sFarm();
     ~sFarm();

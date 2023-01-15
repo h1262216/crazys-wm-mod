@@ -5,7 +5,7 @@
 #include "jobs/cJobManager.h"
 #include "jobs/IGenericJob.h"
 #include "cTariff.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 #include "cGangs.h"
 #include "cGangManager.hpp"
@@ -26,7 +26,7 @@
 extern cRng g_Dice;
 
 bool is_Actress_Job(int testjob);
-bool CrewNeeded(const IBuilding& building);
+bool CrewNeeded(const cBuilding& building);
 
 namespace settings {
     extern const char* PREG_CONTRA_FAIL;
@@ -1372,7 +1372,7 @@ double sGirl::job_performance(JOBS job, bool estimate) const {
     return job_handler->GetPerformance(*this, estimate);
 }
 
-void sGirl::AddMessage(const std::string& message, const sImageSpec& spec, EventType event) {
+void sGirl::AddMessage(const std::string& message, const sImageSpec& spec, EEventType event) {
     m_Events.AddMessage(Interpolate(message), spec, event);
 }
 
@@ -1407,7 +1407,7 @@ sImageSpec sGirl::MakeImageSpec(sImagePreset preset) const {
                       preset.tied_up()};
 }
 
-void sGirl::AddMessage(const std::string& message, sImagePreset preset, EventType event) {
+void sGirl::AddMessage(const std::string& message, sImagePreset preset, EEventType event) {
     return AddMessage(message, MakeImageSpec(preset), event);
 }
 

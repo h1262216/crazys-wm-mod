@@ -22,7 +22,7 @@
 #include <cGirls.h>
 #include "character/sGirl.h"
 #include "character/predicates.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 #include "cInventory.h"
 

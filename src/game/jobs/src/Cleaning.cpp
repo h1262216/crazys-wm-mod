@@ -19,7 +19,7 @@
 
 #include "SimpleJob.h"
 #include "character/sGirl.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "cGirls.h"
 #include "character/predicates.h"
 
@@ -28,7 +28,7 @@ namespace {
     struct Cleaning : public cSimpleJob {
         Cleaning(JOBS job, const char* xml);
 
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
         void CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount);
 
         virtual void DoneEarly(sGirl& girl) = 0;
@@ -93,7 +93,7 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
         cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, ACTION_WORKCLEANING, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", is_night);
 }
 
-bool Cleaning::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night){
+bool Cleaning::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night){
     double CleanAmt = m_Performance;
     int enjoy = 0;
     bool playtime = false;

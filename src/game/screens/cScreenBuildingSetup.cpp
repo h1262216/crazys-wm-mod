@@ -16,7 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "cScreenBuildingSetup.h"
 #include "interface/cWindowManager.h"
 #include "cGold.h"
@@ -77,7 +77,7 @@ void cScreenBuildingSetup::init(bool back)
 
     int rooms = 20, maxrooms = 200, antipregnum = 0, antipregused = 0, advert = 0;
     std::string brothel;
-    IBuilding& building = active_building();
+    cBuilding& building = active_building();
     brothel = building.name();
 
     rooms = building.m_NumRooms;

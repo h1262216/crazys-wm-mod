@@ -31,7 +31,7 @@ extern cRng             g_Dice;
 extern const char* const CounselingInteractionId = "CounselingInteraction";
 
 // // ----- Strut sCentre Create / destroy
-sCentre::sCentre() : IBuilding(BuildingType::CENTRE, "Centre")
+sCentre::sCentre() : cBuilding(BuildingType::CENTRE, "Centre")
 {
     m_FirstJob = JOB_CENTREMANAGER;
     m_LastJob = JOB_ANGER;

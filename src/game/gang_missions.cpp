@@ -31,7 +31,7 @@
 #include "buildings/cDungeon.h"
 #include "cObjectiveManager.hpp"
 #include "sStorage.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "buildings/cBuildingManager.h"
 #include "CLog.h"
 #include "combat/combat.h"
@@ -1101,7 +1101,7 @@ bool cMissionService::execute_mission(sGang& gang, std::stringstream& ss)
 
     if (g_Dice.percent(std::max(10, std::min(gang.m_Num * 6, gang.intelligence()))))
     {
-        IBuilding* brothel = g_Game->buildings().random_building_with_type(BuildingType::BROTHEL);
+        cBuilding* brothel = g_Game->buildings().random_building_with_type(BuildingType::BROTHEL);
         sec = std::max(5 + g_Dice % 26, gang.intelligence() / 4);
         dirt = std::max(5 + g_Dice % 26, gang.service() / 4);
         brothel->m_SecurityLevel += sec;
@@ -1132,7 +1132,7 @@ bool cMissionService::execute_mission(sGang& gang, std::stringstream& ss)
             const sInventoryItem* item = g_Game->inventory_manager().GetItem(itemfound);
             if (item)
             {
-                IBuilding* brothel = g_Game->buildings().random_building_with_type(BuildingType::BROTHEL);
+                cBuilding* brothel = g_Game->buildings().random_building_with_type(BuildingType::BROTHEL);
                 sGirl* girl = brothel->girls().get_random_girl();
                 if (girl && girl->add_item(item))                        // see if a girl can take it
                 {

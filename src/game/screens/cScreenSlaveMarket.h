@@ -49,7 +49,7 @@ private:
     int sel_pos;
     void set_ids() override;
 
-    IBuilding* m_TargetBuilding;
+    cBuilding* m_TargetBuilding;
 
     struct RelBtnData {
         int id;

@@ -22,12 +22,12 @@
 #ifndef __CBROTHEL_H
 #define __CBROTHEL_H
 
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 // defines a single brothel
-struct sBrothel : public IBuilding
+struct sBrothel : public cBuilding
 {
     explicit sBrothel();
     ~sBrothel() override;

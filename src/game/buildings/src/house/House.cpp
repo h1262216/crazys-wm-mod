@@ -31,7 +31,7 @@
 namespace {
     struct HouseCook: public cSimpleJob {
         HouseCook();
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     };
 
     struct HousePet: public cBasicJob {
@@ -42,7 +42,7 @@ namespace {
 
     struct Recruiter: public cSimpleJob {
         Recruiter();
-        bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     };
 
     struct PersonalTraining: public cBasicJob {
@@ -57,7 +57,7 @@ HouseCook::HouseCook() : cSimpleJob(JOB_HOUSECOOK, "HouseCook.xml", {ACTION_WORK
 
 }
 
-bool HouseCook::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool HouseCook::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     m_Wages += (int)m_PerformanceToEarnings((float)m_Performance);
     brothel.update_all_girls_stat(STAT_HAPPINESS, get_performance_class(m_Performance) - 2);
     add_performance_text();
@@ -670,7 +670,7 @@ Recruiter::Recruiter() : cSimpleJob(JOB_RECRUITER, "Recruiter.xml", {ACTION_WORK
     m_Info.FreeOnly = true;
 }
 
-bool Recruiter::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool Recruiter::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int fame = 0;
 
     int HateLove = girl.pclove();

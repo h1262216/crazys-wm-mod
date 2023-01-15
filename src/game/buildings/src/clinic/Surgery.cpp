@@ -22,7 +22,7 @@
 #include "jobs/cJobManager.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 #include <sstream>
 #include <utility>
@@ -133,7 +133,7 @@ void SurgeryJob::ReceiveTreatment(sGirl& girl, bool is_night) {
         sGirl* doctor = RequestInteraction(DoctorInteractionId);
         girl.make_treatment_progress(g_Dice.closed_uniform(90, 110) / m_SurgeryData.Duration);
         nursing_effect(girl);
-        doctor->AddMessage(girl.Interpolate(get_text("doctor.work")), EImageBaseType::NURSE, EventType::EVENT_DAYSHIFT);
+        doctor->AddMessage(girl.Interpolate(get_text("doctor.work")), EImageBaseType::NURSE, EEventType::EVENT_DAYSHIFT);
         doctor->exp(5);
     } else    // and if there are nurses on duty, they take care of her at night
     {

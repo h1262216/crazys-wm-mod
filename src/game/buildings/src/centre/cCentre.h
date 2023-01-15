@@ -22,10 +22,10 @@
 #ifndef __CCENTRE_H
 #define __CCENTRE_H
 
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 
 // defines a single centre
-struct sCentre : public IBuilding
+struct sCentre : public cBuilding
 {
     sCentre();
     ~sCentre() override;

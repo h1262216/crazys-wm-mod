@@ -21,7 +21,7 @@
 #include "IGame.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "cInventory.h"
 #include "character/cPlayer.h"
 
@@ -29,7 +29,7 @@ namespace settings {
     extern const char* MONEY_SELL_ITEM;
 }
 
-bool GenericCraftingJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool GenericCraftingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     m_Wages = m_Data.BaseWages * (1.0 + (m_Performance - 70) / 100.0);
     auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 

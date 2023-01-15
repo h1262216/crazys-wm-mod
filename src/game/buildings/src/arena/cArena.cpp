@@ -21,7 +21,7 @@
 
 #include "cArena.h"
 #include "cGangs.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 #include "sStorage.h"
 #include "jobs/cJobManager.h"
@@ -31,7 +31,7 @@
 extern cRng             g_Dice;
 
 // // ----- Strut sArena Create / destroy
-sArena::sArena() : IBuilding(BuildingType::ARENA, "Arena")
+sArena::sArena() : cBuilding(BuildingType::ARENA, "Arena")
 {
     m_FirstJob = JOB_FIGHTBEASTS;
     m_LastJob = JOB_CLEANARENA;

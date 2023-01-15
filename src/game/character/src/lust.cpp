@@ -22,7 +22,7 @@
 #include "cRng.h"
 #include "predicates.h"
 #include "sGirl.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "CLog.h"
 
 extern cRng g_Dice;
@@ -106,7 +106,7 @@ void handle_weekly_lust(sGirl& girl) {
         if(g_Dice.percent(10) && girl.happiness() > 25) {
             girl.happiness(-5);
             girl.AddMessage("${name} wants to be pure and Chaste, but is extremely horny.\n"
-                            "These conflicting feelings will decrease her happiness.", EImageBaseType::PROFILE, EventType::EVENT_WARNING);
+                            "These conflicting feelings will decrease her happiness.", EImageBaseType::PROFILE, EEventType::EVENT_WARNING);
         }
     }
 
@@ -117,7 +117,7 @@ void handle_weekly_lust(sGirl& girl) {
             girl.health(-5);
             girl.happiness(-5);
             girl.AddMessage("Succubus ${name} needs to have sex.\n"
-                            "No, really, her health is declining due to unfulfilled Lust.", EImageBaseType::PROFILE, EventType::EVENT_WARNING);
+                            "No, really, her health is declining due to unfulfilled Lust.", EImageBaseType::PROFILE, EEventType::EVENT_WARNING);
         }
     }
 

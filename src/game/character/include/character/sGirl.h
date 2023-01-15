@@ -40,7 +40,7 @@
 class TraitSpec;
 class sInventoryItem;
 class sChild;
-class IBuilding;
+class cBuilding;
 class cPlayer;
 class sCustomer;
 class sGirl;
@@ -152,8 +152,8 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
 
     std::set<Fetishs> m_FetishTypes;            // the types of fetishes this girl has
 
-    void AddMessage(const std::string& message, const sImageSpec& spec, EventType event);
-    void AddMessage(const std::string& message, sImagePreset preset, EventType event);
+    void AddMessage(const std::string& message, const sImageSpec& spec, EEventType event);
+    void AddMessage(const std::string& message, sImagePreset preset, EEventType event);
     std::string Interpolate(const std::string& pattern);
     sImageSpec MakeImageSpec(sImagePreset preset) const;
     cEvents& GetEvents() { return m_Events; }
@@ -182,7 +182,7 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
 
     std::vector<std::string> m_Canonical_Daughters;
 
-    IBuilding* m_Building = nullptr;
+    cBuilding* m_Building = nullptr;
 
     bool m_Refused_To_Work_Day;                    // `J` to track better if she refused to work her assigned job
     bool m_Refused_To_Work_Night;                // `J` to track better if she refused to work her assigned job

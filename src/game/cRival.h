@@ -98,7 +98,7 @@ public:
     std::string rivals_plunder_pc_gold(cRival* rival);
 
     const cEvents& GetEvents() const { return m_Events; }
-    void AddMessage(std::string message, EventType event_type = EventType::EVENT_RIVAL);
+    void AddMessage(std::string message, EEventType event_type = EEventType::EVENT_RIVAL);
 private:
     std::vector<std::unique_ptr<cRival>> m_Rivals;
     bool m_PlayerSafe;

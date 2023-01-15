@@ -22,10 +22,10 @@
 #ifndef __CHOUSE_H
 #define __CHOUSE_H
 
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 
 // defines a single House
-struct sHouse : public IBuilding
+struct sHouse : public cBuilding
 {
     sHouse();                         // constructor
     ~sHouse();                        // destructor

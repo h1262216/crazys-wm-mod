@@ -24,7 +24,7 @@
 #include "Constants.h"
 #include "ICharacter.h"
 
-class IBuilding;
+class cBuilding;
 struct sBrothel;
 
 // Individual customers are randomly generated
@@ -52,7 +52,7 @@ struct sCustomer : public ICharacter
     sCustomer();
     sCustomer(sCustomer&&) = default;
 
-    void Setup(int social_class, IBuilding& brothel);
+    void Setup(int social_class, cBuilding& brothel);
     void SetGoals();
 };
 
@@ -63,10 +63,10 @@ public:
     cCustomers();
     ~cCustomers();
 
-    void GenerateCustomers(IBuilding& brothel, bool Day0Night1 = SHIFT_DAY);    // generates a random amount of possible customers based on the number of poor, rich, and middle class
-    std::unique_ptr<sCustomer> CreateCustomer(IBuilding& brothel);
+    void GenerateCustomers(cBuilding& brothel, bool Day0Night1 = SHIFT_DAY);    // generates a random amount of possible customers based on the number of poor, rich, and middle class
+    std::unique_ptr<sCustomer> CreateCustomer(cBuilding& brothel);
 
-    sCustomer GetCustomer(IBuilding& brothel); // Creates a new customer.
+    sCustomer GetCustomer(cBuilding& brothel); // Creates a new customer.
     void ChangeCustomerBase();    // Changes customer base, it is based on how much money the player is bring into the town
     int GetNumCustomers();
     /// TODO(fix) restore the behaviour that this function was responsible for.

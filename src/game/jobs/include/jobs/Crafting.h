@@ -33,7 +33,7 @@ public:
     }
 
 protected:
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 
     // shift processing data
     int craftpoints;

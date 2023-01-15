@@ -22,13 +22,13 @@
 #ifndef CRAZYS_WM_MOD_QUERIES_HPP
 #define CRAZYS_WM_MOD_QUERIES_HPP
 
-class IBuilding;
+class cBuilding;
 
-bool DoctorNeeded(IBuilding& building);
-int GetNumberPatients(IBuilding& building, bool Day0Night1);
-bool CrewNeeded(const IBuilding& building);
+bool DoctorNeeded(cBuilding& building);
+int GetNumberPatients(cBuilding& building, bool Day0Night1);
+bool CrewNeeded(const cBuilding& building);
 bool is_Actress_Job(int testjob);
-int GetNumberActresses(const IBuilding& building);
-int Num_Patients(const IBuilding& building, bool is_night);
+int GetNumberActresses(const cBuilding& building);
+int Num_Patients(const cBuilding& building, bool is_night);
 
 #endif //CRAZYS_WM_MOD_QUERIES_HPP

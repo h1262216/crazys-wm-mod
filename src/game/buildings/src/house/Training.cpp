@@ -21,7 +21,7 @@
 #include "jobs/Treatment.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "utils/streaming_random_selection.hpp"
 #include "IGame.h"
 #include "character/predicates.h"
@@ -286,7 +286,7 @@ protected:
 
     void ReceiveTreatment(sGirl& girl, bool is_night) override;
 
-    EventType TypeOfEvent;
+    EEventType TypeOfEvent;
     int Tiredness;
     int Enjoyment;
 

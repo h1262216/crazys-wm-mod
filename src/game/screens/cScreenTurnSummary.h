@@ -61,7 +61,7 @@ public:
     void Fill_Items_GANGS();
     void Fill_Items_BUILDINGS();
     void Fill_Items_DUNGEON();
-    void Fill_Items_GIRLS(IBuilding * building);
+    void Fill_Items_GIRLS(cBuilding * building);
 
     void Fill_Events(sGirl* girl);
     void Fill_Events_Gang(int gang_id);

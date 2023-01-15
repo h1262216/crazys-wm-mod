@@ -18,10 +18,10 @@
  */
 
 #include "queries.h"
-#include "IBuilding.h"
+#include "cBuilding.h"
 
 
-bool DoctorNeeded(IBuilding& building) {
+bool DoctorNeeded(cBuilding& building) {
     return !(building.num_girls_on_job(JOB_DOCTOR, 0) > 0 ||
              building.num_girls_on_job(JOB_GETHEALING, 0) +
              building.num_girls_on_job(JOB_GETABORT, 0) +
@@ -36,7 +36,7 @@ bool DoctorNeeded(IBuilding& building) {
              building.num_girls_on_job(JOB_ASSJOB, 0) < 1);
 }
 
-int GetNumberPatients(IBuilding& building, bool Day0Night1)    // `J` added, if there is a doctor already on duty or there is no one needing surgery, return false
+int GetNumberPatients(cBuilding& building, bool Day0Night1)    // `J` added, if there is a doctor already on duty or there is no one needing surgery, return false
 {
     return (building.num_girls_on_job(JOB_GETHEALING, Day0Night1) +
             building.num_girls_on_job(JOB_GETABORT, Day0Night1) +
@@ -52,7 +52,7 @@ int GetNumberPatients(IBuilding& building, bool Day0Night1)    // `J` added, if 
 }
 
 
-int GetNumberActresses(const IBuilding& building)
+int GetNumberActresses(const cBuilding& building)
 {
     // `J` When adding new Studio Scenes, search for "J-Add-New-Scenes"  :  found in >> cMovieStudio.cpp > Num_Actress
     int actresses = 0;
@@ -70,7 +70,7 @@ bool is_Actress_Job(int testjob)
     return (testjob > JOB_STAGEHAND && testjob <= JOB_FILMRANDOM);
 }
 
-bool CrewNeeded(const IBuilding& building)    // `J` added, if CM and CP both on duty or there are no actresses, return false
+bool CrewNeeded(const cBuilding& building)    // `J` added, if CM and CP both on duty or there are no actresses, return false
 {
     // `J` When adding new Studio Scenes, search for "J-Add-New-Scenes"  :  found in >> cMovieStudio.cpp > CrewNeeded
     if ((building.num_girls_on_job(JOB_CAMERAMAGE, 1) > 0 &&
@@ -80,7 +80,7 @@ bool CrewNeeded(const IBuilding& building)    // `J` added, if CM and CP both on
     return true;    // Otherwise a CM or CP is Needed
 }
 
-int Num_Patients(const IBuilding& building, bool at_night)
+int Num_Patients(const cBuilding& building, bool at_night)
 {
     return building.num_girls_on_job(JOB_REHAB, at_night) +
             building.num_girls_on_job(JOB_ANGER, at_night) +

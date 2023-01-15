@@ -19,7 +19,7 @@
 #include "CLog.h"
 #include "cTariff.h"
 #include "cGirls.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 #include "character/predicates.h"
 
@@ -60,7 +60,7 @@ int cTariff::slave_sell_price(sGirl& girl) const
     return int(cost * g_Game->settings().get_percent(settings::MONEY_SELL_SLAVE).as_ratio());    // multiply by the config factor for selling slaves
 }
 
-int cTariff::empty_room_cost(IBuilding& brothel)
+int cTariff::empty_room_cost(cBuilding& brothel)
 {
 
     double cost;

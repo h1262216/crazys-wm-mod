@@ -61,7 +61,7 @@ cWhoreJob::cWhoreJob(JOBS job, const char* short_name, const char* description) 
     m_CacheShortName = short_name;
 }
 
-bool cWhoreJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     /*
     *    WD:    Modified to fix customer service problems.. I hope :)
     *
@@ -227,7 +227,7 @@ bool cWhoreJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
     return false;
 }
 
-void cWhoreJob::HandleCustomer(sGirl& girl, IBuilding& brothel, bool is_night) {
+void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     m_FuckMessage.str("");
 
     int pay = girl.askprice();

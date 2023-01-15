@@ -22,7 +22,7 @@
 #include "character/cCustomers.h"
 #include "character/predicates.h"
 #include "cGirls.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 
 extern const char* const CarePointsBasicId;
@@ -43,7 +43,7 @@ namespace {
 
 struct DoctorJob : public cSimpleJob {
     DoctorJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
 };
 
@@ -72,7 +72,7 @@ void DoctorJob::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
     }
 }
 
-bool DoctorJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool DoctorJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     // this will be added to the clinic's code eventually - for now it is just used for her pay
 
     ProvideInteraction(DoctorInteractionId, 1);
@@ -107,7 +107,7 @@ bool DoctorJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
 
 struct NurseJob : public cSimpleJob {
     NurseJob();
-    bool JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) override;
+    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
     eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
 };
@@ -137,7 +137,7 @@ NurseJob::NurseJob() : cSimpleJob(JOB_NURSE, "Nurse.xml", {ACTION_WORKNURSE, 0, 
     m_Info.Provides.emplace_back(CarePointsGoodId);
 }
 
-bool NurseJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool NurseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     int roll_a = d100(), roll_b = d100();
     int fame = 0;
     bool hand = false, sex = false, les = false;

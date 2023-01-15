@@ -666,7 +666,7 @@ enum Training_Types{
 const int MAXNUM_RIVAL_INVENTORY    = 40;        // Maximum number of items a Rival can have in inventory
 
 // Event constants oved from cEvents.h
-enum EventType {
+enum EEventType {
     EVENT_NONE = -1,
     EVENT_DAYSHIFT = 0,
     EVENT_NIGHTSHIFT = 1,

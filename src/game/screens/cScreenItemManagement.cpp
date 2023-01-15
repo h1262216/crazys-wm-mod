@@ -379,7 +379,7 @@ void cScreenItemManagement::init(bool back)    // `J` bookmark
     update_button_states(Right);
 }
 
-void cScreenItemManagement::AddGirlsFromBuilding(IBuilding * brothel) {
+void cScreenItemManagement::AddGirlsFromBuilding(cBuilding * brothel) {
     brothel->girls().visit([&](const sGirl& girl){
         int i = m_OwnerList.size();
         if (g_AllTogle && selected_girl().get() == &girl) m_RightData.selected_owner = i;

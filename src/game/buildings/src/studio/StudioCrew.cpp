@@ -19,7 +19,7 @@
 
 #include <sstream>
 #include <buildings/studio/cMovieStudio.h>
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "buildings/queries.h"
 #include "cGirls.h"
 #include "jobs/IGenericJob.h"
@@ -80,7 +80,7 @@ bool cCrewJob::CheckCanWork(sGirl& girl, bool is_night) {
     return true;
 }
 
-bool cCrewJob::JobProcessing(sGirl& girl, IBuilding& brothel, bool is_night) {
+bool cCrewJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     m_Wages = 50;
 
     // slave girls not being paid for a job that normally you would pay directly for do less work

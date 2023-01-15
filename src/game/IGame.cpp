@@ -6,7 +6,7 @@
 #include "cGangManager.hpp"
 #include "jobs/cJobManager.h"
 #include "cObjectiveManager.hpp"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "sStorage.h"
 #include "character/cCustomers.h"
 #include "buildings/cBuildingManager.h"
@@ -209,7 +209,7 @@ int IGame::GetNumCustomers() const
     return m_Customers->GetNumCustomers();
 }
 
-sCustomer IGame::GetCustomer(IBuilding& brothel)
+sCustomer IGame::GetCustomer(cBuilding& brothel)
 {
     return m_Customers->GetCustomer(brothel);
 }

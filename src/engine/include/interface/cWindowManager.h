@@ -27,7 +27,7 @@
 #include "interface/fwd.hpp"
 
 class cModalWindow;
-class IBuilding;
+class cBuilding;
 struct SDL_Keysym;
 class sGirl;
 
@@ -73,8 +73,8 @@ public:
     CGraphics& GetGraphics();
     const cTheme& GetTheme() const;
 
-    IBuilding* GetActiveBuilding() const;
-    void SetActiveBuilding(IBuilding*);
+    cBuilding* GetActiveBuilding() const;
+    void SetActiveBuilding(cBuilding*);
 
     // input handling
     void InputInteger(std::function<void(int)> callback, int def_value);
@@ -108,7 +108,7 @@ private:
     std::map<std::string, std::shared_ptr<cInterfaceWindow>> windows;
 
     // the currently selected building
-    IBuilding* m_ActiveBuilding = nullptr;
+    cBuilding* m_ActiveBuilding = nullptr;
 
     // the active girl list.
     std::vector<std::shared_ptr<sGirl>> m_GirlCycleList;

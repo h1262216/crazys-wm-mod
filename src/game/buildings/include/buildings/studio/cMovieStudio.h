@@ -22,13 +22,13 @@
 #ifndef __CMOVIESTUDIO_H
 #define __CMOVIESTUDIO_H
 
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "jobs/cJobManager.h"
 #include "fwd.h"
 #include <vector>
 
 // defines a single studio
-struct sMovieStudio : public IBuilding
+struct sMovieStudio : public cBuilding
 {
     sMovieStudio();                            // constructor
     ~sMovieStudio();                        // destructor

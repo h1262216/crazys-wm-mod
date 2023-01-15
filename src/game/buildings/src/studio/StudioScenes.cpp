@@ -22,7 +22,7 @@
 #include "cGirls.h"
 #include "IGame.h"
 #include "sStorage.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "utils/streaming_random_selection.hpp"
 
 namespace {

@@ -23,7 +23,7 @@
 #include "interface/cInterfaceWindowXML.h"
 #include "images/sImageSpec.h"
 
-class IBuilding;
+class cBuilding;
 class sGirl;
 
 class cGameWindow : public cInterfaceWindowXML {
@@ -42,9 +42,9 @@ public:
 
 protected:
     // active building
-    IBuilding& active_building() const;
-    void set_active_building(IBuilding* building);
-    IBuilding& cycle_building(int direction);
+    cBuilding& active_building() const;
+    void set_active_building(cBuilding* building);
+    cBuilding& cycle_building(int direction);
 
     // active girls
     sGirl& active_girl() const;

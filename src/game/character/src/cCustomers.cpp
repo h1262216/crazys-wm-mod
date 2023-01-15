@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "character/cCustomers.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "IGame.h"
 #include <sstream>
 #include "traits/ITraitsCollection.h"
@@ -78,7 +78,7 @@ void sCustomer::SetGoals()
 }
 
 
-void sCustomer::Setup(int social_class, IBuilding& brothel)
+void sCustomer::Setup(int social_class, cBuilding& brothel)
 {
 // It may be a group of people looking for group sex (5% chance)
     if (g_Dice.percent(5)) // changed to bring to documented 5%, consider rasing to 10 or 15, was 4. -PP
@@ -187,13 +187,13 @@ void sCustomer::Setup(int social_class, IBuilding& brothel)
     m_Money *= m_Amount;
 }
 
-std::unique_ptr<sCustomer> cCustomers::CreateCustomer(IBuilding& brothel)
+std::unique_ptr<sCustomer> cCustomers::CreateCustomer(cBuilding& brothel)
 {
     return std::make_unique<sCustomer>(GetCustomer(brothel));
 }
 
 // Create 1 customer
-sCustomer cCustomers::GetCustomer(IBuilding& brothel)
+sCustomer cCustomers::GetCustomer(cBuilding& brothel)
 {
     sCustomer customer;
     int class_ = 3;
@@ -205,7 +205,7 @@ sCustomer cCustomers::GetCustomer(IBuilding& brothel)
     return std::move(customer);
 }
 
-void cCustomers::GenerateCustomers(IBuilding& brothel, bool Day0Night1)
+void cCustomers::GenerateCustomers(cBuilding& brothel, bool Day0Night1)
 {
     m_Customers.clear();
 

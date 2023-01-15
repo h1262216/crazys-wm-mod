@@ -23,7 +23,7 @@
 #define WM_CBUILDINGMANAGER_H
 
 #include <string>
-#include "IBuilding.h"
+#include "cBuilding.h"
 
 struct BrothelCreationData {
     int    rooms;
@@ -37,8 +37,8 @@ class cBuildingManager
 {
     using girl_pred_fn = std::function<bool(const sGirl&)>;
 public:
-    IBuilding& AddBuilding(std::unique_ptr<IBuilding> building);
-    IBuilding& AddBuilding(const BrothelCreationData& data);
+    cBuilding& AddBuilding(std::unique_ptr<cBuilding> building);
+    cBuilding& AddBuilding(const BrothelCreationData& data);
 
     void LoadXML(const tinyxml2::XMLElement& root);
     tinyxml2::XMLElement * SaveXML(tinyxml2::XMLElement& root) const;
@@ -48,11 +48,11 @@ public:
     int num_buildings(BuildingType type) const;
 
     /// Gets the index of the given building
-    std::size_t find(const IBuilding * target) const;
+    std::size_t find(const cBuilding * target) const;
 
     /// Gets a building of given type
-    IBuilding* building_with_type(BuildingType type, int index = 0);
-    IBuilding* random_building_with_type(BuildingType type);
+    cBuilding* building_with_type(BuildingType type, int index = 0);
+    cBuilding* random_building_with_type(BuildingType type);
 
     /// Gets the total number of girls in all buildings.
     int total_girls() const;
@@ -77,20 +77,20 @@ public:
     }
 
     /// Gets buildings by linear index
-    const IBuilding& get_building(int pos) const;
-    IBuilding& get_building(int pos);
+    const cBuilding& get_building(int pos) const;
+    cBuilding& get_building(int pos);
 
     // building info functions
     bool has_building(BuildingType type) const;
 
-    const std::vector<std::unique_ptr<IBuilding>>& buildings() const {
+    const std::vector<std::unique_ptr<cBuilding>>& buildings() const {
         return m_Buildings;
     }
 
 private:
-    std::unique_ptr<IBuilding> create_building(std::string type) const;
+    std::unique_ptr<cBuilding> create_building(std::string type) const;
 
-    std::vector<std::unique_ptr<IBuilding>> m_Buildings;
+    std::vector<std::unique_ptr<cBuilding>> m_Buildings;
 };
 
 
@@ -100,6 +100,6 @@ int get_total_player_girls();
 int get_total_player_monster_girls();
 
 sGirl* random_girl_on_job(const cBuildingManager& mgr, JOBS job, bool at_night);
-sGirl* random_girl_on_job(IBuilding& building, JOBS job, bool at_night);
+sGirl* random_girl_on_job(cBuilding& building, JOBS job, bool at_night);
 
 #endif //WM_CBUILDINGMANAGER_H

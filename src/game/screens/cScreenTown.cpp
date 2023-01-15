@@ -120,8 +120,8 @@ void cScreenTown::set_ids()
     });
 }
 
-IBuilding& init_building(const static_brothel_data* data) {
-    IBuilding& building = g_Game->buildings().AddBuilding( data->data);
+cBuilding& init_building(const static_brothel_data* data) {
+    cBuilding& building = g_Game->buildings().AddBuilding( data->data);
     g_Game->gold().brothel_cost(data->price);
     return building;
 }

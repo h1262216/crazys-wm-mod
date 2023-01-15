@@ -21,7 +21,7 @@
 #include "jobs/cJobManager.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include <sstream>
 #include <utility>
 #include "character/predicates.h"

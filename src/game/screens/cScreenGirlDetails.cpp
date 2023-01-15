@@ -16,7 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "buildings/IBuilding.h"
+#include "buildings/cBuilding.h"
 #include "buildings/cDungeon.h"
 #include "cScreenGirlDetails.h"
 #include "interface/cWindowManager.h"
@@ -179,7 +179,7 @@ void cScreenGirlDetails::init(bool back)
     DisableWidget(takegold_id, (m_SelectedGirl->m_Money <= 0));
     SetCheckBox(antipreg_id, (m_SelectedGirl->m_UseAntiPreg));
 
-    IBuilding* pBuilding = m_SelectedGirl->m_Building;
+    cBuilding* pBuilding = m_SelectedGirl->m_Building;
     HideWidget(reldungeon_id, m_SelectedGirl->m_DayJob != JOB_INDUNGEON);
     HideWidget(senddungeon_id, m_SelectedGirl->m_DayJob == JOB_INDUNGEON);
 
@@ -319,7 +319,7 @@ void cScreenGirlDetails::on_select_job(int selection, bool fulltime)
 void cScreenGirlDetails::release_from_dungeon()
 {
     if (!m_SelectedGirl) return;
-    IBuilding& current_brothel = active_building();
+    cBuilding& current_brothel = active_building();
     if (current_brothel.free_rooms() <= 0)
     {
         push_message("The current brothel has no more room.\nBuy a new one, get rid of some girls, or change the brothel you are currently managing.", 0);

@@ -41,7 +41,7 @@ public:
     void TransferGirlsRightToLeft(bool rightfirst, int rightBrothel, int leftBrothel);
     int checkjobcolor(const sGirl& temp);
 
-    IBuilding * getBuilding(int index) const;
+    cBuilding * getBuilding(int index) const;
 
     enum Side {
         Left = 0,
