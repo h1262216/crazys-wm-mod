@@ -49,6 +49,8 @@ public:
     virtual void handle_pre_shift(sGirlShiftData& shift) = 0;
     virtual void handle_main_shift(sGirlShiftData& shift) = 0;
 
+    virtual void setup() = 0;
+
     // Job-Filter data
     virtual const sJobFilter& get_filter(EJobFilter filter) const = 0;
     bool is_in_filter(EJobFilter filter, JOBS job) const;

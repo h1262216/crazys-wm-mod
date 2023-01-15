@@ -85,7 +85,7 @@ public:
     // return a job description along with a count of how many girls are on it
     bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments
 
-    void Setup();
+    void setup() override;
 
     // - stuff that does processing for jobs
     static bool AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, IBuilding* brothel, bool Day0Night1);

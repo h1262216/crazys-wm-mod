@@ -73,7 +73,7 @@ namespace settings {
 cJobManager::cJobManager() = default;
 cJobManager::~cJobManager() = default;
 
-void cJobManager::Setup()
+void cJobManager::setup()
 {
     m_OOPJobs.resize(NUM_JOBS);
 

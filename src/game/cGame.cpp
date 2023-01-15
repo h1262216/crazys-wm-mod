@@ -78,7 +78,7 @@ std::unique_ptr<IGame> IGame::CreateGame() {
 void cGame::LoadCommon(const std::function<void(std::string)>& callback) {
     // jobs
     g_LogFile.info("prepare", "Setup Jobs");
-    job_manager().Setup();
+    job_manager().setup();
 
     // traits
     callback("Loading Traits");

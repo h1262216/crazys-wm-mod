@@ -23,6 +23,7 @@
 #define __CHOUSE_H
 
 #include "buildings/cBuilding.h"
+#include "jobs/cBasicJob.h"
 
 // defines a single House
 struct sHouse : public cBuilding
@@ -33,5 +34,22 @@ struct sHouse : public cBuilding
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
 };
 
+void RegisterHouseJobs(cJobManager& mgr);
+
+class PracticeJob : public cBasicJob {
+public:
+    PracticeJob();
+
+    void DoWork(sGirlShiftData& shift) const override;
+    bool CheckRefuseWork(sGirl& girl) const override;
+};
+
+class MistressJob : public cBasicJob {
+public:
+    MistressJob();
+
+    void DoWork(sGirlShiftData& shift) const override;
+    bool CheckRefuseWork(sGirl& girl) const override;
+};
 
 #endif  /* __CHOUSE_H */

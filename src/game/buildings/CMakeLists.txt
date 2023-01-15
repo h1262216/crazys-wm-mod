@@ -25,7 +25,7 @@ set(BUILDING_SRC
         #src/farm/WorkFarmPonyGirl.cpp
         src/house/cHouse.cpp
         #src/house/House.cpp
-        #src/house/Training.cpp
+        src/house/Training.cpp
         #src/house/WorkPersonalBedWarmer.cpp
         src/studio/cMovieStudio.cpp
         src/studio/data.cpp

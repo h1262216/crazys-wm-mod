@@ -27,6 +27,7 @@
 #include "cGirls.h"
 #include "queries.h"
 #include "cBuildingShift.h"
+#include "jobs/cJobManager.h"
 
 extern cRng             g_Dice;
 
@@ -93,4 +94,9 @@ void sHouse::auto_assign_job(sGirl& target, std::stringstream& message, bool is_
     {
         ss << "do nothing because this part of the code has not been finished yet.";
     }
+}
+
+void RegisterHouseJobs(cJobManager& mgr) {
+    mgr.register_job(std::make_unique<PracticeJob>());
+    mgr.register_job(std::make_unique<MistressJob>());
 }

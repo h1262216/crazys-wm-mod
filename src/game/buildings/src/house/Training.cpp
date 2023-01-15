@@ -25,49 +25,35 @@
 #include "utils/streaming_random_selection.hpp"
 #include "IGame.h"
 #include "character/predicates.h"
+#include "cHouse.h"
 
 extern const char* const TrainingInteractionId;
 
-namespace {
-    class PracticeJob : public cBasicJob {
-    public:
-        PracticeJob();
 
-        sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
-    };
-
-    class MistressJob : public cBasicJob {
-    public:
-        MistressJob();
-
-        sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
-    };
-}
 
 MistressJob::MistressJob() : cBasicJob(JOB_MISTRESS, "Mistress.xml") {
     m_Info.FreeOnly = true;
     m_Info.Provides.emplace_back(TrainingInteractionId);
 }
 
-sWorkJobResult MistressJob::DoWork(sGirl& girl, bool is_night) {
-    if (m_Performance > 150) {
-        ProvideInteraction(TrainingInteractionId, 3);
+void MistressJob::DoWork(sGirlShiftData& shift) const {
+    shift.Wages = 100;
+    if (shift.Performance > 150) {
+        provide_interaction(TrainingInteractionId, 3);
         add_text("work.good");
     } else {
         add_text("work.normal");
-        ProvideInteraction(TrainingInteractionId, 2);
+        provide_interaction(TrainingInteractionId, 2);
     }
 
-    apply_gains(girl, m_Performance);
+    apply_gains(shift.Performance);
 
-    if(m_Performance > 100) {
-        auto* target_girl = girl.m_Building->girls().get_random_girl([](const sGirl& g) {
+    if(shift.Performance > 100) {
+        auto* target_girl = shift.building().Building()->girls().get_random_girl([](const sGirl& g) {
             return g.is_slave() && g.obedience() < 50;
         });
         if (target_girl) {
-            SetSubstitution("slacker", target_girl->FullName());
+            const_cast<MistressJob*>(this)->SetSubstitution("slacker", target_girl->FullName());
             add_text("slacker");
             target_girl->upd_temp_stat(STAT_OBEDIENCE, 4);
             target_girl->upd_temp_stat(STAT_PCFEAR, 2);
@@ -78,9 +64,10 @@ sWorkJobResult MistressJob::DoWork(sGirl& girl, bool is_night) {
     return {false, 0, 0, 100};
 }
 
-IGenericJob::eCheckWorkResult MistressJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
-    return SimpleRefusalCheck(girl, ACTION_WORKMATRON);
+bool MistressJob::CheckRefuseWork(sGirl& girl) const {
+    return SimpleRefusalCheck(girl, ACTION_WORKMATRON) == ECheckWorkResult::REFUSES;
 }
+
 
 PracticeJob::PracticeJob() : cBasicJob(JOB_TRAINING, "Training.xml") {
     m_Info.Consumes.emplace_back(TrainingInteractionId);
@@ -120,12 +107,13 @@ namespace {
     }
 }
 
-
-sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
-    auto building = girl.m_Building;
-    sGirl* mistress = RequestInteraction(TrainingInteractionId);
-    SetSubstitution("mistress", mistress ? mistress->FullName() : "The Mistress");
+void PracticeJob::DoWork(sGirlShiftData& shift) const {
+    auto& girl = active_girl();
+    sGirl* mistress = request_interaction(TrainingInteractionId);
+    const_cast<PracticeJob*>(this)->SetSubstitution("mistress", mistress ? mistress->FullName() : "The Mistress");
     girl.tiredness(2);
+
+    shift.Wages = 20;
 
     if(!mistress) {
         add_text("no-mistress");
@@ -139,18 +127,15 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
         }
 
         girl.exp(5);
-        sImagePreset image = EImagePresets::MASTURBATE;
+        shift.EventImage = EImagePresets::MASTURBATE;
         if(selector.selection()) {
             auto target = *selector.selection();
-            image = skill_to_image(target);
+            shift.EventImage = skill_to_image(target);
             if(girl.get_skill(target) < 50) {
                 girl.upd_skill(target, 1);
-                ss << "\n" << get_skill_name(target) << " + 1";
+                shift.EventMessage << "\n" << get_skill_name(target) << " + 1";
             }
         }
-
-        girl.AddMessage(ss.str(), image, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-        return sWorkJobResult{false, 0, 0, 20};
     } else {
         mistress->tiredness(2);
 
@@ -187,11 +172,11 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
             selector.process(&skill, weight);
         }
 
-        // this will always be non NULL, because SKILL_PERFORMANCE cannot be forbidden
+        // this will always be non-NULL, because SKILL_PERFORMANCE cannot be forbidden
         SKILLS target = *selector.selection();
-        sImagePreset image = skill_to_image(target);
+        shift.EventImage = skill_to_image(target);
 
-        SetSubstitution("skill", get_skill_name(target));
+        const_cast<PracticeJob*>(this)->SetSubstitution("skill", get_skill_name(target));
         int my_value = girl.get_skill(target);
         int other_value = mistress->get_skill(target);
         if(my_value >= other_value) {
@@ -200,7 +185,7 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
             // if total skill < 50, we still get some update
             if(girl.get_skill(target) < 50) {
                 girl.upd_skill(target, 1);
-                ss << "\n" << get_skill_name(target) << " + 1";
+                shift.EventMessage << "\n" << get_skill_name(target) << " + 1";
             }
             if(chance(5)) {
                 mistress->upd_skill(target, 1);
@@ -228,21 +213,21 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
             max_gain += std::min((other_value - my_value) / 10, 3);
             int amount = uniform(min_gain, std::max(max_gain, min_gain));
             girl.upd_skill(target, amount);
-            ss << "\n${name}'s " << get_skill_name(target) << " skill increased by " << amount << " points.";
-        }
 
-        girl.AddMessage(ss.str(), image, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-        return sWorkJobResult{false, 0, 0, 20};
+            shift.EventMessage << "\n${name}'s " << get_skill_name(target) << " skill increased by " << amount << " points.";
+        }
     }
+
+    generate_event();
 }
 
-IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
-    if (girl.disobey_check(ACTION_WORKTRAINING, JOB_TRAINING))            // they refuse to work
+bool PracticeJob::CheckRefuseWork(sGirl& girl) const {
+    if (girl.disobey_check(ACTION_WORKTRAINING, JOB_TRAINING))
     {
-
         sGirl* mistress = nullptr;
-        if(girl.is_slave() && (mistress = RequestInteraction(TrainingInteractionId))) {
-            SetSubstitution("mistress", mistress->FullName() );
+        if(girl.is_slave() && (mistress = request_interaction(TrainingInteractionId))) {
+            // TODO FIX THIS
+            const_cast<PracticeJob*>(this)->SetSubstitution("mistress", mistress->FullName() );
             add_text("refuse.forced");
             // smaller changes than for dungeon torture, but still we should combine the code at some point
             girl.obedience(2);
@@ -254,15 +239,20 @@ IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, IBuildingShift
             girl.tiredness(2);
             girl.health(-2);
 
-            girl.AddMessage(ss.str(), EImageBaseType::TORTURE, EVENT_NOWORK);
+            active_shift().EventImage = EImageBaseType::TORTURE;
+            active_shift().EventType = EVENT_NOWORK;
+
+            generate_event();
         } else {
             add_text("refuse");
-            girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
-        }
+            active_shift().EventImage = EImageBaseType::REFUSE;
+            active_shift().EventType = EVENT_NOWORK;
 
-        return eCheckWorkResult::REFUSES;
+            generate_event();
+        }
+        return true;
     }
-    return eCheckWorkResult::ACCEPTS;
+    return false;
 }
 
 class TrainingJob : public ITreatmentJob {
