@@ -80,12 +80,11 @@ public:
 
     const sJobFilter& get_filter(EJobFilter filter) const override;
 
+    bool assign_job(sGirl& girl, JOBS job, EJobShift shift) const override;
+
     std::array<sJobFilter, NUMJOBTYPES> JobFilters;
 
     EJobFilter get_filter_id(const std::string& name) const;
-
-    // return a job description along with a count of how many girls are on it
-    bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments
 
     void setup() override;
 

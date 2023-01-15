@@ -36,6 +36,7 @@ public:
         m_Info.ShortName = short_name;
         m_Info.Shift = EJobShift::FULL;
         m_Info.FreeOnly = true;
+        m_Info.Singleton = true;
     }
     double GetPerformance(const sGirl& girl, bool estimate) const override;
     void DoWork(sGirlShiftData& shift) const override;

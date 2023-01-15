@@ -1073,9 +1073,10 @@ int cGirls::GetRebelValue(const sGirl& girl, JOBS job)
         chanceNo += 15;                                // Free girls are a little more rebelious
         // WD    House take of gold has no affect on rebellion if
         //        job is paid by player. eg Matron / cleaner
-        if (job == NUM_JOBS || g_Game->job_manager().is_job_Paid_Player(job))
+        // TODO Re-enable
+        /*if (job == NUM_JOBS || g_Game->job_manager().is_job_Paid_Player(job))
             houseStat = 0;
-
+*/
         if (houseStat < 60)                            // Take less money than normal, lower Rebel
             chanceNo -= (60 - houseStat) / 2;
         else

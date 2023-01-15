@@ -25,6 +25,7 @@
 
 class sGirl;
 class sCustomer;
+class sLuaShiftData;
 
 namespace scripting {
     class cLuaState;
@@ -37,10 +38,11 @@ namespace scripting {
         explicit sLuaParameter(sCustomer* cust);
         explicit sLuaParameter(sCustomer& cust);
         explicit sLuaParameter(sLuaEventResult& res);
+        explicit sLuaParameter(sLuaShiftData& res);
 
         void push(cLuaState& target) const;
         enum Type {
-            GIRL, CUSTOMER, RESULT
+            GIRL, CUSTOMER, RESULT, SHIFT
         };
         Type get_type() const { return type; }
     private:
@@ -49,6 +51,7 @@ namespace scripting {
         sGirl* girl;
         sCustomer* customer;
         sLuaEventResult* result;
+        sLuaShiftData* shift;
     } data;
     };
 }

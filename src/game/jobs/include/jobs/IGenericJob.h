@@ -47,6 +47,7 @@ struct sJobInfo {
 
     EJobShift Shift = EJobShift::ANY;
     bool FreeOnly = false;
+    bool Singleton = false;
     bool IsFightingJob = false;
     EJobPhase Phase = EJobPhase::MAIN;
 

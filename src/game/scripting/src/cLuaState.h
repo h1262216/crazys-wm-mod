@@ -54,6 +54,7 @@ namespace scripting {
         void settable(int index, const char* key, const std::string& value);
         void settable(int index, const std::string& key, int value) { settable(index, key.c_str(), value); }
         void settable(int index, const std::string& key, const std::string& value) { settable(index, key.c_str(), value); }
+        void settable(int index, const char*, int(*fun)(lua_State*));
 
         // common operations
         bool get_function(const std::string& name);

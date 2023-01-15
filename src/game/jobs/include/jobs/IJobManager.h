@@ -54,6 +54,10 @@ public:
 
     virtual void setup() = 0;
 
+    /// Checks if the job assignment is valid. If yes, updates `girl`s job and returns true.
+    /// Otherwise, returns false.
+    virtual bool assign_job(sGirl& girl, JOBS job, EJobShift shift) const = 0;
+
     // Job-Filter data
     virtual const sJobFilter& get_filter(EJobFilter filter) const = 0;
     bool is_in_filter(EJobFilter filter, JOBS job) const;

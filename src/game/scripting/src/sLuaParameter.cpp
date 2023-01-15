@@ -56,3 +56,7 @@ scripting::sLuaParameter::sLuaParameter(scripting::sLuaEventResult& res) : type(
 scripting::sLuaParameter::sLuaParameter(sCustomer& cust) : sLuaParameter(&cust)
 {
 }
+
+scripting::sLuaParameter::sLuaParameter(sLuaShiftData& shift) : type(SHIFT), data{.shift=&shift} {
+
+}

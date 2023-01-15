@@ -21,8 +21,11 @@
         <Message Name="no-progress">
             <Text>She resisted all attempts to make her Bisexual.</Text>
         </Message>
-        <Message Name="progress">
-            <Text>Her Sexual Orientation conversion to Bisexual is</Text>
+        <Message Name="in-progress">
+            <Text>Her Sexual Orientation conversion to Bisexual is in progress (${progress}).</Text>
+        </Message>
+        <Message Name="almost-done">
+            <Text>Her Sexual Orientation conversion to Bisexual is almost complete.</Text>
         </Message>
         <Message Name="complete">
             <Text>Her Sexual Orientation conversion is complete. She is now Bisexual.</Text>

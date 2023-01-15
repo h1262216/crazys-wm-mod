@@ -300,7 +300,11 @@ void cScreenGirlDetails::on_select_job(int selection, bool fulltime)
 {// `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >>
     JOBS old_job = m_SelectedGirl->get_job(m_EditNightShift);
     // handle special job requirements and assign - if HandleSpecialJobs returns true, the job assignment was modified or cancelled
-    if (g_Game->job_manager().HandleSpecialJobs(*m_SelectedGirl, JOBS(selection), old_job, m_EditNightShift, fulltime))
+    EJobShift shift = m_EditNightShift ? EJobShift::NIGHT : EJobShift::DAY;
+    if(fulltime)
+        shift = EJobShift::FULL;
+
+    if (g_Game->job_manager().assign_job(*m_SelectedGirl, JOBS(selection), shift))
     {
         selection = m_SelectedGirl->get_job(m_EditNightShift);
         SetSelectedItemInList(joblist_id, selection, false);

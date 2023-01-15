@@ -363,13 +363,14 @@ void TrainingJob::OnNoProgress(sGirl& girl) const {
 }
 
 void TrainingJob::OnRegularProgress(sGirl& girl, bool is_night) const {
-    add_text("progress");
     if (girl.get_treatment_progress() >= 100)
     {
-        add_literal("almost complete.");
+        add_line("almost-done");
         tiredness() -= (girl.get_treatment_progress() - 100) / 2;    // her last day so she rested a bit
     }
-    else active_shift().EventMessage << "in progress (" << girl.get_treatment_progress() << "%).";
+    else {
+        add_line("in-progress");
+    }
 }
 
 int& TrainingJob::tiredness() const {
@@ -567,7 +568,7 @@ void FakeOrg::OnRegularProgress(sGirl& girl, bool is_night) const {
     int status = girl.get_treatment_progress();
     if (status >= 100)    tiredness() -= (status - 100) / 2;    // her last day so she rested a bit
     else                  ss << "Training in progress (" << status << "%).\n \n";
-    if (status < 25)      ss << "She has no idea what she sounds like during sex but it ain't orgasmic.";
+    if (status < 25)      ss << "She has no idea what she sounds like during sex, but it ain't orgasmic.";
     else if (status < 50) ss << "When she realizes she should finish, you can see it click in her mind and easily notice her changing things up.";
     else if (status < 75) ss << "She is still not getting into rhythm with her partner but it still seems enjoyable.";
     else                  ss << "She is almost there but you want her to practice a little more to get it perfect.";

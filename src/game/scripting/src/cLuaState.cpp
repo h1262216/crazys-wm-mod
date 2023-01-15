@@ -80,6 +80,13 @@ void cLuaState::settable(int index, const char* key, const std::string& value) {
     lua_settable(m_State, index - 2);
 }
 
+void cLuaState::settable(int index, const char* key, int (*fun)(lua_State*)) {
+    lua_pushstring(m_State, key);
+    lua_pushcfunction(m_State,fun);
+    lua_settable(m_State, index - 2);
+}
+
+
 int cLuaState::get_top() const {
     return lua_gettop(m_State);
 }

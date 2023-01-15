@@ -229,15 +229,17 @@ void IBuildingScreenManagement::assign_job(sGirl& girl, JOBS new_job, int girl_s
 {
     // handle special job requirements and assign
     JOBS old_job = girl.get_job(Day0Night1);
+
+    EJobShift shift = Day0Night1 ? EJobShift::NIGHT : EJobShift::DAY;
+    if(fulltime)
+        shift = EJobShift::FULL;
     
-    // if HandleSpecialJobs returns true, the job assignment was modified or cancelled
-    if (job_manager().HandleSpecialJobs(girl, new_job, old_job, Day0Night1, fulltime))
-    {
-        // TODO WHAT HAPPENS HERE?
-        //new_job = Day0Night1 ? night_job : day_job;
-        SetSelectedItemInList(joblist_id, new_job, false);
+    // if assign_job returns false, the job assignment was cancelled
+    if (!job_manager().assign_job(girl, new_job, shift)) {
+        return;
     }
 
+    SetSelectedItemInList(joblist_id, new_job, false);
     JOBS day_job   = girl.get_job(false);
     JOBS night_job = girl.get_job(true);
     std::stringstream ss;
@@ -633,7 +635,7 @@ cScreenGirlManagement::cScreenGirlManagement() :
 cScreenHouseManagement::cScreenHouseManagement() :
         IBuildingScreenManagement(BuildingType::HOUSE, "house_management_screen.xml")
 {
-    add_job_filter(JOBFILTER_HOUSE);
+    // add_job_filter(JOBFILTER_HOUSE);
     add_job_filter(JOBFILTER_HOUSETTRAINING);
 }
 

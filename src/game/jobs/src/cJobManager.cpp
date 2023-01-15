@@ -368,242 +368,6 @@ bool cJobManager::is_job_Paid_Player(JOBS Job)
 
 }
 
-// `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >> cJobManager.cpp > HandleSpecialJobs
-bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime)
-{
-    bool MadeChanges = true;  // whether a special case applies to specified job or not
-
-    assert(m_OOPJobs[JobID] != nullptr);
-    auto check = m_OOPJobs[JobID]->IsJobValid(Girl, Day0Night1);
-    if(!check) {
-        g_Game->push_message(Girl.Interpolate(check.Reason), 0);
-        return false;
-    }
-
-    // rest jobs
-    if (JobID == JOB_RESTING)
-    {
-        /*   */if (fulltime)    Girl.m_NightJob = Girl.m_DayJob = JobID;
-        else if (Day0Night1)    Girl.m_NightJob = JobID;
-        else/*            */    Girl.m_DayJob = JobID;
-    }
-// Special Brothel Jobs
-    else if (JobID == JOB_MATRON)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_MATRON, Day0Night1) > 0)
-            g_Game->push_message("You can only have one matron per brothel.", 0);
-        else
-            Girl.m_NightJob = Girl.m_DayJob = JOB_MATRON;
-    }
-    else if (JobID == JOB_TORTURER)
-    {
-        if (random_girl_on_job(g_Game->buildings(), JOB_TORTURER, 0))
-            g_Game->push_message("You can only have one torturer among all of your brothels.", 0);
-        else
-            Girl.m_NightJob = Girl.m_DayJob = JOB_TORTURER;
-    }
-    // Special House Jobs
-    else if (JobID == JOB_HEADGIRL)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_HEADGIRL, Day0Night1) > 0)    g_Game->push_message("There can be only one Head Girl!", 0);
-        else /*                                 */    Girl.m_NightJob = Girl.m_DayJob = JOB_HEADGIRL;
-    }
-    else if (JobID == JOB_RECRUITER)
-    {
-        Girl.m_NightJob = Girl.m_DayJob = JOB_RECRUITER;
-    }
-    else if (JobID == JOB_FAKEORGASM)
-    {
-        if (Girl.has_active_trait(traits::FAKE_ORGASM_EXPERT))    g_Game->push_message("She already has \"Fake Orgasm Expert\".", 0);
-        else /*                                 */    Girl.m_DayJob = Girl.m_NightJob = JOB_FAKEORGASM;
-    }
-    else if (JobID == JOB_SO_BISEXUAL)
-    {
-        if (Girl.has_active_trait(traits::BISEXUAL))/*      */    g_Game->push_message("She is already Bisexual.", 0);
-        else /*                                 */    Girl.m_DayJob = Girl.m_NightJob = JOB_SO_BISEXUAL;
-    }
-    else if (JobID == JOB_SO_LESBIAN)
-    {
-        if (Girl.has_active_trait(traits::LESBIAN))/*       */    g_Game->push_message("She is already a Lesbian.", 0);
-        else /*                                 */    Girl.m_DayJob = Girl.m_NightJob = JOB_SO_LESBIAN;
-    }
-    else if (JobID == JOB_SO_STRAIGHT)
-    {
-        if (Girl.has_active_trait(traits::STRAIGHT))/*      */    g_Game->push_message("She is already Straight.", 0);
-        else /*                                 */    Girl.m_DayJob = Girl.m_NightJob = JOB_SO_STRAIGHT;
-    }
-    else if (JobID == JOB_HOUSEPET)
-    {
-        if (Girl.is_slave())/*                 */    Girl.m_NightJob = Girl.m_DayJob = JOB_HOUSEPET;
-        else /*                                 */    g_Game->push_message("Only slaves can take this training.", 0);
-    }
-//    else if (JobID == JOB_PONYGIRL)
-//    {
-//        if (Girl.is_slave())    Girl.m_NightJob = Girl.m_DayJob = JOB_PONYGIRL;
-//        else                    g_Game->push_message(("Only slaves can take this training."), 0);
-//    }
-    // Special Farm Jobs
-    else if (JobID == JOB_FARMMANGER)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_FARMMANGER, Day0Night1) > 0)
-            g_Game->push_message("There can be only one Farm Manager!", 0);
-        else
-            Girl.m_NightJob = Girl.m_DayJob = JOB_FARMMANGER;
-    }
-    else if (JobID == JOB_MARKETER)
-    {
-        if (Day0Night1 == SHIFT_DAY || fulltime)
-        {
-            if (num_girls_on_job(*Girl.m_Building, JOB_MARKETER, SHIFT_DAY) > 0)
-                g_Game->push_message("There can be only one Farm Marketer on each shift!", 0);
-            else Girl.m_DayJob = JOB_MARKETER;
-        }
-        if (Day0Night1 == SHIFT_NIGHT || fulltime)
-        {
-            if (num_girls_on_job(*Girl.m_Building, JOB_MARKETER, SHIFT_NIGHT) > 0)
-                g_Game->push_message("There can be only one Farm Marketer on each shift!", 0);
-            else Girl.m_NightJob = JOB_MARKETER;
-        }
-    }
-    // Special Arena Jobs
-    else if (JobID == JOB_DOCTORE)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_DOCTORE, Day0Night1) > 0)
-            g_Game->push_message("There can be only one Doctore!", 0);
-        else
-            Girl.m_NightJob = Girl.m_DayJob = JOB_DOCTORE;
-    }
-    else if (JobID == JOB_FIGHTTRAIN && (Girl.combat() > 99 && Girl.magic() > 99 && Girl.agility() > 99 && Girl.constitution() > 99))
-    {    // `J` added then modified
-        g_Game->push_message("There is nothing more she can learn here.", 0);
-        if (Girl.m_DayJob == JOB_FIGHTTRAIN)    Girl.m_DayJob = JOB_RESTING;
-        if (Girl.m_NightJob == JOB_FIGHTTRAIN)    Girl.m_NightJob = JOB_RESTING;
-    }
-    // Special Clinic Jobs
-    else if (JobID == JOB_CHAIRMAN)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_CHAIRMAN, Day0Night1)>0)
-            g_Game->push_message("There can be only one Chairman!", 0);
-        else
-            Girl.m_NightJob = Girl.m_DayJob = JOB_CHAIRMAN;
-    }
-
-    else if (Girl.has_active_trait(traits::AIDS) && (JobID == JOB_DOCTOR || JobID == JOB_NURSE || JobID == JOB_INTERN))
-    {
-        g_Game->push_message("Health laws prohibit anyone with AIDS from working in the Medical profession", 0);
-        if (Girl.m_DayJob == JOB_INTERN || Girl.m_DayJob == JOB_NURSE || Girl.m_DayJob == JOB_DOCTOR)
-            Girl.m_DayJob = JOB_RESTING;
-        if (Girl.m_NightJob == JOB_INTERN || Girl.m_NightJob == JOB_NURSE || Girl.m_NightJob == JOB_DOCTOR)
-            Girl.m_NightJob = JOB_RESTING;
-    }
-    else if (JobID == JOB_DOCTOR)
-    {
-        if (Girl.medicine() < 50 || Girl.intelligence() < 50)
-        {
-            std::stringstream ss;
-            ss << Girl.FullName() << " does not have enough training to work as a Doctor. Doctors require 50 Medicine and 50 Intelligence.";
-            g_Game->push_message(ss.str(), 0);
-        }
-        else Girl.m_NightJob = Girl.m_DayJob = JOB_DOCTOR;
-    }
-    else if (JobID == JOB_INTERN && Girl.medicine() > 99 && Girl.intelligence() > 99 && Girl.charisma() > 99)
-    {
-        std::stringstream ss;
-        ss << "There is nothing more she can learn here.\n";
-        if (Girl.is_free())
-        {
-            Girl.m_DayJob = Girl.m_NightJob = JOB_DOCTOR;
-            ss << Girl.FullName() << " has been assigned as a Doctor instead.";
-        }
-        else
-        {
-            if (fulltime)
-                Girl.m_DayJob = Girl.m_NightJob = JOB_NURSE;
-            else if (Day0Night1 == SHIFT_DAY)
-                Girl.m_DayJob = JOB_NURSE;
-            else
-                Girl.m_NightJob = JOB_NURSE;
-            ss << Girl.FullName() << " has been assigned as a Nurse instead.";
-        }
-        g_Game->push_message(ss.str(), 0);
-    }
-    // Special Centre Jobs
-    else if (JobID == JOB_CENTREMANAGER)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_CENTREMANAGER, Day0Night1) >0)
-            g_Game->push_message(("There can be only one Centre Manager!"), 0);
-        else
-            Girl.m_NightJob = Girl.m_DayJob = JOB_CENTREMANAGER;
-    }
-    else if (JobID == JOB_COUNSELOR)
-    {
-        Girl.m_NightJob = Girl.m_DayJob = JOB_COUNSELOR;
-    }
-    else if (JobID == JOB_REHAB)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
-            g_Game->push_message(("You must have a counselor for rehab."), 0);
-        else if (!is_addict(Girl))
-            g_Game->push_message(("She has no addictions."), 0);
-        else
-            Girl.m_DayJob = Girl.m_NightJob = JOB_REHAB;
-    }
-    else if (JobID == JOB_ANGER)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
-            g_Game->push_message(("You must have a counselor for anger management."), 0);
-        else if (!Girl.any_active_trait({traits::AGGRESSIVE, traits::TSUNDERE, traits::YANDERE}))
-            g_Game->push_message(("She has no anger issues."), 0);
-        else
-            Girl.m_DayJob = Girl.m_NightJob = JOB_ANGER;
-    }
-    else if (JobID == JOB_EXTHERAPY)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
-            g_Game->push_message(("You must have a counselor for extreme therapy."), 0);
-        else if (!Girl.any_active_trait({traits::MIND_FUCKED, traits::BROKEN_WILL}))
-            g_Game->push_message(("She has no extreme issues."), 0);
-        else
-            Girl.m_DayJob = Girl.m_NightJob = JOB_EXTHERAPY;
-    }
-    else if (JobID == JOB_THERAPY)
-    {
-        if (num_girls_on_job(*Girl.m_Building, JOB_COUNSELOR, Day0Night1) < 1)
-            g_Game->push_message(("You must have a counselor for therapy."), 0);
-        else if (!Girl.any_active_trait({traits::NERVOUS, traits::DEPENDENT, traits::PESSIMIST}))
-            g_Game->push_message(("She has no need of therapy."), 0);
-        else
-            Girl.m_DayJob = Girl.m_NightJob = JOB_THERAPY;
-    }
-
-// Special cases were checked and don't apply, just set the studio job as requested
-#if 1
-    else if (Girl.m_Building && Girl.m_Building->type() == BuildingType::STUDIO)
-    {
-        MadeChanges = false;
-        Girl.m_DayJob = JOB_RESTING;
-        Girl.m_NightJob = JobID;
-    }
-    else
-    {
-        MadeChanges = false;
-        if (fulltime)/*                */    Girl.m_DayJob = Girl.m_NightJob = JobID;
-        else if (Day0Night1 == SHIFT_DAY)    Girl.m_DayJob = JobID;
-        else/*                         */    Girl.m_NightJob = JobID;
-    }
-#endif
-// handle instances where special job has been removed, specifically where it actually matters
-    if (JobID != OldJobID)
-    {
-        // if old job was full time but new job is not, switch leftover day or night job back to resting
-        if (!fulltime && is_full_time(OldJobID) && !is_full_time(JobID))        // `J` greatly simplified the check
-            (Day0Night1 ? Girl.m_DayJob = JOB_RESTING : Girl.m_NightJob = JOB_RESTING);
-
-    }
-
-    return MadeChanges;
-}
-
 // ------ Work Related Violence fns
 
 // MYR: Rewrote the work_related_violence to add the security guard job.
@@ -1643,4 +1407,54 @@ EJobFilter cJobManager::get_filter_id(const std::string& name) const {
 
 const sJobFilter& cJobManager::get_filter(EJobFilter filter) const {
     return JobFilters.at(filter);
+}
+
+bool cJobManager::assign_job(sGirl& girl, JOBS job, EJobShift shift) const {
+    if(is_full_time(job)) {
+        shift = EJobShift::FULL;
+    }
+
+    // Check that the job is valid
+    if(shift == EJobShift::FULL || shift == EJobShift::DAY) {
+        auto check = get_job(job)->IsJobValid(girl, false);
+        if(!check) {
+            g_Game->push_message(girl.Interpolate(check.Reason), 0);
+            return false;
+        }
+    }
+    if(shift == EJobShift::FULL || shift == EJobShift::NIGHT) {
+        auto check = get_job(job)->IsJobValid(girl, true);
+        if(!check) {
+            g_Game->push_message(girl.Interpolate(check.Reason), 0);
+            return false;
+        }
+    }
+
+    // Additional checks
+    if(get_job_info(job).Singleton) {
+        if (num_girls_on_job(*girl.m_Building, job, shift == EJobShift::NIGHT) > 0) {
+            g_Game->push_message("There can be only one " + get_job_name(job) + "!", 0);
+            return false;
+        }
+    }
+
+    // Assignment
+    if(shift == EJobShift::FULL) {
+        girl.m_DayJob = job;
+        girl.m_NightJob = job;
+    } else if(shift == EJobShift::DAY) {
+        girl.m_DayJob = job;
+        if(is_full_time(girl.m_NightJob)) {
+            girl.m_NightJob = JOB_RESTING;
+        }
+    } else if(shift == EJobShift::NIGHT) {
+        girl.m_NightJob = job;
+        if(is_full_time(girl.m_DayJob)) {
+            girl.m_DayJob = JOB_RESTING;
+        }
+    } else {
+        g_Game->push_message("Invalid shift. This is a bug!", COLOR_WARNING);
+        return false;
+    }
+    return true;
 }

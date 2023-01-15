@@ -308,6 +308,8 @@ void cGenericJob::add_text(const std::string& prompt) const {
             return active_girl().FullName();
         } else if (var == "shift") {
             return is_night_shift() ? "night" : "day";
+        } else if (var == "progress") {
+            return std::to_string(active_girl().get_treatment_progress()) + "%";
         } else if (m_Replacements.count(var) != 0) {
             return m_Replacements.at(var);
         }
