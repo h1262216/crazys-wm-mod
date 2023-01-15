@@ -6,7 +6,7 @@
 
     <Performance />
 
-    <Config Shift="day-only" DefaultImage="Combat" FightingJob="1">
+    <Config Shift="day-only" DefaultImage="Combat" FightingJob="1" BaseWages="20">
         <Filter>ArenaFight</Filter>
     </Config>
 

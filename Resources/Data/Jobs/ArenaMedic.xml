@@ -47,7 +47,7 @@
         <Stat Name="Intelligence" Weight="1" />
     </Gains>
 
-    <Config DefaultImage="Nurse" Phase="prepare">
+    <Config DefaultImage="Nurse" Phase="prepare" BaseWages="25">
         <Filter>ArenaStaff</Filter>
     </Config>
     

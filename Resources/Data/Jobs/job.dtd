@@ -4,7 +4,7 @@
 <!ELEMENT Description (#PCDATA)>
 <!ELEMENT Config (Filter)>
 <!ATTLIST Config Shift (both|day-only|night-only|full) FreeOnly (0|1) #IMPLIED DefaultImage CDATA #IMPLIED
-        Phase (prepare|produce|main|late) #IMPLIED FightingJob (0|1) #IMPLIED>
+        Phase (prepare|produce|main|late) #IMPLIED FightingJob (0|1) #IMPLIED BaseWages CDATA #IMPLIED>
 <!ELEMENT Filter (#PCDATA)>
 
 <!ELEMENT Performance (Factor|Trait|Mod)*>

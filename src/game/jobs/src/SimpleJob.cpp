@@ -26,8 +26,6 @@
 
 void cSimpleJob::DoWork(sGirlShiftData& shift) const
 {
-    shift.Wages = m_Data.BaseWages;
-
     if(has_text("work")) {
         add_text("work");
         add_literal("\n\n");
@@ -39,14 +37,14 @@ void cSimpleJob::DoWork(sGirlShiftData& shift) const
     }
 }
 
-cSimpleJob::cSimpleJob(JOBS job, const char* xml, sSimpleJobData data) : cBasicJob(job, xml), m_Data(data) {
+cSimpleJob::cSimpleJob(JOBS job, const char* xml) : cBasicJob(job, xml) {
     RegisterVariable("Enjoyment", m_Enjoyment);
     // RegisterVariable("Image", m_ImageType);
 }
 
 void cSimpleJob::HandleGains(sGirl& girl, int fame) const {
     // Update Enjoyment
-    girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
+    girl.upd_Enjoyment(m_Info.BaseAction, m_Enjoyment);
 
     if (girl.fame() < 10 && active_shift().Performance >= 70)     { fame += 1; }
     if (girl.fame() < 20 && active_shift().Performance >= 100)    { fame += 1; }
@@ -112,5 +110,5 @@ void cSimpleJob::InitWork(sGirlShiftData& shift) {
 }
 
 bool cSimpleJob::CheckRefuseWork(sGirl& girl) const {
-    return check_refuse_action(girl, m_Data.Action);
+    return check_refuse_action(girl, m_Info.BaseAction);
 }

@@ -36,7 +36,7 @@ int& GenericCraftingJob::craft_points() const {
 }
 
 void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
-    shift.Wages = m_Data.BaseWages * (1.0 + (shift.Performance - 70) / 100.0);
+    shift.Wages += m_Info.BaseWages * (shift.Performance - 70) / 100.0;
     craft_points() = shift.Performance;
 
     int dirtyloss = shift.building().Filthiness() / 10;        // craftpoints lost due to repairing equipment
@@ -69,7 +69,7 @@ void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const
     apply_gains(shift.Performance);
 
     // Update Enjoyment
-    girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
+    girl.upd_Enjoyment(m_Info.BaseAction, m_Enjoyment);
 }
 
 float GenericCraftingJob::DoCrafting(sGirl& girl) const {

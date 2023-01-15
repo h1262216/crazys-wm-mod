@@ -52,8 +52,8 @@ namespace {
     };
 }
 
-CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "CommunityService.xml", {ACTION_WORKCENTRE, 100}) {
-
+CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "CommunityService.xml") {
+    m_Info.BaseAction = ACTION_WORKCENTRE;
 }
 
 void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
@@ -146,8 +146,8 @@ void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     HandleGains(girl, fame);
 }
 
-FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENTRE, 20}) {
-
+FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml") {
+    m_Info.BaseAction = ACTION_WORKCENTRE;
 }
 
 void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
@@ -244,7 +244,8 @@ void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     HandleGains(girl, fame);
 }
 
-Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORKCOUNSELOR, 25}) {
+Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml") {
+    m_Info.BaseAction = ACTION_WORKCOUNSELOR;
 }
 
 void Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {

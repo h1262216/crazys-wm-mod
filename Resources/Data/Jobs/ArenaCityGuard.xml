@@ -12,6 +12,10 @@
         <Mod Weight="1">work.security</Mod>
     </Performance>
 
+    <Config BaseWages="10">
+        <Filter>ArenaFight</Filter>
+    </Config>
+
     <Gains XP="13" Skill="3">
         <GainTrait Trait="Tough" Threshold="20" Action="WORKSECURITY">
             She has become pretty Tough from all the fights she's been in.

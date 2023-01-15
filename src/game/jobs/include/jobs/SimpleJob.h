@@ -25,15 +25,10 @@
 #include "utils/piecewise_linear.h"
 #include "images/sImageSpec.h"
 
-struct sSimpleJobData {
-    Action_Types Action;
-    int BaseWages = 0;
-};
-
 
 class cSimpleJob : public cBasicJob {
 public:
-    cSimpleJob(JOBS job, const char* xml, sSimpleJobData data);
+    cSimpleJob(JOBS job, const char* xml);
     void DoWork(sGirlShiftData& shift) const override;
     virtual void JobProcessing(sGirl& girl, sGirlShiftData& shift) const = 0;
 
@@ -42,7 +37,6 @@ protected:
 
     void InitWork(sGirlShiftData& shift) override;
     void HandleGains(sGirl& girl, int fame) const;
-    sSimpleJobData m_Data;
 
     PiecewiseLinearFunction m_PerformanceToEarnings;
 

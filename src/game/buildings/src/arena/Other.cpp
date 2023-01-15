@@ -25,8 +25,9 @@
 #include "cGirlGangFight.h"
 #include "jobs/cJobManager.h"
 
-CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10}) {
+CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml") {
     CatchThiefID = RegisterVariable("CatchThief", 0);
+    m_Info.BaseAction = ACTION_WORKSECURITY;
 }
 
 void CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
@@ -103,7 +104,8 @@ int CityGuard::catch_thief() const {
     return GetVariable(CatchThiefID);
 }
 
-Medic::Medic() : cSimpleJob(JOB_MEDIC, "ArenaMedic.xml", {ACTION_WORKDOCTOR, 25}) {
+Medic::Medic() : cSimpleJob(JOB_MEDIC, "ArenaMedic.xml") {
+    m_Info.BaseAction = ACTION_WORKDOCTOR;
 }
 
 sJobValidResult Medic::on_is_valid(const sGirl& girl, bool night_shift) const {
@@ -172,9 +174,8 @@ void Medic::HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target
     interactor.girl().AddMessage(ss.str(), EImageBaseType::NURSE, EVENT_NIGHTSHIFT);
 }
 
-IntermissionStripper::IntermissionStripper() : cSimpleJob(JOB_INTERMISSION_SHOW, "ArenaIntermission.xml",
-                                                          {ACTION_WORKSTRIP, 25}) {
-
+IntermissionStripper::IntermissionStripper() : cSimpleJob(JOB_INTERMISSION_SHOW, "ArenaIntermission.xml") {
+    m_Info.BaseAction = ACTION_WORKSTRIP;
 }
 
 void IntermissionStripper::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {

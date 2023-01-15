@@ -35,7 +35,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config Shift="night-only" DefaultImage="Combat" FightingJob="1">
+    <Config Shift="night-only" DefaultImage="Combat" FightingJob="1" BaseWages="50">
         <Filter>ArenaFight</Filter>
     </Config>
 

@@ -23,7 +23,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config Shift="full" FreeOnly="1" />
+    <Config Shift="full" FreeOnly="1" BaseWages="25"/>
 
     <Messages>
         <Message Name="refuse">

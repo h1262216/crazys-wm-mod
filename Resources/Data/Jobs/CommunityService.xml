@@ -17,6 +17,10 @@
         <Skill Name="Service" Weight="1" Max="70"/>
     </Gains>
 
+    <Config BaseWages="100">
+        <Filter>CommunityCentre</Filter>
+    </Config>
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>

@@ -50,6 +50,9 @@ struct sJobInfo {
     bool IsFightingJob = false;
     EJobPhase Phase = EJobPhase::MAIN;
 
+    int BaseWages = 0;
+    Action_Types BaseAction = Action_Types::ACTION_GENERAL;
+
     sImagePreset DefaultImage = EImageBaseType::PROFILE;
 
     std::vector<std::string> Consumes;

@@ -64,7 +64,8 @@ namespace {
     };
 }
 
-Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml, {ACTION_WORKCLEANING, 0}) {
+Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml) {
+    m_Info.BaseAction = ACTION_WORKCLEANING;
 }
 
 void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) const {

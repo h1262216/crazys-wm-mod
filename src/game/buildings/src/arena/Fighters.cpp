@@ -38,7 +38,8 @@ void FighterJob::handle_combat_stat(const std::string& name, int value) const {
     provide_resource(name, std::min(std::max(0, value), 100));
 }
 
-FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml", {ACTION_COMBAT, 100}) {
+FightBeasts::FightBeasts() : FighterJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml") {
+    m_Info.BaseAction = ACTION_COMBAT;
 }
 
 bool FightBeasts::CheckCanWork(sGirl& girl) const {
@@ -321,7 +322,8 @@ std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const
     }
 }
 
-FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml", {ACTION_COMBAT, 50}) {
+FightGirls::FightGirls() : FighterJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml") {
+    m_Info.BaseAction = ACTION_COMBAT;
 }
 
 bool FightGirls::CheckCanWork(sGirl& girl) const {
@@ -461,7 +463,8 @@ void FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     }
 }
 
-FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaTraining.xml", {ACTION_COMBAT, 20}) {
+FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaTraining.xml") {
+    m_Info.BaseAction = ACTION_COMBAT;
 }
 
 double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {

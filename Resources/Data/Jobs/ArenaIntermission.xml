@@ -17,7 +17,7 @@
         -->
     </Performance>
 
-    <Config Shift="night-only" DefaultImage="Strip">
+    <Config Shift="night-only" DefaultImage="Strip" BaseWages="25">
         <Filter>ArenaStaff</Filter>
         <WageFunction>
             <Point Performance="245" Wages="155" />
