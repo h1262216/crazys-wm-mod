@@ -295,7 +295,7 @@ void cBuildingShift::end_shift(bool is_night) {
     {
         m_Building->GirlEndShift(current, is_night);
         auto& shift = get_girl_data(current);
-        make_summary_message(shift);
+        g_Game->job_manager().handle_post_shift(shift);
     });
 }
 
@@ -319,38 +319,6 @@ void cBuildingShift::apply_to_girls(const std::function<void(sGirl&)>& handler) 
           return;
       handler(current);
     });
-}
-
-void cBuildingShift::make_summary_message(sGirlShiftData& shift)
-{
-    // Summary Messages
-    if (shift.Refused == ECheckWorkResult::REFUSES)
-    {
-        //brothel->m_Fame -= girl.fame();
-        shift.girl().AddMessage("${name} refused to work so she made no money.", EImageBaseType::PROFILE, EVENT_SUMMARY);
-    }
-    // TODO handle the 'IMPOSSIBLE' case
-    else
-    {
-        //brothel->m_Fame += girl.fame();
-        std::stringstream ss;
-        auto money_data = g_Game->job_manager().CalculatePay(shift);
-        ss << "${name} made " << money_data.Earnings;
-        if(money_data.Tips != 0) {
-            ss << " and " << money_data.Tips << " in tips. ";
-        } else {
-            ss << " gold. ";
-        }
-        if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
-        ss << "In total, she got " << money_data.GirlGets << " gold and you ";
-        if(money_data.PlayerGets > 0) {
-            ss << "got " << money_data.PlayerGets << " gold.";
-        } else {
-            ss << "spent " << -money_data.PlayerGets << " gold.";
-        }
-
-        shift.girl().AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
-    }
 }
 
 sGirlShiftData& cBuildingShift::get_girl_data(const sGirl& girl) {

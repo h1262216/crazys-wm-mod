@@ -4,6 +4,10 @@
         She will train either alone or with others to improve her skills.
     </Description>
 
+    <Config>
+        <Filter>HouseTraining</Filter>
+    </Config>
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to practice her skills.</Text>

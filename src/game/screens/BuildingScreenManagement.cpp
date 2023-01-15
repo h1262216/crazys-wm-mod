@@ -87,8 +87,8 @@ void IBuildingScreenManagement::RefreshJobList()
     for (auto i : g_Game->job_manager().get_filter((EJobFilter)job_filter).Contents)
     {
         if (g_Game->job_manager().get_job_name(i).empty()) continue;
-        if (g_Game->job_manager().get_job(i)->get_info().DayOnly && Day0Night1 ||
-            g_Game->job_manager().get_job(i)->get_info().NightOnly && !Day0Night1) {
+        if (g_Game->job_manager().get_job(i)->get_info().Shift == EJobShift::DAY && Day0Night1 ||
+            g_Game->job_manager().get_job(i)->get_info().Shift == EJobShift::NIGHT && !Day0Night1) {
             continue;
         }
         AddToListBox(joblist_id, i, jobname_with_count((JOBS)i, Day0Night1));
@@ -213,7 +213,7 @@ void IBuildingScreenManagement::on_select_job(int selection)
         EditTextItem(job_manager().get_job_info((JOBS)selection).Description, jobdesc_id);        // first handle the descriptions
         ForAllSelectedItems(girllist_id, [&](int sel) {
             auto girl = active_building().get_girl(sel);
-            if(job_manager().get_job_info(new_job).FullTime)
+            if(job_manager().is_full_time(new_job))
                 fulltime = true;
 
             if (girl)

@@ -1,7 +1,12 @@
-<!ELEMENT Treatment (Description, Therapy?, Surgery?, Messages?)>
+<!ELEMENT Treatment (Description, Config, Therapy?, Surgery?, Messages?)>
 <!ATTLIST Treatment ShortName CDATA #REQUIRED>
 
 <!ELEMENT Description (#PCDATA)>
+
+<!ELEMENT Config (Filter)>
+<!ATTLIST Config Shift (both|day-only|night-only|full) FreeOnly (0|1) #IMPLIED DefaultImage CDATA #IMPLIED
+        Phase (prepare|produce|main|late) #IMPLIED FightingJob (0|1) #IMPLIED>
+<!ELEMENT Filter (#PCDATA)>
 
 <!ELEMENT Messages (Message|Include)*)>
 <!ELEMENT Message ((Text|Group)+)>

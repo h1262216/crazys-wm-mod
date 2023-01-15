@@ -34,7 +34,7 @@ public:
         cGenericJob(job), m_WorkerTitle(WorkerTitle) {
         m_Info.Description = description;
         m_Info.ShortName = short_name;
-        m_Info.FullTime = true;
+        m_Info.Shift = EJobShift::FULL;
         m_Info.FreeOnly = true;
     }
     double GetPerformance(const sGirl& girl, bool estimate) const override;

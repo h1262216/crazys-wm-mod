@@ -226,7 +226,7 @@ bool sClinic::handle_back_to_work(sGirl& girl, std::stringstream& ss, bool is_ni
     }
     else if (psw != JOB_RESTING && psw >= firstjob && psw<=lastjob)
     {    // if she had a previous job that shift, put her back to work.
-        if (g_Game->job_manager().get_job_info(psw).FullTime)
+        if (g_Game->job_manager().is_full_time(psw))
         {
             girl.m_DayJob = girl.m_NightJob = psw;
         }

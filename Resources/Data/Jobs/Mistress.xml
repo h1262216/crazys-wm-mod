@@ -4,6 +4,10 @@
         She will train the other girls. This will boost the effectiveness of Practice Skills drastically.
     </Description>
 
+    <Config>
+        <Filter>HouseTraining</Filter>
+    </Config>
+
     <Performance>
         <Factor Stat="Spirit" Weight="1" />
         <Factor Stat="Charisma" Weight="1" />

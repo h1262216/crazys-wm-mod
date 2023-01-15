@@ -44,7 +44,7 @@ void cGenericJob::Work(sGirlShiftData& shift) {
     auto& girl = shift.girl();
     m_ActiveData = &shift;
 
-    if(m_Info.FullTime && girl.m_DayJob != girl.m_NightJob) {
+    if(m_Info.Shift == EJobShift::FULL && girl.m_DayJob != girl.m_NightJob) {
         g_LogFile.error("jobs", "Full time job was assigned for a single shift!");
         girl.m_DayJob = job();
         girl.m_NightJob = job();
@@ -190,9 +190,9 @@ sJobValidResult cGenericJob::IsJobValid(const sGirl& girl, bool night_shift) con
     if(m_Info.FreeOnly && girl.is_slave()) {
         return {false, "Slaves cannot work as " + m_Info.Name + "!"};
     }
-    if(night_shift && m_Info.DayOnly) {
+    if(night_shift && m_Info.Shift == EJobShift::DAY) {
         return {false, "The " + m_Info.Name + " job can only be assigned for the day shift."};
-    } else if (!night_shift && m_Info.NightOnly) {
+    } else if (!night_shift && m_Info.Shift == EJobShift::NIGHT) {
         return {false, "The " + m_Info.Name + " job can only be assigned for the night shift."};
     }
 
@@ -247,11 +247,11 @@ void cGenericJob::load_job() {
         if(config_el) {
             std::string shift = tolower(GetDefaultedStringAttribute(*config_el, "Shift", "both"));
             if(shift == "day-only") {
-                m_Info.DayOnly = true;
+                m_Info.Shift = EJobShift::DAY;
             } else if (shift == "night-only") {
-                m_Info.NightOnly = true;
+                m_Info.Shift = EJobShift::NIGHT;
             } else if(shift == "full") {
-                m_Info.FullTime = true;
+                m_Info.Shift = EJobShift::FULL;
             }
             m_Info.FreeOnly = config_el->BoolAttribute("FreeOnly", false);
             m_Info.IsFightingJob = config_el->BoolAttribute("FightingJob", false);
@@ -360,4 +360,8 @@ void cGenericJob::generate_event() const {
 
 void cGenericJob::on_post_shift(sGirlShiftData& shift) const {
 
+}
+
+const cJobManager& cGenericJob::job_manager() const {
+    return *m_JobManager;
 }

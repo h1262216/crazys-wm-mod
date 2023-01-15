@@ -64,6 +64,8 @@ protected:
         }
     }
 
+    void on_post_shift(sGirlShiftData& shift) const;
+
 private:
     cJobPerformance m_PerformanceData;
     cJobGains       m_Gains;

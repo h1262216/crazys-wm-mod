@@ -29,6 +29,9 @@ public:
     void DoWork(sGirlShiftData& shift) const override;
 
 private:
+    bool CheckCanWork(sGirl& girl) const override { return true; }
+    bool CheckRefuseWork(sGirl& girl) const override { return false; };
+
     virtual const char* specific_config_element() const { return nullptr; }
     void load_from_xml_internal(const tinyxml2::XMLElement& job_data, const std::string& file_name) override;
 

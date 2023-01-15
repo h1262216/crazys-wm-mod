@@ -24,6 +24,7 @@
 
 #include "buildings/cBuilding.h"
 #include "jobs/cBasicJob.h"
+#include "jobs/Treatment.h"
 
 // defines a single House
 struct sHouse : public cBuilding
@@ -50,6 +51,69 @@ public:
 
     void DoWork(sGirlShiftData& shift) const override;
     bool CheckRefuseWork(sGirl& girl) const override;
+};
+
+class TrainingJob : public ITreatmentJob {
+public:
+    TrainingJob(JOBS job, std::string xml_file, const char* trait);
+
+    double GetPerformance(const sGirl& girl, bool estimate) const override;
+
+    virtual void HandleTraining(sGirl& girl, bool is_night) const = 0;
+    virtual void OnComplete(sGirl& girl) const = 0;
+    virtual void OnNoProgress(sGirl& girl) const;
+    virtual void OnRegularProgress(sGirl& girl, bool is_night) const;
+
+
+protected:
+    int calculate_progress(const sGirl& girl) const;
+    void CountTheDays(sGirl& girl, bool is_night, int progress) const;
+
+    void ReceiveTreatment(sGirl& girl, bool is_night) const override;
+
+    int& tiredness() const;
+
+    int Enjoyment;
+
+    const char* TargetTrait;
+
+    sJobValidResult on_is_valid(const sGirl& girl, bool night_shift) const override;
+
+    int TirednessId;
+};
+
+class SoStraight : public TrainingJob {
+public:
+    SoStraight() : TrainingJob(JOB_SO_STRAIGHT, "SoStraight.xml", traits::STRAIGHT) {
+    }
+    void HandleTraining(sGirl& girl, bool is_night) const override;
+    void OnComplete(sGirl& girl) const override;
+};
+
+class SoLesbian : public TrainingJob {
+public:
+    SoLesbian() : TrainingJob(JOB_SO_LESBIAN, "SoLesbian.xml", traits::LESBIAN) {
+    }
+    void HandleTraining(sGirl& girl, bool is_night) const override;
+    void OnComplete(sGirl& girl) const override;
+};
+
+class SoBi : public TrainingJob {
+public:
+    SoBi() : TrainingJob(JOB_SO_BISEXUAL, "SoBi.xml", traits::BISEXUAL) {
+    }
+    void HandleTraining(sGirl& girl, bool is_night) const override;
+    void OnComplete(sGirl& girl) const override;
+};
+
+class FakeOrg : public TrainingJob {
+public:
+    FakeOrg() : TrainingJob(JOB_FAKEORGASM, "FakeOrgasm.xml", traits::FAKE_ORGASM_EXPERT) {
+    }
+    void HandleTraining(sGirl& girl, bool is_night) const override;
+    void OnComplete(sGirl& girl) const override;
+    void OnNoProgress(sGirl& girl) const override;
+    void OnRegularProgress(sGirl& girl, bool is_night) const override;
 };
 
 #endif  /* __CHOUSE_H */

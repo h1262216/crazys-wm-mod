@@ -76,6 +76,8 @@ public:
 
     void handle_main_shift(sGirlShiftData& shift) override;
 
+    void handle_post_shift(sGirlShiftData& shift) override;
+
     const sJobFilter& get_filter(EJobFilter filter) const override;
 
     std::array<sJobFilter, NUMJOBTYPES> JobFilters;
@@ -104,8 +106,7 @@ public:
     static sCustomer GetMiscCustomer(IBuilding& brothel);
 
     bool is_job_Paid_Player(JOBS Job);        //    WD:    Test for all jobs paid by player
-    bool FullTimeJob(JOBS Job);            //    `J`    Test if job is takes both shifts
-    sPaymentData CalculatePay(sGirlShiftData& shift);
+    sPaymentData CalculatePay(sGirlShiftData& shift) const;
 
     static bool is_Surgery_Job(int testjob);
 

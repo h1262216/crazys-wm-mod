@@ -60,12 +60,12 @@ void MistressJob::DoWork(sGirlShiftData& shift) const {
         }
     }
 
-    girl.AddMessage(ss.str(), EImageBaseType::TEACHER, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-    return {false, 0, 0, 100};
+    shift.EventImage = EImageBaseType::TEACHER;
+    generate_event();
 }
 
 bool MistressJob::CheckRefuseWork(sGirl& girl) const {
-    return SimpleRefusalCheck(girl, ACTION_WORKMATRON) == ECheckWorkResult::REFUSES;
+    return check_refuse_action(girl, ACTION_WORKMATRON);
 }
 
 
@@ -255,39 +255,13 @@ bool PracticeJob::CheckRefuseWork(sGirl& girl) const {
     return false;
 }
 
-class TrainingJob : public ITreatmentJob {
-public:
-    TrainingJob(JOBS job, std::string xml_file, const char* trait, sImagePreset image) :
-        ITreatmentJob(job, std::move(xml_file)), TargetTrait(trait), ImageType(image)
-    {
-        m_Info.Consumes.emplace_back(TrainingInteractionId);
-    }
+TrainingJob::TrainingJob(JOBS job, std::string xml_file, const char* trait) :
+    ITreatmentJob(job, std::move(xml_file)), TargetTrait(trait)
+{
+    TirednessId = RegisterVariable("Tiredness", 0);
+    m_Info.Consumes.emplace_back(TrainingInteractionId);
+}
 
-    double GetPerformance(const sGirl& girl, bool estimate) const override;
-    eCheckWorkResult CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) override;
-
-    virtual void HandleTraining(sGirl& girl, bool is_night) = 0;
-    virtual void OnComplete(sGirl& girl) = 0;
-    virtual void OnNoProgress(sGirl& girl);
-    virtual void OnRegularProgress(sGirl& girl, bool is_night);
-
-protected:
-    int calculate_progress(const sGirl& girl) const;
-    void CountTheDays(sGirl& girl, bool is_night, int progress);
-
-    void ReceiveTreatment(sGirl& girl, bool is_night) override;
-
-    EEventType TypeOfEvent;
-    int Tiredness;
-    int Enjoyment;
-
-    const char* TargetTrait;
-    sImagePreset ImageType;
-
-private:
-
-    sGirl* m_Mistress = nullptr;
-};
 
 int TrainingJob::calculate_progress(const sGirl& girl) const {
     int progress = 0;
@@ -306,20 +280,28 @@ int TrainingJob::calculate_progress(const sGirl& girl) const {
     return progress;
 }
 
-void TrainingJob::ReceiveTreatment(sGirl& girl, bool is_night) {
+void TrainingJob::ReceiveTreatment(sGirl& girl, bool is_night) const {
+    auto mistress = request_interaction(TrainingInteractionId);
+    if(!mistress) {
+        add_text("no-mistress");
+        active_shift().EventType = EVENT_WARNING;
+        active_shift().EventImage = EImageBaseType::PROFILE;
+        generate_event();
+        return;
+    }
+
     // Base adjustment
-    Tiredness = uniform(5, 15);
+    tiredness() = uniform(5, 15);
 
-    add_text("training") << "\n";
-
-    TypeOfEvent = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    add_line("training");
+    active_shift().EventType = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     HandleTraining(girl, is_night);
 
     girl.upd_Enjoyment(ACTION_WORKTRAINING, Enjoyment);
-    girl.tiredness(Tiredness);
+    girl.tiredness(tiredness());
 
-    girl.AddMessage(ss.str(), ImageType, TypeOfEvent);
+    generate_event();
 }
 
 double TrainingJob::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -327,56 +309,46 @@ double TrainingJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return 250;
 }
 
-IGenericJob::eCheckWorkResult TrainingJob::CheckWork(sGirl& girl, IBuildingShift& building, bool is_night) {
+sJobValidResult TrainingJob::on_is_valid(const sGirl& girl, bool night_shift) const {
     if (girl.has_active_trait(TargetTrait))
     {
-        add_text("is-already");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
-        girl.FullJobReset(JOB_RESTING);
-        return eCheckWorkResult::IMPOSSIBLE;    // not refusing
+        return {false, get_text("is-already")};
     }
-
-    m_Mistress = RequestInteraction(TrainingInteractionId);
-    if(!m_Mistress) {
-        add_text("no-mistress");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
-        return eCheckWorkResult::IMPOSSIBLE;
-    }
-
-    return eCheckWorkResult::ACCEPTS;
+    return {true, {}};
 }
 
-void TrainingJob::CountTheDays(sGirl& girl, bool is_night, int progress)
+
+void TrainingJob::CountTheDays(sGirl& girl, bool is_night, int progress) const
 {
     if (girl.disobey_check(ACTION_WORKTRAINING, job())) progress /= 2;    // if she disobeys, half her time is wasted
 
     if (progress <= 0)                                // she lost time so more tired
     {
-        Tiredness += uniform(5, 5-progress);
-        Enjoyment -= uniform(0, 2);
+        tiredness() += uniform(5, 5-progress);
+        //Enjoyment -= uniform(0, 2);
     }
     else if (progress > 33)                        // or if she trained a lot
     {
-        Tiredness += uniform(progress / 4, progress / 2);
-        Enjoyment += uniform(0, 2);
+        tiredness() += uniform(progress / 4, progress / 2);
+        //Enjoyment += uniform(0, 2);
     }
     else                                        // otherwise just a bit tired
     {
-        Tiredness += uniform(0, progress / 3);
-        Enjoyment -= uniform(-2, 2);
+        tiredness() += uniform(0, progress / 3);
+        //Enjoyment -= uniform(-2, 2);
     }
 
     girl.make_treatment_progress(progress);
 
     if (progress <= 0)
     {
-        TypeOfEvent = EVENT_WARNING;
+        active_shift().EventType = EVENT_WARNING;
         OnNoProgress(girl);
     }
     else if (girl.get_treatment_progress() >= 100 && is_night)
     {
         girl.finish_treatment();
-        TypeOfEvent = EVENT_GOODNEWS;
+        active_shift().EventType = EVENT_GOODNEWS;
         OnComplete(girl);
         girl.FullJobReset(JOB_RESTING);
     }
@@ -385,30 +357,26 @@ void TrainingJob::CountTheDays(sGirl& girl, bool is_night, int progress)
     }
 }
 
-void TrainingJob::OnNoProgress(sGirl& girl) {
-    add_text("no-progress") << "\n";
-    Tiredness += uniform(5, 15);
+void TrainingJob::OnNoProgress(sGirl& girl) const {
+    add_line("no-progress");
+    tiredness() += uniform(5, 15);
 }
 
-void TrainingJob::OnRegularProgress(sGirl& girl, bool is_night) {
+void TrainingJob::OnRegularProgress(sGirl& girl, bool is_night) const {
     add_text("progress");
     if (girl.get_treatment_progress() >= 100)
     {
-        ss << "almost complete.";
-        Tiredness -= (girl.get_treatment_progress() - 100) / 2;    // her last day so she rested a bit
+        add_literal("almost complete.");
+        tiredness() -= (girl.get_treatment_progress() - 100) / 2;    // her last day so she rested a bit
     }
-    else ss << "in progress (" << girl.get_treatment_progress() << "%).";
+    else active_shift().EventMessage << "in progress (" << girl.get_treatment_progress() << "%).";
 }
 
-class SoStraight : public TrainingJob {
-public:
-    SoStraight() : TrainingJob(JOB_SO_STRAIGHT, "SoStraight.xml", traits::STRAIGHT, EImageBaseType::VAGINAL) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-};
+int& TrainingJob::tiredness() const {
+    return active_shift().get_var_ref(TirednessId);
+}
 
-void SoStraight::HandleTraining(sGirl& girl, bool is_night) {
+void SoStraight::HandleTraining(sGirl& girl, bool is_night) const {
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.normalsex() / 5;
@@ -421,16 +389,16 @@ void SoStraight::HandleTraining(sGirl& girl, bool is_night) {
 
     if (!likes_men(girl))
     {
-        add_text("dislikes-men") << "\n";
+        add_line("dislikes-men");
         progress -= girl.lesbian() / 5;                    // it is hard to change something you are good at
-        Tiredness += girl.lesbian() / 10;
+        tiredness() += girl.lesbian() / 10;
     }
     if (girl.has_active_trait(traits::BISEXUAL)) progress -= girl.lesbian() / 20;    // it is hard to change something you are good at
 
     int trait = girl.get_trait_modifier(traits::modifiers::SO_STRAIGHT);
     progress += uniform(trait / 2, trait + trait / 2);
     if (girl.has_active_trait(traits::BROKEN_WILL))        {
-        add_text("broken-will") << "\n";
+        add_line("broken-will");
     }
 
     if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(10, 30);
@@ -448,20 +416,12 @@ void SoStraight::HandleTraining(sGirl& girl, bool is_night) {
     girl.tittysex( uniform(1, 5) );
 }
 
-void SoStraight::OnComplete(sGirl& girl) {
-    add_text("complete") << "\n";
+void SoStraight::OnComplete(sGirl& girl) const {
+    add_line("complete");
     girl.lose_trait(traits::LESBIAN);    girl.gain_trait(traits::BISEXUAL);    girl.lose_trait(traits::STRAIGHT);
 }
 
-class SoLesbian : public TrainingJob {
-public:
-    SoLesbian() : TrainingJob(JOB_SO_LESBIAN, "SoLesbian.xml", traits::LESBIAN, EImageBaseType::VAGINAL) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-};
-
-void SoLesbian::HandleTraining(sGirl& girl, bool is_night) {
+void SoLesbian::HandleTraining(sGirl& girl, bool is_night) const {
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.lesbian() / 5;
@@ -471,9 +431,9 @@ void SoLesbian::HandleTraining(sGirl& girl, bool is_night) {
 
     if (girl.has_active_trait(traits::STRAIGHT))
     {
-        add_text("dislikes-women") << "\n";
+        add_line("dislikes-women");
         progress -= girl.normalsex() / 5;                // it is hard to change something you are good at
-        Tiredness += girl.normalsex() / 10;
+        tiredness() += girl.normalsex() / 10;
     }
     if (girl.has_active_trait(traits::BISEXUAL)) progress -= girl.normalsex() / 20;                    // it is hard to change something you are good at
 
@@ -481,7 +441,7 @@ void SoLesbian::HandleTraining(sGirl& girl, bool is_night) {
     progress += uniform(trait / 2, trait + trait / 2);
 
     if (girl.has_active_trait(traits::BROKEN_WILL))    {
-        add_text("broken-will") << "\n";
+        add_line("broken-will");
     }
 
     //    if (girl.check_virginity())                {}
@@ -501,20 +461,12 @@ void SoLesbian::HandleTraining(sGirl& girl, bool is_night) {
     girl.tittysex( uniform(-1, -5) );
 }
 
-void SoLesbian::OnComplete(sGirl& girl) {
+void SoLesbian::OnComplete(sGirl& girl) const {
     add_text("complete");
     girl.gain_trait(traits::LESBIAN);    girl.lose_trait(traits::BISEXUAL);    girl.lose_trait(traits::STRAIGHT);
 }
 
-class SoBi : public TrainingJob {
-public:
-    SoBi() : TrainingJob(JOB_SO_BISEXUAL, "SoBi.xml", traits::BISEXUAL, EImagePresets::LESBIAN) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-};
-
-void SoBi::HandleTraining(sGirl& girl, bool is_night) {
+void SoBi::HandleTraining(sGirl& girl, bool is_night) const {
     int progress = 0;
     if (girl.has_active_trait(traits::STRAIGHT))
     {
@@ -548,7 +500,7 @@ void SoBi::HandleTraining(sGirl& girl, bool is_night) {
     int trait = girl.get_trait_modifier(traits::modifiers::SO_BI);
     progress += uniform(trait / 2, trait + trait / 2);
     if (girl.has_active_trait(traits::BROKEN_WILL))    {
-        add_text("broken-will") << "\n";
+        add_line("broken-will");
     }
 
     if (!girl.is_sex_type_allowed(SKILL_LESBIAN))        progress -= uniform(5, 15);
@@ -566,22 +518,12 @@ void SoBi::HandleTraining(sGirl& girl, bool is_night) {
     girl.tittysex( uniform(0, 3) );
 }
 
-void SoBi::OnComplete(sGirl& girl) {
-    add_text("complete") << "\n";
+void SoBi::OnComplete(sGirl& girl) const {
+    add_line("complete");
     girl.lose_trait(traits::LESBIAN);    girl.gain_trait(traits::BISEXUAL);    girl.lose_trait(traits::STRAIGHT);
 }
 
-class FakeOrg : public TrainingJob {
-public:
-    FakeOrg() : TrainingJob(JOB_FAKEORGASM, "FakeOrgasm.xml", traits::FAKE_ORGASM_EXPERT, EImagePresets::MASTURBATE) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-    void OnNoProgress(sGirl& girl) override;
-    void OnRegularProgress(sGirl& girl, bool is_night) override;
-};
-
-void FakeOrg::HandleTraining(sGirl& girl, bool is_night) {
+void FakeOrg::HandleTraining(sGirl& girl, bool is_night) const {
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.performance() / 5;
@@ -592,7 +534,7 @@ void FakeOrg::HandleTraining(sGirl& girl, bool is_night) {
 
     int trait = girl.get_trait_modifier(traits::modifiers::FAKE_ORGASM);
     progress += uniform(trait / 2, trait + trait / 2);
-    if (girl.has_active_trait(traits::BROKEN_WILL))    { add_text("broken-will") << "\n"; }
+    if (girl.has_active_trait(traits::BROKEN_WILL))    { add_line("broken-will"); }
 
     if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(5, 15);
 
@@ -610,19 +552,20 @@ void FakeOrg::HandleTraining(sGirl& girl, bool is_night) {
     girl.spirit( uniform(-5, 5) );
 }
 
-void FakeOrg::OnNoProgress(sGirl& girl) {
-    add_text("no-progress") << "\n";
-    Tiredness += uniform(5, 15);
+void FakeOrg::OnNoProgress(sGirl& girl) const {
+    add_line("no-progress");
+    tiredness() += uniform(5, 15);
 }
 
-void FakeOrg::OnComplete(sGirl& girl) {
-    add_text("complete") << "\n";
+void FakeOrg::OnComplete(sGirl& girl) const {
+    add_line("complete");
     girl.lose_trait(traits::SLOW_ORGASMS);    girl.lose_trait(traits::FAST_ORGASMS);    girl.gain_trait(traits::FAKE_ORGASM_EXPERT);
 }
 
-void FakeOrg::OnRegularProgress(sGirl& girl, bool is_night) {
+void FakeOrg::OnRegularProgress(sGirl& girl, bool is_night) const {
+    auto& ss = active_shift().EventMessage;
     int status = girl.get_treatment_progress();
-    if (status >= 100)    Tiredness -= (status - 100) / 2;    // her last day so she rested a bit
+    if (status >= 100)    tiredness() -= (status - 100) / 2;    // her last day so she rested a bit
     else                  ss << "Training in progress (" << status << "%).\n \n";
     if (status < 25)      ss << "She has no idea what she sounds like during sex but it ain't orgasmic.";
     else if (status < 50) ss << "When she realizes she should finish, you can see it click in her mind and easily notice her changing things up.";
@@ -642,13 +585,4 @@ void FakeOrg::OnRegularProgress(sGirl& girl, bool is_night) {
         if (status < 50)    ss << "we have a lot more to do tomorrow (and probably the next few weeks).";
         else                ss << "we'll pick things up in the morning.";
     }
-}
-
-void RegisterTrainingJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<SoStraight>());
-    mgr.register_job(std::make_unique<SoLesbian>());
-    mgr.register_job(std::make_unique<SoBi>());
-    mgr.register_job(std::make_unique<FakeOrg>());
-    mgr.register_job(std::make_unique<PracticeJob>());
-    mgr.register_job(std::make_unique<MistressJob>());
 }

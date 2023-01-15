@@ -58,7 +58,6 @@ void RegisterClinicJobs(cJobManager& mgr);
 void RegisterFilmCrewJobs(cJobManager& mgr);
 void RegisterFilmingJobs(cJobManager& mgr);
 void RegisterOtherStudioJobs(cJobManager& mgr);
-void RegisterTrainingJobs(cJobManager& mgr);
 void RegisterArenaJobs(cJobManager& mgr);
 void RegisterCleaningJobs(cJobManager& mgr);
 void RegisterHouseJobs(cJobManager& mgr);
@@ -174,7 +173,6 @@ void cJobManager::setup()
     //JobFunc[JOB_PONYGIRL] = &WorkFarmPonyGirl;
 
     JobFilters[JOBFILTER_HOUSETTRAINING] = sJobFilter{"HouseTraining", "Sex Training", "Training the girl in sexual matters."};
-    register_filter(JOBFILTER_HOUSETTRAINING, JOB_MISTRESS, JOB_HOUSEPET, {});
 
     RegisterCraftingJobs(*this);
 //    RegisterSurgeryJobs(*this);
@@ -187,10 +185,9 @@ void cJobManager::setup()
 //    RegisterBarJobs(*this);
 //    RegisterFarmJobs(*this);
 //    RegisterClinicJobs(*this);
-//    RegisterTrainingJobs(*this);
     RegisterArenaJobs(*this);
     RegisterCleaningJobs(*this);
- //   RegisterHouseJobs(*this);
+    RegisterHouseJobs(*this);
     RegisterCentreJobs(*this);
     RegisterFreeTimeJob(*this);
 }
@@ -203,12 +200,6 @@ sCustomer cJobManager::GetMiscCustomer(cBuilding& brothel)
 }
 */
 // ----- Job related
-
-bool cJobManager::FullTimeJob(JOBS Job)
-{
-    assert(m_OOPJobs.at(Job) != nullptr);
-    return m_OOPJobs.at(Job)->get_info().FullTime;
-}
 
 bool cJobManager::is_job_Paid_Player(JOBS Job)
 {
@@ -605,7 +596,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     if (JobID != OldJobID)
     {
         // if old job was full time but new job is not, switch leftover day or night job back to resting
-        if (!fulltime && FullTimeJob(OldJobID) && !FullTimeJob(JobID))        // `J` greatly simplified the check
+        if (!fulltime && is_full_time(OldJobID) && !is_full_time(JobID))        // `J` greatly simplified the check
             (Day0Night1 ? Girl.m_DayJob = JOB_RESTING : Girl.m_NightJob = JOB_RESTING);
 
     }
@@ -1392,7 +1383,7 @@ double calc_pilfering(sGirl& girl)
     return factor;    // otherwise, she stays honest (aside from addict factored-in earlier)
 }
 
-sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift)
+sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
 {
     sPaymentData retval{0, 0, 0, 0, 0};
     // no pay or tips, no need to continue
@@ -1473,6 +1464,19 @@ void cJobManager::handle_main_shift(sGirlShiftData& shift) {
     assert(m_OOPJobs[job_id] != nullptr);
     m_OOPJobs[job_id]->Work(shift);
 }
+
+
+void cJobManager::handle_post_shift(sGirlShiftData& shift) {
+    auto job_id = shift.Job;
+    if(m_OOPJobs[job_id] != nullptr) {
+        auto ctx{g_Game->push_error_context("post@job: " + get_job_name(job_id))};
+        g_LogFile.info("shift", "Running post-shift handler for girl '", shift.girl().FullName(), "' with job '", get_job_name(job_id), "'.");
+        m_OOPJobs[job_id]->PostShift(shift);
+    } else {
+        throw std::runtime_error("Invalid job id " + std::to_string(job_id));
+    }
+}
+
 
 
 // `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >> cClinic.cpp >> is_Surgery_Job

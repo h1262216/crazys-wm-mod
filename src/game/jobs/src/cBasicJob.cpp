@@ -25,6 +25,7 @@
 #include "CLog.h"
 #include "utils/string.hpp"
 #include "IGame.h"
+#include "cJobManager.h"
 
 double cBasicJob::GetPerformance(const sGirl& girl, bool estimate) const {
     if(get_info().FreeOnly && girl.is_slave()) return -1000;
@@ -101,4 +102,32 @@ int cBasicJob::get_performance_class(int performance) {
     else if (performance >= 100) { return 2; }
     else if (performance >= 70) { return 1; }
     else { return 0;}
+}
+
+void cBasicJob::on_post_shift(sGirlShiftData& shift) const {
+    if (shift.Refused == ECheckWorkResult::REFUSES) {
+        //brothel->m_Fame -= girl.fame();
+        shift.girl().AddMessage("${name} refused to work so she made no money.", EImageBaseType::PROFILE, EVENT_SUMMARY);
+    } else {
+        // TODO check that there is no partial event left.
+        auto& ss = shift.EventMessage;
+        shift.EventImage = EImageBaseType::PROFILE;
+        shift.EventType = EEventType::EVENT_SUMMARY;
+        //brothel->m_Fame += girl.fame();
+        auto money_data = job_manager().CalculatePay(shift);
+        ss << "${name} made " << money_data.Earnings;
+        if(money_data.Tips != 0) {
+            ss << " and " << money_data.Tips << " in tips. ";
+        } else {
+            ss << " gold. ";
+        }
+        if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
+        ss << "In total, she got " << money_data.GirlGets << " gold and you ";
+        if(money_data.PlayerGets > 0) {
+            ss << "got " << money_data.PlayerGets << " gold.";
+        } else {
+            ss << "spent " << -money_data.PlayerGets << " gold.";
+        }
+        generate_event();
+    }
 }

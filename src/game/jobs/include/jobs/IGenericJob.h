@@ -23,6 +23,7 @@
 #include "Constants.h"
 #include "images/sImageSpec.h"
 #include <vector>
+#include "jobs.h"
 
 class sGirl;
 class IBuildingShift;
@@ -44,10 +45,8 @@ struct sJobInfo {
     std::string ShortName;
     std::string Description;
 
-    bool FullTime = false;
+    EJobShift Shift = EJobShift::ANY;
     bool FreeOnly = false;
-    bool DayOnly = false;
-    bool NightOnly = false;
     bool IsFightingJob = false;
     EJobPhase Phase = EJobPhase::MAIN;
 

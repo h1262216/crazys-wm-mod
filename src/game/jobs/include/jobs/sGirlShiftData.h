@@ -24,18 +24,13 @@
 #include <array>
 #include <sstream>
 #include "images/sImageSpec.h"
+#include "jobs.h"
 
 class sGirl;
 class IBuildingShift;
 class cRng;
 
 constexpr const int NUM_JOB_VARIABLES = 5;
-
-enum class ECheckWorkResult {
-    REFUSES,
-    ACCEPTS,
-    IMPOSSIBLE
-};
 
 struct sGirlShiftData {
     sGirlShiftData(sGirl* girl, IBuildingShift* building, JOBS job, bool shift);

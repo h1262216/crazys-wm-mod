@@ -4,6 +4,10 @@
         You will make sure she only likes having sex with men.
     </Description>
 
+    <Config DefaultImage="Sex">
+        <Filter>HouseTraining</Filter>
+    </Config>
+
     <Messages>
         <Message Name="training">
             <Text>You proceed to change ${name}'s sexual orientation to Straight.</Text>

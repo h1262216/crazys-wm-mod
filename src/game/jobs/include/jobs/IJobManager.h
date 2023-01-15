@@ -23,10 +23,7 @@
 #include <memory>
 #include <vector>
 #include "Constants.h"
-
-class IGenericJob;
-struct sJobInfo;
-struct sGirlShiftData;
+#include "jobs.h"
 
 struct sJobFilter {
     std::string Name;
@@ -35,6 +32,8 @@ struct sJobFilter {
     std::vector<JOBS> Contents;
 };
 
+struct sGirl;
+
 class IJobManager {
 public:
     IJobManager() = default;
@@ -42,12 +41,16 @@ public:
 
     virtual const IGenericJob* get_job(JOBS job) const = 0;
     const sJobInfo& get_job_info(JOBS job) const;
+
+    // simplified job info queries
     const std::string& get_job_name(JOBS job) const;
     const std::string& get_job_brief(JOBS job) const;
+    bool is_full_time(JOBS job) const;
 
     /// does the pre-shift setup part of the job processing
     virtual void handle_pre_shift(sGirlShiftData& shift) = 0;
     virtual void handle_main_shift(sGirlShiftData& shift) = 0;
+    virtual void handle_post_shift(sGirlShiftData& shift) = 0;
 
     virtual void setup() = 0;
 

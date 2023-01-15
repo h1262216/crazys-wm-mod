@@ -99,4 +99,8 @@ void sHouse::auto_assign_job(sGirl& target, std::stringstream& message, bool is_
 void RegisterHouseJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<PracticeJob>());
     mgr.register_job(std::make_unique<MistressJob>());
+    mgr.register_job(std::make_unique<SoBi>());
+    mgr.register_job(std::make_unique<SoStraight>());
+    mgr.register_job(std::make_unique<SoLesbian>());
+    mgr.register_job(std::make_unique<FakeOrg>());
 }

@@ -17,27 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "IJobManager.h"
-#include "IGenericJob.h"
-#include <algorithm>
+#ifndef WM_JOBS_H
+#define WM_JOBS_H
 
-const sJobInfo& IJobManager::get_job_info(JOBS job) const {
-    return get_job(job)->get_info();
-}
+// forward declarations
+class IGenericJob;
+class IJobManager;
+class sGirlShiftData;
+struct sJobInfo;
 
-const std::string& IJobManager::get_job_name(JOBS job) const {
-    return get_job_info(job).Name;
-}
+// enums
+enum class EJobShift {
+    DAY, NIGHT, FULL, ANY
+};
 
-const std::string& IJobManager::get_job_brief(JOBS job) const {
-    return get_job_info(job).ShortName;
-}
+enum class ECheckWorkResult {
+    REFUSES,
+    ACCEPTS,
+    IMPOSSIBLE
+};
 
-bool IJobManager::is_full_time(JOBS job) const {
-    return get_job_info(job).Shift == EJobShift::FULL;
-}
-
-bool IJobManager::is_in_filter(EJobFilter filter, JOBS job) const {
-    auto& filter_contents = get_filter(filter).Contents;
-    return std::count(begin(filter_contents), end(filter_contents), job) > 0;
-}
+#endif //WM_JOBS_H

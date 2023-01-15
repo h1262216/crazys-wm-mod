@@ -29,7 +29,7 @@
 
 ITreatmentJob::ITreatmentJob(JOBS job, std::string xml_file) : cGenericJob(job, std::move(xml_file), EJobClass::TREATMENT)
 {
-    m_Info.FullTime = true;
+    m_Info.Shift = EJobShift::FULL;
     m_Info.Phase = EJobPhase::LATE;
 }
 

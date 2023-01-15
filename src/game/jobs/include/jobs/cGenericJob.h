@@ -25,7 +25,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "buildings/sGirlShiftData.h"
+#include "jobs/sGirlShiftData.h"
 #include "buildings/IBuildingShift.h"
 
 class ITextRepository;
@@ -100,6 +100,8 @@ protected:
     virtual void on_pre_shift(sGirlShiftData& shift) const;
     virtual void on_post_shift(sGirlShiftData& shift) const;
     virtual sJobValidResult on_is_valid(const sGirl& girl, bool night_shift) const;
+
+    const cJobManager& job_manager() const;
 private:
     virtual void InitWork(sGirlShiftData& shift) {};
     virtual void DoWork(sGirlShiftData& shift) const = 0;

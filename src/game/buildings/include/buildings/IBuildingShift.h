@@ -21,7 +21,7 @@
 #define WM_IBUILDINGSHIFT_H
 
 #include <string>
-#include "sGirlShiftData.h"
+#include "jobs/sGirlShiftData.h"
 
 class sCustomer;
 class cGold;

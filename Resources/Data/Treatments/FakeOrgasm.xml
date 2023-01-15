@@ -4,6 +4,10 @@
         She will be taught how to fake her orgasms.
     </Description>
 
+    <Config DefaultImage="Masturbate">
+        <Filter>HouseTraining</Filter>
+    </Config>
+
     <Messages>
         <Message Name="training">
             <Text>${name} is trained to fake her orgasms.</Text>

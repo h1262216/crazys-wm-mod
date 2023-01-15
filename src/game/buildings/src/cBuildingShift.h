@@ -81,7 +81,6 @@ private:
     void debug_resources();
 
     void handle_resting_girl(sGirlShiftData& shift);
-    void make_summary_message(sGirlShiftData& shift);
 
     /// applies `handler` to any non-dead girl
     void apply_to_girls(const std::function<void(sGirl&)>& handler);
