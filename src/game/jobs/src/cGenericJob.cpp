@@ -91,6 +91,12 @@ void cGenericJob::PreShift(sGirlShiftData& shift) {
     m_ActiveData = nullptr;
 }
 
+void cGenericJob::PostShift(sGirlShiftData& shift) {
+    m_ActiveData = &shift;
+    on_post_shift(shift);
+    m_ActiveData = nullptr;
+}
+
 
 int cGenericJob::d100() const {
     return rng().d100();
@@ -350,4 +356,8 @@ int cGenericJob::FindVariable(const std::string& name) const {
 void cGenericJob::generate_event() const {
     active_girl().AddMessage(active_shift().EventMessage.str(), active_shift().EventImage, active_shift().EventType);
     active_shift().EventMessage.str("");
+}
+
+void cGenericJob::on_post_shift(sGirlShiftData& shift) const {
+
 }

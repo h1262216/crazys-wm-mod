@@ -80,28 +80,25 @@ void cBasicJob::RegisterVariable(std::string name, sImagePreset& value) {
     m_Interface->RegisterVariable(std::move(name), value);
 }
 */
-ECheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) const {
+bool cBasicJob::check_refuse_action(sGirl& girl, Action_Types action) const {
     if (girl.disobey_check(action, job()))
     {
         add_text("refuse");
-        return ECheckWorkResult::REFUSES;
+        return true;
     }
-    return ECheckWorkResult::ACCEPTS;
+    return false;
 }
 
 void cBasicJob::add_performance_text() const {
-    if (active_shift().Performance >= 245) {
-        add_text("work.perfect");
-    } else if (active_shift().Performance >= 185) {
-        add_text("work.great");
-    } else if (active_shift().Performance >= 145) {
-        add_text("work.good");
-    } else if (active_shift().Performance >= 100) {
-        add_text("work.ok");
-    } else if (active_shift().Performance >= 70) {
-        add_text("work.bad");
-    } else {
-        add_text("work.worst");
-    }
+    add_text(performance_based_lookup("work.worst", "work.bad", "work.ok", "work.good", "work.great", "work.perfect"));
     add_literal("\n\n");
+}
+
+int cBasicJob::get_performance_class(int performance) {
+    if (performance >= 245) { return 5; }
+    else if (performance >= 185) { return 4; }
+    else if (performance >= 145) { return 3; }
+    else if (performance >= 100) { return 2; }
+    else if (performance >= 70) { return 1; }
+    else { return 0;}
 }

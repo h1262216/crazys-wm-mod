@@ -50,6 +50,7 @@ public:
 
     void Work(sGirlShiftData& shift) final;
     void PreShift(sGirlShiftData& shift) final;
+    void PostShift(sGirlShiftData& shift) final;
 
     sJobValidResult IsJobValid(const sGirl& girl, bool night_shift) const override;
 
@@ -97,6 +98,7 @@ protected:
     int FindVariable(const std::string& name) const;
 
     virtual void on_pre_shift(sGirlShiftData& shift) const;
+    virtual void on_post_shift(sGirlShiftData& shift) const;
     virtual sJobValidResult on_is_valid(const sGirl& girl, bool night_shift) const;
 private:
     virtual void InitWork(sGirlShiftData& shift) {};

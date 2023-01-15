@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2019-2022, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -95,6 +95,9 @@ public:
 
     /// Lets the girl do the job
     virtual void Work(sGirlShiftData& shift) = 0;
+
+    /// Handles stuff after the actual work is done, e.g. generating a summary message
+    virtual void PostShift(sGirlShiftData& shift) = 0;
 
     virtual void HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night, cRng& rng) const {};
     virtual void HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const {};

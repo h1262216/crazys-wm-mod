@@ -111,15 +111,6 @@ void cSimpleJob::InitWork(sGirlShiftData& shift) {
     m_Enjoyment = 0;
 }
 
-int cSimpleJob::get_performance_class(int performance) {
-    if (performance >= 245) { return 5; }
-    else if (performance >= 185) { return 4; }
-    else if (performance >= 145) { return 3; }
-    else if (performance >= 100) { return 2; }
-    else if (performance >= 70) { return 1; }
-    else { return 0;}
-}
-
 bool cSimpleJob::CheckRefuseWork(sGirl& girl) const {
-    return SimpleRefusalCheck(girl, m_Data.Action) == ECheckWorkResult::REFUSES;
+    return check_refuse_action(girl, m_Data.Action);
 }

@@ -49,22 +49,6 @@ protected:
     void load_from_xml_callback(const tinyxml2::XMLElement& job_element) override;
     void shift_enjoyment() const;
 
-    /// Returns a number between 0 and 5 (inclusive) that classifies the given performance, from worst (0) to perfect (5)
-    static int get_performance_class(int performance);
-
-    template<class T>
-    T performance_based_lookup(T worst, T bad, T ok, T good, T great, T perfect) const {
-        switch(get_performance_class(active_shift().Performance)) {
-            case 0: return worst;
-            case 1: return bad;
-            case 2: return ok;
-            case 3: return good;
-            case 4: return great;
-            case 5: return perfect;
-            default: __builtin_unreachable();
-        }
-    }
-
     mutable int m_Enjoyment;
 };
 
