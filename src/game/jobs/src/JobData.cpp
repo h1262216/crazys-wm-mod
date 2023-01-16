@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2020-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,8 @@
 #include "cGirls.h"
 #include "IGame.h"
 #include "traits/ITraitsManager.h"
+#include "traits/ITraitSpec.h"
+#include "traits/ITraitsCollection.h"
 
 extern cRng g_Dice;
 
@@ -132,22 +134,76 @@ void cJobGains::apply(sGirl& girl, int performance) const {
     gain_traits(girl, performance);
 }
 
+namespace {
+    int lin_factor(int value, int lower, int upper) {
+        if(value < lower)
+            return 0;
+        if(value < upper) {
+            return std::min(10, (100 * (value - lower)) / (upper - lower));
+        }
+        return 100;
+    }
+}
+
 void cJobGains::gain_traits(sGirl& girl, int performance) const {
     for(auto& trait : TraitChanges) {
-        if(trait.PerformanceRequirement > performance)
-            continue;
+        int amount = 0;
+        for(auto& change : trait.ChangeAmounts) {
+            if(!g_Dice.percent(change.Chance))
+                continue;
+            int base = change.BaseAmount;
+            int factor = lin_factor(performance, change.PerformanceRequirementMin, change.PerformanceRequirementMax);
 
-        if(trait.Chance < 100 && !g_Dice.percent(trait.Chance))
+            for(auto& cond : change.Conditions) {
+                int value = girl.get_attribute(cond.Attribute);
+                int new_factor = lin_factor(value, cond.LowerBound, cond.UpperBound);
+                factor = std::min(factor, new_factor);
+            }
+
+            amount += (factor * base) / 100;
+        }
+        if(amount <= 0)
             continue;
 
         if(trait.Gain) {
-            cGirls::PossiblyGainNewTrait(girl, trait.TraitName, trait.Threshold, trait.Action,
-                                         trait.Message, false, trait.EventType);
+            // only gain traits that are not currently blocked.
+            if(!girl.raw_traits().is_trait_blocked(trait.TraitName.c_str())) {
+                cGirls::PossiblyGainNewTrait(girl, trait.TraitName, amount, trait.Message, EImageBaseType::PROFILE,
+                                             trait.EventType);
+            }
         } else {
-            cGirls::PossiblyLoseExistingTrait(girl, trait.TraitName, trait.Threshold, trait.Action,
-                                              trait.Message, false);
+            cGirls::PossiblyLoseExistingTrait(girl, trait.TraitName, amount, trait.Message, EImageBaseType::PROFILE, trait.EventType);
         }
     }
+}
+
+namespace {
+    sTraitChange::sChangeAmount load_change_amount(const tinyxml2::XMLElement& element) {
+        sTraitChange::sChangeAmount amount;
+        amount.BaseAmount = GetIntAttribute(element, "Value");
+        amount.Chance = element.IntAttribute("Chance", 100);
+
+        for(auto& cond_el : IterateChildElements(element, "TraitChangeCondition")) {
+            int lower = -1;
+            int upper = -1;
+            if(cond_el.Attribute("Value")) {
+                int val = GetIntAttribute(cond_el, "Value");
+                lower = val;
+                upper = val;
+            } else {
+                lower = GetIntAttribute(cond_el, "Lower");
+                upper = GetIntAttribute(cond_el, "Upper");
+            }
+            std::string what = GetStringAttribute(cond_el, "What");
+            if(what == "JobPerformance") {
+                amount.PerformanceRequirementMin = lower;
+                amount.PerformanceRequirementMax = upper;
+            } else {
+                amount.Conditions.push_back(sTraitChange::sAttributeCondition{get_stat_skill_id(what), lower, upper});
+            }
+        }
+        return amount;
+    };
 }
 
 void cJobGains::load(const tinyxml2::XMLElement& source) {
@@ -156,18 +212,21 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
 
     auto load_trait_change = [&](const tinyxml2::XMLElement& element, bool gain) {
         std::string trait = GetStringAttribute(element, "Trait");
-        int threshold = GetIntAttribute(element, "Threshold", -100, 100);
-        int performance = element.IntAttribute("MinPerformance", -1000);
-        int chance = element.IntAttribute("Chance", 100);
-        Action_Types action = get_action_id(GetStringAttribute(element, "Action"));
-        const char* msg_text = element.GetText();
+        auto* msg_el = element.FirstChildElement("Text");
         std::string message = (gain ? "${name} has gained the trait " : "${name} has lost the trait ") + trait;
-        if(msg_text) {
+        if(msg_el) {
             // TODO trim
-            message = msg_text;
+            message = msg_el->GetText();
         }
-        EEventType event_type = (EEventType)element.IntAttribute("Event", EVENT_GOODNEWS);
-        TraitChanges.push_back({gain, trait, threshold, action, message, event_type, performance, chance});
+
+        auto event_type = (EEventType)element.IntAttribute("Event", EVENT_GOODNEWS);
+        TraitChanges.emplace_back(gain, trait, message, event_type);
+        for(auto& amount_el : IterateChildElements(element, "TraitChangeAmount")) {
+            TraitChanges.back().ChangeAmounts.push_back(load_change_amount(amount_el));
+        }
+        if(TraitChanges.back().ChangeAmounts.empty()) {
+            throw std::runtime_error("Missing <Amount> for trait change element");
+        }
     };
 
     for(const auto& trait_change : IterateChildElements(source, "GainTrait")) {

@@ -290,11 +290,6 @@ bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
 
     apply_gains(girl, m_Performance);
 
-    if (chance(25) && girl.strength() >= 60 && girl.combat() >= girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, "Strong", 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", is_night);
-    }
-
     return false;
 }
 
@@ -416,16 +411,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     ss << "${name} drew in " << m_Performance << " people to watch her and you earned " << earned << " from it.";
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
-
-    //gain traits
-    if (chance(25) && girl.strength() >= 65 && girl.combat() > girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::STRONG, 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", is_night);
-    }
-    if (chance(25) && girl.combat() >= 60 && girl.combat() > girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::BRAWLER, 60, ACTION_COMBAT, "${name} has become pretty good at fighting.", is_night);
-    }
+    apply_gains(girl, m_Performance);
 
 #pragma endregion
     return false;

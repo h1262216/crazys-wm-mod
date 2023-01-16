@@ -29,6 +29,19 @@
         <Skill Name="Herbalism" Weight="3"/>
         <Skill Name="Cooking" Weight="1"/>
         <Skill Name="Magic" Weight="1"/>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>It took her spilling hundreds of vials, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Mixologist">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>${name} has become an expert at Mixing potions.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

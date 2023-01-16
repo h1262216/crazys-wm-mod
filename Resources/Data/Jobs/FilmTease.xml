@@ -52,18 +52,39 @@
         <Skill Name="Performance" Weight="2" />
         <Stat Name="Charisma" Weight="1" />
         <Skill Name="Strip" Weight="1" Max="75"/>
-        <GainTrait Trait="Charming" Threshold="80" Action="ACTRESS">
-            Flirting and seducing on film has made her Charming.
-        </GainTrait>
-        <GainTrait Trait="Actress" Threshold="80" Action="WORKSTRIP">
-            All this flirting and teasing with a camera in a studio has improved her acting skills.
-        </GainTrait>
-        <GainTrait Trait="Sexy Air" Threshold="80" Action="WORKSTRIP" MinPerformance="140" Chance="25">
-            ${name} has been having to be sexy for so long she now reeks of sexiness.
+
+        <GainTrait Trait="Charming" >
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text> Flirting and seducing on film has made her Charming.</Text>
         </GainTrait>
 
-        <LoseTrait Trait="Chaste" Threshold="20" Action="PORNSTAR">
-            She has been filmed having sex so often that she is no longer Chaste.
+        <GainTrait Trait="Actress" >
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>All this flirting and teasing with a camera in a studio has improved her Acting skills.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="50" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>${name}'s flirting is Idolized by her countless fans.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Sexy Air" >
+            <TraitChangeAmount Value="40" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has been having to be sexy for so long she now reeks Sexiness.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="25" Chance="25" />
+            <Text>Flirting with the camera has helped ${name} overcome her Chasteness.</Text>
         </LoseTrait>
     </Gains>
 

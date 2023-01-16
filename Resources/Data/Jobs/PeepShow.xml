@@ -17,11 +17,30 @@
     <Gains XP="20" Skill="3">
         <Skill Name="Strip" Weight="1" Max="50" />
         <Skill Name="Performance" Weight="1" Max="50"/>
-        <LoseTrait Trait="Nervous" Threshold="30" Action="WORKSTRIP">
-            ${name} has had so many people see her naked she is no longer nervous about anything.
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} has had so many people see her naked she is no longer Nervous about anything.</Text>
         </LoseTrait>
-        <GainTrait Trait="Sexy Air" Threshold="80" Action="WORKSTRIP" Chance="25" MinPerformance="140">
-            ${name} has been having to be sexy for so long she now reeks sexiness.
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+            </TraitChangeAmount>
+            <Text>${name} has had so many people see her naked she is no longer Shy.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="80" Chance="50" />
+            <Text>${name} is getting used to people seeing her naked, and is no longer Chaste.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Sexy Air">
+            <TraitChangeAmount Value="20" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has been stripping and having to be sexy for so long she now reeks of Sexyness.</Text>
         </GainTrait>
     </Gains>
 

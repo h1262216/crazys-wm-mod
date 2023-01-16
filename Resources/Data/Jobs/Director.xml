@@ -15,6 +15,20 @@
         <Stat Name="Intelligence" Weight="1" Max="50" />
         <Stat Name="Charisma" Weight="1" Max="50"/>
         <Stat Name="Confidence" Weight="1" Min="20" />
+
+        <GainTrait Trait="Director" >
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>${name} has directed so many movies, she is now an accomplished Director.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Meek">
+            <TraitChangeAmount Value="100" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="50" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Having to use her authority as a Director, ${name} has become less Meek.</Text>
+        </LoseTrait>
     </Gains>
 
     <Messages>

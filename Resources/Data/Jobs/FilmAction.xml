@@ -45,26 +45,70 @@
         <Stat Name="Agility" Weight="2" Max="50" />
         <Stat Name="Confidence" Weight="1" Max="33" />
 
-        <GainTrait Trait="Brawler" Threshold="60" Action="COMBAT" Chance="50" MinPerformance="140" >
-            She has performed in enough fight scenes that she has become quite a Brawler.
+        <GainTrait Trait="Brawler" >
+            <TraitChangeAmount Value="40" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="140" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has performed in enough fight scenes that she has become quite a Brawler.</Text>
         </GainTrait>
-        <GainTrait Trait="Tough" Threshold="70" Action="COMBAT" Chance="50" MinPerformance="160" >
-            She has performed in enough fight scenes that she has become quite Tough.
+
+        <GainTrait Trait="Tough" >
+            <TraitChangeAmount Value="40" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+                <TraitChangeCondition What="Strength" Lower="40" Upper="60" />
+            </TraitChangeAmount>
+            <Text>She has performed in enough fight scenes that she has become quite Tough.</Text>
         </GainTrait>
-        <GainTrait Trait="Agile" Threshold="80" Action="COMBAT" Chance="50" MinPerformance="180" >
-            She has performed so many martial arts scenes that she is becoming agile.
+
+        <GainTrait Trait="Agile" >
+            <TraitChangeAmount Value="40" Chance="15">
+                <TraitChangeCondition What="JobPerformance" Lower="160" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has performed so many martial arts scenes that she is becoming agile.</Text>
         </GainTrait>
-        <GainTrait Trait="Fleet of Foot" Threshold="90" Action="COMBAT" Chance="50" MinPerformance="180" >
-            She has performed so many action scenes that she has become fast on her feet.
+
+        <GainTrait Trait="Fleet of Foot" >
+            <TraitChangeAmount Value="40" Chance="15">
+                <TraitChangeCondition What="JobPerformance" Lower="160" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has performed so many action scenes that she has become fast on her feet.</Text>
         </GainTrait>
-        <GainTrait Trait="Charismatic" Threshold="60" Action="ACTRESS" Chance="50" MinPerformance="140" >
-            She has performed in enough movie scenes that she has become Charismatic.
+
+        <GainTrait Trait="Charismatic" >
+            <TraitChangeAmount Value="40" Chance="40">
+                <TraitChangeCondition What="JobPerformance" Lower="140" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has performed in enough movie scenes that she has become Charismatic.</Text>
         </GainTrait>
-        <GainTrait Trait="Actress" Threshold="70" Action="ACTRESS" Chance="50" MinPerformance="160" >
-            She has performed in enough movie scenes that she has become a good Actress.
+
+        <GainTrait Trait="Actress" >
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has performed in enough movie scenes that she has become a good Actress.</Text>
         </GainTrait>
-        <GainTrait Trait="Sexy Air" Threshold="80" Action="ACTRESS" Chance="50" MinPerformance="180" >
-            ${name} has been having to be sexy for so long she now reeks sexiness.
+
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="75" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>Action hero ${name} has become an Idol, adored by her fans and followers.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Cool Person" >
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Agility" Lower="33" Upper="66" />
+            </TraitChangeAmount>
+            <Text>Performing in action scenes makes ${name} a really Cool Person.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Sexy Air" >
+            <TraitChangeAmount Value="40" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has been having to be sexy for so long she now reeks Sexiness.</Text>
         </GainTrait>
     </Gains>
 

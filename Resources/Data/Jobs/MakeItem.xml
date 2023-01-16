@@ -14,6 +14,13 @@
     <Gains XP="10" Skill="3">
         <Skill Name="Crafting" Weight="3" />
         <Skill Name="Service" Weight="1" />
+
+        <GainTrait Trait="Handyman">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Regular work making items has turned ${name} into a capable Handyman.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

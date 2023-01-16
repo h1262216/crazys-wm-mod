@@ -10,6 +10,8 @@
         <Factor Stat="Agility" Weight="1"/>
         <Factor Skill="Magic" Weight="2"/>
         <Factor Skill="Service" Weight="1"/>
+
+        <Trait Name="Clumsy" Value="-50" />
     </Performance>
 
     <Gains XP="10" Skill="2">
@@ -17,6 +19,17 @@
         <Skill Name="Service" Weight="1" Max="50" />
         <Stat Name="Agility" Weight="1" Max="66" />
         <Stat Name="Confidence" Weight="1" />
+
+        <GainTrait Trait="Director" >
+            <!-- Really only preserving any progress -->
+            <TraitChangeAmount Value="1" Chance="50" />
+        </GainTrait>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="100" Chance="25" />
+            <Text>It took her ruining many pieces of equipment, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
     </Gains>
 
     <Messages>

@@ -32,20 +32,42 @@
         <Stat Name="Charisma" Weight="1" />
         <Stat Name="Confidence" Weight="1" />
         <Stat Name="Fame" Weight="1" />
-        <GainTrait Trait="Charismatic" Threshold="30" Action="WORKCUSTSERV">
-            ${name} has been selling long enough that she has learned to be more Charismatic.
+
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} has been selling long enough that she has learned to be more Charismatic.</Text>
         </GainTrait>
-        <GainTrait Trait="Psychic" Threshold="90" Action="WORKCUSTSERV">
-            ${name} has learned to size up the buyers so well that you'd almost think she was Psychic.
+
+        <GainTrait Trait="Psychic">
+            <TraitChangeAmount Value="100" Chance="10">
+                <TraitChangeCondition What="JobPerformance" Lower="180" Upper="220"/>
+            </TraitChangeAmount>
+            <Text>${name} has learned to size up the buyers so well that you'd almost think she was Psychic.</Text>
         </GainTrait>
-        <LoseTrait Trait="Shy" Threshold="50" Action="WORKCUSTSERV">
-            ${name} has been selling for so long now that her confidence is super high and she is no longer Shy.
+
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her Nervousness.</Text>
         </LoseTrait>
-        <LoseTrait Trait="Meek" Threshold="40" Action="WORKCUSTSERV">
-            ${name}'s having to work with customers every day has forced her to get over her Meekness.
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+            </TraitChangeAmount>
+            <Text>${name} has been selling for so long now that her confidence is super high, and she is no longer Shy.</Text>
         </LoseTrait>
-        <LoseTrait Trait="Nervous" Threshold="70" Action="WORKCUSTSERV">
-            ${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.
+
+        <LoseTrait Trait="Meek">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+            </TraitChangeAmount>
+            <Text>${name}'s having to work with customers every day has forced her to get over her Meekness.</Text>
         </LoseTrait>
     </Gains>
 

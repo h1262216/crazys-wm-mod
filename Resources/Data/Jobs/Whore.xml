@@ -6,14 +6,33 @@
     </Description>
 
     <Gains XP="0" Skill="0">
-        <GainTrait Trait="Good Kisser" Threshold="50" Action="SEX">
-            ${name} has had a lot of practice kissing and as such has become a Good Kisser.
+        <GainTrait Trait="Good Kisser">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has had a lot of practice kissing and as such has become a Good Kisser.</Text>
         </GainTrait>
-        <GainTrait Trait="Slut" Threshold="60" Action="SEX">
-            ${name} has turned into quite a slut.
+
+        <GainTrait Trait="Slut" Event="2">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="Libido" Lower="50" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has turned into quite a Slut.</Text>
         </GainTrait>
-        <GainTrait Trait="Nymphomaniac" Threshold="70" Action="SEX">
-            ${name} has been having so much sex she is now wanting sex all the time.
+
+        <GainTrait Trait="Nymphomaniac">
+            <TraitChangeAmount Value="30" Chance="25">
+                <TraitChangeCondition What="Libido" Lower="0" Upper="50"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="100" Chance="5">
+                <TraitChangeCondition What="Libido" Lower="80" Upper="90"/>
+            </TraitChangeAmount>
+            <Text>${name} has been having so much sex that she has become a total Nympho.</Text>
         </GainTrait>
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="80" Chance="50" />
+            <Text>She has been having sex for money so often that she is no longer Chaste.</Text>
+        </LoseTrait>
     </Gains>
 </Job>

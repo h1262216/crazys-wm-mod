@@ -971,11 +971,6 @@ bool cFarmJobBeastCapture::JobProcessing(sGirl& girl, cBuilding& brothel, bool i
 
     HandleGains(girl);
 
-    if (chance(25) && girl.strength() >= 60 && girl.combat() > girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, "Strong", 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", is_night);
-    }
-
     girl.AddMessage(ss.str(), m_ImageType, msgtype ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     return false;

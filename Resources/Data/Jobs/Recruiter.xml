@@ -15,14 +15,27 @@
         <Stat Name="Charisma" Weight="1" />
         <Stat Name="Intelligence" Weight="1" />
 
-        <GainTrait Trait="Charismatic" Threshold="60" Action="WORKRECRUIT">
-            Dealing with people all day has made ${name} more Charismatic.
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Dealing with people all day has made ${name} more Charismatic.</Text>
         </GainTrait>
-        <GainTrait Trait="Psychic" Threshold="80" Action="WORKRECRUIT">
-            ${name} has been doing this for so long it's as if she can read minds now.
+
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="50" Chance="10">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+            </TraitChangeAmount>
+            <Text> ${name} has been doing this for so long it's as if she can read minds now.</Text>
         </GainTrait>
-        <LoseTrait Trait="Nervous" Threshold="20" Action="WORKRECRUIT">
-            ${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.
+
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her Nervousness.</Text>
         </LoseTrait>
     </Gains>
 

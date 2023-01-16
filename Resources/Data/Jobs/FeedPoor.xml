@@ -15,6 +15,33 @@
         <Stat Name="Intelligence" Weight="1" Max="50"/>
         <Stat Name="Charisma" Weight="1" Max="50"/>
         <Skill Name="Service" Weight="1" Max="70"/>
+
+        <GainTrait Trait="Chef" >
+            <!-- Just so it doesn't decay -->
+            <TraitChangeAmount Value="1" Chance="50" />
+        </GainTrait>
+
+        <LoseTrait Trait="Merciless">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>Seeing the poor of the city every day, ${name} could not maintain her Merciless attitude.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Compassionate">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="120" Upper="220"/>
+            </TraitChangeAmount>
+            <Text>Helping so many people has made ${name} quite Compassionate.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Interacting with the poor of Crossgate on a regular basis,
+                ${name} seems to finally be getting over her Shyness.</Text>
+        </LoseTrait>
     </Gains>
 
     <Messages>

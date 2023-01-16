@@ -128,8 +128,8 @@ int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) {
     girl.medicine(uniform(0, skill));
     girl.service(uniform(2, skill + 2));
 
-    cGirls::PossiblyGainNewTrait(girl, traits::CHARISMATIC, 30, ACTION_WORKMATRON, "She has worked as a matron long enough that she has learned to be more Charismatic.", Day0Night1);
-    cGirls::PossiblyGainNewTrait(girl, traits::PSYCHIC, 60, ACTION_WORKMATRON, "She has learned to handle the girls so well that you'd almost think she was Psychic.", Day0Night1);
+    cGirls::PossiblyGainNewTrait(girl, traits::CHARISMATIC, 30, "She has worked as a matron long enough that she has learned to be more Charismatic.");
+    cGirls::PossiblyGainNewTrait(girl, traits::PSYCHIC, 15, "She has learned to handle the girls so well that you'd almost think she was Psychic.");
 
     return std::max(0, wages);
 }

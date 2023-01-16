@@ -1679,7 +1679,7 @@ void cBuilding::EndWeek() {
     g_Game->gold().brothel_accounts(m_Finance, m_id);
 
     m_Girls->apply([this](sGirl& girl){
-        cGirls::updateTemp(girl);            // update temp stuff
+        girl.DecayTemp();            // update temp stuff
         cGirls::EndDayGirls(*this, girl);
     });
 

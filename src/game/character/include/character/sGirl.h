@@ -298,6 +298,13 @@ public:
     JOBS get_active_treatment() const { return m_TreatmentProgress.Treatment; }
     void start_treatment(JOBS job) { m_TreatmentProgress.Treatment = job; m_TreatmentProgress.Progress = 0; }
     void finish_treatment() { m_TreatmentProgress.Treatment = JOBS::JOB_UNSET; m_TreatmentProgress.Progress = 0; }
+
+    // trait progress
+    int progress_trait(const std::string& trait_name, int amount);
+    void reset_trait_progress(const std::string& trait_name);
+    std::unordered_map<std::string, int> get_trait_progress() const;
+
+    void DecayTemp() override;
 private:
     int m_States = 0;                                // Holds the states the girl has
 
@@ -308,6 +315,13 @@ private:
         int Progress = 0;
     };
     sTreatmentProgress m_TreatmentProgress;
+
+    // gaining new traits
+    struct sTraitProgress {
+        int Progress = 0;
+        int Timer = 0;
+    };
+    std::unordered_map<std::string, sTraitProgress> m_PartialTraits;
 };
 
 #endif //CRAZYS_WM_MOD_SGIRL_HPP

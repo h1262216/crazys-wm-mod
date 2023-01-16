@@ -12,18 +12,31 @@
         <Mod>work.pornstar</Mod>
         <Trait Name="Lesbian" Value="-15" />
         <Trait Name="Clumsy" Value="-5" />
+        <Trait Name="No Hands" Value="-100" />
     </Performance>
 
     <Gains XP="15" Skill="3">
         <Skill Name="Performance" Weight="2" Max="75"/>
         <Skill Name="Handjob" Weight="1" Max="50"/>
 
-        <GainTrait Trait="Porn Star" Threshold="70" Action="PORNSTAR">
-            She has performed in enough sex scenes that she has become a well known Porn Star.
+        <GainTrait Trait="Porn Star" >
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has performed in enough sex scenes that she has become a well known Porn Star.</Text>
         </GainTrait>
 
-        <LoseTrait Trait="Chaste" Threshold="20" Action="PORNSTAR">
-            She has been filmed having sex so often that she is no longer Chaste.
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="15" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>Her on-camera handjobs have become legendary, ${name} truly is an Idol.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="50" Chance="50" />
+            <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
         </LoseTrait>
     </Gains>
 

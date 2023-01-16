@@ -13,15 +13,56 @@
     </Performance>
 
     <Gains XP="13" Skill="3">
-        <GainTrait Trait="Tough" Threshold="20" Action="WORKSECURITY">
-            She has become pretty Tough from all of the fights she's been in.
+        <GainTrait Trait="Tough">
+            <TraitChangeAmount Value="80" Chance="50">
+                <TraitChangeCondition What="Constitution" Lower="33" Upper="50" />
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has become pretty Tough from all the fights she's been in.</Text>
         </GainTrait>
-        <GainTrait Trait="Aggressive" Threshold="60" Action="WORKSECURITY">
-            She is getting rather Aggressive from her enjoyment of combat.
+
+        <GainTrait Trait="Aggressive" Event="2">
+            <TraitChangeAmount Value="20" Chance="25">
+                <TraitChangeCondition What="Spirit" Value="50"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="200" Chance="10" />
+            <Text>She is getting rather Aggressive from her enjoyment of combat.</Text>
         </GainTrait>
-        <GainTrait Trait="Fleet of Foot" Threshold="30" Action="WORKSECURITY">
-            She is getting rather fast from all the fighting.
+
+        <GainTrait Trait="Fleet of Foot">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Chasing after thieves and muggers, ${name} has gotten quite fast.</Text>
         </GainTrait>
+
+        <GainTrait Trait="City Girl">
+            <TraitChangeAmount Value="15" Chance="50" />
+            <Text>${name} has been patrolling the streets of Crossgate for so long,
+                she now considers herself a City Girl.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Fragile">
+            <TraitChangeAmount Value="100" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="50" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has had to heal from so many injuries you can't say she is Fragile anymore.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Meek">
+            <TraitChangeAmount Value="100" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="50" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Having to use her authority in the City Guard, ${name} has become less Meek.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Audacity">
+            <TraitChangeAmount Value="50" Chance="25">
+                <TraitChangeCondition What="Spirit" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>Being a city guard, ${name} started to get used to abusing her authority. (+Audacity)</Text>
+        </GainTrait>
+
         <Skill Name="Combat" Weight="3"/>
         <Skill Name="Magic" Weight="1" Max="50"/>
         <Stat Name="Agility" Weight="1"/>

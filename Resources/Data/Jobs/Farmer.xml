@@ -44,9 +44,36 @@
     </Performance>
 
     <Gains XP="10" Skill="3">
-        <GainTrait Trait="Tough" Threshold="30" Action="WORKFARM">
-            Working in the heat of the sun has made ${name} rather Tough.
+        <GainTrait Trait="Tough">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Constitution" Lower="33" Upper="50" />
+            </TraitChangeAmount>
+            <Text>Working in the heat of the sun has made ${name} rather Tough.</Text>
         </GainTrait>
+
+        <LoseTrait Trait="Fragile">
+            <TraitChangeAmount Value="75" Chance="50" />
+            <Text>Working in the heat of the sun has made ${name} lose her Fragility.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Farmer">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has become an experienced Farmer.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="City Girl">
+            <TraitChangeAmount Value="33" Chance="33" />
+            <Text>Having worked on the Farm for so long,
+                ${name} no longer considers herself a City Girl.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Country Gal">
+            <TraitChangeAmount Value="33" Chance="33" />
+            <Text>Spending so much time at the Farm has turned ${name} into a Country Gal.</Text>
+        </GainTrait>
+
         <Skill Name="Farming" Weight="2" />
         <Stat Name="Constitution" Weight="1" />
         <Stat Name="Strength" Weight="1" />

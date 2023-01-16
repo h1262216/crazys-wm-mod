@@ -9,12 +9,25 @@
         <Factor Skill="Service" Weight="1"/>
         <Factor Skill="Magic" Weight="1"/>
         <Factor Stat="Intelligence" Weight="1"/>
+
+        <Trait Name="Clumsy" Value="-33" />
     </Performance>
 
     <Gains XP="10" Skill="3">
         <Skill Name="Crafting" Weight="3"/>
         <Skill Name="Service" Weight="1"/>
         <Skill Name="Magic" Weight="1"/>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>It took her ruining hundreds of leather items, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Handyman">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>Regular work with leather items has turned ${name} into a capable Handyman.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

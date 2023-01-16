@@ -163,8 +163,8 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
     g_Game->dungeon().SetTortureDone();
 
     // Check for new traits
-    cGirls::PossiblyGainNewTrait(girl, traits::SADISTIC, 30, actiontype, "${name} has come to enjoy her job so much that she has become rather Sadistic.", Day0Night1);
-    cGirls::PossiblyGainNewTrait(girl, traits::MERCILESS, 50, actiontype, "${name} extensive experience with torture has made her absolutely Merciless.", Day0Night1);
+    cGirls::PossiblyGainNewTrait(girl, traits::SADISTIC, 30, "${name} has come to enjoy her job so much that she has become rather Sadistic.");
+    cGirls::PossiblyGainNewTrait(girl, traits::MERCILESS, 20, "${name} extensive experience with torture has made her absolutely Merciless.");
 
     return {false, 0, 0, std::max(0, wages)};
 }

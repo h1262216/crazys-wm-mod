@@ -218,8 +218,8 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 
     //gain
     //SIN: use a few of the new traits
-    if (chance(1) && chance(girl.oralsex()) && (girl.has_active_trait(traits::NYMPHOMANIAC)))
-        cGirls::PossiblyGainNewTrait(girl, traits::CUM_ADDICT, 90, ACTION_SEX, "${name} has tasted so much cum she now craves it at all times.", is_night);
+    if (girl.has_active_trait(traits::NYMPHOMANIAC))
+        cGirls::PossiblyGainNewTrait(girl, traits::CUM_ADDICT, girl.oralsex() / 10, "${name} has tasted so much cum she now craves it at all times.");
 
     if (girl.oralsex() > 30 && chance(m_OralCount))
         cGirls::AdjustTraitGroupGagReflex(girl, +1, true);

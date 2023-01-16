@@ -45,21 +45,35 @@
         <Skill Name="OralSex" Weight="1" Max="75"/>
         <Stat Name="Constitution" Weight="1" Max="33"/>
 
-        <GainTrait Trait="Mind Fucked" Threshold="90" Action="PORNSTAR" Event="2">
-            She has been abused so much she is now completely Mind Fucked.
+        <GainTrait Trait="Porn Star" >
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text> She has performed in enough sex scenes that she has become a well known Porn Star.</Text>
         </GainTrait>
-        <GainTrait Trait="Masochist" Threshold="65" Action="SEX">
-            ${name} has turned into a Masochist from filming so many BDSM scenes.
+
+        <GainTrait Trait="Masochist">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="BDSM" Lower="50" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has turned into a Masochist from filming so many BDSM scenes.</Text>
         </GainTrait>
-        <GainTrait Trait="Porn Star" Threshold="70" Action="PORNSTAR" MinPerformance="200">
-            She has performed in enough sex scenes that she has become a well known Porn Star.
+
+        <GainTrait Trait="Mind Fucked" Event="2">
+            <TraitChangeAmount Value="10" Chance="33" />
+            <Text>${name} has been abused so much she is now completely Mind Fucked.</Text>
         </GainTrait>
-        <LoseTrait Trait="Iron Will" Threshold="80" Action="SEX" Chance="5">
-            Somewhere between having a dick in her throat, balls slapping her eyes and a camera watching her retch,
-            ${name} has lost her iron will.
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="80" Chance="50" />
+            <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
         </LoseTrait>
-        <LoseTrait Trait="Chaste" Threshold="20" Action="PORNSTAR">
-            She has been filmed having sex so often that she is no longer Chaste.
+
+        <LoseTrait Trait="Iron Will">
+            <TraitChangeAmount Value="150" Chance="5" />
+            <TraitChangeAmount Value="5" Chance="33" />
+            <Text>Somewhere between having a dick in her throat, balls slapping her eyes and a camera watching her retch,
+                ${name} has lost her Iron Will.</Text>
         </LoseTrait>
     </Gains>
 

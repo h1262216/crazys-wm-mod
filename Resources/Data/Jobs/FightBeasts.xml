@@ -21,17 +21,48 @@
         <Stat Name="Constitution" Weight="1"/>
         <Stat Name="Agility" Weight="1"/>
 
-        <GainTrait Trait="Tough" Threshold="20" Action="COMBAT">
-            She has become pretty Tough from all of the fights she's been in.
+        <GainTrait Trait="Tough">
+            <TraitChangeAmount Value="80" Chance="50">
+                <TraitChangeCondition What="Constitution" Lower="33" Upper="50" />
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has become pretty Tough from all the fights she's been in.</Text>
         </GainTrait>
-        <GainTrait Trait="Aggressive" Threshold="60" Action="COMBAT">
-            She is getting rather Aggressive from her enjoyment of combat.
+
+        <GainTrait Trait="Strong">
+            <TraitChangeAmount Value="60" Chance="25">
+                <TraitChangeCondition What="Strength" Lower="60" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has become pretty Strong from all the fights she's been in.</Text>
         </GainTrait>
-        <GainTrait Trait="Fleet of Foot" Threshold="30" Action="COMBAT">
-            She is getting rather fast from all the fighting.
+
+        <GainTrait Trait="Aggressive" Event="2">
+            <TraitChangeAmount Value="20" Chance="25">
+                <TraitChangeCondition What="Spirit" Value="50"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="200" Chance="10" />
+            <Text>She is getting rather Aggressive from her enjoyment of combat.</Text>
         </GainTrait>
-        <LoseTrait Trait="Fragile" Threshold="75" Action="COMBAT">
-            ${name} has had to heal from so many injuries you can't say she is Fragile anymore.
+
+        <GainTrait Trait="Fleet of Foot">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Having to evade so many of the beasts' attacks, ${name} has gotten quite fast.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Muscular" >
+            <TraitChangeAmount Value="25" Chance="25">
+                <TraitChangeCondition What="Strength" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>All the fighting and training has made ${name} very Muscular.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Fragile">
+            <TraitChangeAmount Value="100" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="50" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has had to heal from so many injuries you can't say she is Fragile anymore.</Text>
         </LoseTrait>
     </Gains>
 

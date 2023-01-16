@@ -329,6 +329,10 @@ namespace traits {
     /// her. (will more likely disobey)
     constexpr const char* MERCILESS = "Merciless";
 
+    /// This girl empathizes a lot with others, and is generally unwilling to do them
+    /// harm.
+    constexpr const char* COMPASSIONATE = "Compassionate";
+
     /// This girl is gone in the head. She will be compliant with anything. (+obedience)
     constexpr const char* MIND_FUCKED = "Mind Fucked";
 

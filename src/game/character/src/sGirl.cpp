@@ -476,6 +476,17 @@ bool sGirl::LoadGirlXML(const tinyxml2::XMLElement* pGirl)
     // load house percent
     pGirl->QueryIntAttribute("HousePercent", &m_HousePercent);
 
+    // load partial trait status
+    auto* part_trait_el = pGirl->FirstChildElement("TraitProgress");
+    if(part_trait_el) {
+        for(auto& sub : IterateChildElements(*part_trait_el, "Trait")) {
+            std::string name = GetStringAttribute(sub, "Name");
+            int prog = GetIntAttribute(sub, "Progress");
+            int timer = GetIntAttribute(sub, "Timer");
+            m_PartialTraits[name] = sTraitProgress{prog, timer};
+        }
+    }
+
     auto load_job = [pGirl](const char* attribute, JOBS& target){
         std::string tempst = pGirl->Attribute(attribute);
         if(tempst == "255") {
@@ -574,6 +585,15 @@ tinyxml2::XMLElement& sGirl::SaveGirlXML(tinyxml2::XMLElement& elRoot)
     }
 
     elGirl.SetAttribute("ImagePath", GetImageFolder().c_str());
+
+    // Save partial trait status
+    auto& part_trait_el = PushNewElement(elGirl, "TraitProgress");
+    for(auto& tp : m_PartialTraits) {
+        auto& prog_el = PushNewElement(part_trait_el, "Trait");
+        prog_el.SetAttribute("Name", tp.first.c_str());
+        prog_el.SetAttribute("Progress", tp.second.Progress);
+        prog_el.SetAttribute("Timer", tp.second.Timer);
+    }
 
     // `J` changed jobs to save as quick codes instead of numbers so if new jobs are added they don't shift jobs
     // save jobs
@@ -1433,3 +1453,70 @@ bool sGirl::is_sex_type_allowed(SKILLS sex_type) const {
     }
     return true;
 }
+
+int sGirl::progress_trait(const std::string& trait_name, int amount) {
+    auto found = m_PartialTraits.find(trait_name);
+    if(found != m_PartialTraits.end()) {
+        auto& progress = found->second;
+        // dampen amount
+        if(amount > 0 && progress.Progress > 0) {
+            amount = std::max(1, amount - progress.Progress / 10);
+        } else if(amount < 0 && progress.Progress < 0) {
+            amount = std::min(-1, amount - progress.Progress / 10);
+        }
+        // make progress
+        progress.Progress += amount;
+        // reset timer if we are going in the same direction as current value
+        if(amount * progress.Progress > 0) {
+            progress.Timer = 10;
+        }
+        return progress.Progress;
+    } else {
+        m_PartialTraits[trait_name] = sTraitProgress{amount, 10};
+        return amount;
+    }
+}
+
+void sGirl::reset_trait_progress(const std::string& trait_name) {
+    m_PartialTraits.erase(trait_name);
+}
+
+std::unordered_map<std::string, int> sGirl::get_trait_progress() const {
+    std::unordered_map<std::string, int> result;
+    for(auto& p : m_PartialTraits) {
+        result[p.first] = p.second.Progress;
+    }
+    return result;
+}
+
+void sGirl::DecayTemp() {
+    ICharacter::DecayTemp();
+
+    for (int i = 0; i < NUM_ACTIONTYPES; i++)
+    {
+        if (m_EnjoymentTemps[i] != 0)
+        {                                            // normalize towards 0 by 30% each week
+            int newEnjoy = (int)(float(m_EnjoymentTemps[i]) * 0.7);
+            if (newEnjoy != m_EnjoymentTemps[i])    m_EnjoymentTemps[i] = newEnjoy;
+            else
+            {                                        // if 30% did nothing, go with 1 instead
+                /* */if (m_EnjoymentTemps[i] > 0)    m_EnjoymentTemps[i]--;
+                else if (m_EnjoymentTemps[i] < 0)    m_EnjoymentTemps[i]++;
+            }
+        }
+    }
+
+    // time down traits progress, and remove unused ones
+    for(auto it = m_PartialTraits.begin(); it != m_PartialTraits.end();) {
+        it->second.Timer -= 1;
+        if(it->second.Timer <= 0) {
+            it->second.Progress = (it->second.Progress * 70) / 100;
+            if(it->second.Progress == 0) {
+                it = m_PartialTraits.erase(it);
+                continue;
+            }
+        }
+        ++it;
+    }
+}
+

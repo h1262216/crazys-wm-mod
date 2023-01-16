@@ -85,12 +85,10 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
 
     // Update Enjoyment
     girl.upd_Enjoyment(ACTION_WORKCLEANING, enjoy);
-    // Gain Traits
-    if (chance(girl.service()))
-        cGirls::PossiblyGainNewTrait(girl, "Maid", 70, ACTION_WORKCLEANING, "${name} has cleaned enough that she could work professionally as a Maid anywhere.", is_night);
-    // Lose Traits
-    if (chance(girl.service()))
-        cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, ACTION_WORKCLEANING, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", is_night);
+    // Gain and Lose Traits
+    cGirls::PossiblyGainNewTrait(girl, traits::MAID, girl.service() / 7, "${name} has cleaned enough that she could work professionally as a Maid anywhere.");
+    cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, girl.service() / 3, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.");
+
 }
 
 bool Cleaning::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night){

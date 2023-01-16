@@ -11,14 +11,19 @@
 
 <!ELEMENT Gains (GainTrait|LoseTrait|Skill|Stat)*>
 <!ATTLIST Gains XP CDATA #IMPLIED Skill CDATA #IMPLIED>
-<!ELEMENT GainTrait (#PCDATA)>
-<!ATTLIST GainTrait Trait CDATA #REQUIRED Threshold CDATA #REQUIRED Action CDATA #REQUIRED Event CDATA #IMPLIED Chance CDATA #IMPLIED MinPerformance CDATA #IMPLIED>
-<!ELEMENT LoseTrait (#PCDATA)>
-<!ATTLIST LoseTrait Trait CDATA #REQUIRED Threshold CDATA #REQUIRED Action CDATA #REQUIRED Event CDATA #IMPLIED Chance CDATA #IMPLIED MinPerformance CDATA #IMPLIED>
+<!ELEMENT GainTrait (TraitChangeAmount,Text)>
+<!ATTLIST GainTrait Trait CDATA #REQUIRED Event CDATA #IMPLIED Chance CDATA #IMPLIED>
+<!ELEMENT LoseTrait (TraitChangeAmount,Text)>
+<!ATTLIST LoseTrait Trait CDATA #REQUIRED Event CDATA #IMPLIED Chance CDATA #IMPLIED>
 <!ELEMENT Skill (EMPTY)>
 <!ATTLIST Skill Name CDATA #REQUIRED Weight CDATA Min CDATA Max CDATA>
 <!ELEMENT Stat (EMPTY)>
 <!ATTLIST Stat Name CDATA #REQUIRED Weight CDATA Min CDATA Max CDATA>
+<!ELEMENT TraitChangeAmount (TraitChangeCondition?)>
+<!ATTLIST TraitChangeAmount Value CDATA #REQUIRED Chance CDATA #IMPLIED>
+<!ELEMENT TraitChangeCondition EMPTY>
+<!ATTLIST TraitChangeCondition Value CDATA #IMPLIED Lower CDATA #IMPLIED Upper CDATA #IMPLIED What CDATA #REQUIRED>
+
 
 <!ELEMENT Messages (Message|Include)*)>
 <!ELEMENT Message ((Text|Group)+)>

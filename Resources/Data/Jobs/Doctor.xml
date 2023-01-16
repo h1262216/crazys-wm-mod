@@ -21,6 +21,7 @@
         <Trait Name="Goddess" Value="10"/> <!-- might be able to heal people easier.. they are a goddess after all -->
         <Trait Name="Optimist" Value="10"/>
         <Trait Name="Priestess" Value="10"/>
+        <Trait Name="Compassionate" Value="10"/>
 
         <!-- bad traits -->
         <Trait Name="Dependent" Value="-50"/>
@@ -57,6 +58,26 @@
     <Gains XP="15" Skill="3">
         <Skill Name="Medicine" Weight="2" />
         <Stat Name="Intelligence" Weight="1" />
+
+        <GainTrait Trait="Doctor">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has been employed in the clinic for so long, she no longer is working as a doctor,
+                she *is* a Doctor.</Text>
+        </GainTrait>
+        <LoseTrait Trait="Merciless">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>Mending the ills of her patients on a daily basis, ${name} could not maintain her Merciless attitude.</Text>
+        </LoseTrait>
+        <GainTrait Trait="Compassionate">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="120" Upper="220"/>
+            </TraitChangeAmount>
+            <Text>Helping so many people has made ${name} quite Compassionate.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

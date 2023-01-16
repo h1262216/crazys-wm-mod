@@ -24,12 +24,45 @@
     </Performance>
 
     <Gains XP="15" Skill="3">
-        <LoseTrait Trait="Nervous" Threshold="40" Action="WORKBAR">
-            ${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.</Text>
         </LoseTrait>
-        <GainTrait Trait="Charismatic" Threshold="60" Action="WORKBAR">
-            Dealing with customers at the bar and talking with them about their problems has made ${name} more Charismatic.
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+            </TraitChangeAmount>
+            <Text>Interacting with so many customers has allowed ${name} to finally overcome her Shyness.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>It took her breaking hundreds of glasses, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Dealing with customers at the bar and talking with them about their problems has made ${name} more Charismatic.</Text>
         </GainTrait>
+
+        <GainTrait Trait="Mixologist">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="250" Chance="5">
+                <TraitChangeCondition What="JobPerformance" Lower="200" Upper="250"/>
+            </TraitChangeAmount>
+            <Text>Preparing so many drinks at the bar, ${name} has become quite the Mixologist.</Text>
+        </GainTrait>
+
         <Skill Name="Service" Weight="3" />
         <Stat Name="Charisma" Weight="2"/>
         <Skill Name="Performance" Weight="2" />

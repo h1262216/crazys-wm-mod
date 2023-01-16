@@ -20,14 +20,28 @@
         <Stat Name="Confidence" Weight="1" Max="50" />
         <Skill Name="Performance" Weight="1" Max="50"/>
         <Skill Name="Strip" Weight="1" Max="50"/>
-        <GainTrait Trait="Nymphomaniac" Threshold="75" Action="WORKSTRIP">
-            Having to perform sexual entertainment for patrons every day has made ${name} quite the nympho.
+
+        <GainTrait Trait="Nymphomaniac">
+            <TraitChangeAmount Value="30" Chance="25">
+                <TraitChangeCondition What="Libido" Lower="0" Upper="50"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="100" Chance="5">
+                <TraitChangeCondition What="Libido" Lower="80" Upper="90"/>
+            </TraitChangeAmount>
+            <Text>Having to perform sexual entertainment for patrons every day has made ${name} quite the Nympho.</Text>
         </GainTrait>
-        <GainTrait Trait="Exhibitionist" Threshold="50" Action="WORKSTRIP">
-            Performing sexual entertainment for strangers every day has made ${name} quite keen to show off her sexuality.
+        <GainTrait Trait="Exhibitionist">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+            </TraitChangeAmount>
+            <Text>Performing sexual entertainment for strangers every day has made ${name} quite keen to show off her sexuality.</Text>
         </GainTrait>
-        <GainTrait Trait="Sexy Air" Threshold="80" Action="WORKSTRIP" Chance="25" MinPerformance="140">
-            ${name} has been having to be sexy for so long she now reeks sexiness.
+
+        <GainTrait Trait="Sexy Air">
+            <TraitChangeAmount Value="20" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has become the embodiment Sexyness.</Text>
         </GainTrait>
     </Gains>
 

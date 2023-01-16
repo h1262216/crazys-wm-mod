@@ -43,14 +43,35 @@
         <Skill Name="Beastiality" Weight="1" />
         <Skill Name="AnimalHandling" Weight="1" />
 
-        <GainTrait Trait="Porn Star" Threshold="70" Action="PORNSTAR">
-            She has performed in enough sex scenes that she has become a well known Porn Star.
+        <GainTrait Trait="Porn Star" >
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text> She has performed in enough sex scenes that she has become a well known Porn Star.</Text>
         </GainTrait>
-        <GainTrait Trait="Fake Orgasm Expert" Threshold="50" Action="SEX">
-            She has become quite the Faker.
+
+        <GainTrait Trait="Fake Orgasm Expert">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="Libido" Lower="50" Upper="80" />
+            </TraitChangeAmount>
+            <Text>She has become quite the Faker.</Text>
         </GainTrait>
-        <LoseTrait Trait="Chaste" Threshold="20" Action="PORNSTAR">
-            She has been filmed having sex so often that she is no longer Chaste.
+
+        <GainTrait Trait="Slut" Event="2">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="Libido" Lower="50" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has turned into quite a Slut.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Mind Fucked">
+            <TraitChangeAmount Value="10" Chance="25" />
+            <Text>${name} has become Mind Fucked from too many bondage scenes.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="80" Chance="50" />
+            <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
         </LoseTrait>
     </Gains>
 

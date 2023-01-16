@@ -9,12 +9,25 @@
         <Factor Stat="Refinement" Weight="1"/>
         <Factor Skill="Magic" Weight="1"/>
         <Factor Skill="Crafting" Weight="2"/>
+
+        <Trait Name="Clumsy" Value="-50" />
     </Performance>
 
     <Gains XP="10" Skill="2">
         <Skill Name="Magic" Weight="1" />
         <Skill Name="Crafting" Weight="2" />
         <Stat Name="Confidence" Weight="1" />
+
+        <GainTrait Trait="Director" >
+            <!-- Really only preserving any progress -->
+            <TraitChangeAmount Value="1" Chance="50" />
+        </GainTrait>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="100" Chance="25" />
+            <Text>It took her ruining many video crystals, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
     </Gains>
 
     <Messages>

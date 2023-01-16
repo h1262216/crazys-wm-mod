@@ -204,7 +204,7 @@ void sMovieStudio::Update()
     g_Game->gold().brothel_accounts(m_Finance, m_id);
 
     m_Girls->apply([this](sGirl& g){
-        cGirls::updateTemp(g);            // update temp stuff
+        g.DecayTemp();                  // update temp stuff
         cGirls::EndDayGirls(*this, g);
     });
     if (m_Filthiness < 0)        m_Filthiness = 0;

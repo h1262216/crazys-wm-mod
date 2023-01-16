@@ -100,8 +100,8 @@ public:
     static double GetAverageOfSexSkills(const sGirl& girl);    // `J` added
     static double GetAverageOfNSxSkills(const sGirl& girl);    // `J` added
 
-    static bool PossiblyGainNewTrait(sGirl& girl, std::string Trait, int Threshold, int ActionType, std::string Message, bool Day0Night1, EEventType eventtype = EVENT_GOODNEWS);
-    static bool PossiblyLoseExistingTrait(sGirl& girl, std::string Trait, int Threshold, int ActionType, std::string Message, bool Day0Night1);
+    static bool PossiblyGainNewTrait(sGirl& girl, const std::string& Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_GOODNEWS);
+    static bool PossiblyLoseExistingTrait(sGirl& girl, const std::string& Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_GOODNEWS);
 
     // `J` adding these to allow single step adjustment of linked traits
     static std::string AdjustTraitGroupGagReflex(sGirl& girl, int steps, bool showmessage = false);
@@ -144,8 +144,6 @@ public:
     void UncontrolledPregnancies();    // ages children and handles pregnancy for all girls not controlled by player
 
     // end mod
-
-    static void updateTemp(sGirl& girl);        // `J` group all the temp updates into one area
 
     // WD:    Consolidate common code in BrothelUpdate and DungeonUpdate to fn's
     static void updateGirlAge(sGirl& girl, bool inc_inService = false);

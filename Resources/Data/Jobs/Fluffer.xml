@@ -13,6 +13,20 @@
     <Gains XP="15" Skill="1">
         <Skill Name="OralSex" Weight="1" />
         <Skill Name="Service" Weight="1" />
+
+        <GainTrait Trait="Slut" Event="2">
+            <TraitChangeAmount Value="30" Chance="33">
+                <TraitChangeCondition What="Libido" Lower="50" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has turned into quite a Slut.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Cum Addict" Event="2">
+            <TraitChangeAmount Value="25" Chance="20">
+                <TraitChangeCondition What="Libido" Lower="50" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has become addicted to Cum.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

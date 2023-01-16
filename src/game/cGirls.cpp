@@ -768,6 +768,21 @@ string cGirls::GetMoreDetailsString(const sGirl& girl, bool purchase)
         else                                     { ss << "At the moment, she hasn't started any special training.\n \n"; }
     }
 
+    ss << "\nTRAIT PROGRESSION:\n";
+
+    // Add trait progress
+    auto prog = girl.get_trait_progress();
+    for(auto& trait : prog) {
+        int value = trait.second / 10;
+        if(trait.second > 0) {
+            ss << " + ";
+        } else {
+            ss << " - ";
+            value = -value;
+        }
+        ss << trait.first << "  " << value << "%\n";
+    }
+
     ss << "\n \n\nBased on:  " << girl.m_FileName;
 
     return ss.str();
@@ -931,6 +946,8 @@ string cGirls::GetThirdDetailsString(const sGirl& girl)    // `J` bookmark - Job
     data += "Then 'A'-'E' with 'E' being the worst.\n'X' means they can not do the job.\n \n";
     data += "Jobs marked with ? do not really use job performance directly and is an estimate.\n";
     data += "Jobs marked with ! are how much the girl is in need of the service of that job.\n";
+    data += "\n";
+
     return data;
 
 }
@@ -1128,14 +1145,6 @@ int cGirls::GetRebelValue(const sGirl& girl, JOBS job)
 int cGirls::GetNumYourDaughterGirls()
 {
     return m_Girls->count(is_your_daughter);
-}
-
-// ----- Stat
-
-void cGirls::updateTemp(sGirl& girl)    // `J` group all the temp updates into one area
-{
-    girl.DecayTemp();        // update temp stats
-    updateTempEnjoyment(girl);        // update temp enjoyment
 }
 
 // ----- Skill
@@ -1597,32 +1606,31 @@ int cGirls::GetNumItemType(const sGirl& girl, int Type, bool splitsubtype)
 // ----- Traits
 
 // If a girl enjoys a job enough, she has a chance of gaining traits associated with it
-bool cGirls::PossiblyGainNewTrait(sGirl& girl, string Trait, int Threshold, int ActionType, string Message, bool Day0Night1, EEventType eventtype)
+bool cGirls::PossiblyGainNewTrait(sGirl& girl, const string& Trait, int Amount, const string& Message, sImagePreset image, EEventType eventtype)
 {
-    if (girl.m_Enjoyment[ActionType] > Threshold)
-    {
-        int chance = (girl.m_Enjoyment[ActionType] - Threshold);
-        if (girl.gain_trait(Trait.c_str(), chance))
-        {
-            girl.AddMessage(Message, EImageBaseType::PROFILE, eventtype);
-            return true;
-        }
-    }
+    auto state = girl.raw_traits().has_inherent_trait(Trait.c_str());
+    if(state == ITraitsCollection::TRAIT_ACTIVE) return false;
+    if(state == ITraitsCollection::TRAIT_INACTIVE) Amount *= 2;
+
+    if(girl.progress_trait(Trait, Amount) >= 1000) {
+        girl.reset_trait_progress(Trait);
+        girl.gain_trait(Trait.c_str());
+        girl.AddMessage(Message, image, eventtype);
+        return true;
+    };
     return false;
 }
 
-// If a girl enjoys a job enough, she has a chance of losing bad traits associated with it
-bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, string Trait, int Threshold, int ActionType, string Message, bool Day0Night1)
+bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, const string& Trait, int Amount, const std::string& Message, sImagePreset image, EEventType eventtype)
 {
-    if (girl.m_Enjoyment[ActionType] > Threshold && girl.has_active_trait(Trait.c_str()))
-    {
-        int chance = (girl.m_Enjoyment[ActionType] - Threshold);
-        if (girl.lose_trait(Trait.c_str(), chance))
-        {
-            girl.AddMessage(Message, EImageBaseType::PROFILE, EVENT_GOODNEWS);
-            return true;
-        }
-    }
+    if(girl.raw_traits().has_inherent_trait(Trait.c_str()) != ITraitsCollection::TRAIT_ACTIVE) return false;
+
+    if(girl.progress_trait(Trait, -Amount) <= -1000) {
+        girl.reset_trait_progress(Trait);
+        girl.lose_trait(Trait.c_str());
+        girl.AddMessage(Message, image, eventtype);
+        return true;
+    };
     return false;
 }
 

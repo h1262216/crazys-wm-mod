@@ -154,7 +154,7 @@ public:
     virtual void upd_temp_stat(STATS stat, int amount, bool usetraits=false);
 
     // higher level behaviour
-    void DecayTemp();
+    virtual void DecayTemp();
 
     // convenience methods
     // `J` When modifying Stats or Skills, search for "J-Change-Stats-Skills"  :  found in >> cGirls.h

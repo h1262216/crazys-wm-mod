@@ -11,6 +11,8 @@
         <Factor Skill="Magic" Weight="1"/>
         <Factor Stat="Intelligence" Weight="1"/>
         <Factor Stat="Constitution" Weight="1"/>
+
+        <Trait Name="Clumsy" Value="-10" />
     </Performance>
 
     <Gains XP="10" Skill="3">
@@ -19,9 +21,25 @@
         <Stat Name="Constitution" Weight="2" />
         <Skill Name="Combat" Weight="1" />
         <Skill Name="Magic" Weight="1" />
-        <GainTrait Trait="Tough" Threshold="50" Action="MAKEITEMS">
-            Working in the heat of the forge has made ${name} rather Tough.
+
+        <GainTrait Trait="Tough">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="Strength" Lower="25" Upper="50" />
+            </TraitChangeAmount>
+            <Text>Working in the heat of the forge has made ${name} rather Tough.</Text>
         </GainTrait>
+
+        <GainTrait Trait="Manly">
+            <TraitChangeAmount Value="33" Chance="50">
+                <TraitChangeCondition What="Strength" Lower="60" Upper="100" />
+            </TraitChangeAmount>
+            <Text>The grueling work in the forge has made ${name} appear rather Manly.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Fragile">
+            <TraitChangeAmount Value="100" Chance="50" />
+            <Text>Working in the heat of the forge has made ${name} lose her Fragility.</Text>
+        </LoseTrait>
     </Gains>
 
     <Messages>
