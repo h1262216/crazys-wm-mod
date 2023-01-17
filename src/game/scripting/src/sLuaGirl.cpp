@@ -39,6 +39,7 @@ extern "C" {
 #include "cGirlTorture.h"
 #include "character/predicates.h"
 #include "buildings/cBuildingManager.h"
+#include "traits/ITraitsCollection.h"
 
 // to get the currently active building
 #include "interface/cWindowManager.h"
@@ -95,6 +96,7 @@ void sLuaGirl::init(lua_State* L) {
             {"add_trait", sLuaGirl::add_trait},
             {"has_trait", sLuaGirl::has_trait},
             {"remove_trait", sLuaGirl::remove_trait},
+            {"progress_trait", sLuaGirl::progress_trait},
             {"breast_size", sLuaGirl::breast_size},
             {"has_item", sLuaGirl::has_item},
             {"check_virginity", sLuaGirl::check_virginity},
@@ -293,6 +295,40 @@ int sLuaGirl::remove_trait(lua_State *L) {
     girl.lose_trait(trait);
     return 0;
 }
+
+int sLuaGirl::progress_trait(lua_State* L) {
+    auto& girl = check_type(L, 1);
+    const char* trait = luaL_checkstring(L, 2);
+    int amount = luaL_checkinteger(L, 3);
+    girl.progress_trait(trait, amount);
+
+    auto state = girl.raw_traits().has_inherent_trait(trait);
+
+    if ((state == ITraitsCollection::TRAIT_ACTIVE && amount > 0) || (state != ITraitsCollection::TRAIT_ACTIVE && amount < 0)) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    if(amount > 0) {
+        if (state == ITraitsCollection::TRAIT_INACTIVE) amount *= 2;
+
+        if (girl.progress_trait(trait, amount) >= 1000) {
+            girl.reset_trait_progress(trait);
+            lua_pushboolean(L, girl.gain_trait(trait));
+            return 1;
+        };
+    } else {
+        if(girl.progress_trait(trait, amount) <= -1000) {
+            girl.reset_trait_progress(trait);
+            lua_pushboolean(L, girl.lose_trait(trait));
+            return 1;
+        };
+    }
+
+    lua_pushboolean(L, false);
+    return 1;
+}
+
 
 int sLuaGirl::make_horny(lua_State *L) {
     auto& girl = check_type(L, 1);

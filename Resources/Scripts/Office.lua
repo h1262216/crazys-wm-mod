@@ -86,6 +86,7 @@ function InteractOffice(girl)
                 girl:make_horny(1)
             elseif girl:strip() < 40 or girl:has_trait(wm.TRAITS.CHASTE, wm.TRAITS.SHY) then
                 Dialog("She removes her clothing and stands nervously before you.")
+                girl:happiness(-2)
             else
                 Dialog("She removes her clothing and stands before you.")
             end

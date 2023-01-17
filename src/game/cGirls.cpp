@@ -1608,7 +1608,7 @@ int cGirls::GetNumItemType(const sGirl& girl, int Type, bool splitsubtype)
 // If a girl enjoys a job enough, she has a chance of gaining traits associated with it
 bool cGirls::PossiblyGainNewTrait(sGirl& girl, const string& Trait, int Amount, const string& Message, sImagePreset image, EEventType eventtype)
 {
-    auto state = girl.raw_traits().has_inherent_trait(Trait.c_str());
+    auto state = girl.raw_traits().has_permanent_trait(Trait.c_str());
     if(state == ITraitsCollection::TRAIT_ACTIVE) return false;
     if(state == ITraitsCollection::TRAIT_INACTIVE) Amount *= 2;
 
@@ -1623,7 +1623,7 @@ bool cGirls::PossiblyGainNewTrait(sGirl& girl, const string& Trait, int Amount, 
 
 bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, const string& Trait, int Amount, const std::string& Message, sImagePreset image, EEventType eventtype)
 {
-    if(girl.raw_traits().has_inherent_trait(Trait.c_str()) != ITraitsCollection::TRAIT_ACTIVE) return false;
+    if(girl.raw_traits().has_permanent_trait(Trait.c_str()) != ITraitsCollection::TRAIT_ACTIVE) return false;
 
     if(girl.progress_trait(Trait, -Amount) <= -1000) {
         girl.reset_trait_progress(Trait);

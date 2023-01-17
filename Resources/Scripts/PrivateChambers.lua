@@ -50,6 +50,13 @@ function Drinks(girl, dinner_already)
     end
 
     wm.UpdateImage(wm.IMG.DRINKS)
+
+    if not girl:has_trait(wm.TRAITS.ALCOHOLIC) then
+        if girl:progress_trait(wm.TRAITS.SOCIAL_DRINKER, 10) then
+            Dialog("Having cocktails with you has turned ${name} into a Social Drinker.")
+        end
+    end
+
     girl:tiredness(2)
     if what > 90 or girl:tiredness() > 75 then
         Dialog("She becomes very comfortable and giddy as she downs drink after drink.  " ..
