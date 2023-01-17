@@ -10,6 +10,8 @@ An overview of which trait can be gained/lost by which job is given [here](Docs&
 ## Gameplay
 * Reworked the way how traits are gained from working jobs.
 * Added a `Compassionate` tag as the opposite of `Sadistic`/`Merciless`
+* Split `Libido` stat into (permanent) `Libido` and (temporary) `Lust`. Lust increases more quickly with high libido 
+(and decreases if Libido is too low), and is the stat generally used for checks.
 
 ## Other
 * Trait xml files now specify which traits are gained / lost on level-up
