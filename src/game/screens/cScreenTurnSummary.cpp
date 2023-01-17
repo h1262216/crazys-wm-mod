@@ -385,10 +385,9 @@ void cScreenTurnSummary::Fill_Events(sGirl* girl)
     auto& events = girl->GetEvents();
     if (!events.IsEmpty())
     {
-        events.DoSort();        // Sort Events to put Warnings & Dangers first.
         for (int l = 0; l < events.GetNumEvents(); l++)
         {
-            std::string            sTitle = events.GetMessage(l).TitleText();
+            std::string              sTitle = events.GetMessage(l).TitleText();
             unsigned int    uiListboxColour = events.GetMessage(l).ListboxColour();
             AddToListBox(event_id, l, sTitle, uiListboxColour);
         }

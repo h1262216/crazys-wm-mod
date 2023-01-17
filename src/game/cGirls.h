@@ -100,8 +100,8 @@ public:
     static double GetAverageOfSexSkills(const sGirl& girl);    // `J` added
     static double GetAverageOfNSxSkills(const sGirl& girl);    // `J` added
 
-    static bool PossiblyGainNewTrait(sGirl& girl, std::string Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_GOODNEWS);
-    static bool PossiblyLoseExistingTrait(sGirl& girl, std::string Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_GOODNEWS);
+    static bool PossiblyGainNewTrait(sGirl& girl, const std::string& Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_GAIN_TRAIT);
+    static bool PossiblyLoseExistingTrait(sGirl& girl, const std::string& Trait, int Amount, const std::string& Message, sImagePreset image = EImageBaseType::PROFILE, EEventType eventtype = EVENT_LOSE_TRAIT);
 
     // `J` adding these to allow single step adjustment of linked traits
     static std::string AdjustTraitGroupGagReflex(sGirl& girl, int steps, bool showmessage = false);

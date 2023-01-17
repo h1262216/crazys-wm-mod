@@ -556,10 +556,6 @@ bool cBarWaitressJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool 
 
     // Improve stats
     HandleGains(girl, fame);
-    if (m_Performance > 150 && girl.constitution() > 65)
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::FLEET_OF_FOOT, 60, m_Data.Action, "${name} has been dodging between tables and avoiding running into customers for so long she has become Fleet of Foot.", is_night);
-    }
 
     return false;
 }
@@ -716,11 +712,6 @@ bool cBarSingerJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is
 
     // Improve stats
     HandleGains(girl, fame);
-    if (girl.fame() >= 70 && chance(10))
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::IDOL, 50, m_Data.Action, "Her fame and singing skills has made ${name} an Idol in Crossgate.", is_night);
-    }
-
     return false;
 }
 
@@ -1559,9 +1550,9 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_
     HandleGains(girl, fame);
 
     //gain traits
-    if (sextype != SKILL_STRIP && girl.dignity() < 0 && chance(25))
+    if (sextype != SKILL_STRIP && girl.dignity() < 0)
     {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 80, ACTION_SEX, "${name} has turned into quite a slut.", is_night, EVENT_WARNING);
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
     }
 
     return false;
@@ -1862,14 +1853,9 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, IBuildingShift& building, bool
     HandleGains(girl, fame);
 
     //gained
-    if (sex && girl.dignity() < 0 && chance(25))
+    if (sex && girl.dignity() < 0)
     {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 80, ACTION_SEX, "${name} has turned into quite a slut.", is_night, EVENT_WARNING);
-    }
-    //lose
-    if (m_Performance > 150 && girl.confidence() > 65)
-    {
-        cGirls::PossiblyLoseExistingTrait(girl, traits::SHY, 60, ACTION_WORKSTRIP, "${name} has been stripping for so long now that her confidence is super high and she is no longer Shy.", is_night);
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
     }
     return false;
 }
@@ -1960,10 +1946,10 @@ bool ClubBarmaid::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_n
     HandleGains(girl, fame);
 
     //gained
-    if (m_Performance < 100 && chance(2)) { cGirls::PossiblyGainNewTrait(girl, traits::ASSASSIN, 10, ACTION_WORKCLUB, "${name}'s lack of skill at mixing drinks has been killing people left and right making her into quite the Assassin.", is_night); }
+    if (m_Performance < 100 && chance(2)) { cGirls::PossiblyGainNewTrait(girl, traits::ASSASSIN, 100, "${name}'s lack of skill at mixing drinks has been killing people left and right making her into quite the Assassin."); }
     if (chance(25) && girl.dignity() < 0 && (imagetype == EImageBaseType::VAGINAL || imagetype == EImagePresets::BLOWJOB))
     {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 80, ACTION_SEX, "${name} has turned into quite a slut.", is_night, EVENT_WARNING);
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 80, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
     }
     return false;
 }
@@ -2130,7 +2116,7 @@ bool ClubStripper::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_
     //lose
     if (m_Performance > 150 && girl.confidence() > 65)
     {
-        cGirls::PossiblyLoseExistingTrait(girl, traits::SHY, 60, ACTION_WORKSTRIP, "${name} has been stripping for so long now that her confidence is super high and she is no longer Shy.", is_night);
+        cGirls::PossiblyLoseExistingTrait(girl, traits::SHY, 15, "${name} has been stripping for so long now that her confidence is super high and she is no longer Shy.");
     }
 
     return false;
@@ -2649,10 +2635,9 @@ bool ClubWaitress::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_
     }
 
     //gained traits
-    if (m_Performance > 150 && girl.constitution() > 65) { cGirls::PossiblyGainNewTrait(girl, traits::FLEET_OF_FOOT, 60, ACTION_WORKCLUB, "${name} has been dodging between tables and avoiding running into customers for so long she has become Fleet Of Foot.", is_night); }
-    if (chance(25) && girl.dignity() < 0 && (anal > 0 || oral > 0 || hand > 0))
+    if (girl.dignity() < 0 && (anal > 0 || oral > 0 || hand > 0))
     {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 80, ACTION_SEX, "${name} has turned into quite a slut.", is_night, EVENT_WARNING);
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
     }
 
     return false;
@@ -2779,9 +2764,6 @@ bool AdvertisingJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool i
     brothel.m_AdvertisingLevel += (m_Performance / 100);
 
     HandleGains(girl, fame);
-
-    if (girl.strip() > 50)
-        cGirls::PossiblyGainNewTrait(girl, traits::EXHIBITIONIST, 50, ACTION_WORKADVERTISING, "${name} has become quite the Exhibitionist, she seems to prefer Advertising topless whenever she can.", is_night);
 
     return false;
 }
@@ -3416,11 +3398,6 @@ bool CatacombJob::JobProcessing(sGirl& girl, IBuildingShift& building, bool is_n
 
     // Improve girl
     HandleGains(girl, m_Performance);
-
-    if (chance(25) && girl.strength() >= 60 && girl.combat() > girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, "Strong", 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", is_night);
-    }
 
     return false;
 }

@@ -14,6 +14,17 @@
     <Gains XP="10" Skill="3">
         <Skill Name="Crafting" Weight="3"/>
         <Skill Name="Service" Weight="1"/>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>It took her ruining hundreds of pieces of fabric, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Handyman">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>Regular as a tailor has turned ${name} into a capable Handyman.</Text>
+        </GainTrait>
     </Gains>
 
     <Config DefaultImage="Craft" />

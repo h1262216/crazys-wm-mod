@@ -42,6 +42,7 @@ struct sLuaGirl : public sCharacter<sLuaGirl>{
     static int add_trait(lua_State* L);
     static int has_trait(lua_State* L);
     static int remove_trait(lua_State* L);
+    static int progress_trait(lua_State* L);
 
     static int breast_size(lua_State* L);
 

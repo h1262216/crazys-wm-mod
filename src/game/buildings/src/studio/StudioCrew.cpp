@@ -278,10 +278,8 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     if (filming) girl.upd_Enjoyment(ACTION_MOVIECREW, enjoym);
     girl.upd_Enjoyment(ACTION_WORKCLEANING, enjoyc);
     // Gain Traits
-    if (chance(girl.service()))
-        cGirls::PossiblyGainNewTrait(girl, "Maid", 90, ACTION_WORKCLEANING, "${name} has cleaned enough that she could work professionally as a Maid anywhere.", is_night);
-    //lose traits
-    cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, ACTION_WORKCLEANING, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", is_night);
+    cGirls::PossiblyGainNewTrait(girl, "Maid", girl.service() / 9, "${name} has cleaned enough that she could work professionally as a Maid anywhere.");
+    cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.");
 
     return {false, 0, 0, m_Wages};
 }

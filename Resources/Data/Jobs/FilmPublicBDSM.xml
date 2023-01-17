@@ -54,15 +54,42 @@
         <Skill Name="BDSM" Weight="1" />
         <Stat Name="Constitution" Weight="1" Max="75"/>
 
-        <GainTrait Trait="Porn Star" Threshold="70" Action="PORNSTAR">
-            She has performed in enough sex scenes that she has become a well known Porn Star.
-        </GainTrait>
-        <GainTrait Trait="Masochist" Threshold="65" Action="SEX">
-            ${name} has turned into a Masochist from filming so many BDSM scenes.
+        <GainTrait Trait="Porn Star" >
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text> She has performed in enough sex scenes that she has become a well known Porn Star.</Text>
         </GainTrait>
 
-        <LoseTrait Trait="Chaste" Threshold="20" Action="PORNSTAR">
-            She has been filmed having sex so often that she is no longer Chaste.
+        <GainTrait Trait="Masochist">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="BDSM" Lower="50" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has turned into a Masochist from filming so many BDSM scenes.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Mind Fucked">
+            <TraitChangeAmount Value="10" Chance="25" />
+            <TraitChangeAmount Value="100" Chance="5" />
+            <Text>${name} has become Mind Fucked from too many bondage scenes.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="80" Chance="50" />
+            <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="80" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Being paraded around naked, and abused by countless strangers, has made ${name} overcome her Shyness.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Iron Will">
+            <TraitChangeAmount Value="150" Chance="5" />
+            <TraitChangeAmount Value="5" Chance="33" />
+            <Text>Being repeatedly fucked and abused in bondage seems to have broken ${name}'s Iron Will.</Text>
         </LoseTrait>
     </Gains>
 

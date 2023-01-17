@@ -305,17 +305,8 @@ sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
 
     // consequences of forcing are loss of iron will and potential gain of Mind Fucked
     if (m_IsForced) {
-        if(girl.has_active_trait(traits::IRON_WILL)) {
-            if (girl.lose_trait(traits::IRON_WILL, 2))
-            {
-                girl.AddMessage("${name}'s unwilling degradation has shattered her iron will.", EImageBaseType::TORTURE, EVENT_GOODNEWS);
-            }
-        } else {
-            if (girl.gain_trait(traits::MIND_FUCKED, 2))
-            {
-                girl.AddMessage("${name} has become Mind Fucked from the forced degradation.", EImageBaseType::TORTURE, EVENT_WARNING);
-            }
-        }
+        cGirls::PossiblyLoseExistingTrait(girl, traits::IRON_WILL, 15, "${name}'s unwilling degradation has shattered her Iron Will.", EImageBaseType::TORTURE);
+        cGirls::PossiblyLoseExistingTrait(girl, traits::MIND_FUCKED, 15, "${name}'s has become Mind Fucked from the forced degradation.", EImageBaseType::TORTURE, EVENT_WARNING);
     }
 
     // independent of the scene description, charisma and beauty change the rating a bit

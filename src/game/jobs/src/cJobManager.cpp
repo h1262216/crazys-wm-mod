@@ -429,7 +429,7 @@ bool cJobManager::work_related_violence(sGirl& girl, bool Day0Night1, bool stree
         customer_rape(girl, enemy_gang.m_Num);
         return true;
     }
-    girl.upd_Enjoyment(ACTION_SEX, +1);
+    // girl.upd_Enjoyment(ACTION_SEX, +1);
     /*
      *    the fame thing could work either way.
      *    of course, that road leads to us keeping reputation for
@@ -547,8 +547,8 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
         make_horny(*SecGuard, num);  // There's nothing like killin ta make ya horny!
         SecGuard->confidence(num);
         SecGuard->fame(num);
-        girl.upd_Enjoyment(ACTION_COMBAT, num);
-        girl.upd_Enjoyment(ACTION_WORKSECURITY, num);
+        // girl.upd_Enjoyment(ACTION_COMBAT, num);
+        // girl.upd_Enjoyment(ACTION_WORKSECURITY, num);
 
         std::stringstream Gmsg;
         std::stringstream SGmsg;
@@ -683,8 +683,8 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
         SecGuard->pcfear(20);
         SecGuard->pclove(-40);
         cGirls::GirlInjured(*SecGuard, 10); // MYR: Note
-        SecGuard->upd_Enjoyment(ACTION_WORKSECURITY, -30);
-        SecGuard->upd_Enjoyment(ACTION_COMBAT, -30);
+        // SecGuard->upd_Enjoyment(ACTION_WORKSECURITY, -30);
+        // SecGuard->upd_Enjoyment(ACTION_COMBAT, -30);
         return false;
     }
 }
@@ -780,7 +780,7 @@ bool cJobManager::girl_fights_rape(sGirl& girl, sGang *enemy_gang, int day_night
         girl.confidence(num);
         girl.fame(num);
 
-        girl.upd_Enjoyment(ACTION_COMBAT, num);
+        // girl.upd_Enjoyment(ACTION_COMBAT, num);
 
         std::stringstream msg;
 
@@ -887,7 +887,7 @@ void cJobManager::customer_rape(sGirl& girl, int numberofattackers)
     girl.pcfear(20);
     girl.pclove(-40);
     cGirls::GirlInjured(girl, 10); // MYR: Note
-    girl.upd_Enjoyment(ACTION_SEX, -30);
+    // girl.upd_Enjoyment(ACTION_SEX, -30);
 
     // `J` do Pregnancy and/or STDs
     bool preg = false, std = false, a = false, c = false, h = false, s = false;
@@ -1375,7 +1375,7 @@ bool cJobManager::job_filter(int Filter, JOBS job) const {
     auto& filter = JobFilters[Filter];
     return std::count(begin(filter.Contents), end(filter.Contents), job) > 0;
 }
-
+/*
 bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, cBuilding * brothel, bool Day0Night1)
 {
     int avail = g_Game->shop().CountItem(Drug);
@@ -1395,7 +1395,7 @@ bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl
     }
     return true;
 }
-
+*/
 EJobFilter cJobManager::get_filter_id(const std::string& name) const {
     for(int i = 0; i < JobFilters.size(); ++i) {
         if(JobFilters[i].Name == name) {

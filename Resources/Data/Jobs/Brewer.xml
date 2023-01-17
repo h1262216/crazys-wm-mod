@@ -47,8 +47,22 @@
         <Skill Name="Herbalism" Weight="1"/>
         <Skill Name="Cooking" Weight="1"/>
 
-        <GainTrait Trait="Chef" Threshold="70" Action="COOKING">
-            ${name} has prepared enough food to qualify as a Chef.
+        <GainTrait Trait="Chef" >
+            <TraitChangeAmount Value="30" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+                <TraitChangeCondition What="Cooking" Lower="40" Upper="80"/>
+            </TraitChangeAmount>
+            <Text>${name} has prepared enough food to qualify as a Chef.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Mixologist">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="500" Chance="5">
+                <TraitChangeCondition What="JobPerformance" Lower="200" Upper="250"/>
+            </TraitChangeAmount>
+            <Text>Her brewing experience means that ${name} qualifies as a Mixologist.</Text>
         </GainTrait>
     </Gains>
 

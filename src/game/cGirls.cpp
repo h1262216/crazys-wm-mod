@@ -193,7 +193,7 @@ void cGirls::LevelUpTraits(sGirl& girl) {
         if(girl.lose_trait(trait.c_str(), false)) {
             std::stringstream ss;
             ss << " She has lost the " << trait << " trait.";
-            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
+            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_LOSE_TRAIT);
             return;
         }
     }
@@ -226,7 +226,7 @@ void cGirls::LevelUpTraits(sGirl& girl) {
         if(girl.gain_trait(trait.c_str())) {
             std::stringstream ss;
             ss << " She has gained the " << trait << " trait.";
-            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
+            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GAIN_TRAIT);
             return;
         }
     }
@@ -769,6 +769,21 @@ string cGirls::GetMoreDetailsString(const sGirl& girl, bool purchase)
         else                                     { ss << "At the moment, she hasn't started any special training.\n \n"; }
     }
 
+    ss << "\nTRAIT PROGRESSION:\n";
+
+    // Add trait progress
+    auto prog = girl.get_trait_progress();
+    for(auto& trait : prog) {
+        int value = trait.second / 10;
+        if(trait.second > 0) {
+            ss << " + ";
+        } else {
+            ss << " - ";
+            value = -value;
+        }
+        ss << trait.first << "  " << value << "%\n";
+    }
+
     ss << "\n \n\nBased on:  " << girl.m_FileName;
 
     return ss.str();
@@ -932,6 +947,8 @@ string cGirls::GetThirdDetailsString(const sGirl& girl)    // `J` bookmark - Job
     data += "Then 'A'-'E' with 'E' being the worst.\n'X' means they can not do the job.\n \n";
     data += "Jobs marked with ? do not really use job performance directly and is an estimate.\n";
     data += "Jobs marked with ! are how much the girl is in need of the service of that job.\n";
+    data += "\n";
+
     return data;
 
 }
@@ -1117,8 +1134,6 @@ int cGirls::GetNumYourDaughterGirls()
 {
     return m_Girls->count(is_your_daughter);
 }
-
-// ----- Stat
 
 // ----- Skill
 
@@ -1579,22 +1594,28 @@ int cGirls::GetNumItemType(const sGirl& girl, int Type, bool splitsubtype)
 // ----- Traits
 
 // If a girl enjoys a job enough, she has a chance of gaining traits associated with it
-bool cGirls::PossiblyGainNewTrait(sGirl& girl, string Trait, int Amount, const string& Message, sImagePreset image, EEventType eventtype)
+bool cGirls::PossiblyGainNewTrait(sGirl& girl, const string& Trait, int Amount, const string& Message, sImagePreset image, EEventType eventtype)
 {
-    if(girl.has_active_trait(Trait.c_str())) return false;
+    auto state = girl.raw_traits().has_permanent_trait(Trait.c_str());
+    if(state == ITraitsCollection::TRAIT_ACTIVE) return false;
+    if(state == ITraitsCollection::TRAIT_INACTIVE) Amount *= 2;
 
     if(girl.progress_trait(Trait, Amount) >= 1000) {
+        girl.reset_trait_progress(Trait);
+        girl.gain_trait(Trait.c_str());
         girl.AddMessage(Message, image, eventtype);
         return true;
     };
     return false;
 }
 
-bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, string Trait, int Amount, const std::string& Message, sImagePreset image, EEventType eventtype)
+bool cGirls::PossiblyLoseExistingTrait(sGirl& girl, const string& Trait, int Amount, const std::string& Message, sImagePreset image, EEventType eventtype)
 {
-    if(!girl.has_active_trait(Trait.c_str())) return false;
+    if(girl.raw_traits().has_permanent_trait(Trait.c_str()) != ITraitsCollection::TRAIT_ACTIVE) return false;
 
     if(girl.progress_trait(Trait, -Amount) <= -1000) {
+        girl.reset_trait_progress(Trait);
+        girl.lose_trait(Trait.c_str());
         girl.AddMessage(Message, image, eventtype);
         return true;
     };

@@ -47,6 +47,12 @@
         <Stat Name="Confidence" Weight="1" />
         <Stat Name="Strength" Weight="1" />
         <Stat Name="Constitution" Weight="1" />
+
+        <LoseTrait Trait="Elegant">
+            <TraitChangeAmount Value="100" Chance="50" />
+            <Text>Working with dirty, smelly beasts has damaged ${name}'s hair,
+                skin and nails making her less Elegant.</Text>
+        </LoseTrait>
     </Gains>
 
     <Config>

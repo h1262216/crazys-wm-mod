@@ -41,17 +41,40 @@
         <Stat Name="Charisma" Weight="1"/>
         <Stat Name="Confidence" Weight="1" Max="50" />
 
-        <GainTrait Trait="Charming" Threshold="80" Action="ACTRESS" MinPerformance="100" Chance="25">
-            Singing and dancing on film has made her more Charming.
+        <GainTrait Trait="Actress" >
+            <TraitChangeAmount Value="20" Chance="25" />
+            <Text>She has performed in enough scenes that she has become a good Actress.</Text>
         </GainTrait>
-        <GainTrait Trait="Sexy Air" Threshold="80" Action="WORKSTRIP" MinPerformance="140" Chance="25">
-            ${name} has been having to be sexy for so long she now reeks of sexiness.
+
+        <GainTrait Trait="Charming">
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="Performance" Lower="30" Upper="60"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Singing and dancing on film has made ${name} more Charming.</Text>
         </GainTrait>
-        <GainTrait Trait="Singer" Threshold="80" Action="ACTRESS" MinPerformance="200" Chance="30">
-            Her singing has become quite excellent.
+
+        <GainTrait Trait="Singer">
+            <TraitChangeAmount Value="25" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>${name} has become an accomplished Singer.</Text>
         </GainTrait>
-        <GainTrait Trait="Idol" Threshold="80" Action="ACTRESS" MinPerformance="245" Chance="30">
-            Her talented and charismatic performances have got a large number of fans Idolizing her.
+
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="75" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>Her talented and charismatic performances have got a large number of fans Idolizing her.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Cool Person" >
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Agility" Lower="33" Upper="66" />
+            </TraitChangeAmount>
+            <Text>Performing in a music video makes ${name} a really Cool Person.</Text>
         </GainTrait>
     </Gains>
 

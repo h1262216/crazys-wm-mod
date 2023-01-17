@@ -26,17 +26,70 @@
         <Stat Name="Agility" Weight="1"/>
         <Stat Name="Constitution" Weight="1"/>
 
-        <GainTrait Trait="Tough" Threshold="30" Action="COMBAT">
-            She has become pretty Tough from all of the fights she's been in.
+        <GainTrait Trait="Tough">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Constitution" Lower="33" Upper="50" />
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has become pretty Tough from all the fights she's been in.</Text>
         </GainTrait>
-        <GainTrait Trait="Adventurer" Threshold="40" Action="COMBAT">
-            She has been in enough tough spots to consider herself Adventurer.
+
+        <GainTrait Trait="Strong">
+            <TraitChangeAmount Value="60" Chance="25">
+                <TraitChangeCondition What="Strength" Lower="60" Upper="80" />
+            </TraitChangeAmount>
+            <Text>${name} has become pretty Strong from all the fights she's been in.</Text>
         </GainTrait>
-        <GainTrait Trait="Aggressive" Threshold="50" Action="COMBAT" Event="2">
-            She is getting rather Aggressive from her enjoyment of combat.
+
+        <GainTrait Trait="Adventurer">
+            <TraitChangeAmount Value="80" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="220" />
+            </TraitChangeAmount>
+            <Text>She has been in enough tough spots to consider herself an Adventurer.</Text>
         </GainTrait>
-        <LoseTrait Trait="Fragile" Threshold="15" Action="COMBAT">
-            ${name} has had to heal from so many injuries you can't say she is fragile anymore.
+
+        <GainTrait Trait="Assassin">
+            <!-- Just enough so that working this job won't lose her progress -->
+            <TraitChangeAmount Value="1" Chance="50" />
+        </GainTrait>
+
+        <GainTrait Trait="Aggressive" Event="2">
+            <TraitChangeAmount Value="20" Chance="25">
+                <TraitChangeCondition What="Spirit" Value="50"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="200" Chance="10" />
+            <Text>She is getting rather Aggressive from her enjoyment of combat.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Hunter">
+            <TraitChangeAmount Value="40" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="125" Upper="175" />
+            </TraitChangeAmount>
+            <Text>Capturing so many beasts has turned ${name} into quite the Hunter.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Fragile">
+            <TraitChangeAmount Value="100" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="50" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has had to heal from so many injuries you can't say she is Fragile anymore.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Meek">
+            <TraitChangeAmount Value="100" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="50" Upper="200" />
+            </TraitChangeAmount>
+            <Text>All the fighting has made ${name} less Meek.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Elegant">
+            <TraitChangeAmount Value="33" Chance="50" />
+            <Text>Regularly fighting with disgusting fiends has made ${name} less Elegant.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="City Girl">
+            <TraitChangeAmount Value="33" Chance="25" />
+            <Text>Having been out and hunting beasts for so long, ${name} no longer considers herself a City Girl.</Text>
         </LoseTrait>
     </Gains>
 

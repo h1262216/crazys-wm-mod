@@ -467,7 +467,7 @@ void cDungeon::Update()
         current.m_Weeks++;                        // the number of weeks they have been in the dungeon
         cGirls::CalculateGirlType(*girl);        // update the fetish traits
         cGirls::updateGirlAge(*girl, true);        // update birthday counter and age the girl
-        cGirls::updateTemp(*girl);            // update temp stuff
+        girl->DecayTemp();
         cGirls::EndDayGirls(g_Game->buildings().get_building(0), *girl);
         handle_children(*girl, summary, true);            // handle pregnancy and children growing up
         cGirls::updateSTD(*girl);                // health loss to STD's - NOTE: Girl can die

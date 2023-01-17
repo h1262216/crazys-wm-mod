@@ -304,6 +304,8 @@ public:
 
     // trait progress
     int progress_trait(const std::string& trait_name, int amount);
+    void reset_trait_progress(const std::string& trait_name);
+    std::unordered_map<std::string, int> get_trait_progress() const;
 
     void DecayTemp() override;
 private:

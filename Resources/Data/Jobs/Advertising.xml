@@ -23,12 +23,45 @@
         <Skill Name="Service" Weight="1" Max="50"/>
         <Stat Name="Confidence" Weight="1" Max="50"/>
 
-        <GainTrait Trait="Charismatic" Threshold="70" Action="WORKADVERTISING">
-            Advertising on a daily basis has made ${name} more Charismatic.
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Advertising on a daily basis has made ${name} more Charismatic.</Text>
         </GainTrait>
-        <LoseTrait Trait="Nervous" Threshold="40" Action="WORKADVERTISING">
-            ${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.
+
+        <GainTrait Trait="Charming">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="40"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="40"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="30"/>
+            </TraitChangeAmount>
+            <Text>Advertising on a daily basis has made ${name} more Charming.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.</Text>
         </LoseTrait>
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her Shyness.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Exhibitionist">
+            <TraitChangeAmount Value="50" Chance="33">
+                <TraitChangeCondition What="Lust" Lower="75" Upper="100"/>
+                <TraitChangeCondition What="Strip" Lower="50" Upper="70"/>
+            </TraitChangeAmount>
+            <Text>${name} has become quite the Exhibitionist, she seems to prefer Advertising topless whenever she can.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

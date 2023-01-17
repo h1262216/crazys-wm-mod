@@ -15,6 +15,21 @@
         <Stat Name="Intelligence" Weight="1" Max="50"/>
         <Skill Name="Cooking" Weight="1" Max="70"/>
         <Skill Name="Service" Weight="1" Max="70"/>
+
+        <GainTrait Trait="Charming">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Helping less fortunate citizens on a daily basis has made ${name} quite Charming.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Compassionate">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="120" Upper="220"/>
+            </TraitChangeAmount>
+            <Text>Helping so many people has made ${name} quite Compassionate.</Text>
+        </GainTrait>
     </Gains>
 
     <Config BaseWages="100">

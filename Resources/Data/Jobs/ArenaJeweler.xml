@@ -18,8 +18,17 @@
         <Stat Name="Confidence" Weight="1"/>
         <Stat Name="Intelligence" Weight="1"/>
         <Stat Name="Agility" Weight="1"/>
-        <GainTrait Trait="Sharp-Eyed" Threshold="50" Action="MAKEITEMS">
-            Working on such small items has made ${name} rather Sharp-Eyed.
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="50" Chance="50" />
+            <Text>Working on such small items has made ${name} less Clumsy.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Sharp-Eyed">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Working on such small items has made ${name} rather Sharp-Eyed.</Text>
         </GainTrait>
     </Gains>
 

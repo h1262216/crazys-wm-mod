@@ -15,6 +15,7 @@ function Training(girl)
         return
     elseif girl:health() < 40 then
         Dialog("She is not healthy enough for training today.")
+        return
     elseif action == 0 then -- Magic Lesson
         Dialog("Today you will spend the day at in the care of the mages at the Citadel.  Learn well from them. ")
         if girl:obey_check(wm.ACTIONS.GENERAL) then
@@ -48,18 +49,9 @@ function Training(girl)
         Dialog("\"I have made arrangements with a local acrobatics troupe.  They have agreed to show you some of their techniques.\"  You hand her a parchment with a crude map and the name of the troupe leader.")
         if girl:obey_check(wm.ACTIONS.GENERAL) then
             wm.TakePlayerGold(250)
-            -- TODO this is a bit weird, agility training works better if she is good at agility
             girl:experience(wm.Range(5, 10))
             wm.UpdateImage(wm.IMG.SPORT)
             if wm.Percent(girl:agility()) then
-                Dialog("She finds the plaza easily and introduced herself to the Head Troubadour. She easily picked up on the subtle important motions involved with tumbling and they acrobats were impressed by her natural flexibility.")
-                Dialog("She had a fun day and learned a great deal from the troupe.")
-                girl:agility(wm.Range(3, 10))
-                girl:strength(wm.Range(0, 4))
-                girl:charisma(wm.Range(0, 4))
-                girl:happiness(wm.Range(0, 5))
-                girl:tiredness(wm.Range(1, 10))
-            else
                 Dialog("She got a little turned around but eventually found the correct street.")
                 Dialog("She forgot to wear her underwear today, which made many of the lifts and holds distracting to both her and her fellow entertainers. More than one audience member got more of a show then they had expected.")
                 Dialog("All in all, her unique brand of showmanship earned some better tips, but she was too distracted to learn everything.")
@@ -69,6 +61,18 @@ function Training(girl)
                 girl:make_horny(wm.Range(5, 25))
                 girl:tiredness(wm.Range(1, 10))
                 wm.AddPlayerGold(wm.Range(20, 90))
+            else
+                Dialog("She finds the plaza easily and introduced herself to the Head Troubadour. She easily picked up on the subtle important motions involved with tumbling and they acrobats were impressed by her natural flexibility.")
+                Dialog("She had a fun day and learned a great deal from the troupe.")
+                girl:agility(wm.Range(3, 10))
+                girl:strength(wm.Range(0, 4))
+                girl:charisma(wm.Range(0, 4))
+                girl:happiness(wm.Range(0, 5))
+                girl:tiredness(wm.Range(1, 10))
+            end
+
+            if girl:progress_trait(wm.TRAITS.AGILE, 10 + girl:agility() / 3) then
+                Dialog("She has gained the Agile trait.")
             end
         else
             Dialog("She pretends to have an injured ankle and mumbles some apologies as she hobbles out of the room.")
@@ -86,7 +90,7 @@ function Training(girl)
                 Dialog("Although she was tired and cranky she helped the men unload the ship long into the night.  The Foreman thanked her for her help and refunded most of the bribe.")
                 wm.AddPlayerGold(wm.Range(100, 200))
                 girl:strength(wm.Range(4, 10))
-                girl:constitution(wm.Range(4, 10))
+                girl:constitution(wm.Range(1, 5))
                 girl:obedience(wm.Range(1, 5))
                 girl:refinement(-wm.Range(0, 2))
                 girl:tiredness(wm.Range(2, 20))
@@ -94,10 +98,14 @@ function Training(girl)
                 Dialog("She had meant to get to the docks on time, but somehow she managed to oversleep.  The Foreman was not pleased when she showed up around noon.")
                 Dialog("She worked hard for the last half of the day, but she may have gotten more out of it if she had been on time.")
                 girl:strength(wm.Range(1, 5))
-                girl:constitution(wm.Range(1, 5))
+                girl:constitution(wm.Range(4, 10))
                 girl:make_horny(wm.Range(2, 10))
                 girl:refinement(-wm.Range(1, 3))
                 girl:tiredness(wm.Range(1, 15))
+            end
+
+            if girl:progress_trait(wm.TRAITS.TOUGH, 10 + girl:constitution() / 3) then
+                Dialog("All this hard work made ${name} quite Tough.")
             end
         else
             Dialog("She is visibly disgusted by the idea of working around sweaty men all day.  She makes some weak excuses and walks away.")
@@ -161,6 +169,10 @@ function Training(girl)
                 if girl:charisma() < 33 then
                     girl:charisma(wm.Range(0, 3))
                 end
+
+                if girl:progress_trait(wm.TRAITS.SINGER, 10 + girl:performance() / 3) then
+                    Dialog("The training paid off, she is now an experienced Singer.")
+                end
             else
                 Dialog("${firstname} already is a rather skilled thespian, but there are still some things she can learn from the masters. "..
                         "She works on her comedic timing, and practice nuanced facial expressions.")
@@ -172,6 +184,10 @@ function Training(girl)
                 if girl:refinement() < 33 then
                     girl:refinement(wm.Range(0, 2))
                 end
+            end
+
+            if girl:progress_trait(wm.TRAITS.CHARISMATIC, 10 + girl:charisma() / 10) then
+                Dialog("Her training has made her more Charismatic.")
             end
         end
     end

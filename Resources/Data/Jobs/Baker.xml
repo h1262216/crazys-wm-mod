@@ -25,8 +25,17 @@
     </Performance>
 
     <Gains XP="10" Skill="3">
-        <GainTrait Trait="Chef" Threshold="70" Action="COOKING">
-            ${name} has prepared enough food to qualify as a Chef.
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>It took her breaking hundreds of dishes, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Chef" >
+            <TraitChangeAmount Value="30" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>${name} has prepared enough food to qualify as a Chef.</Text>
         </GainTrait>
         <Skill Name="Cooking" Weight="3" Max="80"/>
         <Skill Name="Herbalism" Weight="1" Max="50"/>

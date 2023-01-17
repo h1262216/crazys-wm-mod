@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2020-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -56,28 +56,30 @@ private:
 
 struct sTraitChange {
     // explicit constructor needed for mingw
-    sTraitChange(bool g, std::string trait, int amount, std::string message, EEventType e = EVENT_GOODNEWS,
-                 int perf = -1000) :
-            Gain(g), TraitName(std::move(trait)), Amount(amount), Message(std::move(message)), EventType(e),
-            PerformanceRequirement(perf) {}
+    sTraitChange(bool g, std::string trait, std::string message, EEventType e = EVENT_NONE);
     // target change
     bool Gain;
     std::string TraitName;
-    int Amount;
-
-    // message
-    std::string Message;
-    EEventType EventType = EVENT_GOODNEWS;
-
-    // Conditions
-    int PerformanceRequirement = -1000;        // minimum job performance to consider the trait
 
     struct sAttributeCondition {
         StatSkill Attribute;
         int LowerBound;
         int UpperBound;
     };
-    std::vector<sAttributeCondition> Conditions;
+
+    struct sChangeAmount {
+        int BaseAmount;
+        int PerformanceRequirementMin = -1000;
+        int PerformanceRequirementMax = -1000;
+        int Chance = 100;
+        std::vector<sAttributeCondition> Conditions;
+    };
+
+    // message
+    std::string Message;
+    EEventType EventType;
+
+    std::vector<sChangeAmount> ChangeAmounts;
 };
 
 class cJobGains {

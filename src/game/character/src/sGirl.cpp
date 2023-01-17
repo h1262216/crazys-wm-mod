@@ -479,6 +479,17 @@ bool sGirl::LoadGirlXML(const tinyxml2::XMLElement* pGirl)
     // load house percent
     pGirl->QueryIntAttribute("HousePercent", &m_HousePercent);
 
+    // load partial trait status
+    auto* part_trait_el = pGirl->FirstChildElement("TraitProgress");
+    if(part_trait_el) {
+        for(auto& sub : IterateChildElements(*part_trait_el, "Trait")) {
+            std::string name = GetStringAttribute(sub, "Name");
+            int prog = GetIntAttribute(sub, "Progress");
+            int timer = GetIntAttribute(sub, "Timer");
+            m_PartialTraits[name] = sTraitProgress{prog, timer};
+        }
+    }
+
     auto load_job = [pGirl](const char* attribute, JOBS& target){
         std::string tempst = pGirl->Attribute(attribute);
         if(tempst == "255") {
@@ -577,6 +588,15 @@ tinyxml2::XMLElement& sGirl::SaveGirlXML(tinyxml2::XMLElement& elRoot)
     }
 
     elGirl.SetAttribute("ImagePath", GetImageFolder().c_str());
+
+    // Save partial trait status
+    auto& part_trait_el = PushNewElement(elGirl, "TraitProgress");
+    for(auto& tp : m_PartialTraits) {
+        auto& prog_el = PushNewElement(part_trait_el, "Trait");
+        prog_el.SetAttribute("Name", tp.first.c_str());
+        prog_el.SetAttribute("Progress", tp.second.Progress);
+        prog_el.SetAttribute("Timer", tp.second.Timer);
+    }
 
     // `J` changed jobs to save as quick codes instead of numbers so if new jobs are added they don't shift jobs
     // save jobs
@@ -1467,6 +1487,18 @@ int sGirl::progress_trait(const std::string& trait_name, int amount) {
     }
 }
 
+void sGirl::reset_trait_progress(const std::string& trait_name) {
+    m_PartialTraits.erase(trait_name);
+}
+
+std::unordered_map<std::string, int> sGirl::get_trait_progress() const {
+    std::unordered_map<std::string, int> result;
+    for(auto& p : m_PartialTraits) {
+        result[p.first] = p.second.Progress;
+    }
+    return result;
+}
+
 void sGirl::DecayTemp() {
     ICharacter::DecayTemp();
 
@@ -1497,6 +1529,5 @@ void sGirl::DecayTemp() {
         }
         ++it;
     }
-
 }
 

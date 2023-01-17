@@ -22,11 +22,20 @@
         <Skill Name="Service" Weight="1" Max="50"/>
         <Stat Name="Confidence" Weight="1" Max="50"/>
 
-        <GainTrait Trait="Charismatic" Threshold="70" Action="WORKADVERTISING">
-            Advertising on a daily basis has made ${name} more Charismatic.
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>Helping customers on a daily basis has made ${name} more Charismatic.</Text>
         </GainTrait>
-        <LoseTrait Trait="Nervous" Threshold="40" Action="WORKADVERTISING">
-            ${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.
+
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.</Text>
         </LoseTrait>
     </Gains>
 

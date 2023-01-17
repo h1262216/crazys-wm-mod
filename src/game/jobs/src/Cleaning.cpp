@@ -90,8 +90,9 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
     // Update Enjoyment
     // girl.upd_Enjoyment(ACTION_WORKCLEANING, enjoy);
     // Gain and Lose Traits
-    cGirls::PossiblyGainNewTrait(girl, traits::MAID, girl.service() / 7, "${name} has cleaned enough that she could work professionally as a Maid anywhere.", EImageBaseType::PROFILE);
-    cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, girl.service() / 3, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.", EImageBaseType::PROFILE);
+    cGirls::PossiblyGainNewTrait(girl, traits::MAID, girl.service() / 7, "${name} has cleaned enough that she could work professionally as a Maid anywhere.");
+    cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, girl.service() / 3, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.");
+
 }
 
 void Cleaning::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {

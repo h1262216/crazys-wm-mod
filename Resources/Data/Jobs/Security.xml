@@ -9,15 +9,35 @@
         <Skill Name="Magic" Weight="1"/>
         <Stat Name="Agility" Weight="1" />
 
-        <GainTrait Trait="Tough" Threshold="15" Action="WORKSECURITY">
-            She has become pretty Tough from all of the fights she's been in.
+        <GainTrait Trait="Tough">
+            <TraitChangeAmount Value="80" Chance="50">
+                <TraitChangeCondition What="Constitution" Lower="33" Upper="50" />
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>She has become pretty Tough from all the fights she's been in.</Text>
         </GainTrait>
-        <GainTrait Trait="Adventurer" Threshold="45" Action="WORKSECURITY">
-            She has been in enough tough spots to consider herself Adventurer.
+
+        <GainTrait Trait="Aggressive" Event="2">
+            <TraitChangeAmount Value="20" Chance="25">
+                <TraitChangeCondition What="Spirit" Value="50"/>
+            </TraitChangeAmount>
+            <TraitChangeAmount Value="200" Chance="10" />
+            <Text>She is getting rather Aggressive from her enjoyment of combat.</Text>
         </GainTrait>
-        <LoseTrait Trait="Aggressive" Threshold="60" Action="WORKSECURITY">
-            She is getting rather Aggressive from her enjoyment of combat.
+
+        <LoseTrait Trait="Meek">
+            <TraitChangeAmount Value="100" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="50" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Having to use her authority in the City Guard, ${name} has become less Meek.</Text>
         </LoseTrait>
+
+        <GainTrait Trait="Audacity">
+            <TraitChangeAmount Value="50" Chance="25">
+                <TraitChangeCondition What="Spirit" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>Being a security guard, ${name} started to get used to abusing her authority. (+Audacity)</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

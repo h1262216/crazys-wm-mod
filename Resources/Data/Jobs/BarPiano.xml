@@ -38,6 +38,8 @@
         <Trait Name="Aggressive" Value="-20"/> <!-- gets mad easy and may attack people -->
         <Trait Name="Meek" Value="-20"/>
         <Trait Name="Slow Learner" Value="-10"/>
+        <Trait Name="Clumsy" Value="-20"/>
+        <Trait Name="Tone Deaf" Value="-20"/>
 
         <Trait Name="No Arms" Value="-200"/>
         <Trait Name="No Hands" Value="-190"/>
@@ -58,12 +60,48 @@
     </Performance>
 
     <Gains XP="10" Skill="3">
-        <LoseTrait Trait="Nervous" Threshold="30" Action="WORKMUSIC">
-            ${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.</Text>
         </LoseTrait>
-        <GainTrait Trait="Elegant" Threshold="75" Action="WORKMUSIC">
-            Playing the piano has given ${name} an Elegant nature.
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>Playing in front of a crowd has allowed ${name} to finally overcome her Shyness.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="10" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="250" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>${name} has become an Idol, adored by her fans and followers.</Text>
         </GainTrait>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="30" Chance="50">
+                <TraitChangeCondition What="Agility" Lower="33" Upper="66"/>
+            </TraitChangeAmount>
+            <Text>Having exercised her fine motor skills so much playing the piano, ${name} has lost her Clumsiness.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Tone Deaf">
+            <TraitChangeAmount Value="60" Chance="25" />
+            <Text>Playing a musical instrument for so long, ${name} managed to overcome her Tone-Deafness.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Elegant">
+            <TraitChangeAmount Value="60" Chance="25">
+                <TraitChangeCondition What="Dignity" Lower="50" Upper="100"/>
+            </TraitChangeAmount>
+            <Text>Playing the piano has given ${name} an Elegant nature.</Text>
+        </GainTrait>
+
         <Skill Name="Performance" Weight="3" />
         <Stat Name="Confidence" Weight="1" />
         <Stat Name="Agility" Weight="1" />
@@ -77,7 +115,7 @@
             <Text>${name} refused to play piano in your bar to${shift}.</Text>
         </Message>
         <Message Name="event.nympho-nowork">
-            <Text>${name} let lust get the better of her and she ended up missing her ${shift} shift.</Text>
+            <Text>${name} let lust get the better of her, and she ended up missing her ${shift} shift.</Text>
         </Message>
 
         <Message Name="work.perfect">

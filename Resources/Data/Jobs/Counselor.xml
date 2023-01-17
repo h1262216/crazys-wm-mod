@@ -15,12 +15,37 @@
     <Gains XP="10" Skill="2">
         <Skill Name="Service" Weight="1" />
         <Stat Name="Charisma" Weight="1" />
-        <GainTrait Trait="Charismatic" Threshold="60" Action="WORKCOUNSELOR">
-            Dealing with patients and talking with them about their problems has made ${name} more Charismatic.
+
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Dealing with patients and talking with them about their problems has made ${name} more Charismatic.</Text>
         </GainTrait>
-        <LoseTrait Trait="Nervous" Threshold="30" Action="WORKCOUNSELOR">
-            ${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Dealing with patients on a regular basis, ${name} seems to finally be getting over her Shyness.</Text>
         </LoseTrait>
+
+        <LoseTrait Trait="Merciless">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>Seeing the plight of her charges on a daily basis,
+                Counselor ${name} could not maintain her Merciless attitude.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Compassionate">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="120" Upper="220"/>
+            </TraitChangeAmount>
+            <Text>Helping so many people has made ${name} quite Compassionate.</Text>
+        </GainTrait>
     </Gains>
 
     <Config Shift="full" FreeOnly="1" BaseWages="25"/>

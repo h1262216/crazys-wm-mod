@@ -58,10 +58,5 @@
   - [ ] Equip / unequip shown simultaneously
 * [ ] gracefully handle missing/corrupt config file
 * [ ] animated webps don't load
-* [ ] order of events:
-  When matron puts girl into resting state, 
-  the announcement isn't put into the correct spot in the event listing. 
-  It is always at the top, instead of in the correct time sequence. 
-  This appears to also be a problem with girls who get in fights or are attacked, 
-  and if the girl refuses a customer due to sexual preference.
 * [ ] WalkTown image appears too early
+* [ ] Check spawning of "Your daughter" girls

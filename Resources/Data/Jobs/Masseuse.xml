@@ -17,8 +17,19 @@
     <Gains XP="20" Skill="3">
         <Skill Name="Medicine" Weight="1" Max="50"/>
         <Skill Name="Service" Weight="1" Max="50"/>
-        <GainTrait Trait="Sexy Air" Threshold="80" Action="WORKSTRIP" Chance="25" MinPerformance="140">
-            ${name} has been having to be sexy for so long she now reeks sexiness.
+
+        <GainTrait Trait="Sexy Air" >
+            <TraitChangeAmount Value="40" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has been having to be sexy for so long she now reeks Sexiness.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Charming" >
+            <TraitChangeAmount Value="40" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} is Charming her customers while she is giving her massages.</Text>
         </GainTrait>
     </Gains>
 

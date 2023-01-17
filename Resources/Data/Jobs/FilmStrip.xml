@@ -18,12 +18,25 @@
         <Skill Name="Performance" Weight="2" />
         <Skill Name="Strip" Weight="1" />
         <Stat Name="Charisma" Weight="1" Max="50"/>
-        <GainTrait Trait="Sexy Air" Threshold="80" Action="WORKSTRIP" MinPerformance="150" Chance="25">
-            ${name} has been stripping for so long, when she walks, it seems her clothes just want to fall off.
+
+        <GainTrait Trait="Sexy Air" >
+            <TraitChangeAmount Value="60" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has been stripping for so long, when she walks, it seems her clothes just want to fall off. (+Sexy Air)</Text>
         </GainTrait>
 
-        <LoseTrait Trait="Chaste" Threshold="20" Action="PORNSTAR">
-            She has been filmed having sex so often that she is no longer Chaste.
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="25" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>${name} has become an Idol.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Chaste">
+            <TraitChangeAmount Value="50" Chance="50" />
+            <Text>Stripping in front of the camera (and the studio crew) has helped ${name} overcome her Chasteness.</Text>
         </LoseTrait>
     </Gains>
 

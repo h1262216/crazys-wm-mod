@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders 
+ * Copyright 2009-2023 The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -25,60 +25,42 @@
 
 std::string CEvent::TitleText() const
 {
+    if(!m_Title.empty())    return m_Title;
 
-/*
- *    Returns default Title Texts
- *    
- *    Used to simplify code in TurnSummary
- *
- */
     switch (m_Event)
     {
     case EVENT_DAYSHIFT:
         return "Day Shift";
-        break;
     case EVENT_NIGHTSHIFT:
         return "Night Shift";
-        break;
     case EVENT_WARNING:
         return "Warning";
-        break;
     case EVENT_DANGER:
-        return "!!!DANGER!!!";
-        break;
+        return "!DANGER!";
     case EVENT_GOODNEWS:
-        return "!!!GOODNEWS!!!";
-        break;
+        return "!GOODNEWS!";
     case EVENT_LEVELUP:
-        return "!!!LEVEL UP!!!";
-        break;
+        return "!LEVEL UP!";
+    case EVENT_GAIN_TRAIT:
+        return "Gained Trait";
+    case EVENT_LOSE_TRAIT:
+        return "Lost Trait";
     case EVENT_SUMMARY:
         return "Summary";
-        break;
     case EVENT_DUNGEON:
         return "Dungeon";
-        break;
     case EVENT_MATRON:
         return "Matron";
-        break;
     case EVENT_GANG:
         return "Gang Report";
-        break;
-    //case EVENT_BROTHEL:
-    //    return "Event";
-    //    break;
     case EVENT_NOWORK:
         return "Refused Job";
-        break;
     case EVENT_BACKTOWORK:
         return "Back to Work";
-        break;
     case EVENT_DEBUG:
         return "#DEBUG#";
-        break;
     default:
         return "Event";
-        break;
     }
 }
 
@@ -92,31 +74,17 @@ unsigned int CEvent::ListboxColour() const
  */
     switch (m_Event)
     {
-    //case EVENT_DAYSHIFT:
-    //    return COLOR_BLUE;
-    //case EVENT_NIGHTSHIFT:
-    //    return COLOR_BLUE;
     case EVENT_WARNING:
+    case EVENT_NOWORK:
         return COLOR_EMPHASIS;
     case EVENT_DANGER:
         return COLOR_WARNING;
     case EVENT_GOODNEWS:
-        return COLOR_POSITIVE;
     case EVENT_LEVELUP:
-        return COLOR_ATTENTION;;
-    //case EVENT_SUMMARY:
-    //    return COLOR_BLUE;
-    //case EVENT_DUNGEON:
-    //    return COLOR_BLUE;
-    //case EVENT_MATRON:
-    //    return COLOR_BLUE;
+    case EVENT_GAIN_TRAIT:
+    case EVENT_LOSE_TRAIT:
+        return COLOR_POSITIVE;
     case EVENT_DEBUG:
-        return COLOR_WARNING;
-    //case EVENT_GANG:
-    //    return COLOR_BLUE;
-    //case EVENT_BROTHEL:
-    //    return COLOR_BLUE;
-    case EVENT_NOWORK:
         return COLOR_EMPHASIS;
     default:
         return COLOR_NEUTRAL;
@@ -125,7 +93,7 @@ unsigned int CEvent::ListboxColour() const
 
 bool CEvent::IsGoodNews() const
 {
-    return m_Event == EVENT_GOODNEWS || m_Event == EVENT_LEVELUP;
+    return m_Event == EVENT_GOODNEWS || m_Event == EVENT_LEVELUP || m_Event == EVENT_GAIN_TRAIT || m_Event == EVENT_LOSE_TRAIT;
 }
 
 bool CEvent::IsUrgent() const

@@ -8,6 +8,26 @@
     </Performance>
 
     <Gains XP="15" Skill="3">
+        <GainTrait Trait="Quick Learner">
+            <TraitChangeAmount Value="50" Chance="25">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>All that Research has turned ${name} into a Quick Learner.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="Slow Learner">
+            <TraitChangeAmount Value="50" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>The constant mental exercise of research has made ${name} overcome her Slow Learning.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Nerd">
+            <TraitChangeAmount Value="50" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Researched ${name} has become a total Nerd.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

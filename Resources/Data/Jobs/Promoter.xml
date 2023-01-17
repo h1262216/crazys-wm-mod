@@ -78,6 +78,24 @@
     <Gains XP="15" Skill="3">
         <Stat Name="Charisma" Weight="1" />
         <Skill Name="Service" Weight="1" Max="50"/>
+
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>Promoting movies on a daily basis has made ${name} more Charismatic.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Charming">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="40"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="40"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="30"/>
+            </TraitChangeAmount>
+            <Text>Promoting movies on a daily basis has made ${name} more Charming.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

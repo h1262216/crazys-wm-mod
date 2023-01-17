@@ -62,11 +62,47 @@
     </Performance>
 
     <Gains XP="15" Skill="3">
-        <LoseTrait Trait="Clumsy" Threshold="30" Action="WORKBAR">
-            It took her breaking hundreds of dishes, and just as many reprimands, but ${name} has finally stopped being so Clumsy.
+        <LoseTrait Trait="Nervous">
+            <TraitChangeAmount Value="60" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>${name} seems to finally be getting over her shyness. She's not always so Nervous anymore.</Text>
         </LoseTrait>
-        <GainTrait Trait="Charming" Threshold="70" Action="WORKBAR">
-            ${name} has been flirting with customers to try to get better tips. Enough practice at it has made her quite Charming.
+
+        <LoseTrait Trait="Shy">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="0" Upper="33"/>
+            </TraitChangeAmount>
+            <Text>Interacting with so many customers has allowed ${name} to finally overcome her Shyness.</Text>
+        </LoseTrait>
+
+        <LoseTrait Trait="Clumsy">
+            <TraitChangeAmount Value="30" Chance="50" />
+            <Text>It took her breaking hundreds of dishes, and just as many reprimands,
+                but ${name} has finally stopped being so Clumsy.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Charming">
+            <TraitChangeAmount Value="60" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>${name} has been flirting with customers to try to get better tips.
+                Enough practice at it has made her quite Charming.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Waitress">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+            </TraitChangeAmount>
+            <Text>${name} has become an accomplished Waitress.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Fleet of Foot">
+            <TraitChangeAmount Value="50" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="150" Upper="200"/>
+                <TraitChangeCondition What="Constitution" Lower="65" Upper="80"/>
+            </TraitChangeAmount>
+            <Text>${name} has been dodging between tables and avoiding running into customers for so long she has become Fleet Of Foot.</Text>
         </GainTrait>
 
         <Skill Name="Service" Weight="2" />

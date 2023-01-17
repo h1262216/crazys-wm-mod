@@ -26,6 +26,19 @@
         <Skill Name="Herbalism" Weight="2"/>
         <Skill Name="Farming" Weight="2"/>
         <Stat Name="Constitution" Weight="1"/>
+
+        <GainTrait Trait="Farmer">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>Regularly tending the herbs has turned ${name} into a Farmer.</Text>
+        </GainTrait>
+
+        <LoseTrait Trait="City Girl">
+            <TraitChangeAmount Value="15" Chance="33" />
+            <Text>Having spent so much time in the herb garden,
+                ${name} no longer feels like a City Girl.</Text>
+        </LoseTrait>
     </Gains>
 
     <Config DefaultImage="Farm" />

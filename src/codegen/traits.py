@@ -3,69 +3,8 @@
 
 import sys
 from pathlib import Path
-from xml.etree import ElementTree as ET
-from collections import namedtuple
 import textwrap
-
-TraitSpec = namedtuple("TraitSpec", ["name", "description", "modifiers"])
-
-
-class TraitsParser:
-    def __init__(self):
-        self.traits = dict()
-        self.groups = set()
-        self.modifiers = set()
-
-    def parse_file(self, traits_file: Path):
-        doc = ET.fromstring(traits_file.read_text())
-        traits = []
-        for child in doc:
-            if child.tag == "Trait":
-                trait = parse_trait(child)
-                traits.append(trait)
-                self.modifiers.update(trait.modifiers)
-            elif child.tag == "Default":
-                pass
-            elif child.tag == "TraitGroup":
-                self.groups.add(parse_group(child))
-            elif child.tag == "Modifier":
-                self.modifiers.add(parse_modifier(child))
-            else:
-                print("Warning: Unknown tag ", child.tag)
-
-        self.traits[traits_file.name] = traits
-
-
-def parse_trait(trait: ET.Element):
-    name = trait.attrib["Name"]
-    description = None
-    modifiers = set()
-
-    for child in trait:
-        if child.tag == "description":
-            if description is None:
-                description = child.text
-            else:
-                print(f"Warning: Duplicate description for trait {name}")
-        elif child.tag == "Modifiers":
-            for mod in child:
-                modifiers.add(parse_modifier(mod))
-        elif child.tag == "Excludes":
-            pass
-        elif child.tag == "Properties":
-            pass
-        else:
-            print(f"Warning: Unknown element {child.tag} for trait {name}")
-
-    return TraitSpec(name=name, description=description, modifiers=modifiers)
-
-
-def parse_modifier(modifier: ET.Element):
-    return modifier.attrib["Name"]
-
-
-def parse_group(group: ET.Element):
-    return group.attrib.get("Name", "")
+from wmlib import TraitsParser
 
 
 def name_as_identifier(trait_name: str):
@@ -105,13 +44,14 @@ def main():
 
     xml_file_list = sorted(search_path.glob("*.xml"))
 
+    all_trait_names = set()
+
     for traits_file in xml_file_list:
         try:
             parser.parse_file(traits_file)
         except Exception as E:
-            print(f"Error parsing file '{traits_file}'")
+            print(f"Error parsing file '{traits_file}'", file=sys.stderr)
             raise
-
 
     for traits_file in parser.traits:
         out_text += f"\n\n    // {traits_file}\n"

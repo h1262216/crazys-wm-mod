@@ -468,6 +468,7 @@
         <Trait Name="Cute" Value="5"/>
         <Trait Name="Charming" Value="15"/>    <!-- people like charming people -->
         <Trait Name="Optimist" Value="10"/>
+        <Trait Name="Compassionate" Value="15" />
 
         <!-- bad traits -->
         <Trait Name="Dependent" Value="-50"/>  <!-- needs others to do the job -->
@@ -475,6 +476,8 @@
         <Trait Name="Aggressive" Value="-20"/> <!-- gets mad easy and may attack people -->
         <Trait Name="Nervous" Value="-30"/>    <!-- don't like to be around people -->
         <Trait Name="Meek" Value="-20"/>
+        <Trait Name="Merciless" Value="-20" />
+        <Trait Name="Sadistic" Value="-20" />
     </Modifier>
 
     <Modifier Name="work.counselor">

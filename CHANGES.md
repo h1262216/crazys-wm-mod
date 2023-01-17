@@ -1,12 +1,25 @@
 # Version 7.2.1alpha6
+This version contains new game mechanics for gaining traits by doing jobs. In the old version, 
+girls would slowly start to like doing their assigned job more and more, and once a certain threshold
+was passed, they would gain the trait. Now, each girl keeps track of the progress she has made towards
+gaining/losing a trait, and only once this reaches 100% does she get/lose the trait. The progress towards
+traits can be seen under "More Details" in the girl details screen, below her job preferences. If a 
+trait does not make any progress for 10 consecutive shifts, its progress starts to decay towards zero. 
+An overview of which trait can be gained/lost by which job is given [here](Docs&Tools/traits.html).
+
+## Gameplay
+* Reworked the way how traits are gained from working jobs.
+* Added a `Compassionate` tag as the opposite of `Sadistic`/`Merciless`
 
 ## Other
 * Trait xml files now specify which traits are gained / lost on level-up
-* Unified contraceptive code between buildings
+* No longer sort danger/warning messages into the first slot in the turn event screen, so
+that the girl messages now should always be chronological
+* Added specific `Gained Trait` and `Lost Trait` event types for the turn summary
 
 ## Tagger
 * Prefer game `ImageFiles.xml` over bundled one, allowing for user overrides
-* Add directory adds files with matching extension now case-insensitively
+* `Add Directory` adds files with matching extension now case-insensitively
 
 ## Bugfixes
 * Fixed two bugs reported by big fan of fans

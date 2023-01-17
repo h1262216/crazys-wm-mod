@@ -17,9 +17,24 @@
         <Skill Name="AnimalHandling" Weight="1"/>
         <Skill Name="Service" Weight="1" Max="50"/>
 
-        <LoseTrait Trait="Elegant" Threshold="40" Action="WORKCARING">
-            Working with dirty, smelly beasts has damaged ${name}'s hair, skin and nails making her less Elegant.
+        <LoseTrait Trait="Elegant">
+            <TraitChangeAmount Value="50" Chance="50" />
+            <Text>Working with dirty, smelly beasts has damaged ${name}'s hair,
+                skin and nails making her less Elegant.</Text>
         </LoseTrait>
+
+        <LoseTrait Trait="City Girl">
+            <TraitChangeAmount Value="33" Chance="25" />
+            <Text>Having been caring for dirty, smelly beasts for so long,
+                ${name} no longer considers herself a City Girl.</Text>
+        </LoseTrait>
+
+        <GainTrait Trait="Farmer">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+            </TraitChangeAmount>
+            <Text>${name} has been taking care of beasts for so long, she now considers herself a Farmer.</Text>
+        </GainTrait>
     </Gains>
 
     <Messages>

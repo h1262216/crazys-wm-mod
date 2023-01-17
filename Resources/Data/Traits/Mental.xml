@@ -249,6 +249,23 @@
             <Modifier Name="fetish:Elegant" Value="-5" />
             <Modifier Name="fetish:Lolita" Value="-10" />
         </Modifiers>
+        <Excludes>Compassionate</Excludes>
+    </Trait>
+
+    <Trait InheritChance="1" Name="Compassionate" RandomChance="10" Type="Mental">
+        <description>This girl empathizes a lot with others, and is generally unwilling to do them harm.</description>
+        <Modifiers>
+            <Modifier Name="skill-cap:Combat" Value="-20" />
+            <Modifier Name="skill-cap:BDSM" Value="-10" />
+            <Modifier Name="skill:Combat" Value="-10" />
+            <Modifier Name="skill:Combat" Value="-10" />
+            <Modifier Name="enjoy:COMBAT" Value="-20" />
+            <Modifier Name="enjoy:WORKTORTURER" Value="-30" />
+            <Modifier Name="fetish:CuteGirl" Value="10" />
+            <Modifier Name="fetish:Dangerous" Value="-10" />
+        </Modifiers>
+        <Excludes>Merciless</Excludes>
+        <Excludes>Sadistic</Excludes>
     </Trait>
 
 
@@ -353,6 +370,7 @@
             <Modifier Name="fetish:Sexy" Value="-10" />
             <Modifier Name="fetish:Freak" Value="30" />
         </Modifiers>
+        <Excludes>Compassionate</Excludes>
     </Trait>
 
 
