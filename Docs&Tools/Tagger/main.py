@@ -17,7 +17,7 @@ app = QApplication([])
 def _find_path(path: Path, sub: str):
     if (path / sub).exists():
         return path / sub
-    if path.root == path:
+    if path.parent == path:
         return None
     return _find_path(path.parent, sub)
 
@@ -27,7 +27,7 @@ def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = Path(os.path.abspath("."))
     res_path = _find_path(base_path, "Resources")
-    if (res_path / "Data").exists():
+    if res_path is not None and (res_path / "Data").exists():
         base_path = res_path / "Data"
     elif hasattr(sys, "_MEIPASS"):
         # PyInstaller creates a temp folder and stores path in _MEIPASS
