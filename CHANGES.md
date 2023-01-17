@@ -13,6 +13,9 @@ An overview of which trait can be gained/lost by which job is given [here](Docs&
 
 ## Other
 * Trait xml files now specify which traits are gained / lost on level-up
+* No longer sort danger/warning messages into the first slot in the turn event screen, so
+that the girl messages now should always be chronological
+* Added specific `Gained Trait` and `Lost Trait` event types for the turn summary
 
 ## Tagger
 * Prefer game `ImageFiles.xml` over bundled one, allowing for user overrides

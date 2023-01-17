@@ -680,8 +680,10 @@ enum EEventType {
     EVENT_BUILDING = 9,
     EVENT_NOWORK = 10,
     EVENT_BACKTOWORK = 11,
-    EVENT_LEVELUP = 12,    // `J` added
-    EVENT_RIVAL = 13,
+    EVENT_LEVELUP = 12,
+    EVENT_GAIN_TRAIT = 13,
+    EVENT_LOSE_TRAIT = 14,
+    EVENT_RIVAL = 15,
     EVENT_DEBUG = 99,
 };
 

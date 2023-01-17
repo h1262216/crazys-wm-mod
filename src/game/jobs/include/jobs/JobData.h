@@ -56,8 +56,7 @@ private:
 
 struct sTraitChange {
     // explicit constructor needed for mingw
-    sTraitChange(bool g, std::string trait, std::string message, EEventType e = EVENT_GOODNEWS) :
-            Gain(g), TraitName(std::move(trait)), Message(std::move(message)), EventType(e) {}
+    sTraitChange(bool g, std::string trait, std::string message, EEventType e = EVENT_NONE);
     // target change
     bool Gain;
     std::string TraitName;
@@ -78,7 +77,7 @@ struct sTraitChange {
 
     // message
     std::string Message;
-    EEventType EventType = EVENT_GOODNEWS;
+    EEventType EventType;
 
     std::vector<sChangeAmount> ChangeAmounts;
 };

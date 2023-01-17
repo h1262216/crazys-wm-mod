@@ -1849,8 +1849,6 @@ void cBuilding::end_of_week_update(sGirl& girl) {
 }
 
 void cBuilding::handle_accommodation(sGirl& girl) {
-    std::stringstream ss;
-
     // Gold per accommodation level
     int gold = (girl.is_slave() ? 0 : 15) + 10 * (girl.m_AccLevel + 1);
     m_Finance.girl_support(gold);
@@ -1951,7 +1949,7 @@ void cBuilding::handle_accommodation(sGirl& girl) {
 
 
     // after all the happy, love fear and hate are done, do some other checks.
-    int chance = 1 + (mod < 0 ? -mod : mod);
+    int chance = 5 + 3*(mod < 0 ? -mod : mod);
     if (!g_Dice.percent(chance)) return;
     // Only check if a trait gets modified if mod is far from 0
 
@@ -1962,36 +1960,45 @@ void cBuilding::handle_accommodation(sGirl& girl) {
     bool b_dignity = g_Dice.percent(girl.dignity());
 
     if (b_refinement && b_dignity && b_confidence &&
-        mod >= 0 && girl.m_AccLevel >= 5 && girl.lose_trait(traits::HOMELESS, true, girl.m_AccLevel))
+        mod >= 0 && girl.m_AccLevel >= 5)
     {
-        ss << girl.FullName() << " has gotten used to better surroundings and has lost the \"Homeless\" trait.";
-    }
-    else if (b_intelligence && b_spirit && b_confidence && mod >= 2 &&
-             girl.lose_trait(traits::MASOCHIST, true, girl.m_AccLevel - 7))
-    {
-        ss << girl.FullName() << " seems to be getting used to being treated well and has lost the \"Masochist\" trait.";
-    }
-    else if (!b_dignity && !b_spirit && !b_confidence && mod <= -1 && girl.gain_trait(traits::MASOCHIST, 3 - mod))
-    {
-        ss << girl.FullName()
-           << " seems to be getting used to being treated poorly and has become a \"Masochist\".";
-    }
-    else if (mod < 0 && girl.lose_trait(traits::OPTIMIST, true, 3))
-    {
-        ss << girl.FullName() << " has lost her \"Optimistic\" outlook on life.";
-    }
-    else if (mod > 0 && girl.gain_trait(traits::OPTIMIST, 3))
-    {
-        ss << girl.FullName() << " has started to view the world from a more \"Optimistic\" point of view.";
-    }
-    else if (mod > 0 && g_Dice.percent(3) && girl.lose_trait(traits::PESSIMIST, true, 3))
-    {
-        ss << girl.FullName() << " has lost her \"Pessimistic\" way of viewing the world around her.";
-    }
-    else if (mod < 0 && girl.gain_trait(traits::PESSIMIST, 3))
-    {
-        ss << girl.FullName() << " has started to view the world from a more \"Pessimistic\" point of view.";
+        cGirls::PossiblyLoseExistingTrait(
+                girl, traits::MASOCHIST, girl.m_AccLevel * 4,
+                "${name} has gotten used to better surroundings and has lost the \"Homeless\" trait.");
     }
 
-    if (ss.str().length() > 0)    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
+    if (b_intelligence && b_spirit && b_confidence && mod >= 2)
+    {
+        cGirls::PossiblyLoseExistingTrait(
+                girl, traits::MASOCHIST, 4 * girl.m_AccLevel - 20,
+                "${name} seems to be getting used to being treated well and has lost the \"Masochist\" trait.");
+    }
+    else if (!b_dignity && !b_spirit && !b_confidence && mod <= -1)
+    {
+        cGirls::PossiblyGainNewTrait(
+                girl, traits::MASOCHIST, 30 - mod,
+                "${name} seems to be getting used to being treated poorly and has become a \"Masochist\".");
+    }
+
+    if (mod > 0)
+    {
+        cGirls::PossiblyLoseExistingTrait(
+                girl, traits::PESSIMIST, 30,
+                "${name} has lost her \"Pessimistic\" way of viewing the world around her.");
+
+        cGirls::PossiblyGainNewTrait(
+                girl, traits::OPTIMIST, 30,
+                "${name} has started to view the world from a more \"Optimistic\" point of view.");
+    }
+    else if (mod < 0)
+    {
+        cGirls::PossiblyLoseExistingTrait(
+                girl, traits::OPTIMIST, 30,
+                "${name} has lost her \"Optimistic\" outlook on life.",
+                EImageBaseType::PROFILE, EVENT_WARNING);
+
+        cGirls::PossiblyGainNewTrait(girl, traits::PESSIMIST, 30,
+                                     "${name} has started to view the world from a more \"Pessimistic\" point of view.",
+                                     EImageBaseType::PROFILE, EVENT_WARNING);
+    }
 }

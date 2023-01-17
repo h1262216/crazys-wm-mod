@@ -145,6 +145,13 @@ namespace {
     }
 }
 
+sTraitChange::sTraitChange(bool g, std::string trait, std::string message, EEventType e) :
+    Gain(g), TraitName(std::move(trait)), Message(std::move(message)), EventType(e) {
+    if(EventType == EVENT_NONE) {
+        EventType = Gain ? EVENT_GAIN_TRAIT : EVENT_LOSE_TRAIT;
+    }
+}
+
 void cJobGains::gain_traits(sGirl& girl, int performance) const {
     for(auto& trait : TraitChanges) {
         int amount = 0;
@@ -219,7 +226,7 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
             message = msg_el->GetText();
         }
 
-        auto event_type = (EEventType)element.IntAttribute("Event", EVENT_GOODNEWS);
+        auto event_type = (EEventType)element.IntAttribute("Event", EVENT_NONE);
         TraitChanges.emplace_back(gain, trait, message, event_type);
         for(auto& amount_el : IterateChildElements(element, "TraitChangeAmount")) {
             TraitChanges.back().ChangeAmounts.push_back(load_change_amount(amount_el));

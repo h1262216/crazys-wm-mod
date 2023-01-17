@@ -192,7 +192,7 @@ void cGirls::LevelUpTraits(sGirl& girl) {
         if(girl.lose_trait(trait.c_str(), false)) {
             std::stringstream ss;
             ss << " She has lost the " << trait << " trait.";
-            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
+            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_LOSE_TRAIT);
             return;
         }
     }
@@ -225,7 +225,7 @@ void cGirls::LevelUpTraits(sGirl& girl) {
         if(girl.gain_trait(trait.c_str())) {
             std::stringstream ss;
             ss << " She has gained the " << trait << " trait.";
-            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
+            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_GAIN_TRAIT);
             return;
         }
     }

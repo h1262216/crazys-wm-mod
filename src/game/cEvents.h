@@ -55,6 +55,7 @@ private:
     EEventType         m_Event;                  // type of event
     sImageSpec         m_Image;
     std::string        m_Message;
+    std::string        m_Title;
     std::shared_ptr<CombatReport> m_Report = nullptr;
 };
 
