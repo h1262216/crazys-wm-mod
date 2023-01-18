@@ -116,7 +116,6 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     }
     add_literal("\n");
 
-    int turn_enjoy = 0;
     turn_beauty() = uniform(girl.beauty() / 2, girl.beauty()) / 2;
     turn_combat() = uniform(girl.combat() / 2, girl.combat()) / 2;
     if(lack_of_equipment > 0) {
@@ -168,11 +167,11 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
             } else {
                 add_literal("flashing the crowd her boobs.");
             }
-            turn_enjoy += 3;
+            shift.Enjoyment += 3;
             turn_beauty() += girl.beauty() / 10;
         }
 
-        turn_enjoy += 3;
+        shift.Enjoyment += 3;
         int roll_max = girl.fame() + girl.charisma();
         roll_max /= 4;
         shift.Tips = uniform(10, 10+roll_max);
@@ -224,7 +223,7 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
             turn_combat() -= uniform(10, 40);
             add_literal("${name} was unable to win the fight.");
         }
-        turn_enjoy -= 1;
+        shift.Enjoyment -= 1;
         girl.spirit(-1);
         //Crazy: I feel there needs to be more of a bad outcome for losses added this... Maybe could use some more
         if (girl.is_sex_type_allowed(SKILL_BEASTIALITY) && !is_virgin(girl))
@@ -247,14 +246,14 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
                 }
                 girl.pclove(-10);
                 girl.pcfear(5);
-                turn_enjoy -= 15;
+                shift.Enjoyment -= 15;
                 girl.libido(-5);
                 turn_brutality() += uniform(50, 100);
                 turn_sexuality() += uniform(20, 60);
                 turn_beauty() -= uniform(20, 60);
             } else {
                 add_text("beast-won-regular");
-                turn_enjoy -= 5;
+                shift.Enjoyment -= 5;
                 girl.pclove(-4);
                 girl.pcfear(2);
                 girl.libido(-2);
@@ -294,15 +293,6 @@ void FightBeasts::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     handle_combat_stat(BeautyId, turn_beauty());
     provide_resource(ArenaFightId, 1);
     shift.building().Finance().arena_income(earned);
-
-    girl.upd_Enjoyment(ACTION_COMBAT, turn_enjoy);
-
-    apply_gains(shift.Performance);
-
-    if (chance(25) && girl.strength() >= 60 && girl.combat() >= girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, "Strong", 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", shift.IsNightShift);
-    }
 }
 
 std::unique_ptr<Combatant> FightBeasts::CreateBeast(sGirlShiftData& shift) const {
@@ -450,17 +440,8 @@ void FightGirls::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
 
     // Improve girl
     girl.fame(fame);
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
 
-    //gain traits
-    if (chance(25) && girl.strength() >= 65 && girl.combat() > girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::STRONG, 60, ACTION_COMBAT, "${name} has become pretty Strong from all of the fights she's been in.", shift.IsNightShift);
-    }
-    if (chance(25) && girl.combat() >= 60 && girl.combat() > girl.magic())
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::BRAWLER, 60, ACTION_COMBAT, "${name} has become pretty good at fighting.", shift.IsNightShift);
-    }
+    apply_gains();
 }
 
 FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaTraining.xml") {
@@ -718,17 +699,12 @@ void FightTraining::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     /* */if (roll_c <= 10)    { enjoy -= uniform(1, 3);    ss << "\n"; }
     else if (roll_c >= 90)    { enjoy += uniform(1, 3);    ss << "\n"; }
     else /*             */    { enjoy += uniform(0, 1);        ss << "\nOtherwise, the shift passed uneventfully."; }
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
-    girl.upd_Enjoyment(ACTION_WORKTRAINING, enjoy);
+    // girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
+    // girl.upd_Enjoyment(ACTION_WORKTRAINING, enjoy);
 
     shift.building().GenerateFilth(2);
     shift.Wages += (skill * 5); // `J` Pay her more if she learns more
 
     // Improve stats
-    int xp = 5 + skill;
-
-    if (girl.has_active_trait(traits::QUICK_LEARNER))        { xp += 2; }
-    else if (girl.has_active_trait(traits::SLOW_LEARNER))    { xp -= 2; }
-
-    girl.exp(uniform(1, xp));
+    apply_gains();
 }

@@ -268,9 +268,9 @@ private:
 
     cEvents m_Events;                            // Each girl keeps track of all her events that happened to her in the last turn
 
-    int m_Enjoyment[NUM_BASIC_ACTION_TYPES];            // these values determine how much a girl likes an action
-    int m_EnjoymentMods[NUM_BASIC_ACTION_TYPES];        // `J` added perminant modifiers to stats
-    int m_EnjoymentTemps[NUM_BASIC_ACTION_TYPES];       // temporary enjoyment modifiers
+    int m_Enjoyment[NUM_ACTIVITIES];            // these values determine how much a girl likes an action
+    int m_EnjoymentMods[NUM_ACTIVITIES];        // `J` added perminant modifiers to stats
+    int m_EnjoymentTemps[NUM_ACTIVITIES];       // temporary enjoyment modifiers
     // (-100 is hate, +100 is loves)
 
 public:

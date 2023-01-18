@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2019-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,31 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef WM_SIMPLEJOB_H
-#define WM_SIMPLEJOB_H
+#ifndef WM_CMATRONJOB_H
+#define WM_CMATRONJOB_H
 
 #include "cBasicJob.h"
-#include "utils/piecewise_linear.h"
-#include "images/sImageSpec.h"
 
-
-class cSimpleJob : public cBasicJob {
+class MatronJob : public cBasicJob {
 public:
-    cSimpleJob(JOBS job, const char* xml);
+    MatronJob(JOBS job, const char* xml_file, const char* worker_title);
+    double GetPerformance(const sGirl& girl, bool estimate) const override;
     void DoWork(sGirlShiftData& shift) const override;
-    virtual void JobProcessing(sGirl& girl, sGirlShiftData& shift) const = 0;
-
 protected:
-    bool CheckRefuseWork(sGirl& girl) const override;
 
-    void InitWork(sGirlShiftData& shift) override;
-    void HandleGains(sGirl& girl, int fame) const;
+    void MatronGains(sGirl& girl) const;
+    void HandleMatronResult() const;
+    void ApplyMatronEffect(const sGirl& girl) const;
 
-    PiecewiseLinearFunction m_PerformanceToEarnings;
+    bool CheckRefuseWork(sGirl& girl) const override {
+        return false;
+    }
 
-    void load_from_xml_callback(const tinyxml2::XMLElement& job_element) override;
+
+    const char* m_WorkerTitle;
 };
 
 
-#endif //WM_SIMPLEJOB_H
+#endif //WM_CMATRONJOB_H

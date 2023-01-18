@@ -31,6 +31,7 @@
 #include "cBuildingShift.h"
 #include "character/cCustomers.h"
 #include "utils/streaming_random_selection.hpp"
+#include "jobs/cMatronJob.h"
 
 extern cRng             g_Dice;
 
@@ -308,4 +309,5 @@ void RegisterArenaJobs(IJobManager& mgr) {
     cGenericJob::Register(mgr, std::make_unique<cBlacksmithJob>());
     cGenericJob::Register(mgr, std::make_unique<cCobblerJob>());
     cGenericJob::Register(mgr, std::make_unique<cJewelerJob>());
+    cGenericJob::Register(mgr, std::make_unique<MatronJob>(JOB_DOCTORE, "ArenaDoctore.xml", "Doctore"));
 }

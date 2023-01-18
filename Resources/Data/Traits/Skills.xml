@@ -14,6 +14,7 @@
             <Modifier Name="fetish:Dangerous" Value="20" />
             <Modifier Name="fetish:Sexy" Value="5" />
             <Modifier Name="fetish:Freak" Value="10" />
+            <Modifier Name="enjoy:Physical" Value="5" />
         </Modifiers>
         <Properties>
             <Setting Name="level-up:add-chance" Value="10"/>
@@ -26,7 +27,8 @@
             <Modifier Name="skill:Combat" Value="10" />
             <Modifier Name="skill-cap:Combat" Value="10" />
             <Modifier Name="stat:Constitution" Value="5" />
-            <Modifier Name="enjoy:COMBAT" Value="10" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
+            <Modifier Name="enjoy:Physical" Value="5" />
             <Modifier Name="fetish:Dangerous" Value="30" />
             <Modifier Name="fetish:Freak" Value="10" />
         </Modifiers>
@@ -39,6 +41,7 @@
             <Modifier Name="skill-cap:Combat" Value="5" />
             <Modifier Name="fetish:Dangerous" Value="10" />
             <Modifier Name="fetish:Sexy" Value="20" />
+            <Modifier Name="enjoy:Physical" Value="5" />
         </Modifiers>
         <Properties>
             <Setting Name="level-up:add-chance" Value="10"/>
@@ -58,6 +61,8 @@
             <Modifier Name="fetish:NiceFigure" Value="20" />
             <Modifier Name="fetish:NiceArse" Value="20" />
             <Modifier Name="fetish:Lolita" Value="-5" />
+            <Modifier Name="enjoy:Physical" Value="10" />
+            <Modifier Name="enjoy:Fighting" Value="3" />
         </Modifiers>
         <Properties>
             <Setting Name="level-up:add-chance" Value="5"/>

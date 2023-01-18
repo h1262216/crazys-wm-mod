@@ -610,11 +610,12 @@ enum Goals{                                // `J` new
 
 // actions girls can disobey against
 enum class EBasicActionType {
-    FIGHTING,         // fighting activities
-    FUCKING,            // fucking activities
+    FIGHTING,       // fighting activities
+    FUCKING,        // fucking activities
     STRIPPING,      // no-touching sexual activities
     CRAFTING,       // any sort of production job, including cooking
     FARMING,        // caring for plants or animals
+    COOKING,        // cooking, and generally working with foodstuffs
     PHYSICAL,       // activities mainly consisting of physical labor
     SOCIAL,         // non-sexual interaction activities
     MENTAL,         // activities that mainly exercise the brain
@@ -624,11 +625,11 @@ enum class EBasicActionType {
     GENERIC,
 };
 
-constexpr const int NUM_BASIC_ACTION_TYPES = int(EBasicActionType::GENERIC);
+constexpr const int NUM_ACTIVITIES = int(EBasicActionType::GENERIC) + 1;
 
 constexpr const EnumRange<EBasicActionType, EBasicActionType::FIGHTING, EBasicActionType::GENERIC> BasicActionRange = {};
 
-const std::array<const char*, NUM_BASIC_ACTION_TYPES>& get_activity_names();
+const std::array<const char*, NUM_ACTIVITIES>& get_activity_names();
 const char* get_activity_name(EBasicActionType activity);
 EBasicActionType get_activity_id(const std::string& name);
 const char* get_activity_descr(EBasicActionType action);

@@ -110,7 +110,6 @@ std::unique_ptr<sCompareCondition> sCompareCondition::from_string(const std::str
             ++rhs_start;
         } else {
             compare = sCompareCondition::GREATER;
-            ++rhs_start;
         }
     } else if(*cmp == '=') {
         compare = sCompareCondition::EQUAL;
@@ -241,6 +240,9 @@ std::unique_ptr<ICondition> parse_conditions(const std::string& source) {
 TEST_CASE("inner parse") {
     std::unique_ptr<ICondition> cond;
     cond = parse_inner("x < 12");
+    CHECK(typeid(*cond) == typeid(sCompareCondition));
+
+    cond = parse_inner("x>0");
     CHECK(typeid(*cond) == typeid(sCompareCondition));
 
     cond = parse_inner(" boolcond");

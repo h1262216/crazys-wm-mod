@@ -24,8 +24,7 @@
 #include "cArena.h"
 
 cBlacksmithJob::cBlacksmithJob() :
-        GenericCraftingJob(JOB_BLACKSMITH, "ArenaBlacksmith.xml",
-                           ACTION_WORKMAKEITEMS, 40) {
+        GenericCraftingJob(JOB_BLACKSMITH, "ArenaBlacksmith.xml") {
 
 }
 
@@ -94,8 +93,7 @@ void cBlacksmithJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
 }
 
 cCobblerJob::cCobblerJob() :
-        GenericCraftingJob(JOB_COBBLER, "ArenaCobbler.xml",
-                           ACTION_WORKMAKEITEMS, 20) {
+        GenericCraftingJob(JOB_COBBLER, "ArenaCobbler.xml") {
 }
 
 void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
@@ -151,8 +149,7 @@ void cCobblerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
 }
 
 cJewelerJob::cJewelerJob() :
-        GenericCraftingJob(JOB_JEWELER, "ArenaJeweler.xml",
-                           ACTION_WORKMAKEITEMS, 40) {
+        GenericCraftingJob(JOB_JEWELER, "ArenaJeweler.xml") {
 }
 
 void cJewelerJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {

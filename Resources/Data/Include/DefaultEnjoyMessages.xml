@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Messages>
+    <Message Name="enjoy.love">
+        <Text>She loves this job.</Text>
+    </Message>
+
+    <Message Name="enjoy.like">
+        <Text>${name} likes this job.</Text>
+    </Message>
+
+    <Message Name="enjoy.dislike">
+        <Text>She does not like this job.</Text>
+    </Message>
+
+    <Message Name="enjoy.hate">
+        <Text>${name} hates this job.</Text>
+    </Message>
+
+    <Message Name="shift.bad">
+        <Text>Some of the patrons abused her during the shift.</Text>
+        <Text>Several patrons heckled her and made her shift generally unpleasant.</Text>
+    </Message>
+    <Message Name="shift.good">
+        <Text Condition="Enjoyment>0">She had a pleasant time working.</Text>
+        <Text Condition="Enjoyment<=0">The shift went better than ${name} expected.</Text>
+    </Message>
+    <Message Name="shift.neutral">
+        <Text>Otherwise, the shift passed uneventfully.</Text>
+    </Message>
+</Messages>

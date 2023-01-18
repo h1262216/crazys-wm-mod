@@ -104,6 +104,10 @@
             <Modifier Name="stat:Beauty" Value="-20" />
             <Modifier Name="fetish:NonHuman" Value="10" />
             <Modifier Name="fetish:Freak" Value="50" />
+
+            <Modifier Name="enjoy:Social" Value="-10" />
+            <Modifier Name="enjoy:Performing" Value="-10" />
+            <Modifier Name="enjoy:Physical" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="25" />
@@ -139,9 +143,10 @@
         <description>This girl no longer has a clit. This was probably done to help her concentrate on her work.</description>
         <Modifiers>
             <Modifier Name="stat:Libido" Value="-20" />
-            <Modifier Name="enjoy:SEX" Value="-20" />
+            <Modifier Name="enjoy:Fucking" Value="-20" />
             <Modifier Name="fetish:Freak" Value="5" />
             <Modifier Name="fetish:Sexy" Value="-10" />
+            <Modifier Name="enjoy:Fucking" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="10" />
@@ -205,7 +210,7 @@
             <Modifier Name="skill:Group" Value="-20" />
             <Modifier Name="skill-cap:Group" Value="-10" />
             <Modifier Name="stat:Agility" Value="-70" />
-            <Modifier Name="enjoy:WORKFARM" Value="-10" />
+            <Modifier Name="enjoy:Farming" Value="-10" />
             <Modifier Name="fetish:Freak" Value="60" />
             <Modifier Name="fetish:Dangerous" Value="-30" />
             <Modifier Name="fetish:Tall" Value="-20" />
@@ -242,6 +247,7 @@
             <Modifier Name="stat:Lactation" Value="-200" />
             <Modifier Name="fetish:Freak" Value="20" />
             <Modifier Name="fetish:NonHuman" Value="10" />
+            <Modifier Name="enjoy:Fucking" Value="-3" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="10" />
@@ -437,10 +443,13 @@
         <Modifiers>
             <Modifier Name="skill:Magic" Value="-10" />
             <Modifier Name="skill:Performance" Value="-10" />
+            <Modifier Name="skill-cap:Performance" Value="-10" />
             <Modifier Name="skill:AnimalHandling" Value="-5" />
             <Modifier Name="stat:Charisma" Value="-5" />
             <Modifier Name="fetish:Freak" Value="10" />
             <Modifier Name="fetish:Dangerous" Value="-5" />
+
+            <Modifier Name="enjoy:Performing" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="inherit:chance:from_active" Value="50" />
@@ -474,6 +483,8 @@
             <Modifier Name="stat:Confidence" Value="-60" />
             <Modifier Name="fetish:NonHuman" Value="2" />
             <Modifier Name="fetish:Freak" Value="45" />
+
+            <Modifier Name="enjoy:Mental" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="20" />

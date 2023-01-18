@@ -127,7 +127,7 @@ std::string stringtolowerj(std::string name)
     return s;
 }
 
-bool sGirl::disobey_check(Action_Types action, JOBS job, int offset)
+bool sGirl::disobey_check(EBasicActionType action, JOBS job, int offset)
 {
     int diff;
     int chance_to_obey = 0;                            // high value - more likely to obey
@@ -153,7 +153,7 @@ bool sGirl::disobey_check(Action_Types action, JOBS job, int offset)
     *    why not normalise the rebellion -100 to 100 value so it runs
     *    0 to 100, and invert it so it's basically an obedience check
     */
-
+/*
     switch (action)
     {
     case ACTION_COMBAT:
@@ -174,7 +174,8 @@ bool sGirl::disobey_check(Action_Types action, JOBS job, int offset)
     default:
         break;
     }
-    chance_to_obey += m_Enjoyment[action];            // add in her enjoyment level
+*/
+    chance_to_obey += m_Enjoyment[(int)action];            // add in her enjoyment level
     chance_to_obey += pclove() / 5;                   // let's add in some mods for love, fear and hate
     chance_to_obey += pcfear() / 10;
     chance_to_obey += offset;                         // Let's add a blanket 30% to all of that
@@ -389,7 +390,7 @@ bool sGirl::fights_back()
     if (health() < 10 || tiredness() > 90)/* */    return false;
 
     // TODO not sure what this check does
-    if (disobey_check(ACTION_COMBAT))/*            */    return true;
+    if (disobey_check(EBasicActionType::FIGHTING))/*            */    return true;
     int chance = get_trait_modifier(traits::modifiers::FIGHT_BACK_CHANCE);
     return g_Dice.percent(chance);
 }
@@ -1241,12 +1242,6 @@ bool sGirl::FixFreeTimeJobs()
     return fixedD || fixedN;
 }
 
-int sGirl::upd_temp_Enjoyment(Action_Types stat_id, int amount)
-{
-    m_EnjoymentTemps[stat_id] += amount;
-    return get_enjoyment(stat_id);
-}
-
 int sGirl::upd_Training(int stat_id, int amount, bool usetraits)
 {
     m_Training[stat_id] += amount;
@@ -1338,9 +1333,8 @@ void sGirl::set_default_house_percent() {
 int sGirl::enjoyment(EBasicActionType activity) const {
     if(activity == EBasicActionType::GENERIC) return 0;
     int index = static_cast<int>(activity);
-    // Generic calculation
-    int value = m_Enjoyment[index] + get_trait_modifier(("enjoy:" + std::string(get_activity_name(activity))).c_str()) +
-                m_EnjoymentMods[index];
+    int value = m_Enjoyment[index] + m_EnjoymentMods[index] + m_EnjoymentTemps[index];
+    value += m_Traits->enjoy_effects()[index];
 
     if (value < -100) value = -100;
     else if (value > 100) value = 100;

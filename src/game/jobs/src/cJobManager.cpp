@@ -177,7 +177,7 @@ void cJobManager::setup()
     RegisterCraftingJobs(*this);
 //    RegisterSurgeryJobs(*this);
 //    RegisterWrappedJobs(*this);
-    RegisterManagerJobs(*this);
+//    RegisterManagerJobs(*this);
 //    RegisterFilmingJobs(*this);
 //    RegisterFilmCrewJobs(*this);
 //    RegisterOtherStudioJobs(*this);
@@ -1375,8 +1375,8 @@ bool cJobManager::job_filter(int Filter, JOBS job) const {
     auto& filter = JobFilters[Filter];
     return std::count(begin(filter.Contents), end(filter.Contents), job) > 0;
 }
-/*
-bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, cBuilding * brothel, bool Day0Night1)
+
+bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, IBuilding * brothel, bool Day0Night1)
 {
     int avail = g_Game->shop().CountItem(Drug);
     if(avail == 0) return false;                        // quit if the shop does not have the item
@@ -1395,7 +1395,7 @@ bool cJobManager::AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl
     }
     return true;
 }
-*/
+
 EJobFilter cJobManager::get_filter_id(const std::string& name) const {
     for(int i = 0; i < JobFilters.size(); ++i) {
         if(JobFilters[i].Name == name) {

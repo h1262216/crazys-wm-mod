@@ -92,12 +92,6 @@ void CityGuard::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     }
 
     g_Game->player().suspicion(sus);
-
-    // Improve girl
-    girl.upd_Enjoyment(ACTION_WORKSECURITY, enjoy);
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoyc);
-
-    apply_gains(shift.Performance);
 }
 
 int CityGuard::catch_thief() const {
@@ -187,9 +181,6 @@ void IntermissionStripper::JobProcessing(sGirl& girl, sGirlShiftData& shift) con
     int turn_sex = std::max(0, (shift.Performance - 100) / 10);
     provide_resource(BeautyId, turn_beauty);
     provide_resource(SexualityId, turn_sex);
-
-    // Improve stats
-    HandleGains(girl, 0);
 }
 
 Recuperate::Recuperate(): cBasicJob(JOB_RECUPERATE, "ArenaRecuperate.xml") {

@@ -27,7 +27,7 @@
         </GainTrait>
     </Gains>
 
-    <Config DefaultImage="Craft" />
+    <Config DefaultImage="Craft" BaseWages="20"/>
 
     <Messages>
         <Message Name="work">

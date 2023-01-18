@@ -20,4 +20,28 @@
             her wounds.
         </Text>
     </Message>
+
+    <Message Name="enjoy.love">
+        <Text>She loves fighting in the Arena.</Text>
+        <Text>${name} really enjoys to fight in your Arena.</Text>
+    </Message>
+
+    <Message Name="enjoy.like">
+        <Text>${name} enjoys fighting in the Arena.</Text>
+        <Text>She is happy enough to fight in the Arena.</Text>
+    </Message>
+
+    <Message Name="enjoy.neutral">
+        <Text>${name} is indifferent to this job.</Text>
+    </Message>
+
+    <Message Name="enjoy.dislike">
+        <Text>She doesn't like fighting in the Arena.</Text>
+        <Text>${name} is unhappy that you send her to fight in the Arena.</Text>
+    </Message>
+
+    <Message Name="enjoy.hate">
+        <Text>${name} hates fighting in the Arena.</Text>
+        <Text>She hates you for sending her to fight in the Arena.</Text>
+    </Message>
 </Messages>

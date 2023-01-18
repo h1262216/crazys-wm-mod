@@ -30,7 +30,10 @@
         </GainTrait>
     </Gains>
 
-    <Config DefaultImage="Craft" />
+    <Config DefaultImage="Craft" BaseWages="20" >
+        <Filter>ArenaProducers</Filter>
+        <Enjoyment PrimaryAction="Crafting" />
+    </Config>
 
     <Messages>
         <Message Name="work">
@@ -45,6 +48,8 @@
         <Message Name="produce">
             <Text>${name} made:</Text>
         </Message>
+
         <Include>DefaultPerformanceMessages.xml</Include>
+        <Include>DefaultEnjoyMessages.xml</Include>
     </Messages>
 </Job>

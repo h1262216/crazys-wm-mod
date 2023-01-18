@@ -62,7 +62,7 @@
         </GainTrait>
     </Gains>
 
-    <Config DefaultImage="Cook" />
+    <Config DefaultImage="Cook" BaseWages="20"/>
 
     <Messages>
         <Message Name="work">

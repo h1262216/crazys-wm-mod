@@ -663,7 +663,7 @@ sGirl* cBuilding::SetupMatron(bool is_night)
         matron_candidate->AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
         return matron_candidate;
     }
-    else if (matron_candidate->disobey_check(ACTION_WORKMATRON, JOB_MATRON))
+    else if (matron_candidate->disobey_check(EBasicActionType::GENERIC, JOB_MATRON))
     {
         if(is_night) {
             matron_candidate->m_Refused_To_Work_Night = true;
@@ -992,7 +992,7 @@ void cBuilding::do_daily_items(sGirl& girl)
     if (girl.has_item("Apron") && g_Dice.percent(10))
     {
         ss << "She put on her Apron and cooked a meal for some of the girls.\n \n";
-        girl.upd_Enjoyment(ACTION_WORKCOOKING, 1);
+        girl.enjoyment(EBasicActionType::COOKING, 1);
         girl.happiness(5);
         cook = true;
     }

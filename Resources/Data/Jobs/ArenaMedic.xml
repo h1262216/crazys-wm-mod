@@ -48,6 +48,7 @@
     </Gains>
 
     <Config DefaultImage="Nurse" Phase="prepare" BaseWages="25">
+        <Enjoyment PrimaryAction="Medical"/>
         <Filter>ArenaStaff</Filter>
     </Config>
     

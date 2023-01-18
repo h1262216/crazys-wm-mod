@@ -187,9 +187,10 @@ bool LoadSkillsXML(const tinyxml2::XMLElement* pSkills, int * skills, int * skil
 tinyxml2::XMLElement& SaveActionsXML(tinyxml2::XMLElement& elRoot, int * enjoyments, int * enjoymentsMods, int * enjoymentsTemps)
 {
     auto& actions_el = PushNewElement(elRoot, "Actions");
-    for (int i = 0; i < NUM_ACTIONTYPES; i++)
+    for(auto activity : BasicActionRange)
     {
-        auto& action_el = PushNewElement(actions_el, get_action_name((Action_Types)i));
+        int i = (int)activity;
+        auto& action_el = PushNewElement(actions_el, get_activity_name(activity));
         action_el.SetAttribute("Enjoys", enjoyments[i]);
         if (enjoymentsMods && enjoymentsMods[i])    action_el.SetAttribute("Mod", enjoymentsMods[i]);
         if (enjoymentsTemps && enjoymentsTemps[i])    action_el.SetAttribute("Temp", enjoymentsTemps[i]);
@@ -201,18 +202,15 @@ bool LoadActionsXML(const tinyxml2::XMLElement* pActions, int * enjoyments, int 
 {
     if (pActions == nullptr) return false;
 
-    for (int x = 0; x < NUM_ACTIONTYPES; ++x)
+    for(auto activity : BasicActionRange)
     {
-        auto* pAction = pActions->FirstChildElement(get_action_name((Action_Types)x));
-        
-        // `J` a fix for the old WORKINTERN changed to WORKTRAINING
-        if (x == ACTION_WORKTRAINING && !pAction) pAction = pActions->FirstChildElement("WORKINTERN");
-
+        auto* pAction = pActions->FirstChildElement(get_activity_name(activity));
         if (pAction)
         {
             int tempInt = pAction->IntAttribute("Enjoys", 0);
             if (tempInt < -100)    tempInt = -100;
             if (tempInt > 100)    tempInt = 100;
+            int x = (int)activity;
             enjoyments[x] = tempInt;
             enjoymentsMods[x] = pAction->IntAttribute("Mod", 0);
             enjoymentsTemps[x] = pAction->IntAttribute("Temp", 0);

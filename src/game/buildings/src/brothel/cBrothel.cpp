@@ -290,7 +290,7 @@ bool sBrothel::runaway_check(sGirl& girl)
     /*
     *    mainly here, we're interested in the chance that she might run away
     */
-    if (girl.disobey_check(ACTION_GENERAL))    // check if the girl will run away
+    if (girl.disobey_check(EBasicActionType::GENERIC))    // check if the girl will run away
     {
         // TODO Re-enable guards
         //if (g_Dice.percent(g_Game->job_manager().guard_coverage() - girl.m_DaysUnhappy)) return false;

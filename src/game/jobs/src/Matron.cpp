@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cGenericJob.h"
+#include "cMatronJob.h"
 #include <sstream>
 #include <cGirls.h>
 #include "character/sGirl.h"
@@ -28,31 +28,6 @@
 #include "buildings/queries.h"
 #include "cJobManager.h"
 
-class MatronJob : public cGenericJob {
-public:
-    MatronJob(JOBS job, const char* WorkerTitle, const char* short_name, const char* description) :
-        cGenericJob(job), m_WorkerTitle(WorkerTitle) {
-        m_Info.Description = description;
-        m_Info.ShortName = short_name;
-        m_Info.Shift = EJobShift::FULL;
-        m_Info.FreeOnly = true;
-        m_Info.Singleton = true;
-    }
-    double GetPerformance(const sGirl& girl, bool estimate) const override;
-    void DoWork(sGirlShiftData& shift) const override;
-protected:
-    int MatronGains(sGirl& girl, bool Day0Night1, int conf) const;
-    void HandleMatronResult(sGirl& girl, int &conf) const;
-    bool CheckCanWork(sGirl& girl) const override {
-        return true;
-    }
-    bool CheckRefuseWork(sGirl& girl) const override {
-        return false;
-    }
-    void ApplyMatronEffect(const sGirl& girl) const;
-
-    const char* m_WorkerTitle;
-};
 
 class BrothelMatronJob : public MatronJob {
 public:
@@ -102,75 +77,59 @@ void MatronJob::DoWork(sGirlShiftData& shift) const {
     auto& ss = active_shift().EventMessage;
     auto& girl = shift.girl();
     bool is_night = shift.IsNightShift;
-    // DisobeyCheck is done in the building flow.
-    girl.m_DayJob = girl.m_NightJob = job();    // it is a full time job
 
     ss << m_WorkerTitle << " ${name} ";
-
-    int conf = 0;
 
     ApplyMatronEffect(girl);
 
     // Complications
-    HandleMatronResult(girl, conf);
+    HandleMatronResult();
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     // Improve girl
-    int wages = MatronGains(girl, is_night, conf);
-    shift.Wages = wages;
+    MatronGains(girl);
+
+    generate_event();
 }
 
-int MatronJob::MatronGains(sGirl& girl, bool Day0Night1,  int conf) const {
+void MatronJob::MatronGains(sGirl& girl) const {
     int numgirls = num_girls(*girl.m_Building);
-    int xp = numgirls / 10,  skill = 3;
+    int xp = numgirls / 10;
+    girl.exp(xp);
 
-    if (girl.has_active_trait(traits::QUICK_LEARNER))        { skill += 1; xp += 5; }
-    else if (girl.has_active_trait(traits::SLOW_LEARNER))    { skill -= 1; xp -= 5; }
     int stat_sum = girl.get_skill(SKILL_SERVICE) + girl.get_stat(STAT_CHARISMA) + girl.get_stat(STAT_INTELLIGENCE) +
                    girl.get_stat(STAT_CONFIDENCE) + girl.get_skill(SKILL_MEDICINE);
-    int wages = int((100.f + (stat_sum / 50.f + 1) * numgirls));
-
-    if (conf>-1) conf += uniform(0, skill);
-    girl.confidence(conf);
-
-    girl.exp(uniform(5, 5+xp));
-    girl.medicine(uniform(0, skill));
-    girl.service(uniform(2, skill + 2));
-
-    cGirls::PossiblyGainNewTrait(girl, traits::CHARISMATIC, 30, "She has worked as a matron long enough that she has learned to be more Charismatic.");
-    cGirls::PossiblyGainNewTrait(girl, traits::PSYCHIC, 15, "She has learned to handle the girls so well that you'd almost think she was Psychic.");
-
-    return std::max(0, wages);
+    active_shift().Wages += std::max(0, (stat_sum / 50 + 1) * numgirls);
 }
 
-void MatronJob::HandleMatronResult(sGirl& girl, int &conf) const {
+void MatronJob::HandleMatronResult() const {
+    auto& girl = active_girl();
     auto& ss = active_shift().EventMessage;
     int numgirls = num_girls(*girl.m_Building);
     int check = d100();
     if (check < 10 && numgirls >(girl.service() + girl.confidence()) * 3)
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, -uniform(5, 10));
-        conf -= 5;
+        active_shift().Enjoyment -= uniform(5, 10);
         girl.happiness(-10);
+        girl.confidence(-5);
         ss << "was overwhelmed by the number of girls she was required to manage and broke down crying.";
     }
     else if (check < 10)
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, -uniform(1, 4));
-        conf -= -1;
+        active_shift().Enjoyment -= uniform(1, 4);
         girl.happiness(-3);
+        girl.confidence(-1);
         ss << "had trouble dealing with some of the girls.";
     }
     else if (check > 90)
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, uniform(1, 4));
-        conf += 1;
+        active_shift().Enjoyment += uniform(1, 4);
         girl.happiness(3);
         ss << "enjoyed helping the girls with their lives.";
     }
     else
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, -uniform(-1, 1));
+        active_shift().Enjoyment -= uniform(-2, 2);
         ss << "went about her day as usual.";
     }
 }
@@ -193,12 +152,15 @@ void MatronJob::ApplyMatronEffect(const sGirl& girl) const {
     });
 }
 
+MatronJob::MatronJob(JOBS job, const char* xml_file, const char* worker_title) : cBasicJob(job, xml_file), m_WorkerTitle(worker_title) {
+
+}
+
 void BrothelMatronJob::DoWork(sGirlShiftData& shift) const {
     auto& ss = active_shift().EventMessage;
     auto& girl = shift.girl();
     bool is_night = shift.IsNightShift;
 
-    Action_Types actiontype = ACTION_WORKMATRON;
     girl.m_DayJob = girl.m_NightJob = JOB_MATRON;    // it is a full time job
     if (is_night) return;    // and is only checked once
 
@@ -206,21 +168,11 @@ void BrothelMatronJob::DoWork(sGirlShiftData& shift) const {
 
     ApplyMatronEffect(girl);
 
-    // `J` zzzzzz - this needs to be updated for building flow
-    if (girl.disobey_check(actiontype, JOB_MATRON))
-    {
-        ss << "refused to work during the " << (is_night ? "night" : "day") << " shift.";
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
-        shift.Refused = ECheckWorkResult::REFUSES;
-        return;
-    }
-
-    int conf = 0;
     int roll_b = d100();
     EImageBaseType imagetype = EImageBaseType::PROFILE;
 
     // Complications
-    HandleMatronResult(girl, conf);
+    HandleMatronResult();
 
     //Events
     if (g_Game->gold().ival() > 1000 &&                                // `J` first you need to have enough money to steal
@@ -388,13 +340,10 @@ void BrothelMatronJob::DoWork(sGirlShiftData& shift) const {
     }
 
     girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    // Improve girl
-    shift.Wages = MatronGains(girl, is_night, conf);
 }
-
+/*
 void RegisterManagerJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<BrothelMatronJob>(JOB_MATRON, "Matron", "Mtrn", "This girl will look after the other girls. Only non-slave girls can have this position and you must pay them 300 gold per week. Also, it takes up both shifts. (max 1)"));
+    mgr.register_job(std::make_unique<BrothelMatronJob>(JOB_MATRON, "Matron.xml", "Matron"));
     mgr.register_job(std::make_unique<MatronJob>(JOB_CHAIRMAN, "Clinic Chairman", "Crmn", "She will watch over the staff of the clinic"));
     mgr.register_job(std::make_unique<MatronJob>(JOB_CENTREMANAGER, "Centre Manager", "CMgr", "She will look after the girls working in the centre."));
     mgr.register_job(std::make_unique<MatronJob>(JOB_DOCTORE, "Doctore", "Dtre", "She will watch over the girls in the arena."));
@@ -402,3 +351,4 @@ void RegisterManagerJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<MatronJob>(JOB_HEADGIRL, "Head Girl", "HGrl", "She takes care of the girls in your house."));
     mgr.register_job(std::make_unique<MatronJob>(JOB_EXECUTIVE, "Executive", "Exec", "She takes care of the girls in your studio."));
 }
+*/

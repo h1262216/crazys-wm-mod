@@ -46,8 +46,6 @@ void MistressJob::DoWork(sGirlShiftData& shift) const {
         provide_interaction(TrainingInteractionId, 2);
     }
 
-    apply_gains(shift.Performance);
-
     if(shift.Performance > 100) {
         auto* target_girl = shift.building().Building()->girls().get_random_girl([](const sGirl& g) {
             return g.is_slave() && g.obedience() < 50;
@@ -65,7 +63,7 @@ void MistressJob::DoWork(sGirlShiftData& shift) const {
 }
 
 bool MistressJob::CheckRefuseWork(sGirl& girl) const {
-    return check_refuse_action(girl, ACTION_WORKMATRON);
+    return check_refuse_action(girl, EBasicActionType::SOCIAL);
 }
 
 
@@ -222,7 +220,7 @@ void PracticeJob::DoWork(sGirlShiftData& shift) const {
 }
 
 bool PracticeJob::CheckRefuseWork(sGirl& girl) const {
-    if (girl.disobey_check(ACTION_WORKTRAINING, JOB_TRAINING))
+    if (disobey_check(girl))
     {
         sGirl* mistress = nullptr;
         if(girl.is_slave() && (mistress = request_interaction(TrainingInteractionId))) {
@@ -298,7 +296,6 @@ void TrainingJob::ReceiveTreatment(sGirl& girl, bool is_night) const {
 
     HandleTraining(girl, is_night);
 
-    girl.upd_Enjoyment(ACTION_WORKTRAINING, Enjoyment);
     girl.tiredness(tiredness());
 
     generate_event();
@@ -320,7 +317,7 @@ sJobValidResult TrainingJob::on_is_valid(const sGirl& girl, bool night_shift) co
 
 void TrainingJob::CountTheDays(sGirl& girl, bool is_night, int progress) const
 {
-    if (girl.disobey_check(ACTION_WORKTRAINING, job())) progress /= 2;    // if she disobeys, half her time is wasted
+    /// if (girl.disobey_check(ACTION_WORKTRAINING, job())) progress /= 2;    // if she disobeys, half her time is wasted
 
     if (progress <= 0)                                // she lost time so more tired
     {

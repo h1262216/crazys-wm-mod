@@ -43,8 +43,6 @@ cSimpleJob::cSimpleJob(JOBS job, const char* xml) : cBasicJob(job, xml) {
 
 void cSimpleJob::HandleGains(sGirl& girl, int fame) const {
     // Update Enjoyment
-    // girl.upd_Enjoyment(m_Info.PrimaryAction, m_Enjoyment);
-
     if (girl.fame() < 10 && active_shift().Performance >= 70)     { fame += 1; }
     if (girl.fame() < 20 && active_shift().Performance >= 100)    { fame += 1; }
     if (girl.fame() < 40 && active_shift().Performance >= 145)    { fame += 1; }
@@ -52,7 +50,7 @@ void cSimpleJob::HandleGains(sGirl& girl, int fame) const {
 
     girl.fame(fame);
 
-    apply_gains(active_shift().Performance);
+    apply_gains();
 }
 
 void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element) {
@@ -62,52 +60,11 @@ void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
     }
 }
 
-
-
-void cSimpleJob::shift_enjoyment() const {
-    add_literal("\n");
-    int roll = d100();
-    if (roll <= 5)
-    {
-        if(has_text("shift.bad")) {
-            add_text("shift.bad");
-        } else {
-            add_literal(rng().select_text({
-                                            "Some of the patrons abused her during the shift.",
-                                            "Several patrons heckled her and made her shift generally unpleasant."
-                                    }));
-        }
-        active_shift().Enjoyment -= 1;
-    }
-    else if (roll <= 25)
-    {
-        if(has_text("shift.good")) {
-            add_text("shift.good");
-        } else {
-            add_literal("She had a pleasant time working.");
-        }
-        active_shift().Enjoyment += 3;
-    }
-    else
-    {
-        if(has_text("shift.neutral")) {
-            add_text("shift.neutral");
-        } else {
-            add_literal("Otherwise, the shift passed uneventfully.");
-        }
-        active_shift().Enjoyment += 1;
-    }
-
-    if (active_shift().Performance < 50)  active_shift().Enjoyment -= 1;
-    if (active_shift().Performance < 0)   active_shift().Enjoyment -= 1;          // if she doesn't do well at the job, she enjoys it less
-    if (active_shift().Performance > 200) active_shift().Enjoyment *= 2;          // if she is really good at the job, her enjoyment (positive or negative) is doubled
-}
-
 void cSimpleJob::InitWork(sGirlShiftData& shift) {
     cBasicJob::InitWork(shift);
-    active_shift().Enjoyment = 0;
 }
 
 bool cSimpleJob::CheckRefuseWork(sGirl& girl) const {
+    return false;
     // return check_refuse_action(girl, m_Info.PrimaryAction);
 }

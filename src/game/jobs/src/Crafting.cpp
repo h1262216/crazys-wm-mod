@@ -65,8 +65,6 @@ void GenericCraftingJob::JobProcessing(sGirl& girl, sGirlShiftData& shift) const
             shift.Wages += item_worth;
         }
     }
-
-    apply_gains(shift.Performance);
 }
 
 float GenericCraftingJob::DoCrafting(sGirl& girl) const {
@@ -119,8 +117,7 @@ struct cMakeItemJob : GenericCraftingJob {
 };
 
 cMakeItemJob::cMakeItemJob() :
-        GenericCraftingJob(JOB_MAKEITEM, "MakeItem.xml",
-                           ACTION_WORKMAKEITEMS, 20) {
+        GenericCraftingJob(JOB_MAKEITEM, "MakeItem.xml") {
 }
 
 void cMakeItemJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
@@ -181,8 +178,7 @@ struct cMakePotionsJob : GenericCraftingJob {
 
 
 cMakePotionsJob::cMakePotionsJob() :
-        GenericCraftingJob(JOB_MAKEPOTIONS, "MakePotions.xml",
-                           ACTION_WORKMAKEPOTIONS, 20) {
+        GenericCraftingJob(JOB_MAKEPOTIONS, "MakePotions.xml") {
 }
 
 void cMakePotionsJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
@@ -224,8 +220,7 @@ struct cTailorJob : GenericCraftingJob {
 
 
 cTailorJob::cTailorJob() :
-        GenericCraftingJob(JOB_TAILOR, "Tailor.xml",
-                           ACTION_WORKMAKEITEMS, 20) {
+        GenericCraftingJob(JOB_TAILOR, "Tailor.xml") {
 }
 
 void cTailorJob::DoWorkEvents(sGirl& girl, sGirlShiftData& shift) const {
@@ -285,17 +280,16 @@ struct cGardenerJob : GenericCraftingJob {
 };
 
 cGardenerJob::cGardenerJob() :
-        GenericCraftingJob(JOB_GARDENER, "Gardener.xml",
-                           ACTION_WORKFARM, 20) {
+        GenericCraftingJob(JOB_GARDENER, "Gardener.xml") {
 }
 
 void RegisterCraftingJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BAKER, "Baker.xml", ACTION_WORKCOOKING, 20));
+            JOB_BAKER, "Baker.xml"));
     mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BREWER, "Brewer.xml", ACTION_WORKCOOKING, 20));
+            JOB_BREWER, "Brewer.xml"));
     mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BUTCHER, "Butcher.xml", ACTION_WORKCOOKING, 20));
+            JOB_BUTCHER, "Butcher.xml"));
     mgr.register_job(std::make_unique<cGardenerJob>());
     mgr.register_job(std::make_unique<cMakeItemJob>());
     mgr.register_job(std::make_unique<cMakePotionsJob>());

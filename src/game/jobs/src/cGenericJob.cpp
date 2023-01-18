@@ -63,14 +63,13 @@ void cGenericJob::Work(sGirlShiftData& shift) {
     shift.EventType = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
     shift.EventImage = m_Info.DefaultImage;
     shift.Wages = m_Info.BaseWages;
+    shift.Enjoyment = m_Info.BaseEnjoyment;
 
     if(m_Info.IsFightingJob) {
         cGirls::EquipCombat(shift.girl());
     } else {
         cGirls::UnequipCombat(shift.girl());
     }
-
-    // Setting up enjoyment
 
     InitWork(shift);
     DoWork(shift);
@@ -267,6 +266,15 @@ void cGenericJob::load_job() {
             std::string phase = GetDefaultedStringAttribute(*config_el, "Phase", "main");
             m_Info.Phase = get_phase_id(phase);
             m_Info.BaseWages = config_el->IntAttribute("BaseWages");
+
+            const auto* enjoy_el = config_el->FirstChildElement("Enjoyment");
+            if(enjoy_el) {
+                m_Info.PrimaryAction = get_activity_id(
+                        GetDefaultedStringAttribute(*enjoy_el, "PrimaryAction", "Generic"));
+                m_Info.SecondaryAction = get_activity_id(
+                        GetDefaultedStringAttribute(*enjoy_el, "SecondaryAction", "Generic"));
+                m_Info.BaseEnjoyment = enjoy_el->IntAttribute("BaseEnjoyment");
+            }
 
             // Filters
             for(auto& filter_el : IterateChildElements(*config_el, "Filter")) {

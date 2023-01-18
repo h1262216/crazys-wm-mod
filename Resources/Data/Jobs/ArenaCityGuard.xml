@@ -14,6 +14,7 @@
 
     <Config BaseWages="10">
         <Filter>ArenaFight</Filter>
+        <Enjoyment PrimaryAction="Physical" SecondaryAction="Fighting" />
     </Config>
 
     <Gains XP="13" Skill="3">

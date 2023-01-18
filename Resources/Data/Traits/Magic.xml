@@ -29,6 +29,7 @@
         <Modifier Name="stat:Charisma" Value="10" />
         <Modifier Name="fetish:NonHuman" Value="10" />
         <Modifier Name="fetish:Sexy" Value="40" />
+        <Modifier Name="enjoy:Social" Value="10" />
     </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="2" />

@@ -386,13 +386,13 @@ int sLuaGirl::calc_group_pregnancy(lua_State *L) {
 
 int sLuaGirl::getset_enjoyment(lua_State* L) {
     auto& girl = check_type(L, 1);
-    auto cat = static_cast<Action_Types>(luaL_checkinteger(L, 2));
+    auto cat = static_cast<EBasicActionType>(luaL_checkinteger(L, 2));
     if(lua_gettop(L) == 3) {
         long value = luaL_checkinteger(L, 3);
-        girl.upd_Enjoyment(cat, value);
+        girl.enjoyment(cat, value);
         return 0;
     } else {
-        int value = girl.get_enjoyment(cat);
+        int value = girl.enjoyment(cat);
         lua_pushinteger(L, value);
         return 1;
     }
@@ -605,9 +605,9 @@ int sLuaGirl::has_status(lua_State* L) {
 int sLuaGirl::obey_check(lua_State * L)
 {
     auto& girl = check_type(L, 1);
-    auto action = ACTION_GENERAL;
+    auto action = EBasicActionType::GENERIC;
     if(lua_gettop(L) == 2) {
-        action = (Action_Types)luaL_checkinteger(L, 2);
+        action = (EBasicActionType)luaL_checkinteger(L, 2);
     }
 
     bool disobey = girl.disobey_check(action);

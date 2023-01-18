@@ -26,6 +26,9 @@ TraitEffect TraitEffect::from_xml(const tinyxml2::XMLElement& el)
     } else if(boost::algorithm::istarts_with(target, "skill-cap:")) {
         effect.type = TraitEffect::SKILL_CAP;
         effect.target = get_skill_id(target.substr(10));
+    } else if(boost::algorithm::istarts_with(target, "enjoy:")) {
+        effect.type = TraitEffect::ENJOYMENT;
+        effect.target = (int)get_activity_id(target.substr(6));
     } else {
         effect.type = TraitEffect::MODIFIER;
         effect.modifier = target;

@@ -35,7 +35,7 @@ public:
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 
 protected:
-    void apply_gains(int performance) const;
+    void apply_gains() const;
 
     void add_performance_text() const;
 
@@ -43,6 +43,7 @@ protected:
     // void RegisterVariable(std::string name, sImagePreset& preset);
 
     bool check_refuse_action(sGirl& girl, EBasicActionType action) const;
+    bool disobey_check(sGirl& girl) const;
 
     bool CheckCanWork(sGirl& girl) const override {
         return true;
@@ -64,11 +65,16 @@ protected:
         }
     }
 
-    void on_post_shift(sGirlShiftData& shift) const;
+    void shift_enjoyment() const;
+
+    void on_post_shift(sGirlShiftData& shift) const override;
 
 private:
     cJobPerformance m_PerformanceData;
     cJobGains       m_Gains;
+
+    void update_enjoyment_of(EBasicActionType action, int change_chance) const;
+
 protected:
     // protected, so derived classes can call the base-class version
     void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) override;

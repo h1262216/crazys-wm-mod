@@ -8,6 +8,7 @@
 
     <Config Shift="day-only" DefaultImage="Combat" FightingJob="1" BaseWages="20">
         <Filter>ArenaFight</Filter>
+        <Enjoyment PrimaryAction="Physical" SecondaryAction="Fighting" />
     </Config>
 
     <Messages>

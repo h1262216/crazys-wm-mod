@@ -168,7 +168,7 @@ cLuaScript::cLuaScript()
 
     register_int_table("FETISH", m_State, get_fetish_names());
     register_int_table("STATUS", m_State, get_status_names());
-    register_int_table("ACTIONS", m_State, get_action_names());
+    register_int_table("ACTIONS", m_State, get_activity_names());
     register_int_table("IMG", m_State, get_imgtype_names());
     register_int_table("IMG_PART", m_State, get_participant_names());
     register_int_table("SPAWN", m_State, get_spawn_names());

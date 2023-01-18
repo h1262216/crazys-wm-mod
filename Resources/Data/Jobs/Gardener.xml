@@ -41,7 +41,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config DefaultImage="Farm" />
+    <Config DefaultImage="Farm" BaseWages="20"/>
 
     <Messages>
         <Message Name="work">

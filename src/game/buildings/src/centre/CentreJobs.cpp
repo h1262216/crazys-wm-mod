@@ -109,7 +109,8 @@ void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         }
         //brothel.m_Happiness += 100;
         girl.lust_release_regular();
-        girl.upd_Enjoyment(ACTION_SEX, +3);
+        /// TODO why is this god or bad?
+        girl.enjoyment(EBasicActionType::FUCKING, +3);
         fame += 1;
         dispo += 6;
     }
@@ -141,9 +142,6 @@ void CommunityService::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     ss.str("");
     ss << "${name} helped " << help << " people today.";
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    // Improve stats
-    HandleGains(girl, fame);
 }
 
 FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml") {
@@ -212,7 +210,7 @@ void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
         }
         //brothel.m_Happiness += 100;
         girl.lust_release_regular();
-        girl.upd_Enjoyment(ACTION_SEX, +3);
+        girl.enjoyment(EBasicActionType::FUCKING, +3);
         fame += 1;
         dispo += 6;
     }
@@ -240,8 +238,6 @@ void FeedPoor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     std::stringstream summary;
     summary << "${name} feed " << feed << " costing you " << cost << " gold.";
     girl.AddMessage(summary.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
-
-    HandleGains(girl, fame);
 }
 
 Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml") {
@@ -264,8 +260,6 @@ void Counselor::JobProcessing(sGirl& girl, sGirlShiftData& shift) const {
     shift.Wages += uniform(10, 10 + roll_max);
     shift.Wages += 5 * rehabers;    // `J` pay her 5 for each patient you send to her
     provide_interaction(CounselingInteractionId, 2);
-
-    HandleGains(girl, 0);
 }
 
 void RegisterCentreJobs(cJobManager& mgr) {

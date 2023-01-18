@@ -42,7 +42,7 @@
         <Skill Name="Service" Weight="1" Max="50"/>
     </Gains>
 
-    <Config DefaultImage="Bake" />
+    <Config DefaultImage="Bake" BaseWages="20"/>
 
     <Messages>
         <Message Name="work">

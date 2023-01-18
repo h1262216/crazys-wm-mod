@@ -57,6 +57,7 @@
         <description>She is able to bend her body in many different ways.</description>
         <Modifiers>
             <Modifier Name="stat:Agility" Value="5" />
+            <Modifier Name="enjoy:Performing" Value="3" />
         </Modifiers>
 
         <Properties>
@@ -117,6 +118,8 @@
             <Modifier Name="sex:*" Value="-1" />
             <Modifier Name="sex:BigBoobs" Value="21" />
             <Modifier Name="sex:SmallBoobs" Value="-19" />
+
+            <Modifier Name="enjoy:Physical" Value="-10" />
         </Modifiers>
 
         <Properties>
@@ -335,6 +338,8 @@
             <Modifier Name="sex:*" Value="-2" />
             <Modifier Name="sex:BigBoobs" Value="27" />
             <Modifier Name="sex:SmallBoobs" Value="-28" />
+
+            <Modifier Name="enjoy:Physical" Value="-5" />
         </Modifiers>
 
         <Properties>
@@ -541,7 +546,6 @@
         <description>Her breasts produce a smaller amount of milk than usual.</description>
         <Modifiers>
             <Modifier Name="stat:Lactation" Value="-50" />
-            <Modifier Name="enjoy:WORKMILK" Value="-10" />
             <Modifier Name="fetish:BigBoobs" Value="-5" />
             <Modifier Name="fetish:SmallBoobs" Value="5" />
             <Modifier Name="fetish:CuteGirl" Value="0" />
@@ -591,6 +595,7 @@
             <Modifier Name="fetish:Sexy" Value="-20" />
             <Modifier Name="fetish:Freak" Value="30" />
             <Modifier Name="fetish:Elegant" Value="15" />
+            <Modifier Name="enjoy:Social" Value="-5" />
         </Modifiers>
     </Trait>
 
@@ -621,6 +626,7 @@
             <Modifier Name="fetish:Freak" Value="10" />
             <Modifier Name="fetish:Lolita" Value="10" />
             <Modifier Name="skill-cap:Combat" Value="-33" />
+            <Modifier Name="enjoy:Physical" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="10" />
@@ -638,6 +644,7 @@
             <Modifier Name="fetish:Cool" Value="10" />
             <Modifier Name="fetish:Nerd" Value="-5" />
             <Modifier Name="fetish:Elegant" Value="-5" />
+            <Modifier Name="enjoy:Physical" Value="5" />
         </Modifiers>
         <Properties>
             <Setting Name="level-up:add-chance" Value="5"/>
@@ -662,12 +669,14 @@
             <Modifier Name="skill:Group" Value="-10" />
             <Modifier Name="skill:Lesbian" Value="-10" />
             <Modifier Name="stat:Confidence" Value="-10" />
-            <Modifier Name="enjoy:WORKCLEANING" Value="-20" />
+            <Modifier Name="enjoy:Crafting" Value="-10" />
             <Modifier Name="fetish:CuteGirl" Value="10" />
             <Modifier Name="fetish:Dangerous" Value="-20" />
             <Modifier Name="fetish:Cool" Value="-10" />
             <Modifier Name="fetish:Nerd" Value="20" />
             <Modifier Name="fetish:Freak" Value="5" />
+            <Modifier Name="enjoy:Physical" Value="-3" />
+            <Modifier Name="enjoy:Crafting" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="level-up:remove-chance" Value="15"/>
@@ -684,6 +693,7 @@
             <Modifier Name="fetish:Freak" Value="5" />
             <Modifier Name="fetish:Lolita" Value="10" />
             <Modifier Name="skill-cap:Combat" Value="-8" />
+            <Modifier Name="enjoy:Physical" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="level-up:remove-chance" Value="5"/>

@@ -79,6 +79,12 @@
             <Modifier Name="fetish:Dangerous" Value="100" />
             <Modifier Name="fetish:Elegant" Value="-50" />
 
+            <Modifier Name="enjoy:Mental" Value="-15" />
+            <Modifier Name="enjoy:Medical" Value="-15" />
+            <Modifier Name="enjoy:Social" Value="-15" />
+            <Modifier Name="enjoy:Cooking" Value="-15" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
+
             <Modifier Name="tag:sterile" Value="1" />
         </Modifiers>
     </Trait>
@@ -138,6 +144,11 @@
             <Modifier Name="fetish:NiceArse" Value="-1000" />
             <Modifier Name="fetish:Freak" Value="1000" />
 
+            <Modifier Name="enjoy:Mental" Value="-15" />
+            <Modifier Name="enjoy:Social" Value="-10" />
+            <Modifier Name="enjoy:Cooking" Value="-15" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
+
             <Modifier Name="tag:sterile" Value="1" />
         </Modifiers>
     </Trait>
@@ -157,6 +168,12 @@
             <Modifier Name="fetish:Elegant" Value="10" />
             <Modifier Name="fetish:Sexy" Value="10" />
             <Modifier Name="fetish:Freak" Value="10" />
+
+            <Modifier Name="enjoy:Medical" Value="5" />
+            <Modifier Name="enjoy:Social" Value="5" />
+            <Modifier Name="enjoy:Service" Value="-5" />
+            <Modifier Name="enjoy:Cooking" Value="-25" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
         </Modifiers>
     </Trait>
 
@@ -172,6 +189,9 @@
             <Modifier Name="fetish:CuteGirl" Value="10" />
             <Modifier Name="fetish:NonHuman" Value="60" />
             <Modifier Name="fetish:Freak" Value="5" />
+
+            <Modifier Name="enjoy:Social" Value="15" />
+            <Modifier Name="enjoy:Medical" Value="10" />
         </Modifiers>
     </Trait>
 
@@ -197,6 +217,7 @@
             <Modifier Name="fetish:NonHuman" Value="60" />
             <Modifier Name="fetish:CuteGirl" Value="10" />
             <Modifier Name="fetish:Freak" Value="15" />
+            <Modifier Name="enjoy:Performing" Value="5" />
         </Modifiers>
     </Trait>
 
@@ -209,6 +230,7 @@
             <Modifier Name="fetish:CuteGirl" Value="20" />
             <Modifier Name="fetish:NonHuman" Value="60" />
             <Modifier Name="fetish:Freak" Value="5" />
+            <Modifier Name="enjoy:Service" Value="-5" />
         </Modifiers>
     </Trait>
 
@@ -241,7 +263,6 @@
             <Modifier Name="stat:Spirit" Value="-10" />
             <Modifier Name="stat:Constitution" Value="5" />
             <Modifier Name="stat:Obedience" Value="5" />
-            <Modifier Name="enjoy:WORKMILK" Value="20" />
             <Modifier Name="fetish:CuteGirl" Value="-20" />
             <Modifier Name="fetish:NonHuman" Value="60" />
             <Modifier Name="fetish:Freak" Value="25" />
@@ -258,6 +279,11 @@
             <Modifier Name="fetish:Dangerous" Value="10" />
             <Modifier Name="fetish:NonHuman" Value="60" />
             <Modifier Name="fetish:Freak" Value="5" />
+
+            <Modifier Name="enjoy:Social" Value="5" />
+            <Modifier Name="enjoy:Performing" Value="-5" />
+            <Modifier Name="enjoy:Service" Value="-25" />
+            <Modifier Name="enjoy:Farming" Value="-20" />
         </Modifiers>
     </Trait>
 
@@ -267,7 +293,7 @@
         <Modifiers>
             <Modifier Name="skill-cap:Farming" Value="33" />
             <Modifier Name="skill-cap:Herbalism" Value="33" />
-            <Modifier Name="enjoy:WORKFARM" Value="10" />
+            <Modifier Name="enjoy:Farming" Value="10" />
             <Modifier Name="fetish:NonHuman" Value="50" />
             <Modifier Name="fetish:CuteGirl" Value="-10" />
             <Modifier Name="fetish:Freak" Value="20" />
@@ -299,6 +325,8 @@
             <Modifier Name="fetish:Elegant" Value="10" />
             <Modifier Name="fetish:Lolita" Value="10" />
             <Modifier Name="fetish:Freak" Value="10" />
+
+            <Modifier Name="enjoy:Farming" Value="5" />
         </Modifiers>
     </Trait>
 
@@ -309,7 +337,7 @@
             <Modifier Name="skill-cap:Beastiality" Value="10" />
             <Modifier Name="stat:Strength" Value="20" />
             <Modifier Name="stat:Constitution" Value="10" />
-            <Modifier Name="enjoy:WORKFARM" Value="10" />
+            <Modifier Name="enjoy:Farming" Value="10" />
             <Modifier Name="fetish:NonHuman" Value="80" />
             <Modifier Name="fetish:Freak" Value="40" />
         </Modifiers>
@@ -324,6 +352,8 @@
             <Modifier Name="fetish:Elegant" Value="30" />
             <Modifier Name="fetish:Freak" Value="-10" />
             <Modifier Name="fetish:Sexy" Value="25" />
+
+            <Modifier Name="enjoy:Service" Value="-15" />
         </Modifiers>
 
         <Properties>
@@ -363,6 +393,8 @@
             <Modifier Name="fetish:Elegant" Value="50" />
             <Modifier Name="fetish:Freak" Value="-20" />
             <Modifier Name="fetish:Sexy" Value="20" />
+
+            <Modifier Name="enjoy:Service" Value="-15" />
         </Modifiers>
 
         <Properties>
@@ -385,7 +417,7 @@
         <Modifiers>
             <Modifier Name="stat:Constitution" Value="20" />
             <Modifier Name="skill:Combat" Value="20" />
-            <Modifier Name="enjoy:WORKMECHANIC" Value="10" />
+            <Modifier Name="enjoy:Physical" Value="10" />
             <Modifier Name="fetish:NonHuman" Value="20" />
             <Modifier Name="fetish:Freak" Value="20" />
             <Modifier Name="fetish:Dangerous" Value="5" />
@@ -403,7 +435,6 @@
     <Trait Name="Incorporeal">
         <description>This girl never gets tired or loses health. (can't get tired or hurt)</description>
         <Modifiers>
-            <Modifier Name="enjoy:COMBAT" Value="20" />
             <Modifier Name="fetish:NonHuman" Value="60" />
             <Modifier Name="fetish:Freak" Value="40" />
         </Modifiers>
@@ -439,8 +470,7 @@
             <Modifier Name="stat:Strength" Value="10" />
             <Modifier Name="stat:Constitution" Value="10" />
             <Modifier Name="skill:Performance" Value="30" />
-            <Modifier Name="enjoy:ACTRESS" Value="10" />
-            <Modifier Name="enjoy:WORKADVERTISING" Value="10" />
+            <Modifier Name="enjoy:Performing" Value="10" />
             <Modifier Name="fetish:NonHuman" Value="35" />
             <Modifier Name="fetish:Sexy" Value="20" />
             <Modifier Name="fetish:NiceFigure" Value="40" />
@@ -464,7 +494,7 @@
     <Trait Name="Solar Powered">
         <description>She needs direct sunlight for a lengthy period to survive.</description>
         <Modifiers>
-            <Modifier Name="enjoy:WORKFARM" Value="10" />
+            <Modifier Name="enjoy:Farming" Value="10" />
             <!--works outdoors-->
             <Modifier Name="fetish:NonHuman" Value="20" />
             <Modifier Name="fetish:Freak" Value="5" />
@@ -489,7 +519,9 @@
             <Modifier Name="skill-cap:Strip" Value="3" />
             <Modifier Name="skill-cap:Group" Value="10" />
             <Modifier Name="stat:Libido" Value="35" />
-            <Modifier Name="enjoy:SEX" Value="40" />
+            <Modifier Name="enjoy:Fucking" Value="40" />
+            <Modifier Name="enjoy:Farming" Value="-20" />
+            <Modifier Name="enjoy:Stripping" Value="5" />
             <Modifier Name="fetish:NonHuman" Value="40" />
             <Modifier Name="fetish:Freak" Value="30" />
             <Modifier Name="fetish:Sexy" Value="30" />

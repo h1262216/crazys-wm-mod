@@ -15,7 +15,10 @@
         <Trait Name="Clumsy" Value="-10" />
     </Performance>
 
-    <Config DefaultImage="Craft" />
+    <Config DefaultImage="Craft" BaseWages="40">
+        <Filter>ArenaProducers</Filter>
+        <Enjoyment PrimaryAction="Crafting" SecondaryAction="Physical"/>
+    </Config>
 
     <Gains XP="10" Skill="3">
         <Skill Name="Crafting" Weight="2" />
@@ -58,5 +61,6 @@
             <Text>${name} made:</Text>
         </Message>
         <Include>DefaultPerformanceMessages.xml</Include>
+        <Include>DefaultEnjoyMessages.xml</Include>
     </Messages>
 </Job>

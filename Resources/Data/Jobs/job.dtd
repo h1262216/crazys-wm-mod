@@ -2,10 +2,13 @@
 <!ATTLIST Job ShortName CDATA #REQUIRED>
 
 <!ELEMENT Description (#PCDATA)>
-<!ELEMENT Config (Filter)>
+<!ELEMENT Config (Filter, Enjoyment)>
 <!ATTLIST Config Shift (both|day-only|night-only|full) FreeOnly (0|1) #IMPLIED DefaultImage CDATA #IMPLIED
         Phase (prepare|produce|main|late) #IMPLIED FightingJob (0|1) #IMPLIED BaseWages CDATA #IMPLIED>
 <!ELEMENT Filter (#PCDATA)>
+<!ELEMENT Enjoyment EMPTY>
+<!ATTLIST Enjoyment PrimaryAction CDATA #IMPLIED SecondaryAction CDATA #IMPLIED BaseEnjoyment CDATA #IMPLIED>
+
 
 <!ELEMENT Performance (Factor|Trait|Mod)*>
 <!ATTLIST Performance Modifier CDATA #IMPLIED>
@@ -26,7 +29,6 @@
 <!ATTLIST TraitChangeAmount Value CDATA #REQUIRED Chance CDATA #IMPLIED>
 <!ELEMENT TraitChangeCondition EMPTY>
 <!ATTLIST TraitChangeCondition Value CDATA #IMPLIED Lower CDATA #IMPLIED Upper CDATA #IMPLIED What CDATA #REQUIRED>
-
 
 <!ELEMENT Messages (Message|Include)*)>
 <!ELEMENT Message ((Text|Group)+)>

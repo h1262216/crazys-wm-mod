@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Rest" Phase="main">
         <Filter>ArenaFight</Filter>
+        <Enjoyment BaseEnjoyment="25" />
     </Config>
 
     <Messages>
