@@ -19,3 +19,6 @@ add_custom_command(
         COMMAND "${PYINSTALLER}" "main.py" -n "Tagger" --onefile --noconfirm --add-data "ImageTypes.xml${PYINSTALLER_PATH_SEP}." --add-data "ImageFiles.xml${PYINSTALLER_PATH_SEP}."
         --exclude-module PySide2 --exclude-module PyQt5 --exclude-module PyQt6 --exclude-module IPython --exclude-module pandas --exclude-module scipy   # these would be picked up by matplotlib, if they are installed, we ignore them so we don't bloat the exe too much
 )
+
+
+install(FILES "jobs.html" "traits.html" DESTINATION "Docs&Tools")
