@@ -125,7 +125,7 @@ struct cBlacksmithJob : GenericCraftingJob {
 };
 
 cBlacksmithJob::cBlacksmithJob() :
-        GenericCraftingJob(JOB_BLACKSMITH, "Blacksmith.xml",
+        GenericCraftingJob(JOB_BLACKSMITH, "ArenaBlacksmith.xml",
                            ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
 
 }
@@ -200,7 +200,7 @@ struct cCobblerJob : GenericCraftingJob {
 };
 
 cCobblerJob::cCobblerJob() :
-    GenericCraftingJob(JOB_COBBLER, "Cobbler.xml",
+    GenericCraftingJob(JOB_COBBLER, "ArenaCobbler.xml",
                        ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
 }
 
@@ -435,7 +435,7 @@ struct cJewelerJob : GenericCraftingJob {
 };
 
 cJewelerJob::cJewelerJob() :
-        GenericCraftingJob(JOB_JEWELER, "Jeweler.xml",
+        GenericCraftingJob(JOB_JEWELER, "ArenaJeweler.xml",
                            ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
 }
 

@@ -66,7 +66,7 @@ namespace {
     };
 }
 
-CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "CityGuard.xml", {ACTION_WORKSECURITY, 10, EImageBaseType::SECURITY, true}) {
+CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10, EImageBaseType::SECURITY, true}) {
     m_Info.FullTime = true;
     RegisterVariable("CatchThief", CatchThief);
 }
@@ -142,7 +142,7 @@ bool CityGuard::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     return false;
 }
 
-FightBeasts::FightBeasts() : cSimpleJob(JOB_FIGHTBEASTS, "FightBeasts.xml", {ACTION_COMBAT, 100, EImageBaseType::COMBAT, true}) {
+FightBeasts::FightBeasts() : cSimpleJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml", {ACTION_COMBAT, 100, EImageBaseType::COMBAT, true}) {
 
 }
 
@@ -293,7 +293,7 @@ bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
     return false;
 }
 
-FightGirls::FightGirls() : cSimpleJob(JOB_FIGHTARENAGIRLS, "FightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
+FightGirls::FightGirls() : cSimpleJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
 
 }
 
@@ -417,7 +417,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     return false;
 }
 
-FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "FightTrain.xml", {ACTION_COMBAT, 20, EImageBaseType::COMBAT, true}) {
+FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaFightTrain.xml", {ACTION_COMBAT, 20, EImageBaseType::COMBAT, true}) {
 }
 
 double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {
