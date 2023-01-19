@@ -1,12 +1,12 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
 <Treatment ShortName="Thrp">
     <Description>
-        She will go to therapy to get over her mental problems. (Nervous, Dependant, Pessimist)
+        She will go to therapy to get over her mental problems. (Nervous, Dependent, Pessimist)
     </Description>
 
     <Therapy Duration="4" FightChance="10" Title="therapy" SuccessBonus="4" HealthDanger="2">
         <RemoveTrait Trait="Nervous">She is no longer Nervous all the time.</RemoveTrait>
-        <RemoveTrait Trait="Dependant">She is no longer Dependant on others.</RemoveTrait>
+        <RemoveTrait Trait="Dependent">She is no longer Dependent on others.</RemoveTrait>
         <RemoveTrait Trait="Pessimist">She is no longer a Pessimist about everything.</RemoveTrait>
     </Therapy>
 
