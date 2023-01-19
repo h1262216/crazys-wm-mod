@@ -212,7 +212,7 @@
             <Text Condition="Masochist" Chance="50">
                 ${name} enjoys this. It's what she deserves.
             </Text>
-            <Text Condition="Broken Will|Dependant" Chance="50">
+            <Text Condition="Broken Will|Dependent" Chance="50">
                 ${name} accepts this. It is Master's will.
             </Text>
             <Text Condition="Iron Will|Fearless" Chance="50">

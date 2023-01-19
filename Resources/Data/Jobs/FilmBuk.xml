@@ -119,7 +119,7 @@
             <Text Condition="Cum Addict" Updates="Enjoy+=13">
                 ${name} enjoys this, and spends a while licking cum off her body.
             </Text>
-            <Text Condition="Broken Will|Dependant" Updates="Enjoy+=11">
+            <Text Condition="Broken Will|Dependent" Updates="Enjoy+=11">
                 ${name} accepts this. It is Master's will.
             </Text>
             <Text Condition="Iron Will|Fearless" Updates="Enjoy-=5">
