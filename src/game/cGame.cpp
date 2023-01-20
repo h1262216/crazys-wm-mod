@@ -76,14 +76,14 @@ std::unique_ptr<IGame> IGame::CreateGame() {
 //                                              Saving and Loading
 // ---------------------------------------------------------------------------------------------------------------------
 void cGame::LoadCommon(const std::function<void(std::string)>& callback) {
-    // jobs
-    g_LogFile.info("prepare", "Setup Jobs");
-    job_manager().Setup();
-
     // traits
     callback("Loading Traits");
     g_LogFile.info("prepare", "Loading Traits");
     LoadTraitFiles(DirPath() << "Resources" << "Data" << "Traits");
+
+    // jobs
+    g_LogFile.info("prepare", "Setup Jobs");
+    job_manager().Setup();
 
     // load skills
     callback("Loading Skills");
