@@ -26,6 +26,7 @@
 #include <sstream>
 #include <utility>
 #include "character/predicates.h"
+#include "traits/ITraitsManager.h"
 #include "IGame.h"
 #include "cGirlGangFight.h"
 #include "buildings/cBuildingManager.h"
@@ -75,6 +76,8 @@ void TherapyJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
     for (auto& remove_el : IterateChildElements(job_element, "RemoveTrait")) {
         TraitRemove.emplace_back(sRemoveTrait{GetStringAttribute(remove_el, "Trait"),
                                                             remove_el.GetText()});
+        // look up the trait to validate it exists
+        g_Game->traits().lookup(GetStringAttribute(remove_el, "Trait"));
     }
 }
 

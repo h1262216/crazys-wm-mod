@@ -228,6 +228,7 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
 
         auto event_type = (EEventType)element.IntAttribute("Event", EVENT_NONE);
         TraitChanges.emplace_back(gain, trait, message, event_type);
+        g_Game->traits().lookup(trait.c_str());  // Check that trait exists
         for(auto& amount_el : IterateChildElements(element, "TraitChangeAmount")) {
             TraitChanges.back().ChangeAmounts.push_back(load_change_amount(amount_el));
         }

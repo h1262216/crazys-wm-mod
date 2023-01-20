@@ -286,7 +286,7 @@ void cGenericJob::load_job() {
         load_from_xml_internal(*job_data, path.str());
     } catch (std::exception& error) {
         g_LogFile.error("job", "Error loading job xml '", m_XMLFile, "': ", error.what());
-        throw;
+        throw std::runtime_error("Error loading job xml '" + m_XMLFile + "': " + error.what());
     }
 }
 

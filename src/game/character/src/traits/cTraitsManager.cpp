@@ -3,6 +3,8 @@
 #include "cTraitsCollection.h"
 #include "cTraitSpec.h"
 
+#include "utils/lookup.h"
+
 #include <tinyxml2.h>
 #include <CLog.h>
 #include <xml/getattr.h>
@@ -15,7 +17,7 @@ std::unique_ptr<ITraitsCollection> cTraitsManager::create_collection() const {
 }
 
 const ITraitSpec *cTraitsManager::lookup(const char* name) const {
-    return m_Traits.at(name).get();
+    return lookup_with_error(m_Traits, name, "Could not find trait", "traits").get();
 }
 
 void cTraitsManager::load_traits(const tinyxml2::XMLElement& root) {
