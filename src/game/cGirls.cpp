@@ -580,11 +580,11 @@ string cGirls::GetMoreDetailsString(const sGirl& girl, bool purchase)
     // `J` When modifying Stats or Skills, search for "J-Change-Stats-Skills"  :  found in >> cGirls.cpp > GetMoreDetailsString
     ss << "STATS";
     const int statnum[] = { STAT_CHARISMA, STAT_BEAUTY, STAT_LIBIDO, STAT_LUST, STAT_MANA, STAT_INTELLIGENCE, STAT_CONFIDENCE, STAT_OBEDIENCE,
-                            STAT_SPIRIT, STAT_AGILITY, STAT_STRENGTH, STAT_FAME, STAT_LACTATION ,STAT_PCFEAR, STAT_PCLOVE };
-    const int statnumsize = 15;
+                            STAT_SPIRIT, STAT_AGILITY, STAT_STRENGTH, STAT_FAME, STAT_DIGNITY,  STAT_LACTATION, STAT_PCFEAR, STAT_PCLOVE };
+    const int statnumsize = 16;
     const string statstr[] = { "Charisma : \t", "Beauty : \t", "Libido : \t", "Lust : \t", "Mana : \t", "Intelligence : \t", "Confidence : \t",
-                         "Obedience : \t", "Spirit : \t", "Agility : \t", "Strength : \t", "Fame : \t", "Lactation : \t",
-                         "PCFear : \t", "PCLove : \t", "Gold : \t" };
+                         "Obedience : \t", "Spirit : \t", "Agility : \t", "Strength : \t", "Fame : \t", "Dignity : \t",
+                         "Lactation : \t", "PCFear : \t", "PCLove : \t", "Gold : \t" };
 
     const int show = statnumsize - 3;
 

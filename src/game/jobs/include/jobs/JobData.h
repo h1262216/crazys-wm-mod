@@ -89,9 +89,9 @@ public:
 private:
     void gain_traits(sGirl& girl, int performance) const;
 
-    int XP;                                         //!< Amount of experience points gained
-    int Skill;                                      //!< Amount of gains for stats/skills
-    std::vector<sWeightedStatSkill>  Gains;       //!< List of stat/skill influences
+    int XP = 0;                                     //!< Amount of experience points gained
+    int Skill = 0;                                  //!< Amount of gains for stats/skills
+    std::vector<sWeightedStatSkill>  Gains;         //!< List of stat/skill influences
     std::vector<sTraitChange>        TraitChanges;  //!< List of potential Trait gains/losses
 };
 
