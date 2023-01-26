@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Items>
 <Item Name="Velma's Glasses"
-      Desc="Glasses worn by the legendary detective Velma Dinkley. Unfortunately, the owner is blind without them. (Adds Nerd and Dependant.)"
+      Desc="Glasses worn by the legendary detective Velma Dinkley. Unfortunately, the owner is blind without them. (Adds Nerd and Dependent.)"
       Type="Glasses"
       Badness="0"
       Special="None"

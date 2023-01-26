@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Items>
 <Item Name="Planet Chaser Starlight Excellent"
-      Desc="An anime that seems to wipe the watcher's mind. (Removes Cool Person, Quick Learner, Optimist, Pessimist. Adds Dependant, Meek.)"
+      Desc="An anime that seems to wipe the watcher's mind. (Removes Cool Person, Quick Learner, Optimist, Pessimist. Adds Dependent, Meek.)"
       Type="Food"
       Badness="0"
       Special="None"

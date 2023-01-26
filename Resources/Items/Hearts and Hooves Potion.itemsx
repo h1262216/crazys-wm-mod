@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Items>
 <Item Name="Hearts and Hooves Potion"
-      Desc="Made of a tuft of cloud, a bright rainbow's glow, and stirred with a pegasus feather. (Love +100. Adds dependant.)"
+      Desc="Made of a tuft of cloud, a bright rainbow's glow, and stirred with a pegasus feather. (Love +100. Adds Dependent.)"
       Type="Food"
       Badness="25"
       Special="None"

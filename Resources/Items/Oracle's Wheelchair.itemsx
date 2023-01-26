@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Items>
 <Item Name="Oracle's Wheelchair"
-      Desc="The wheelchair that Batgirl was forced into after the Joker crippled her. (Intelligence +100, Agility -50. Adds Dependant.)"
+      Desc="The wheelchair that Batgirl was forced into after the Joker crippled her. (Intelligence +100, Agility -50. Adds Dependent.)"
       Type="Misc"
       Badness="10"
       Special="None"

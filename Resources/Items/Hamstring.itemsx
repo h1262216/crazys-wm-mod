@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Items>
 <Item Name="Hamstring"
-      Desc="Is a girl being far too rebellious for your liking? A simple crippling can fix that. (-100 agility. Adds Clumsy and Dependant, removes Fleet of Foot. +lots of fear and hate)"
+      Desc="Is a girl being far too rebellious for your liking? A simple crippling can fix that. (-100 agility. Adds Clumsy and Dependent, removes Fleet of Foot. +lots of fear and hate)"
       Type="Food"
       Badness="100"
       Special="None"

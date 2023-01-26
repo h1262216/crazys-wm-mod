@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Items>
 <Item Name="Sill's Rags"
-      Desc="The rags given to Sill Plain by the 'hero' Rance. (Sex and Service +20. Adds Meek, Dependant.)"
+      Desc="The rags given to Sill Plain by the 'hero' Rance. (Sex and Service +20. Adds Meek, Dependent.)"
       Type="Dress"
       Badness="0"
       Special="None"
