@@ -9,10 +9,10 @@
 <Text       Name="SavesLabel"               Text="Saves"                    XPos="14"       YPos="145"      Width="141"     Height="28"     FontSize="17"  />
 <Text       Name="DefaultImagesLabel"       Text="DefaultImages"            XPos="14"       YPos="175"      Width="141"     Height="28"     FontSize="17"  />
 <Text       Name="ItemsLabel"               Text="Items"                    XPos="14"       YPos="205"      Width="141"     Height="28"     FontSize="17"  />
-<EditBox    Name="Characters"                                               XPos="155"      YPos="112"      Width="422"     Height="28"     FontSize="14" Border="1"  />
-<EditBox    Name="Saves"                                                    XPos="155"      YPos="142"      Width="422"     Height="28"     FontSize="14" Border="1"  />
-<EditBox    Name="DefaultImages"                                            XPos="155"      YPos="172"      Width="422"     Height="28"     FontSize="14" Border="1"  />
-<EditBox    Name="Items"                                                    XPos="155"      YPos="202"      Width="422"     Height="28"     FontSize="14" Border="1"  />
+<EditBox    Name="Characters"                                               XPos="155"      YPos="112"      Width="422"     Height="28"     FontSize="17" Border="1"  />
+<EditBox    Name="Saves"                                                    XPos="155"      YPos="142"      Width="422"     Height="28"     FontSize="17" Border="1"  />
+<EditBox    Name="DefaultImages"                                            XPos="155"      YPos="172"      Width="422"     Height="28"     FontSize="17" Border="1"  />
+<EditBox    Name="Items"                                                    XPos="155"      YPos="202"      Width="422"     Height="28"     FontSize="17" Border="1"  />
 <Checkbox   Name="PreferDefault"            Text="Prefer Default"           XPos="365"      YPos="239"      Width="22"      Height="22"     FontSize="17" LeftOrRight="false" />
 
 <Text       Name="ThemeLabel"               Text="Theme"                    XPos="14"       YPos="309"      Width="141"     Height="28"     FontSize="17"  />
@@ -21,8 +21,12 @@
 
 <Text       Name="WidthLabel"               Text="Window Width"             XPos="14"       YPos="450"      Width="141"     Height="28"     FontSize="17"  />
 <Text       Name="HeightLabel"              Text="Window Height"            XPos="14"       YPos="480"      Width="141"     Height="28"     FontSize="17"  />
-<EditBox    Name="WindowWidth"                                              XPos="155"      YPos="450"      Width="422"     Height="28"     FontSize="14"  Border="1"  />
-<EditBox    Name="WindowHeight"                                             XPos="155"      YPos="480"      Width="422"     Height="28"     FontSize="14"  Border="1"  />
+<EditBox    Name="WindowWidth"                                              XPos="155"      YPos="450"      Width="422"     Height="28"     FontSize="17"  Border="1"  />
+<EditBox    Name="WindowHeight"                                             XPos="155"      YPos="480"      Width="422"     Height="28"     FontSize="17"  Border="1"  />
 
+<Text       Name="StyleLabel"             Text="Image Style Preferences"    XPos="14"       YPos="525"      Width="240"     Height="28"     FontSize="20"  />
+<Checkbox   Name="DrawingsCB"             Text="Drawings / 2D"              XPos="34"       YPos="560"      Width="22"      Height="22"     FontSize="17" LeftOrRight="false" />
+<Checkbox   Name="RenderingsCB"           Text="Renderings / 3D"            XPos="34"       YPos="590"      Width="22"      Height="22"     FontSize="17" LeftOrRight="false" />
+<Checkbox   Name="PhotosCB"               Text="Photos"                     XPos="34"       YPos="620"      Width="22"      Height="22"     FontSize="17" LeftOrRight="false" />
 
 </Screen>

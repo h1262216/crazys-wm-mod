@@ -18,6 +18,13 @@ VIDEO_SUFFIXES = [
 ]
 FILE_SUFFIXES = IMAGE_SUFFIXES + VIDEO_SUFFIXES
 
+STYLE_TO_DISPLAY = {
+    "Unknown": "-",
+    "Drawing": "2D / Drawing",
+    "Rendering": "3D / Rendering",
+    "Photo": "Real / Photo",
+}
+
 
 @dataclass
 class ImageResource:

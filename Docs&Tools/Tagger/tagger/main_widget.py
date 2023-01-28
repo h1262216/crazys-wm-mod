@@ -69,11 +69,10 @@ class MainWidget(QWidget):
         image_meta.addRow("Source", self.source_edit)
 
         self.style = QComboBox()
-        self.style.addItem("-")
-        self.style.addItem("2D")
-        self.style.addItem("3D")
-        self.style.addItem("Real")
+        for s, d in resource.STYLE_TO_DISPLAY.items():
+            self.style.addItem(d, s)
         self.style.setToolTip("Define what sort of art style this image is, to enable players to filter by style.")
+        self.style.currentIndexChanged.connect(self._update_style)
         image_meta.addRow("Style", self.style)
 
         self.tag_view = TagViewWidget(repo=repo, presets=presets)
@@ -150,6 +149,10 @@ class MainWidget(QWidget):
         self.set_image_data(str(self.pack_data.path.parent / image_data.file))
         self.current_image = image
         self.pack_list.setCurrentRow(image)
+        keys = list(resource.STYLE_TO_DISPLAY)
+        style = image_data.style if image_data.style else "Unknown"
+        index = keys.index(style)
+        self.style.setCurrentIndex(index)
 
     def save_active_image(self):
         """
@@ -204,6 +207,12 @@ class MainWidget(QWidget):
     def _update_source(self):
         active_image = self.pack_data.images[self.current_image]
         active_image.source = self.source_edit.text()
+
+    @requires_open_pack
+    def _update_style(self, index):
+        active_image = self.pack_data.images[self.current_image]
+        style = self.style.currentData()
+        active_image.style = style
 
     @requires_open_pack
     def rel_path(self, path) -> Path:

@@ -1,3 +1,17 @@
+# Version 7.2.1alpha7
+This version is mostly small bugfixes, and introduces image style preferences for the new tagging.
+
+## Tagger
+* Allow attaching `style` information to an image: It can be a `drawing`, `rendering`, or `photo`. In the 
+main menu, the player can select which types of images they prefer, which will give the game a nudge towards
+those images --- If there are lots of images with a given tag then the game will only use those of the preferred
+style, but if there are only very few it will use them all.
+
+## Bugfixes
+* Fixed `Dependant`/`Dependent` spelling
+* Added missing `traits.html` file
+* Fixed an error in job xml conditions
+
 # Version 7.2.1alpha6
 This version contains new game mechanics for gaining traits by doing jobs. In the old version, 
 girls would slowly start to like doing their assigned job more and more, and once a certain threshold

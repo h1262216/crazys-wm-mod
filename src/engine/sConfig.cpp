@@ -23,6 +23,7 @@
 #include <tinyxml2.h>
 #include "Revision.h"
 #include "xml/util.h"
+#include "../game/images/ids.h"
 
 
 struct sConfigData : public cSimpleKeyValue
@@ -80,6 +81,7 @@ sConfigData::sConfigData(const char *a_filename) : cSimpleKeyValue("Entry", "Key
     add_setting("interface.fullscreen", "Fullscreen", false);
     add_setting("interface.width", "Width", positive(1024));
     add_setting("interface.height", "Height", positive(768));
+    add_setting("interface.image-styles", "ImageStyles", unbounded((int)EImageStyle::UNKNOWN));
 
     load(DirPath() << a_filename);
 }
@@ -109,3 +111,4 @@ const std::string& cConfig::theme() const { return data->get_str("interface.them
 int cConfig::width() const { return data->get_integer("interface.width"); }
 int cConfig::height() const { return data->get_integer("interface.height"); }
 bool cConfig::fullscreen() const { return data->get_bool("interface.fullscreen"); }
+int cConfig::image_style() const { return data->get_integer("interface.image-styles"); }

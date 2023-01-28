@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2021-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -77,10 +77,13 @@ namespace {
         std::string image_types = GetStringAttribute(entry, "Type");
         std::vector<std::string> split_types;
         split(split_types, image_types, [](char c ){ return c == ';'; });
+        EImageStyle style = parse_image_style(GetDefaultedStringAttribute(entry, "Style", "Unknown"));
         for(auto&& type : split_types) {
             sImageSpec spec{get_image_id(type), part, pregnant, futa, tied};
-            callback(sImageRecord{file, source, spec, parse_yesno(fallback)});
+            callback(sImageRecord{file, source, spec, style, parse_yesno(fallback)});
         }
+
+
     }
 }
 
@@ -148,7 +151,7 @@ void cImageLoader::image_types_from_file_names() {
         for (auto& file: m_FileNameBuffer) {
             if (std::regex_match(file, pattern)) {
                 m_RecordsBuffer[(int)spec.Attributes.BasicImage].push_back(
-                        sImageRecord{file, "", spec.Attributes, false});
+                        sImageRecord{file, "", spec.Attributes, EImageStyle::UNKNOWN, false});
             }
         }
     }

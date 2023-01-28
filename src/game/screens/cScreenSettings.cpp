@@ -20,6 +20,7 @@
 #include "utils/FileList.h"
 #include "CLog.h"
 #include "sConfig.h"
+#include "images/ids.h"
 
 extern cConfig cfg;
 
@@ -39,6 +40,10 @@ void cScreenSettings::set_ids()
     fullscreen_id      = get_id("Fullscreen");
     width_id           = get_id("WindowWidth");
     height_id          = get_id("WindowHeight");
+
+    drawings_id        = get_id("DrawingsCB");
+    renderings_id      = get_id("RenderingsCB");
+    photos_id          = get_id("PhotosCB");
 
     SetButtonCallback(revert_id, [this]() { init(false); });
     SetButtonCallback(ok_id, [this]() {
@@ -77,6 +82,11 @@ void cScreenSettings::init(bool back)
         SetCheckBox(preferdefault_id, cfg.preferdefault());
         SetCheckBox(fullscreen_id, cfg.fullscreen());
         SetSelectedItemInList(theme_id, 1, false, true);
+
+        int style = cfg.image_style();
+        SetCheckBox(drawings_id, style & (int)EImageStyle::DRAWING);
+        SetCheckBox(renderings_id, style & (int)EImageStyle::RENDERING);
+        SetCheckBox(photos_id, style & (int)EImageStyle::PHOTO);
     }
     HideWidget(width_id, cfg.fullscreen());
     HideWidget(height_id, cfg.fullscreen());
@@ -96,6 +106,16 @@ void cScreenSettings::update_settings()
 
     cfg.set_value("interface.height", std::stoi(GetEditBoxText(height_id)));
     cfg.set_value("interface.width", std::stoi(GetEditBoxText(width_id)));
+
+    EImageStyle style = EImageStyle(0);
+    if(IsCheckboxOn(drawings_id))
+       style = combine(style, EImageStyle::DRAWING);
+    if(IsCheckboxOn(renderings_id))
+       style = combine(style, EImageStyle::RENDERING);
+    if(IsCheckboxOn(photos_id))
+       style = combine(style, EImageStyle::PHOTO);
+    cfg.set_value("interface.width", std::stoi(GetEditBoxText(width_id)));
+    cfg.set_value("interface.image-styles", int(style));
 
     cfg.save();
 }

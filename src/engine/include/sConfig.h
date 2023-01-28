@@ -44,6 +44,7 @@ public:
     int                 width() const;
     int                 height() const;
     bool                fullscreen() const;
+    int                 image_style() const;
 
     template <typename T>
     void set_value(const char* id, T value);

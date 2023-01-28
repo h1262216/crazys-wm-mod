@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2021-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,6 +31,9 @@
 #include "xml/util.h"
 #include "utils/string.hpp"
 #include "utils/algorithms.hpp"
+#include "sConfig.h"
+
+extern cConfig cfg;
 
 namespace {
     const int IMAGE_SELECTION_TOLERANCE = 5;
@@ -188,6 +191,8 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
                    print_tri_flag(spec.IsTied, "tied"), " ",
                    print_tri_flag(spec.IsFuta, "futa"), " ",
                    print_tri_flag(spec.IsPregnant, "preg"));
+    int target_styles = cfg.image_style();
+
     while(!queue.empty()) {
         auto it = queue.begin();
         g_LogFile.debug("image", "  Look up '", get_image_name(it->Node.BasicImage), "' with participants ",
@@ -199,6 +204,9 @@ void cImageLookup::find_image_internal_imp(const std::string& base_path, const s
             int cost = it->Cost + match_cost(it->Node, image.Attributes);
             if(image.IsFallback)
                 cost += IMAGE_SELECTION_TOLERANCE + 1;
+            if((int(image.Style) & target_styles) == 0) {
+                cost += IMAGE_SELECTION_TOLERANCE + 1;
+            }
             inner_callback(&image, cost);
         }
 

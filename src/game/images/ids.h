@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2021-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,6 +37,17 @@ enum class ETriValue {
 ETriValue parse_tri_value(const std::string& source);
 std::string print_tri_flag( ETriValue v, const char* val);
 std::ostream& print_tri_flag(std::ostream& target, ETriValue v, const char* val);
+
+enum class EImageStyle {
+    DRAWING    = 0b001,
+    RENDERING  = 0b010,
+    PHOTO      = 0b100,
+    UNKNOWN    = 0b111
+};
+
+EImageStyle combine(EImageStyle a, EImageStyle b);
+
+EImageStyle parse_image_style(const std::string& source);
 
 // This is the data the is submitted to an event when determining an image
 enum class EImageBaseType {

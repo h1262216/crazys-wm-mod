@@ -45,5 +45,9 @@ private:
     int theme_id = -1;
     int fullscreen_id = -1;
     int width_id = -1;
+
     int height_id = -1;
+    int drawings_id = -1;
+    int renderings_id = -1;
+    int photos_id = -1;
 };

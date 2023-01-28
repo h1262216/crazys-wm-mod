@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2021-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -113,6 +113,21 @@ ETriValue parse_tri_value(const std::string& source) {
     }
 }
 
+EImageStyle parse_image_style(const std::string& source) {
+    if(iequals(source, "drawing")) {
+        return EImageStyle::DRAWING;
+    } else if (iequals(source, "rendering")) {
+        return EImageStyle::RENDERING;
+    } else if(iequals(source, "photo")) {
+        return EImageStyle::PHOTO;
+    } else if(iequals(source, "unknown")) {
+        return EImageStyle::UNKNOWN;
+    } else {
+        g_LogFile.warning("image", "Unknown image style: '", source, "'");
+        return EImageStyle::UNKNOWN;
+    }
+}
+
 std::ostream& print_tri_flag(std::ostream& target, ETriValue v, const char* val) {
     switch (v) {
         case ETriValue::Yes:
@@ -130,4 +145,8 @@ std::string print_tri_flag(ETriValue v, const char* val) {
     std::stringstream target;
     print_tri_flag(target, v, val);
     return target.str();
+}
+
+EImageStyle combine(EImageStyle a, EImageStyle b) {
+    return EImageStyle(int(a) | int(b));
 }

@@ -21,6 +21,12 @@
 
     <Text       Name="WidthLabel"               Text="Window Width"         XPos="7"        YPos="450"      Width="141"     Height="28"     FontSize="11"  />
     <Text       Name="HeightLabel"              Text="Window Height"        XPos="7"        YPos="480"      Width="141"     Height="28"     FontSize="11"  />
-    <EditBox    Name="WindowWidth"                                          XPos="82"       YPos="450"      Width="422"     Height="28"     FontSize="10"  Border="1"  />
-    <EditBox    Name="WindowHeight"                                         XPos="82"       YPos="480"      Width="422"     Height="28"     FontSize="10"  Border="1"  />
+    <EditBox    Name="WindowWidth"                                          XPos="82"       YPos="450"      Width="422"     Height="28"     FontSize="11"  Border="1"  />
+    <EditBox    Name="WindowHeight"                                         XPos="82"       YPos="480"      Width="422"     Height="28"     FontSize="11"  Border="1"  />
+
+    <Text       Name="StyleLabel"             Text="Image Style Preferences"    XPos="7"       YPos="525"      Width="240"     Height="28"     FontSize="11"  />
+    <Checkbox   Name="DrawingsCB"             Text="Drawings / 2D"              XPos="17"       YPos="560"      Width="12"      Height="16"     FontSize="11" LeftOrRight="false" />
+    <Checkbox   Name="RenderingsCB"           Text="Renderings / 3D"            XPos="17"       YPos="590"      Width="12"      Height="16"     FontSize="11" LeftOrRight="false" />
+    <Checkbox   Name="PhotosCB"               Text="Photos"                     XPos="17"       YPos="620"      Width="12"      Height="16"     FontSize="11" LeftOrRight="false" />
+
 </Screen>
