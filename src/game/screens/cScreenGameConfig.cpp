@@ -24,6 +24,9 @@
 #include <algorithm>
 #include "utils/string.hpp"
 #include "utils/algorithms.hpp"
+#include "utils/FileList.h"
+#include "xml/util.h"
+#include <tinyxml2.h>
 
 std::string get_class(const sKeyValueEntry* var) {
     // this const cast should not be necessary, but is required for mingw32
@@ -122,12 +125,32 @@ void cScreenGameConfig::set_ids() {
     ok_id          = get_id("OkButton");
     revert_id      = get_id("RevertButton");
     list_id        = get_id("SettingsList");
+    load_id        = get_id("LoadBtn");
 
     SetButtonCallback(revert_id, [this](){ this->init(false); });
     SetButtonCallback(ok_id, [this]() {
         dynamic_cast<cGameSettings&>(g_Game->settings()) = m_Settings;
         pop_window();
     });
+
+    SetButtonCallback(load_id, [this]() {
+        DirPath src("Resources");
+        src << "Presets";
+        FileList fl = FileList(src, "*.xml");
+        std::vector<std::string> prompts;
+        for (int i = 0; i < fl.size(); i++)
+        {
+            std::string mode = fl[i].leaf();
+            prompts.push_back(mode);
+        }
+        input_choice("Select Preset", prompts, [this, fl](int id) mutable {
+            g_LogFile.info("preset", "Loading preset from ", fl[id].full());
+            auto result = LoadXMLDocument(fl[id].full());
+            m_Settings.load_xml(*result->RootElement());
+            this->init(true);
+        });
+    });
+
     SetListBoxDoubleClickCallback(list_id, [this](int sel){
         if(sel < 0) return;
         auto& setting = m_SettingsList.at(sel);

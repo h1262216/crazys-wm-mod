@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Settings>
+    <Setting Name="movies.audience.base-fraction" Value="5"/>
+    <Setting Name="balancing.fatigue.regain" Value="2"/>
+    <Setting Name="balancing.health.regain" Value="2"/>
+    <Setting Name="money.cost.net" Value="5"/>
+    <Setting Name="money.cost.contraception" Value="2"/>
+    <Setting Name="money.cost.room" Value="1000"/>
+    <Setting Name="money.buy.slave" Value="90"/>
+    <Setting Name="money.sell.item" Value="50"/>
+    <Setting Name="tax.rate" Value="6"/>
+    <Setting Name="slave_market.max_weekly_new" Value="12"/>
+    <Setting Name="gang.max_rival_skill" Value="60"/>
+    <Setting Name="gang.min_rival_skill" Value="20"/>
+    <Setting Name="gang.min_rival_members" Value="2"/>
+    <Setting Name="gang.max_rival_members" Value="8"/>
+    <Setting Name="player.talk_count" Value="10"/>
+    <Setting Name="gang.weapon_upgrade_cost" Value="150"/>
+    <Setting Name="tax.minimum" Value="1"/>
+    <Setting Name="initial.gold" Value="4000"/>
+    <Setting Name="gang.wages_factor" Value="1"/>
+    <Setting Name="initial.gang_random" Value="2"/>
+    <Setting Name="interact.torture_injury_chance" Value="3"/>
+    <Setting Name="money.sell.slave" Value="90"/>
+    <Setting Name="money.cost.healing_potion" Value="10"/>
+    <Setting Name="pregnancy.chance.miscarriage.beast" Value="0.1"/>
+    <Setting Name="slave_market.min_weekly_new" Value="5"/>
+    <Setting Name="tax.laundry" Value="25"/>
+    <Setting Name="world.encounter_chance" Value="33.0"/>
+    <Setting Name="pregnancy.chance.contraception_fail" Value="0"/>
+    <Setting Name="gang.min_weekly_new" Value="0"/>
+</Settings>

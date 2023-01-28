@@ -1,11 +1,17 @@
-# Version 7.2.1alpha7
-This version is mostly small bugfixes, and introduces image style preferences for the new tagging.
+# Version 7.2.1beta8
+This version is mostly small bugfixes, and introduces image style preferences for the new tagging. It also
+allows loading presets for the came config in the New Game screen.
 
 ## Tagger
 * Allow attaching `style` information to an image: It can be a `drawing`, `rendering`, or `photo`. In the 
 main menu, the player can select which types of images they prefer, which will give the game a nudge towards
 those images --- If there are lots of images with a given tag then the game will only use those of the preferred
 style, but if there are only very few it will use them all.
+
+## UI
+* Added ability to load game settings from pre-defined configurations in `Resources/Presets`. Comes with three
+pre-defined files for simple adjustments of difficulty. `Easy.xml` makes things a bit cheaper, `Hard.xml` a bit
+more expensive.
 
 ## Bugfixes
 * Fixed `Dependant`/`Dependent` spelling

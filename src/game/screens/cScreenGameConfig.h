@@ -29,6 +29,7 @@ private:
     int ok_id;
     int revert_id;
     int list_id;
+    int load_id;
 
     /// If this is set to true, the screen will acts in "in-game" mode, where only "user" settings can be edited.
     bool m_InGameMode;
