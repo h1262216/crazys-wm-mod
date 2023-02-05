@@ -299,7 +299,7 @@ void cGame::LoadItemFiles(DirPath location) {
 
 void cGame::ReadGameAttributesXML(const tinyxml2::XMLElement& el) {
     // load cheating
-    m_IsCheating = el.IntAttribute("Cheat", 0);
+    m_IsCheating = el.BoolAttribute("Cheat", false);
 
     m_TalkCount = el.IntAttribute("TalkCount", 0);
     m_WalkAround = el.IntAttribute("WalkAround", false);
