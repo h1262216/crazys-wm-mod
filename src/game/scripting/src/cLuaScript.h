@@ -54,6 +54,7 @@ namespace scripting {
         static int UpdateImage(lua_State* state);
         static int SelectImage(lua_State* state);
         static int Interpolate(lua_State* state);
+        static int IsCheating(lua_State* state);
 
         // random boolean with the given chance of being true
         static int Percent(lua_State* state);

@@ -115,6 +115,7 @@ static const luaL_Reg funx [] = {
         {"CreateRandomGirl",             sLuaGirl::create_random_girl},
         {"ToDungeon",                    sLuaGirl::to_dungeon},
         {"ToJail",                       sLuaGirl::to_jail},
+        {"IsCheating",                   cLuaScript::IsCheating},
         { nullptr,                       nullptr }
 };
 
@@ -621,6 +622,11 @@ int cLuaScript::Interpolate(lua_State* state) {
         text = girl.Interpolate(text);
     }
     lua_pushstring(state, text.c_str());
+    return 1;
+}
+
+int cLuaScript::IsCheating(lua_State* state) {
+    lua_pushboolean(state, g_Game->allow_cheats());
     return 1;
 }
 

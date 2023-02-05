@@ -201,11 +201,14 @@ end
 
 function BrothelInteractChoice(girl)
     wm.UpdateImage(wm.IMG.PROFILE)
-    local choice = ChoiceBox("What would you like to do?", "Reward ${firstname}" ,
-            "Chat with ${firstname}", "Visit ${firstname}'s Bedroom",
-            "Call ${firstname} to your office", "Invite ${firstname} to your private chambers",
-            "Train ${firstname}", "Scold ${firstname}", "Punish ${firstname}"
-    )
+    local options = {"Reward ${firstname}" ,
+                     "Chat with ${firstname}", "Visit ${firstname}'s Bedroom",
+                     "Call ${firstname} to your office", "Invite ${firstname} to your private chambers",
+                     "Train ${firstname}", "Scold ${firstname}", "Punish ${firstname}"}
+    if wm.IsCheating() then
+        table.insert(options, "Cheat")
+    end
+    local choice = ChoiceBox("What would you like to do?", table.unpack(options))
 
     if choice == 0 then
         local reward = ChoiceBox("What?", "Money (100G)",
@@ -227,7 +230,7 @@ function BrothelInteractChoice(girl)
     elseif choice == 1 then
         return girl:trigger("girl:chat:brothel")
     elseif choice == 2 then
-         return girl:trigger("girl:interact:bedroom")
+        return girl:trigger("girl:interact:bedroom")
     elseif choice == 3  then -- Office
         return girl:trigger("girl:interact:office")
     elseif choice == 4 then
@@ -242,8 +245,11 @@ function BrothelInteractChoice(girl)
         return girl:trigger("girl:training")
     elseif choice == 6 then
         ScoldGirl(girl)
-    else
+    elseif choice == 7 then
         PunishGirl(girl)
+    else
+        -- cheat
+        CheatMenu(girl)
     end
 end
 
@@ -296,4 +302,63 @@ function Refuse(girl)
     end
 end
 
+--- @param girl wm.Girl
+function CheatMenu(girl)
+    local what = ChoiceBox("", "Add Trait", "Increase Stat", "Increase Skill", "Done")
+    if what == 0 then
+        local sel = ChoiceBox("Which trait?", "A-B", "C", "D-E", "F-G", "H-L", "M", "N-O", "P-R", "S", "T-W", "X-Z")
+        local trait = ""
+        if sel == 0 then
+            trait = _AskTrait("A", "B")
+        elseif sel == 1 then
+            trait = _AskTrait("C", "C")
+        elseif sel == 2 then
+            trait = _AskTrait("D", "E")
+        elseif sel == 3 then
+            trait = _AskTrait("F", "G")
+        elseif sel == 4 then
+            trait = _AskTrait("H", "L")
+        elseif sel == 5 then
+            trait = _AskTrait("M", "M")
+        elseif sel == 6 then
+            trait = _AskTrait("N", "O")
+        elseif sel == 7 then
+            trait = _AskTrait("P", "R")
+        elseif sel == 8 then
+            trait = _AskTrait("S", "S")
+        elseif sel == 9 then
+            trait = _AskTrait("T", "W")
+        elseif sel == 10 then
+            trait = _AskTrait("X", "Z")
+        end
+        girl:add_trait(trait)
+        return CheatMenu(girl)
+    elseif what == 1 then
+        local stat_list = {}
+        for k, v in pairs(wm.STATS) do
+            stat_list[v + 1] = k
+        end
+        local sel = ChoiceBox("Which stat?", table.unpack(stat_list))
+        girl:stat(sel, 10)
+        return CheatMenu(girl)
+    elseif what == 2 then
+        local stat_list = {}
+        for k, v in pairs(wm.SKILLS) do
+            stat_list[v + 1] = k
+        end
+        local sel = ChoiceBox("Which skill?", table.unpack(stat_list))
+        girl:skill(sel, 10)
+        return CheatMenu(girl)
+    end
+end
 
+function _AskTrait(first, last)
+    local trait_list = {}
+    for k, v in pairs(wm.TRAITS) do
+        if v:byte(1) >= first:byte() and v:byte(1) <= last:byte() then
+            table.insert(trait_list, v)
+        end
+    end
+    local sel = ChoiceBox("Which trait?", table.unpack(trait_list))
+    return trait_list[sel + 1]
+end
