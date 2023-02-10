@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2020-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 #define WM_CTEXTREPO_H
 
 #include "text/repo.h"
-#include <unordered_map>
+#include "utils/lookup.h"
 #include <vector>
 #include <boost/variant.hpp>
 
@@ -43,7 +43,7 @@ public:
     void add_entry(std::unique_ptr<TextGroup> group);
     void add_entry(std::unique_ptr<ICondition> conds, std::unique_ptr<IAction> actions, int priority, int chance, std::string text);
 
-    const std::string& get_text(const IInteractionInterface& lookup);
+    const std::string& get_text(const IInteractionInterface& lookup) const;
 private:
     std::unique_ptr<ICondition> m_Condition;
     std::unique_ptr<IAction> m_Action;
@@ -65,7 +65,11 @@ public:
     bool verify() const override;
 private:
     void load_messages(const tinyxml2::XMLElement& root, bool ignore_existing);
-    std::unordered_map<std::string, TextGroup> m_Texts;
+    struct TextPolicy {
+        static constexpr const char* error_channel() { return "text"; }
+        static constexpr const char* default_message() { return "could not find text enty"; }
+    };
+    id_lookup_t<TextGroup, TextPolicy> m_Texts;
 };
 
 

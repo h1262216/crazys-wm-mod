@@ -45,7 +45,7 @@ const id_lookup_t<EImageBaseType>& get_image_lookup() {
 }
 
 EImageBaseType get_image_id(const std::string& name) {
-    return lookup_with_error(get_image_lookup(), name, "Trying to get invalid Image Type");
+    return get_image_lookup().at(name, "Trying to get invalid Image Type");
 }
 
 const char* get_image_name(EImageBaseType image) {
@@ -66,7 +66,7 @@ const id_lookup_t<ESexParticipants>& get_participant_lookup() {
 }
 
 ESexParticipants get_participant_id(const std::string& name) {
-    return lookup_with_error(get_participant_lookup(), name, "Trying to get invalid ESexParticipants");
+    return get_participant_lookup().at(name, "Trying to get invalid ESexParticipants");
 }
 
 const char* get_participant_name(ESexParticipants participant) {
@@ -88,7 +88,7 @@ const id_lookup_t<EImagePresets>& get_image_preset_lookup() {
 }
 
 EImagePresets get_image_preset_id(const std::string& name) {
-    return lookup_with_error(get_image_preset_lookup(), name, "Trying to get invalid EImagePresets");
+    return get_image_preset_lookup().at(name, "Trying to get invalid EImagePresets");
 }
 
 const char* get_image_preset_name(EImagePresets preset) {

@@ -17,7 +17,7 @@ std::unique_ptr<ITraitsCollection> cTraitsManager::create_collection() const {
 }
 
 const ITraitSpec *cTraitsManager::lookup(const char* name) const {
-    return lookup_with_error(m_Traits, name, "Could not find trait", "traits").get();
+    return m_Traits.at(name).get();
 }
 
 void cTraitsManager::load_traits(const tinyxml2::XMLElement& root) {

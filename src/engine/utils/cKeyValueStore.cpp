@@ -23,6 +23,7 @@
 #include "xml/getattr.h"
 #include <utility>
 #include "CLog.h"
+#include "utils/lookup.h"
 
 int cKeyValueBase::get_integer(const char *name) const {
     return boost::get<sIntWithBounds>(get_value(name)).value;

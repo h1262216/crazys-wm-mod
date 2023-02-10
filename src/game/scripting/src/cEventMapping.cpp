@@ -26,6 +26,7 @@
 #include "sLuaParameter.h"
 #include "utils/string.hpp"
 #include "xml/util.h"
+#include "utils/lookup.h"
 
 
 using namespace scripting;
@@ -105,7 +106,8 @@ sAsyncScriptHandle cEventMapping::RunAsyncWithParams(const sEventID& event, std:
         return m_Manager->RunEventAsync(GetEvent(event), params);
     } else {
         auto split_point = event.name.rfind('.');
-        auto handlers = m_Triggers.at(event.name.substr(0, split_point));
+        auto key = event.name.substr(0, split_point);
+        auto& handlers = lookup_with_error(m_Triggers, key, "Could not find trigger");
         for(auto& handler : handlers) {
             m_Manager->RunEventAsync(handler, params);
         }
@@ -124,7 +126,8 @@ cEventMapping::RunSyncWithParams(const sEventID& event, std::initializer_list<sL
         return m_Manager->RunEventSync(GetEvent(event), params);
     } else {
         auto split_point = event.name.rfind('.');
-        auto handlers = m_Triggers.at(event.name.substr(0, split_point));
+        auto key =event.name.substr(0, split_point);
+        auto& handlers = lookup_with_error(m_Triggers, key, "Could not find trigger");
         for(auto& handler : handlers) {
             m_Manager->RunEventSync(handler, params);
         }

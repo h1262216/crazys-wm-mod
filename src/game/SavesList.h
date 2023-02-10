@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2021-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@
 #define WM_SAVESLIST_H
 
 #include <string>
-#include <unordered_map>
 #include <functional>
 #include <vector>
+#include "utils/lookup.h"
+
 class IGame;
 class DirPath;
 
@@ -50,7 +51,7 @@ public:
     };
     std::vector<sSaveEntry> get_saves(const DirPath& saves_dir) const;
 private:
-    std::unordered_map<std::string, sSaveData> m_SaveData;
+    id_lookup_t<sSaveData> m_SaveData;
 };
 
 #endif //WM_SAVESLIST_H

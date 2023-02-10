@@ -27,6 +27,7 @@
 #include "IGame.h"
 #include "text/repo.h"
 #include "TextInterface.h"
+#include "utils/lookup.h"
 
 double cBasicJob::GetPerformance(const sGirl& girl, bool estimate) const {
     if(m_Info.FreeOnly && girl.is_slave()) return -1000;
@@ -112,7 +113,7 @@ std::stringstream& cBasicJob::add_text(const std::string& prompt) {
         } else if (var == "shift") {
             return is_night_shift() ? "night" : "day";
         } else if (m_Replacements.count(var) != 0) {
-            return m_Replacements.at(var);
+            return m_Replacements.at(var, "Could not find variable");
         }
         assert(false);
     }, rng());

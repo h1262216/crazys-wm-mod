@@ -75,7 +75,7 @@ const id_lookup_t<STATS>& get_stat_lookup() {
 }
 
 STATS get_stat_id(const std::string& name) {
-    return lookup_with_error(get_stat_lookup(), name, "Trying to get invalid STAT");
+    return get_stat_lookup().at(name, "Trying to get invalid STAT");
 }
 
 StatSkill get_stat_skill_id(const std::string& name) {
@@ -131,7 +131,7 @@ const id_lookup_t<SKILLS>& get_skill_lookup() {
 }
 
 SKILLS get_skill_id(const std::string& name) {
-    return lookup_with_error(get_skill_lookup(), name, "Trying to get invalid SKILL");
+    return get_skill_lookup().at(name, "Trying to get invalid SKILL");
 }
 
 const std::array<const char*, NUM_STATUS>& get_status_names() {
@@ -153,7 +153,7 @@ const id_lookup_t<STATUS>& get_status_lookup() {
 }
 
 STATUS get_status_id(const std::string& name) {
-    return lookup_with_error(get_status_lookup(), name, "Trying to get invalid STATUS");
+    return get_status_lookup().at(name, "Trying to get invalid STATUS");
 }
 
 const std::array<const char*, NUM_ACTIONTYPES>& get_action_names() {
@@ -228,7 +228,7 @@ const id_lookup_t<Action_Types >& get_action_lookup() {
 }
 
 Action_Types get_action_id(const std::string& name) {
-    return lookup_with_error(get_action_lookup(), name, "Trying to get invalid ACTION");
+    return get_action_lookup().at(name, "Trying to get invalid ACTION");
 }
 
 const std::array<const char*, NUM_FETISH>& get_fetish_names() {
@@ -250,7 +250,7 @@ const id_lookup_t<Fetishs>& get_fetish_lookup() {
 }
 
 Fetishs get_fetish_id(const std::string& name) {
-    return lookup_with_error(get_fetish_lookup(), name, "Trying to get invalid FETISH");
+    return get_fetish_lookup().at(name, "Trying to get invalid FETISH");
 }
 
 const std::array<const char*, NUM_JOBS>& get_job_names() {
@@ -304,7 +304,7 @@ auto get_job_lookup() -> const auto& {
 }
 
 JOBS get_job_id(const std::string& name) {
-    return lookup_with_error(get_job_lookup(), name, "Trying to get invalid JOB");
+    return get_job_lookup().at(name, "Trying to get invalid JOB");
 }
 
 const std::array<const char*, NUM_SPAWN>& get_spawn_names() {
@@ -326,5 +326,5 @@ auto get_spawn_lookup() -> const auto& {
 }
 
 SpawnReason get_spawn_id(const std::string& name) {
-    return lookup_with_error(get_spawn_lookup(), name, "Trying to get invalid spawn location");
+    return get_spawn_lookup().at(name, "Trying to get invalid spawn location");
 }

@@ -27,7 +27,7 @@
 #include <list>
 #include <algorithm>
 #include <unordered_set>
-#include <unordered_map>
+#include "utils/lookup.h"
 #include "utils/streaming_random_selection.hpp"
 
 #include "cEvents.h"
@@ -247,7 +247,11 @@ private:
 
 
     // job processing cache
-    std::unordered_map<std::string, int> m_ShiftResources;
+    struct ResourcePolicy {
+        static constexpr const char* error_channel() { return "shift"; }
+        static constexpr const char* default_message() { return "Unknown Resource"; }
+    };
+    id_lookup_t<int, ResourcePolicy> m_ShiftResources;
 
     struct sInteractionWorker {
         sGirl* Worker;
@@ -260,7 +264,11 @@ private:
         std::vector<sInteractionWorker> Workers = {};
     };
 
-    std::unordered_map<std::string, sInteractionData> m_ShiftInteractions;
+    struct InteractionPolicy {
+        static constexpr const char* error_channel() { return "shift"; }
+        static constexpr const char* default_message() { return "Unknown Interaction"; }
+    };
+    id_lookup_t<sInteractionData, InteractionPolicy> m_ShiftInteractions;
 
     void setup_resources();
 };

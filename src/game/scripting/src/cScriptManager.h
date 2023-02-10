@@ -20,9 +20,9 @@
 #ifndef CRAZYS_WM_MOD_CSCRIPTMANAGER_H
 #define CRAZYS_WM_MOD_CSCRIPTMANAGER_H
 
-#include <unordered_map>
 #include <memory>
 #include "IScriptManager.h"
+#include "utils/lookup.h"
 
 class sGirl;
 
@@ -57,8 +57,8 @@ namespace scripting {
         void LoadEventMapping(IEventMapping& ev, const tinyxml2::XMLElement& source) override;
         void LoadEventMapping(IEventMapping& ev, const std::string& source_file) override;
     private:
-        std::unordered_map<std::string, std::unique_ptr<cLuaScript>> m_Scripts;
-        std::unordered_map<std::string, pEventMapping> m_EventMappings;
+        id_lookup_t<std::unique_ptr<cLuaScript>> m_Scripts;
+        id_lookup_t<pEventMapping> m_EventMappings;
 
         pEventMapping m_GlobalEventMapping;
     };

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022, The Pink Petal Development Team.
+ * Copyright 2019-2023, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
@@ -22,7 +22,7 @@
 
 #include <boost/variant.hpp>
 #include <string>
-#include <unordered_map>
+#include "utils/lookup.h"
 #include "IKeyValueStore.h"
 
 namespace tinyxml2 {
@@ -136,7 +136,7 @@ protected:
         settings_value_t value;
     };
 
-    std::unordered_map<std::string, sKeyValueEntry> m_Settings;
+    id_lookup_t<sKeyValueEntry> m_Settings;
 };
 
 

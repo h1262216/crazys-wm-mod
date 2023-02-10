@@ -34,6 +34,7 @@
 #include "utils/algorithms.hpp"
 #include "CLog.h"
 #include "character/lust.h"
+#include "utils/lookup.h"
 
 namespace settings{
     extern const char* PREG_COOL_DOWN;

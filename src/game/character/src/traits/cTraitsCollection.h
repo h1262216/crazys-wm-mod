@@ -3,10 +3,10 @@
 
 #include "ITraitsCollection.h"
 #include "hDynamicTraitHandle.h"
+#include "utils/lookup.h"
 #include <vector>
 #include <list>
 #include <unordered_set>
-#include <unordered_map>
 
 namespace traits {
     class ITraitsManager;
@@ -48,7 +48,7 @@ namespace traits {
 
         int get_modifier(const char* name) const override;
 
-        const std::unordered_map<std::string, int>& get_all_modifiers() const override;
+        const id_lookup_t<int>& get_all_modifiers() const override;
 
     private:
         const ITraitSpec* id_to_spec(sTraitID id) const;
@@ -114,7 +114,7 @@ namespace traits {
         std::array<int, NUM_STATS> m_StatEffect;
         std::array<int, NUM_SKILLS> m_SkillEffect;
         std::array<int, NUM_SKILLS> m_SkillCapEffect;
-        std::unordered_map<std::string, int> m_Modifiers;
+        id_lookup_t<int> m_Modifiers;
 
         bool _remove_trait_from_list(sTraitID trait, std::vector<PermanentTrait>& tl, bool deactivate);
 

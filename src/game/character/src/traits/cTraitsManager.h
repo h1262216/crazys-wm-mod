@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "ITraitsManager.h"
 #include "ITraitSpec.h"
+#include "utils/lookup.h"
 
 namespace traits {
     class cTraitSpec;
@@ -50,13 +51,21 @@ namespace traits {
         void add_trait(std::unique_ptr<cTraitSpec> spec);
 
         // these are caches used to break circular dependencies while loading
-        std::unordered_map<std::string, sLoadData, CaseInsensitiveHash, CaseInsensitiveHash> m_LoaderCache;
+        id_lookup_t<sLoadData> m_LoaderCache;
 
         // The actual trait data
-        std::unordered_map<std::string, std::unique_ptr<cTraitSpec>, CaseInsensitiveHash, CaseInsensitiveHash> m_Traits;
+        struct TraitsPolicy {
+            static constexpr const char* error_channel() { return "traits"; }
+            static constexpr const char* default_message() { return "Could not find Trait"; }
+        };
+        id_lookup_t<std::unique_ptr<cTraitSpec>, TraitsPolicy> m_Traits;
 
+        struct TraitGroupPolicy {
+            static constexpr const char* error_channel() { return "traits"; }
+            static constexpr const char* default_message() { return "Could not find Trait Group"; }
+        };
         // Trait Groups
-        std::unordered_map<std::string, std::vector<const ITraitSpec*>, CaseInsensitiveHash, CaseInsensitiveHash> m_Groups;
+        id_lookup_t<std::vector<const ITraitSpec*>, TraitGroupPolicy> m_Groups;
     };
 }
 

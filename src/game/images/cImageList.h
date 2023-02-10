@@ -22,9 +22,9 @@
 
 #include <vector>
 #include <string>
-#include <unordered_map>
 #include "ids.h"
 #include "sImageSpec.h"
+#include "utils/lookup.h"
 
 struct sImageRecord {
     std::string FileName;
@@ -85,7 +85,7 @@ private:
     cImageList load_images(const std::string& base_path);
     void image_types_from_file_names();
 
-    std::unordered_map<std::string, cImageList> m_PathCache;
+    id_lookup_t<cImageList> m_PathCache;
 
     // cache variables, so we don't need to repeatedly allocate memory
     std::vector<std::string> m_FileNameBuffer;

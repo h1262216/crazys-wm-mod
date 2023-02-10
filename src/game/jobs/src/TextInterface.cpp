@@ -21,6 +21,7 @@
 #include "IGenericJob.h"
 #include "character/sGirl.h"
 #include "CLog.h"
+#include "utils/lookup.h"
 
 bool cJobTextInterface::LookupBoolean(const std::string& name) const {
     return m_Job->active_girl().has_active_trait(name.c_str());
@@ -34,12 +35,7 @@ int cJobTextInterface::LookupNumber(const std::string& name) const {
     } else if(type == "skill") {
         return m_Job->active_girl().get_skill(get_skill_id(name.substr(split_point+1)));
     } else if (type.size() == name.size()) {
-        try {
-            return *m_MappedIntValues.at(name);
-        } catch (const std::out_of_range& oor) {
-            g_LogFile.error("job", "Unknown job variable '", name, '\'');
-            BOOST_THROW_EXCEPTION(std::runtime_error("Unknown job variable: " + name));
-        }
+        return *m_MappedIntValues.at(name);
     } else {
         g_LogFile.error("job", "Unknown value category ", type, " of variable ", name);
         BOOST_THROW_EXCEPTION(std::runtime_error("Unknown value category: " + type));

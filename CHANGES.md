@@ -1,4 +1,12 @@
 # Version 7.2.1beta8
+Small bug fixes.
+
+* Actually enabled the new pre-defined game settings
+* Fixed saving / loading of cheat mode
+* Improved some error messages
+
+
+# Version 7.2.1beta7
 This version is mostly small bugfixes, and introduces image style preferences for the new tagging. It also
 allows loading presets for the came config in the New Game screen.
 

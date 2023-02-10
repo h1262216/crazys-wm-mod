@@ -100,7 +100,7 @@ int get_stage_points_required(SceneType type) {
 }
 
 SceneType scene_type_from_string(const std::string& name) {
-    return lookup_with_error(get_scene_type_lookup(), name, "Trying to get invalid Scene Type");
+    return get_scene_type_lookup().at(name, "Trying to get invalid Scene Type");
 }
 
 const char* get_name(SceneType type) {

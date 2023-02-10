@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2020-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 #include "xml/getattr.h"
 #include "utils/streaming_random_selection.hpp"
 #include "utils/DirPath.h"
+#include "utils/lookup.h"
 #include <boost/algorithm/string/trim_all.hpp>
 #include <boost/algorithm/string/split.hpp>
 
@@ -38,7 +39,7 @@ void TextGroup::add_entry(std::unique_ptr<TextGroup> group) {
     boost::get<std::vector<group_ptr>>(m_Contents).emplace_back(std::move(group));
 }
 
-const std::string& TextGroup::get_text(const IInteractionInterface& lookup) {
+const std::string& TextGroup::get_text(const IInteractionInterface& lookup) const {
     struct Visitor {
         const IInteractionInterface* lookup;
         const std::string& operator()(const std::string& text) const {

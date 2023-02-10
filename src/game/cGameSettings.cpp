@@ -23,6 +23,7 @@
 #include "xml/getattr.h"
 #include <utility>
 #include "CLog.h"
+#include "utils/lookup.h"
 
 // pre-defined setting constants
 /*!
@@ -265,15 +266,15 @@ void cGameSettings::add_setting(const char* tag, const char* name, const char* d
 
 const settings_value_t & cGameSettings::get_value(const char* name) const
 {
-    return m_Settings.at(std::string(name)).value;
+    return get_entry(name).value;
 }
 
 std::string cGameSettings::get_display_name(const char* name) const {
-    return m_Settings.at(name).name;
+    return get_entry(name).name;
 }
 
 std::string cGameSettings::get_description(const char* name) const {
-    return m_Settings.at(name).description;
+    return get_entry(name).description;
 }
 
 void cGameSettings::save_xml(tinyxml2::XMLElement& target) const {
@@ -302,6 +303,10 @@ std::vector<std::string> cGameSettings::keys() const {
 }
 
 settings_value_t& cGameSettings::get_value(const char* name) {
-    return m_Settings.at(std::string(name)).value;
+    return const_cast<settings_value_t&>(get_entry(name).value);
+}
+
+const sKeyValueEntry& cGameSettings::get_entry(const char* name) const {
+    return m_Settings.at(name, "Could not find setting");
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022, The Pink Petal Development Team.
+ * Copyright 2020-2022, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *

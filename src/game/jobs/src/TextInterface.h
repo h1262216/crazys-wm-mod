@@ -21,9 +21,9 @@
 #ifndef WM_TEXTINTERFACE_H
 #define WM_TEXTINTERFACE_H
 
-#include <unordered_map>
 #include <functional>
 #include "text/repo.h"
+#include "utils/lookup.h"
 
 class IGenericJob;
 class sImagePreset;
@@ -44,8 +44,12 @@ public:
     void RegisterVariable(std::string name, int& value);
     void RegisterVariable(std::string name, sImagePreset& value);
 private:
-    std::unordered_map<std::string, int*> m_MappedIntValues;
-    std::unordered_map<std::string, std::function<void(std::string)>> m_MappedStringValues;
+    struct JobVarPolicy {
+        static constexpr const char* error_channel() { return "jobs"; }
+        static constexpr const char* default_message() { return "Could not find Job Variable"; }
+    };
+    id_lookup_t<int*, JobVarPolicy> m_MappedIntValues;
+    id_lookup_t<std::function<void(std::string)>, JobVarPolicy> m_MappedStringValues;
     IGenericJob* m_Job;
 };
 

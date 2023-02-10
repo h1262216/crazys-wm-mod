@@ -433,6 +433,6 @@ int cTraitsCollection::get_modifier(const char* name) const {
     }
 }
 
-const std::unordered_map<std::string, int>& cTraitsCollection::get_all_modifiers() const {
+const id_lookup_t<int>& cTraitsCollection::get_all_modifiers() const {
     return m_Modifiers;
 }

@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <unordered_set>
-#include <unordered_map>
+#include "utils/lookup.h"
 #include "Constants.h"
 #include "hDynamicTraitHandle.h"
 
@@ -178,7 +178,7 @@ namespace traits {
         virtual int get_modifier(const char* name) const = 0;
 
         /// Gets all modifiers.
-        virtual const std::unordered_map<std::string, int>& get_all_modifiers() const = 0;
+        virtual const id_lookup_t<int>& get_all_modifiers() const = 0;
 
     protected:
         virtual bool _add_inherent_trait(sTraitID trait, bool active) = 0;

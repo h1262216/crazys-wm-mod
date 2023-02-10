@@ -1481,8 +1481,8 @@ void sGirl::reset_trait_progress(const std::string& trait_name) {
     m_PartialTraits.erase(trait_name);
 }
 
-std::unordered_map<std::string, int> sGirl::get_trait_progress() const {
-    std::unordered_map<std::string, int> result;
+id_lookup_t<int> sGirl::get_trait_progress() const {
+    id_lookup_t<int> result;
     for(auto& p : m_PartialTraits) {
         result[p.first] = p.second.Progress;
     }

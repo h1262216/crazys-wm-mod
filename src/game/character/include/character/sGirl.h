@@ -21,7 +21,6 @@
 #define CRAZYS_WM_MOD_SGIRL_HPP
 
 #include <string>
-#include <map>
 #include <vector>
 #include <set>
 #include <tinyxml2.h>
@@ -33,6 +32,7 @@
 #include "scripting/sLuaParameter.h"
 #include "pregnancy.h"
 #include "utils/DirPath.h"
+#include "utils/lookup.h"
 
 #include "interface/TableCells.h"
 
@@ -302,7 +302,7 @@ public:
     // trait progress
     int progress_trait(const std::string& trait_name, int amount);
     void reset_trait_progress(const std::string& trait_name);
-    std::unordered_map<std::string, int> get_trait_progress() const;
+    id_lookup_t<int> get_trait_progress() const;
 
     void DecayTemp() override;
 private:
@@ -321,7 +321,7 @@ private:
         int Progress = 0;
         int Timer = 0;
     };
-    std::unordered_map<std::string, sTraitProgress> m_PartialTraits;
+    id_lookup_t<sTraitProgress> m_PartialTraits;
 };
 
 #endif //CRAZYS_WM_MOD_SGIRL_HPP
