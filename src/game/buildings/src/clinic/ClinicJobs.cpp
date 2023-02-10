@@ -466,6 +466,10 @@ sWorkJobResult InternJob::DoWork(sGirl& girl, bool is_night) {
     if (sgCha > 0) { ss << sgCha << " Charisma.\n"; }
     ss << girl.exp() - exp_start << " Exp.\n";
 
+    if(chance(50)) {
+        girl.progress_trait(traits::DOCTOR, 10);
+    }
+
 
 
     //enjoyed the work or not
