@@ -23,5 +23,4 @@ target_link_libraries(WmCharacterObjects PUBLIC WmCharacterInterface)
 target_include_directories(WmCharacterObjects PRIVATE include/character include/traits)
 # TODO Fix includes!
 target_include_directories(WmCharacterObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
-set_target_properties(WmCharacterObjects PROPERTIES CXX_STANDARD 14)
 add_dependencies(WmCharacterObjects generate_traits_ids)

@@ -37,9 +37,11 @@ set(RESOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Resources)
 add_subdirectory(deps/tinyxml EXCLUDE_FROM_ALL)
 add_subdirectory(deps/doctest EXCLUDE_FROM_ALL)
 add_subdirectory(deps/lua EXCLUDE_FROM_ALL)
+add_subdirectory(Docs&Tools)
+
+set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(src/engine EXCLUDE_FROM_ALL)
 add_subdirectory(src/game)
-add_subdirectory(Docs&Tools)
 
 install(DIRECTORY
         Resources/Themes

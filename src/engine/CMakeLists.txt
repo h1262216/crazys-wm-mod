@@ -48,7 +48,6 @@ configure_file(include/Revision.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/Revisio
 add_library(WMEngineObjects OBJECT ${SRC} ${WIDGETS_SRC} ${INTERFACE_SRC} ${XML_SRC})
 target_link_libraries(WMEngineObjects PUBLIC SDL2::SDL2 lua::lua Boost::headers tinyxml2 FFMPEG::FFMPEG)
 target_link_libraries(WMEngineObjects PRIVATE SDL2::TTF SDL2::Image doctest::doctest)
-set_target_properties(WMEngineObjects PROPERTIES CXX_STANDARD 14)
 if (UNIX)
 	target_compile_definitions(WMEngineObjects PUBLIC LINUX=1)
 else()

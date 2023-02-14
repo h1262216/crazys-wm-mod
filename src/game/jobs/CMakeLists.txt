@@ -21,4 +21,3 @@ target_link_libraries(WmJobsObjects PUBLIC WmJobsInterface)
 target_include_directories(WmJobsObjects PRIVATE include/jobs src)
 # TODO Fix includes!
 target_include_directories(WmJobsObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
-set_target_properties(WmJobsObjects PROPERTIES CXX_STANDARD 14)

@@ -42,4 +42,3 @@ target_link_libraries(WmBuildingObjects PUBLIC WmBuildingInterface)
 target_include_directories(WmBuildingObjects PRIVATE include/buildings src)
 # TODO Fix includes!
 target_include_directories(WmBuildingObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
-set_target_properties(WmBuildingObjects PROPERTIES CXX_STANDARD 14)

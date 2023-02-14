@@ -96,7 +96,6 @@ make_generated_file(
 add_library(WmGameObjects OBJECT ${SCREENS_SRC} screens/ScreenBase.cpp ${SRC})
 target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects WmBuildingObjects WmJobsObjects)
 add_dependencies(WmGameObjects generate_event_ids)
-set_target_properties(WmGameObjects PROPERTIES CXX_STANDARD 14)
 target_include_directories(WmGameObjects PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (UNIX)
