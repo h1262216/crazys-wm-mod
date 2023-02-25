@@ -1,7 +1,7 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
 <Job ShortName="Prtc">
     <Description>
-        She will train either alone or with others to improve her skills.
+        She will train to improve her sexual skills. Training can be made much more effective if it is overseen by a Mistress.
     </Description>
 
     <Messages>
@@ -330,7 +330,7 @@
                 </Text>
                 <Text Condition="Abnormally Large Boobs|Giant Juggs|Massive Melons|Titanic Tits" Priority="1">
                     ${mistress} had ${name} give a titjob to one of the guards.
-                    "I would have though someone as well equipped as you would have no trouble with this",
+                    "I would have though someone as well-equipped as you would have no trouble with this",
                     ${mistress} criticises, "but this was just bad!"
                 </Text>
                 <Text>
@@ -468,7 +468,7 @@
 
             <Text Condition="skill:Anal > 70 ^ skill:Anal <= 90">
                 "Your anal sex skills are pretty good", ${mistress} tells ${name}, "but I think we still can improve
-                the variety you provide. Lets practice the
+                the variety you provide. Let's practice the
                 $[Lotus|Cowgirl|Piledriver|Turtle|Leap Frog|Bodyguard|Burning Man|Cross|Pump|Bulldog|See Saw|Jockey]
                 position today.
             </Text>
@@ -486,19 +486,381 @@
         </Message>
 
         <Message Name="train.Group">
-            <Text>
-                Group training.
+            <Text Condition="skill:Group > 90">
+                ${mistress} has invited four men for an intensive group session with ${name}. As it turns out, however,
+                ${name} isn't actually challenged by being dp'ed while giving two handjobs. Therefore, ${mistress} decides
+                that the best vantage point from which to observe her pupils actions would be sitting on her face.
+                Unfazed, ${name} quickly begins lapping ${mistress}'s pussy, without losing her rhythm with the guys.
+                She is truly a marvel, though it is questionable if there is much left that ${mistress} can teach her.
             </Text>
+
+            <Group Condition="skill:Group < 20">
+                ${name} is very inexperienced having sex with more than one partner.
+
+                <Text Condition="skill:Anal > 40">
+                    ${mistress} calls in two of your goons to tag-team ${name}, and tells her to let the guys take the
+                    lead and "just get a feel for it". At first, having pussy and ass pounded at the same time is an
+                    unfamiliar feeling for ${name}, but after some time she seems to get into it. It would have been even
+                    better if the three of them had managed to find a common rhythm, but that will be a task for the next
+                    training session.
+                </Text>
+
+                <Text Condition="skill:Handjob > 40">
+                    Given ${name}'s decent skills at giving hand jobs, ${mistress} decides that the best way to train
+                    her is to play to her strengths. She gets two of your goons, and instructs ${name} to jerk them off
+                    - simultaneously. That proves more difficult than it sounds, as ${name} only ever can focus on one
+                    cock at a time, the other resting forgotten in her hand.
+
+                    To compensate for their time, ${mistress} finally orders name to finnish them off one after the other,
+                    so they both end up getting a decent hand job with a happy ending.
+                </Text>
+
+                <Text Condition="skill:Oralsex >= 40">
+                    Given ${name}'s decent skills at giving blowjobs, ${mistress} decides that the best way to train
+                    her is to play to her strengths. She gets two of your goons, and instructs ${name} suck the first
+                    guy's dick while the other one is fucking her. And even though ${name} is clearly out of her depth
+                    with two guys, seemingly giving the same level of participation as a dead fish, the recipient of the
+                    blow job later vouches that her "tongue game was on point". Now she just needs to learn to multitask.
+                </Text>
+
+                <Text Condition="skill:Oralsex < 30">
+                    ${mistress} gets two of your goons, and instructs ${name} suck the first guy's dick while the
+                    other one is fucking her. This ends in desaster, though, when the second guy places an enthusiastic
+                    slap on ${name}'s butt, startling her. While she didn't draw blood, the visible teeth-marks on
+                    the first guy's cock make you shudder. Not trusting ${name} anymore, you instruct ${mistress} to
+                    kiss it better.
+                </Text>
+
+                <Text Condition="Lesbian">
+                    Knowing ${name}'s preferences, ${mistress} starts her training by bringing in another girl. The
+                    three women quickly start groping and fondling each other, though ${name} is mostly passive. Hopefully,
+                    this will improve in the next session.
+                </Text>
+
+                <Text Priority="1">
+                    To give her a taste of what is to come, ${mistress} takes her to join in an orgy. ${name} doesn't
+                    really know what to do, but by observing what others are doing to each other - and to her - she will
+                    hopefully have a better idea next time.
+                </Text>
+            </Group>
+
+            <Group Condition="skill:Group > 15 ^ skill:Group < 40">
+                ${name} is not very experienced having sex with more than one partner.
+
+                <Text Condition="skill:Anal > 45">
+                    ${mistress} calls in two of your goons to tag-team ${name}, and tells her to let the guys take the
+                    lead and "just get a feel for it". This is not the first time she experiences having her pussy
+                    and ass pounded at the same time. It does take a while, but in the end the three of them find a
+                    comfortable rhythm, turning this exercise from a chore to a delight.
+                </Text>
+
+                <Text Condition="skill:Handjob > 45">
+                    Given ${name}'s decent skills at giving hand jobs, ${mistress} decides that the best way to train
+                    her is to play to her strengths. She gets two of your goons, and instructs ${name} to jerk them off
+                    - simultaneously.
+
+                    While you certainly can tell that ${name} struggles to ensure that she gives both equal measures of
+                    attention, both men look certainly pleased with what is going on.
+                </Text>
+
+                <Text Condition="skill:Oralsex >= 40">
+                    Given ${name}'s decent skills at giving blowjobs, ${mistress} decides that the best way to train
+                    her is to play to her strengths. She gets two of your goons, Spencer and Chadwick,
+                    and instructs ${name} suck Spencer's dick while the Chadwick is fucking her.
+
+                    The cock in her pussy clearly distracts ${name} from the task she is performing with her mouth, but
+                    she still manages to empy Spencer's balls long before Chadwick cums.
+                </Text>
+
+                <Text Condition="skill:BDSM > 40">
+                    With ${name}'s experience in being tied up, ${mistress} decides that for her initial training,
+                    she'll just get ${name} used to groups of sexual partners, without her having to do anything herself.
+                    ${mistress} ties ${name} to a padded table, with her hip just sticking over the edge for easy access,
+                    then calls in a few people to help with the session.
+
+                    One guy starts pounding ${name}'s pussy, while the others lick, caress, and grope all over the
+                    rest of her body. While ${name} is still riding the bliss of her first orgasm, the others switch
+                    places and a new guy pushes into her slit.
+
+                    This continues until everyone has had their turn. At the end, ${name} is unable to form any coherent
+                    thoughts, but a delirious smile plays on her lips. This session certainly helped in making her more
+                    interested in group sex in the future.
+                </Text>
+
+                <Text Condition="Lesbian">
+                    Knowing ${name}'s preferences, ${mistress} continues her training by bringing in another girl. The
+                    three women quickly start groping and fondling each other. While ${name} is initially a bit clumsy,
+                    she soon gets into it, and some minutes later they are laying in a circle, each having their
+                    mouth buried in another snatch.
+                </Text>
+
+                <Text  Priority="1">
+                    ${mistress} takes ${name} to join in an orgy. This is still a bit much for her, so ${mistress}
+                    convinces a few of the others to "help out the new girl."
+
+                    ${name} ends up kneeling, stroking the cock of one guy, while several others caress and fondle
+                    her all over. Not quite yet what you'd call group sex, but she's getting there.
+                </Text>
+            </Group>
+
+            <Group Condition="skill:Group > 35 ^ skill:Group < 60">
+                ${name} has some experience with group sex, so ${mistress} can work on refining her skills.
+                <Text Condition="Lesbian">
+                    She brings in a boy and a girl for a threesome. It quickly becomes clear, however, that
+                    the lucky man is in fact rather left out, with ${name} focusing all her energy on the girl.
+                    ${mistress} has to step in multiple times, admonishing ${name} to not ignore one of her partners.
+                </Text>
+                <Text Condition="Cum Addict">
+                    Aware of ${name}'s Cum Addiction, ${mistress} gets five guys to provide "nourishment" for her pupil.
+                    "I know you can suck them dry one after the other", she states, "but that is not the challenge today.
+                    I want you to extract their juices simultaneously". She then clarifiers her rules: "After the first
+                    guy cums, I'm going to turn this hourglass. You'll get to enjoy all the semen you can extract until
+                    the time is up."
+
+                    Five guys -- Two hands, one mouth, pussy, and ass. At first, ${name} thinks this task will be easy,
+                    but she soon notices that getting them all off at the same rate is almost impossible. Crazy with the
+                    taste on her tongue, she overeagerly gobbled the schlong in her mouth. Her joy for the hot spunk
+                    running down her throat is short-lived, however, once she realizes that ${mistress} has tuned the
+                    hourglass and half the sand has already passed.
+
+                    In the end, she only gets to enjoy two loads. Three guys will be going home disappointed.
+                </Text>
+
+                <Text Condition="skill:Anal > 50">
+                    She calls in two of your goons to tag-team ${name}.  This is not the first time she experiences
+                    having her pussy and ass pounded at the same time, and she quickly manages to settle into an enjoyable
+                    rhythm.
+
+                    Not only has this training session improved ${name}'s skills, is also made two of your employees very
+                    happy.
+                </Text>
+
+                <Text Condition="skill:Handjob > 50">
+                    Given ${name}'s skills at giving hand jobs, ${mistress} decides that the best way to train
+                    her is to play to her strengths. She gets two of your goons, and instructs ${name} to jerk them off
+                    - simultaneously.
+
+                    ${name} confidently grabs both cocks and starts stroking, adjusting her speed and intensity so that
+                    in the end, both men cum almost exactly at the same time.
+                </Text>
+
+                <Text  Priority="1">
+                    She takes ${name} to join in an orgy. While she is clearly not as comfortable in the situation
+                    as the other participants, with some prodding from ${mistress} she becomes an active participant
+                    in the festivities.
+                </Text>
+            </Group>
+
+            <Group Condition="skill:Group > 55 ^ skill:Group < 80">
+                ${name} is quite comfortable with group sex.
+                <Text Condition="Lesbian">
+                    Knowing ${name} prefers girls, ${mistress} wants to make sure she still can handle a mixed group.
+                    She brings in a boy and a girl for a threesome, and instructs the latter to only focus on ${name}.
+
+                    While you can see that ${name} would prefer to reciprocate the other woman's actions, she is
+                    well-trained enough to instead make sure the guy doesn't feel left out. Maybe not the most enjoyable
+                    training session for her, but certainly a necessary one.
+                </Text>
+                <Text Condition="Cum Addict">
+                    Aware of ${name}'s Cum Addiction, ${mistress} gets five guys to provide "nourishment" for her pupil.
+                    "I know you can suck them dry one after the other", she states, "but that is not the challenge today.
+                    I want you to extract their juices simultaneously". She then clarifiers her rules: "After the first
+                    guy cums, I'm going to turn this hourglass. You'll get to enjoy all the semen you can extract until
+                    the time is up."
+
+                    Five guys -- Two hands, one mouth, pussy, and ass. At first, ${name} thinks this task will be easy,
+                    but she soon notices that getting them all off at the same rate is a real challenge. She manages to
+                    keep her own urges in check, switching up which cock she sucks and which she strokes so that her
+                    overeager tongue does not ruin this experience.
+
+                    Too focused on the task (literally) at hand, she realizes her mistake only when she feels the other
+                    two men spurting their load into her, and ${mistress} sets the timer. With renewed vigour, she slobbers
+                    on the remaining three cocks, and is quickly rewarded with three Happy Meals.
+                </Text>
+
+                <Text Condition="skill:Handjob > 60">
+                    As a new challenge, ${mistress} has her kneel on a mat on the floor as she brings in four guys.
+                    "I want you to jerk them off, simultaneously, just using your hands", ${mistress} instructs.
+                    Even though ${name} is quite good at giving hand jobs, constantly having to switch proves to be quite
+                    the challenge.
+                    Spend too much time on any one cock, and risk it spurting before the others. On the other hand, alternate
+                    between dicks too quickly, and you won't have time to stimulate them properly.
+
+                    In the end, it takes ${name} much longer than if she'd just stroked them one after the other, but
+                    she manages to get the guys of almost at the same time.
+                </Text>
+
+                <Text Condition="skill:Anal > 65">
+                    ${mistress} has prepared a special challenge for her today. She has invited two dudes, but instead
+                    of having them fuck her ass and pussy as ${name} expects, she instructs them to both penetrate her
+                    anus.
+
+                    Thanks to ${name}'s rigorous anal training, this is not overstretching her, but you can see that she
+                    seems a bit uncomfortable for the first few minutes. Not too long after, though, she seems to have
+                    found a position she enjoys, and enthusiastically participates in the action.
+                </Text>
+
+                <Text Priority="1">
+                    ${mistress} sends her to join in an orgy, confident that she'll know what to do.
+                    When ${name} does not come back at the appointed time, ${mistress} gets a bit worried and goes to
+                    pick her up. She finds her, rather still occupied and indisposed. Her anger softens as she hers the
+                    other participants praise ${name}'s performance. In the end, the only 'punishment' ${mistress}
+                    imposes is that ${name} is to continue to entertain these people.
+                </Text>
+            </Group>
+
+            <Group Condition="skill:Group > 75">
+                <Text Condition="skill:Anal > 65 ^ skill:Group < 90">
+                    ${mistress} brings in two guys for an anal DP session with ${name}. As the three settle into their
+                    rhythm, ${mistress} observes that this does not seem to properly challenge ${name} anymore.
+
+                    ${mistress} undresses and places her slit in front of ${name}'s mouth. "I think its time you thanked
+                    me properly for bringing you these fine specimens", she winks. While ${name}'s tongue game may not
+                    be quite as if she'd not been distracted, she still manages to give ${mistress} a good time.
+                </Text>
+
+                <Text Condition="skill:BDSM > 70 ^ skill:Oralsex > 40">
+                    Knowing ${name}'s kinky nature, ${mistress} has planned some very special training today.
+                    She takes her out to a public plaza, and places her head and hands in a pillory.
+
+                    "I've got a whore that needs training", she shouts, "so if you want a free fuck, here's you chance".
+                    Quickly, ${name} sees a line forming in front of her, and she obediently opens her mouth when the
+                    first cock is presented. Another line must have been accumulating behind her, for she suddenly feels
+                    a second dick entering her.
+
+                    Despite ${name}'s obvious skill in sucking these guys off, the line doesn't seem to get any shorter,
+                    and soon there is some grumbling about the waiting time. "She may not be able to move her arms,
+                    but her hands are still free, aren't they", ${mistress} observes. And while there is some murmurring
+                    about "preferring that pretty mouth", ${name} soon feels too dicks pressed into her palms, and
+                    diligently starts stroking them as much as her bonds allow.
+
+                    After maybe the thirtieth man, ${mistress} decides that this has been enough. Not because ${name}
+                    couldn't have handled any more, but because she was afraid that some brothel owners in the city might
+                    look very unkindly on this free service offered here.
+                </Text>
+
+                <Group Condition="skill:Handjob > 65 ^ skill:BDSM > 25">
+                    As a new challenge, ${mistress} has ${name} sit down on a sybian, and firmly secures her with some straps.
+                    Then she goes to fetch four guys:
+                    "I want you to jerk them off, simultaneously, just using your hands", ${mistress} instructs.
+                    ${name} is excellent at giving hand jobs, and even switching between partners doesn't faze her.
+
+                    <Text Condition="skill:Group < 90">
+                        With a sly grind, ${mistress} suddenly turns on the sybian. At first, the low vibrations just
+                        make ${name} more excited, but when ${mistress} turns it up the maximum for a few seconds,
+                        she loses her focus and stops stroking the dicks. ${mistress} dials the machine down again, and
+                        waits for ${name} to find her rhythm again, before repeating the process.
+
+                        The pulses are intensive enough to disrupt ${name}'s work, but not long enough to actually get
+                        her off, leaving her quite frustrated. Only after ten of so rounds does ${mistress} relent and
+                        keeps the sybian at a constant low level until ${name} has fulfilled her task. Finally, as a
+                        reward, she keeps her on a bit longer, increasing the vibrations so that ${name} also gets to
+                        orgasm.
+                    </Text>
+                    <Text Condition="skill:Group >= 90">
+                        With a sly grind, ${mistress} suddenly turns on the sybian. At first, the low vibrations just
+                        make ${name} more excited, but when ${mistress} turns it up the maximum for a few seconds,
+                        she loses her focus. Only for a second though, then she's back and stroking the cocks with
+                        renewed vigour, the moans of pleasure escaping her lips just making them harder.
+
+                        ${mistress} keeps the sybian at high intensity, but even though ${name}'s conscious mind gets
+                        obliterated by wave upon wave of orgasm, her subconscious -- and muscle memory -- keep her not
+                        only stroking dick, but even switching between her partners regularly.
+
+                        She doesn't seem to realize when they blow their load, though, and continues her work even as
+                        the cocks become flaccid. Not wanting to waste such an opportunity, ${mistress} quickly hands
+                        them a blue pill, and in no time they are ready and eager to go anew, their members again firm
+                        in ${name}'s hands.
+                    </Text>
+                </Group>
+
+                <Group Priority="1">
+                    ${mistress} organizes an orgy, with ${name} at the center. She brings in fifteen people, and
+                    instructs ${name} to make each of them cum at least three times -- in the next hour. With
+                    just over one minute for each orgasm, she has to use her hands, mouth, pussy, and ass simultaneously.
+
+                    <Text Condition="skill:Group < 95 ^ skill:Lesbian < 50">
+                        In the end, she fails in this task, because she just can't get the women in the crowd off fast
+                        enough.
+                    </Text>
+                    <Text Condition="skill:Group < 95 ^ Lesbian">
+                        She does not quite succeed with this task. It seems that in her preference of women, she spent
+                        too little time on the guys.
+                    </Text>
+                    <Text Condition="skill:Group < 95 ^ stat:Constitution < 50">
+                        Even though she is very skilled, it seems that she lacks the stamina to keep up this demanding
+                        work for long enough, and in the end, she mostly lays there and tries to let herself be fucked
+                        as fast as possible.
+                    </Text>
+                    <Text Condition="skill:Group >= 95">
+                        Certainly a monumental challenge, but one that ${name} is prepared to face. You are particularly
+                        impressed when she, with one dick in her mouth, and one in each hand, manages to indicate
+                        that yes, she really *needs* that second dick in her pussy, one just isn't enough.
+
+                        In the end, she manages to beat ${mistress}'s time limit, finishing in just about 45 minutes,
+                        but insists to still go for the remaining quarter-hour to set a new house record.
+                    </Text>
+                </Group>
+            </Group>
         </Message>
 
         <Message Name="train.Lesbian">
-            <Text>
-                Lesbian training.
+            <Text Condition="skill:Lesbian > 70 ^ skill:Lesbian < 90">
+                As ${name} is already superb at pleasuring women with both her fingers and tongue, ${mistress} has to
+                be a bit more creative to find a suitable training exercise. After some rummaging in her toolbox, she
+                takes out a large, double-ended dildo.
+
+                In the beginning, the unfamiliar motions make ${name} feel a bit awkward, but by the end of the session,
+                she seems to be thoroughly enjoying this approach to lesbian sex.
+            </Text>
+            <Text Condition="skill:Lesbian > 60 ^ skill:Lesbian < 80">
+                ${name} is already quite adept pleasuring other women, so ${mistress} decides that today they will
+                practice 69ing. She makes sure ${name} spends enough time both in the bottom and the top position,
+                and that her performance doesn't deteriorate while she is riding the waves of her own pleasure.
+                A very enjoyable training session for both participants (and any onlookers), indeed.
+            </Text>
+            <Text Condition="skill:Lesbian > 50 ^ skill:Lesbian < 70">
+                ${name} is pretty skilled with her fingers, yet "a bit of practice can't hurt", as ${mistress} states
+                with a wink. Shamelessly taking advantage of ${name}'s abilities, ${mistress} lets her finger her to
+                orgasm multiple times. To increase ${name}'s challenge, she starts gently biting her aroused
+                nipples: "Just keep going, don't let yourself be distracted by me", she chides.
+            </Text>
+            <Text Condition="skill:Lesbian > 40 ^ skill:Lesbian < 60">
+                "Today, we'll practice the art of eating pussy", ${mistress} announces to ${name}. "First, let me
+                give you a short demonstration."
+
+                ${mistress} goes down on ${name}, skillfully pushing her right to the edge before stopping. "Now, if you
+                can make me cum with your tongue, I'll go back and finnish the job", she states with a devious smirk.
+
+                Unfortunately for both of them, ${name}'s tonguing skills are quite lacking. Only at the end of the lesson
+                does ${mistress} allow ${name} to use her fingers. This, at least, she can do quite well, so for one of
+                them the lesson still ends on a high note.
+            </Text>
+            <Text Condition="skill:Lesbian > 30 ^ skill:Lesbian < 50">
+                "Today, we'll practice the art of eating pussy", ${mistress} announces to ${name}. "First, let me
+                give you a short demonstration."
+
+                ${mistress} goes down on ${name}, skillfully pushing her right to the edge before stopping. "Now, if you
+                can make me cum with your tongue, I'll go back and finnish the job", she states with a devious smirk.
+
+                Unfortunately for both of them, ${name}'s tonguing skills are quite lacking. Only at the end of the lesson
+                does ${mistress} allow ${name} to use her fingers. This, at least, she can do quite well, so for one of
+                them the lesson still ends on a high note.
+            </Text>
+            <Text Condition="skill:Lesbian > 15 ^ skill:Lesbian < 33">
+                ${name} is not very good at pleasuring another woman, so ${mistress} starts her out slowly.
+                After getting undressed by ${name}, she orders her to play with her pussy, "just like you would when
+                you're pleasuring yourself."
+
+                ${name}'s unskilled attempts are not very pleasurable for ${mistress}, though, so she resorts to guiding
+                ${name}'s fingers with her own. After a considerable time of being prodded uncomfortably, ${mistress}'s
+                frustration boils over, and she shoves ${name}'s hand away. "This is how it's done", she proclaims, as
+                she fingers herself to orgasm.
             </Text>
             <Text Condition="skill:Lesbian < 25^Straight">
                 "I don't care if you think this is disgusting, when a client wants you to lick her pussy, you will
-                do it! And I will make sure that you do it so well that once you are finished, they will have trouble
-                remembering their name!", ${mistress} shouts after ${name} insisted that she is Straight and won't have
+                do it! And I will make sure that you do it so well that once you are finished, she will have trouble
+                remembering her name!", ${mistress} shouts after ${name} insisted that she is Straight and won't have
                 sex with a woman.
 
                 Not trusting ${name}, ${mistress} calls in another one of your girls as training subject. "We'll start
@@ -509,7 +871,7 @@
             <Text Condition="skill:Lesbian < 20">
                 Given ${name}'s utter lack of skill in pleasuring women, ${mistress} decided that the best course of
                 action was to have her figure out how to pleasure herself first. But after watching ${name} poke
-                her vagina for half an hour without much signs of even getting aroused, ${mistress} opts for a demonstration
+                her vagina for half an hour without any signs of even getting aroused, ${mistress} opts for a demonstration
                 instead.
 
                 "Just lay back and relax, but try to pay attention to what I do", she says, before starting to caress

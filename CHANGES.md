@@ -4,6 +4,7 @@ Small bug fixes.
 * Actually enabled the new pre-defined game settings
 * Fixed saving / loading of cheat mode
 * Improved some error messages
+* New texts for training job
 
 
 # Version 7.2.1beta7
