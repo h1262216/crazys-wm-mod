@@ -561,11 +561,15 @@ void cScreenItemManagement::refresh_item_list(Side which_list)
     if (selection != -1)
     {
         int i = 0;
-        m_OwnerList[selection]->enumerate_items([this, &data, &i](const sInventoryItem* item, int amount) {
+        m_OwnerList[selection]->enumerate_items([this, selection, &data, &i](const sInventoryItem* item, int amount) {
             std::stringstream it;
             it << item->m_Name;
             if(amount > 1 && amount < 999) {
                 it << " (" << amount << ")";
+            }
+
+            if(m_OwnerList[selection]->equippable(item, false)) {
+                it << " [Eq.]";
             }
             int item_type = item->m_Type;
             if ((filter == 0)  // unfiltered?

@@ -6,6 +6,7 @@ Small bug fixes.
 * Improved some error messages
 * New texts for training job
 * Made Auto-Use work for both consumables and equipment
+* Added `[Eq.]` marker to show equipped items in the inventory
 
 
 # Version 7.2.1beta7
