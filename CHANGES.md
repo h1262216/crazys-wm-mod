@@ -1,5 +1,5 @@
 # Version 7.2.1beta8
-Small bug fixes.
+Small bug fixes and improvements.
 
 * Actually enabled the new pre-defined game settings
 * Fixed saving / loading of cheat mode

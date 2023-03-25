@@ -60,3 +60,4 @@
 * [ ] animated webps don't load
 * [ ] WalkTown image appears too early
 * [ ] Check spawning of "Your daughter" girls
+* [ ] Player seems to impregnate with 100% no matter settings.
