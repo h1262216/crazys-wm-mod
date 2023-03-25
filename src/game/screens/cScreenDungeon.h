@@ -34,8 +34,8 @@ private:
     int stopfood_id;        // Stop Feeding button
     int interact_id;        // Interact With button
     int interactc_id;        // Interact Count
-    int releaseall_id;        // Release All Girls button
-    int releasecust_id;        // Release All Customers button
+    int allgirls_id;        // Select All Girls button
+    int allcust_id;         // Select All Customers button
     int viewdetails_id;        // Girl Details button
     int sellslave_id;        // Sell Slave button
 
@@ -80,8 +80,8 @@ public:
     void    init(bool back) override;
     void    process() override {};
     void    selection_change();
-    void    release_all_customers();
-    void    release_all_girls();
+    void    select_all_customers();
+    void    select_all_girls();
     void    sell_slaves();
     void    stop_feeding();
     void    start_feeding();

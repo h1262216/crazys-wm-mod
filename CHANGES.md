@@ -7,6 +7,8 @@ Small bug fixes.
 * New texts for training job
 * Made Auto-Use work for both consumables and equipment
 * Added `[Eq.]` marker to show equipped items in the inventory
+* Fixed button graphics
+* Added `Select all girls`/`Select all customers` buttons in dungeon screen
 
 
 # Version 7.2.1beta7
