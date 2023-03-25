@@ -52,8 +52,8 @@ void cScreenDungeon::set_ids()
     stopfood_id     = get_id("StopFeedingButton");
     interact_id     = get_id("InteractButton");
     interactc_id    = get_id("InteractCount");
-    releaseall_id   = get_id("ReleaseAllButton");
-    releasecust_id  = get_id("ReleaseCustButton");
+    allgirls_id     = get_id("SelectAllGirls");
+    allcust_id      = get_id("SelectAllCust");
     viewdetails_id  = get_id("DetailsButton");
     sellslave_id    = get_id("SellButton");
 
@@ -102,14 +102,12 @@ void cScreenDungeon::set_ids()
     }
 
     SetButtonCallback(brandslave_id, [this]() { enslave(); });
-    SetButtonCallback(releasecust_id, [this]() { release_all_customers(); });
+    SetButtonCallback(allcust_id, [this]() { select_all_customers(); });
     SetButtonCallback(sellslave_id, [this]() { sell_slaves(); });
     SetButtonCallback(viewdetails_id, [this]() { view_girl(); });
     SetButtonHotKey(viewdetails_id, SDLK_SPACE);
-    SetButtonCallback(releaseall_id, [this]() {
-        release_all_girls();
-        selection = -1;
-        init(false);
+    SetButtonCallback(allgirls_id, [this]() {
+        select_all_girls();
     });
 
     SetButtonCallback(stopfood_id, [this]() {
@@ -205,8 +203,8 @@ void cScreenDungeon::init(bool back)
     DisableWidget(sellslave_id);
     //    cerr << "::init: disabling torture" << endl;    // `J` commented out
     DisableWidget(viewdetails_id);
-    DisableWidget(releaseall_id, (g_Game->dungeon().GetNumGirls() <= 0));    // only enable "release all girls" if there are girls to release
-    DisableWidget(releasecust_id, (g_Game->dungeon().GetNumCusts() <= 0));    // similarly...
+    DisableWidget(allgirls_id, (g_Game->dungeon().GetNumGirls() <= 0));    // only enable "release all girls" if there are girls to release
+    DisableWidget(allcust_id, (g_Game->dungeon().GetNumCusts() <= 0));    // similarly...
 
     HideWidget(m_MainImageId, g_Game->dungeon().GetNumGirls() <= 0);
 
@@ -424,21 +422,6 @@ int cScreenDungeon::enslave()
     return Return;
 }
 
-void cScreenDungeon::release_all_customers()
-{
-    // loop until we run out of customers
-    while (g_Game->dungeon().GetNumCusts() > 0)
-    {
-        sDungeonCust* cust = g_Game->dungeon().GetCust(0);        // get the first customer in the list
-        g_Game->dungeon().RemoveCust(cust);                        // remove from brothel
-        // de-evil the player for being nice suspicion drops too
-        g_Game->player().evil(-5);
-        g_Game->player().suspicion(-5);
-    }
-    selection = -1;
-    init(false);
-}
-
 void cScreenDungeon::sell_slaves()
 {
     int paid = 0, count = 0, deadcount = 0;
@@ -489,21 +472,25 @@ void cScreenDungeon::sell_slaves()
     init(false);
 }
 
-void cScreenDungeon::release_all_girls()
+void cScreenDungeon::select_all_girls()
 {
-    while (g_Game->dungeon().GetNumGirls() > 0)         // loop until there are no more girls to release
+    for (int i = 0; i < g_Game->dungeon().GetNumGirls(); i++)
     {
-        if (m_ReleaseBuilding->free_rooms() > 0)         // make sure there's room for another girl
-        {
-            /// TODO(performance) always removing the first element might be very inefficient
-            g_Game->dungeon().ReleaseGirl(0, *m_ReleaseBuilding);
-            continue;
-        }
-        // we only get here if we run out of space
-        push_message("There is no more room in the current building.\nBuild more rooms, get rid of some girls, or change the building you are currently releasing girls to.", 0);
-        break;
+        SetSelectedItemInList(girllist_id, i, false, false);
     }
+    selection_change();
 }
+
+void cScreenDungeon::select_all_customers()
+{
+    int offset = g_Game->dungeon().GetNumGirls();
+    for (int i = 0; i < g_Game->dungeon().GetNumCusts(); i++)
+    {
+        SetSelectedItemInList(girllist_id, i + offset, false, false);
+    }
+    selection_change();
+}
+
 
 void cScreenDungeon::stop_feeding()
 {
