@@ -48,6 +48,7 @@ install(DIRECTORY
         Resources/Items
         Resources/Scripts
         Resources/Images
+        Resources/Presets
         DESTINATION Resources)
 
 # make sure there is a Saves directory
