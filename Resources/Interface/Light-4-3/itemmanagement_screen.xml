@@ -35,7 +35,7 @@
 <Image      Name="IndicateRight"        File="imgArrowRight.png"            XPos="573"      YPos="622"      Width="33"      Height="60"     Dir="Widgets" />
 <Button     Name="EquipRightButton"     Image="Equip"                       XPos="534"      YPos="620"      Width="60"      Height="32"     Transparency="true" />
 <Button     Name="UnequipRightButton"   Image="Unequip"                     XPos="534"      YPos="652"      Width="60"      Height="32"     Transparency="true" />
-<Checkbox   Name="AutoUseItems"         Text="Autouse Consumables"          XPos="443"      YPos="700"      Width="12"      Height="16"     FontSize="10" />
+<Checkbox   Name="AutoUseItems"         Text="Auto Use"                     XPos="443"      YPos="700"      Width="12"      Height="16"     FontSize="10" />
 <Text       Name="OwnersLeftDetails"    Text=" "                            XPos="7"       YPos="10"       Width="150"     Height="720"    FontSize="9" />
 <Text       Name="OwnersRightDetails"   Text=" "                            XPos="840"     YPos="10"       Width="150"     Height="720"    FontSize="9" />
 <Button     Name="BackButton"           Image="Back"                        XPos="847"     YPos="690"      Width="150"     Height="40"     Transparency="true"  PushWindow="<back>"/>

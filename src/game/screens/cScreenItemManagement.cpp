@@ -186,7 +186,7 @@ struct cInventoryProviderGirl : public IInventoryProvider {
             }
 
             m_Girl->add_item(item);
-            if (AutoUseItems && (type == sInventoryItem::Food || type == sInventoryItem::Makeup)) {
+            if (AutoUseItems && type != sInventoryItem::Misc) {
                 m_Girl->equip(item, false);
             }
 

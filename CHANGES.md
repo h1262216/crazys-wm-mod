@@ -5,6 +5,7 @@ Small bug fixes.
 * Fixed saving / loading of cheat mode
 * Improved some error messages
 * New texts for training job
+* Made Auto-Use work for both consumables and equipment
 
 
 # Version 7.2.1beta7
