@@ -24,7 +24,7 @@ cScreenGetInput::cScreenGetInput() : cInterfaceWindowXML("getInput.xml")
 
 void cScreenGetInput::set_ids()
 {
-    id_btn_ok      = get_id("Ok");
+    id_btn_ok     = get_id("Ok");
     id_btn_cancel = get_id("Cancel");
     id_label      = get_id("Label");
     id_textfield  = get_id("TextField");

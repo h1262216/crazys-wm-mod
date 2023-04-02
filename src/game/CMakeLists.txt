@@ -30,7 +30,10 @@ set(SCREENS_SRC
         screens/cScreenTransfer.cpp
         screens/cScreenTurnSummary.cpp
         screens/cGameWindow.cpp
-        screens/cScreenGameConfig.cpp screens/cScreenInfoTraits.cpp)
+        screens/cScreenGameConfig.cpp
+        screens/cScreenInfoTraits.cpp
+        screens/cScreenGameMenu.cpp
+        )
 
 set(SRC cEvents.cpp
         cGangs.cpp

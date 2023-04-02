@@ -48,8 +48,7 @@ void IBuildingScreen::set_ids()
     nextbrothel_id   = get_id("NextButton", "Next");
 
     details_id       = get_id("BuildingDetails", "Details");
-    save_id          = get_id("Save");
-    quit_id          = get_id("Quit");
+    menu_id          = get_id("Menu");
 
     // set button callbacks
     if(walk_id >= 0) {
@@ -70,14 +69,8 @@ void IBuildingScreen::set_ids()
         push_window("Turn Summary");
         g_Game->NextWeek();
     });
-    SetButtonCallback(save_id, [this]() {
-        SaveGame();
-        push_message("Game Saved", COLOR_POSITIVE);
-    });
-    SetButtonCallback(quit_id, [this]() {
-        input_confirm([this]() {
-            pop_to_window("Main Menu");
-        });
+    SetButtonCallback(menu_id, [this]() {
+        push_window("Game Menu");
     });
 }
 

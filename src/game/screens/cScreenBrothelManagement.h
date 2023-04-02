@@ -31,8 +31,7 @@ protected:
 
     int weeks_id = -1;           // next week map button
     int details_id = -1;         // description text
-    int save_id = -1;
-    int quit_id = -1;
+    int menu_id = -1;
 
     int girlimage_id = -1;        // Girl image
 

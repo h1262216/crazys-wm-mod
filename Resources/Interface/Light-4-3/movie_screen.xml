@@ -16,6 +16,5 @@
 <Button     Name="NextButton"           Image="Next"                XPos="892"     YPos="350"      Width="54"      Height="32"     Transparency="true"/>
 <Button     Name="Visit Town"           Image="VisitTown"           XPos="825"     YPos="650"      Width="120"     Height="32"     Transparency="true" PushWindow="Town"/>
 <Image      Name="GirlImage"            File=""                     XPos="352"      YPos="20"       Width="300"     Height="300"    Hidden="true"  />
-<Button     Name="Quit"                 Image="Quit"                XPos="7"       YPos="698"      Width="120"     Height="32"     Transparency="true"/>
-<Button     Name="Save"                 Image="Save"                XPos="187"      YPos="698"      Width="120"     Height="32"     Transparency="true"/>
+<Button     Name="Menu"                 Image="Menu"                XPos="7"       YPos="698"      Width="120"     Height="32"     Transparency="true"/>
 </Screen>

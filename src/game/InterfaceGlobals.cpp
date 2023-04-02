@@ -45,6 +45,7 @@
 #include "screens/cScreenMovieMaker.h"
 #include "screens/cScreenMarketResearch.h"
 #include "screens/cScreenInfoTraits.h"
+#include "screens/cScreenGameMenu.h"
 #include <tinyxml2.h>
 #include "CLog.h"
 #include "xml/util.h"
@@ -113,6 +114,7 @@ void LoadInterface(const cConfig& cfg)
     load_window<cScreenMovieMaker>("Movie Maker");
     load_window<cScreenMarketResearch>("Market Research");
     load_window<cScreenInfoTraits>("Info Traits");
+    load_window<cScreenGameMenu>("Game Menu");
     load_window<cScreenGameConfig>("GameSetup", false, false);
     load_window<cScreenGameConfig>("UserSettings", false, true);
 
