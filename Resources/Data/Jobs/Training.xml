@@ -180,7 +180,7 @@
             <Group Condition="skill:BDSM < 30 ^ skill:BDSM > 10">
                 <Text>
                     ${mistress} is trying to get ${name} used to some light BDSM play. She orders her
-                    to lie on her stomach, and proceeds to spank her ass until the skin turns bright red.
+                    to lie on her stomach, and proceeds to spank her ass until her skin turns bright red.
                     She takes out a flogger, and ${name} -- with panic in her eyes -- begs her to stop. Given
                     ${name}'s lack of BDSM experience, ${mistress} decides to take it easy. She lets ${name}
                     beg for a few more minutes, but then puts the flogger away.
@@ -199,11 +199,11 @@
             </Group>
             <Group Condition="skill:BDSM < 50 ^ skill:BDSM > 25">
                 <Text>
-                    ${mistress} ties ${name} to a St. Andrews cross and proceeds to flog her until every inch of the
+                    ${mistress} ties ${name} to a St. Andrews cross and proceeds to flog her until every inch of
                     skin on her back has turned red and tears a flowing down her face. Not much subtlety to this training,
                     but then her future clients won't be subtle either. Better for her to experience this here first,
                     under controlled circumstances where ${mistress} can take care of her afterwards, than to have her
-                    mindbroken after the first client gets too rough.
+                    mind-broken after the first client gets too rough.
                 </Text>
                 <Text Condition="Fragile|stat:Health<25">
                     ${name} looks so fragile that ${mistress} is afraid any real BDSM training will seriously harm her.
@@ -245,6 +245,20 @@
                         "That was pathetic", ${mistress} chides, "you are a worthless slut, a piece of fuck-meat! Tell me that!"
                     </Text>
                 </Group>
+                <Text>
+                    Even though ${name} has had considerable training in BDSM by now, there are still areas that ${mistress}
+                    hasn't explored with her yet. Today is the time to introduce her to breath play.
+
+                    ${mistress} places a giant gag in ${name}'s mouth, and proceeds to wind a few layers of tape around
+                    her head to make sure the edges are sealed. She is tied with her arms behind her chair's back, her
+                    ankles fixed to the chair's legs, providing ${mistress} convenient access to her pussy. A vibrator
+                    is placed between ${name}'s thighs, and before long, she is approaching her first climax. Just as
+                    she is coming down from the waves of pleasure, desperately trying to heave enough air into her lungs
+                    through her nostrils, ${mistress} places a clothespin on her nose and flips the vibrator to maximum.
+
+                    As ${name}'s oxygen-deprived consciousness is about to fade into a blanket of bliss, a hard slap brings
+                    her back to reality. She manages to panicked breaths, before the clothespin is reapplied.
+                </Text>
                 <Text>
                     ${mistress} ties ${name} into a hogtie, her ankles bound tightly behind her back. The ropes dig
                     deep into her skin, but ${name} seems unfazed by this. She's had enough training to know how to deal

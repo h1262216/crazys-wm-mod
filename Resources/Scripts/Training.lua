@@ -112,34 +112,7 @@ function Training(girl)
             return girl:trigger("girl:refuse")
         end
     elseif action == 3 then
-        Dialog("\"Grab your armor and gear.  I'm sending you to study with the veteran warrior, Titus Pullo.\"")
-        if girl:obey_check(wm.ACTIVITIES.GENERIC) then
-            wm.TakePlayerGold(500)
-            girl:experience(wm.Range(5, 10))
-            wm.UpdateImage(wm.IMG.COMBAT)
-            if wm.Percent(girl:combat()) then
-                Dialog("She arrives early to the combat ring and becomes lost in thought as she waits...")
-                Dialog("She is startled out of her thoughts by the feeling of a hand between her thighs. She swings wildly at the brash pervert, but her attack is deflected.  \"Oh, You're some nice cunny aren't you, girl!\"  yells the man.  she attacks again and again, but each attack is deflected and followed by some other perverted comment.")
-                Dialog("The battle continues for hours and the unnamed pervert continues to block, parry, and grope her. Throughout the day she becomes better at preventing his hands from reaching her.")
-                girl:combat(wm.Range(3, 8))
-                girl:strength(wm.Range(1, 5))
-                girl:constitution(wm.Range(1, 7))
-                girl:make_horny(wm.Range(5, 20))
-                girl:tiredness(wm.Range(2, 20))
-            else
-                Dialog("She arrives late to the combat ring and not yet wearing her armor.  Her instructor continues to drink as he waits for her to be ready.")
-                Dialog("When she is finally prepared, the lesson begins.  By this time however, the warrior is slightly inebriated.  He is able to handily block and parry and swing she attempts, but he offers little in the form of verbal instruction.")
-                Dialog("After an exhausting day sparring with the superior, although, drunken swordsmen;  She returns to the brothel with some minor skill improvements.")
-                girl:combat(wm.Range(1, 5))
-                girl:strength(wm.Range(0, 2))
-                girl:constitution(wm.Range(0, 2))
-                girl:make_horny(wm.Range(2, 10))
-                girl:tiredness(wm.Range(2, 20))
-            end
-        else
-            Dialog("She mumbles something about her armor still being in the dirty laundry pile and meanders away.")
-            return girl:trigger("girl:refuse")
-        end
+        return CombatTraining(girl)
     elseif action == 4 then
         if girl:performance() < 33 then
             Dialog("\"Go to the conservatory and take some lessons in the performing arts! You really need them!\"")
@@ -190,5 +163,44 @@ function Training(girl)
                 Dialog("Her training has made her more Charismatic.")
             end
         end
+    end
+end
+
+function CombatTraining(girl)
+    Dialog("\"Grab your armor and gear. I'm sending you to study with the veteran warrior, Titus Pullo.\"")
+    if girl:obey_check(wm.ACTIVITIES.FIGHTING) then
+        wm.TakePlayerGold(500)
+        girl:experience(wm.Range(5, 10))
+        wm.UpdateImage(wm.IMG.COMBAT)
+
+        local gdx = 0
+        if wm.Percent(girl:combat()) then
+            Dialog("She arrives early to the combat ring and becomes lost in thought as she waits...")
+            Dialog("She is startled out of her thoughts by the feeling of a hand between her thighs. She swings wildly at the brash pervert, but her attack is deflected.  \"Oh, You're some nice cunny aren't you, girl!\"  yells the man.  she attacks again and again, but each attack is deflected and followed by some other perverted comment.")
+            Dialog("The battle continues for hours and the unnamed pervert continues to block, parry, and grope her. Throughout the day she becomes better at preventing his hands from reaching her.")
+            girl:combat(wm.Range(3, 8))
+            girl:strength(wm.Range(1, 5))
+            girl:constitution(wm.Range(1, 7))
+            girl:make_horny(wm.Range(5, 20))
+            girl:tiredness(wm.Range(2, 20))
+            gdx = 50
+        else
+            Dialog("She arrives late to the combat ring and not yet wearing her armor.  Her instructor continues to drink as he waits for her to be ready.")
+            Dialog("When she is finally prepared, the lesson begins.  By this time however, the warrior is slightly inebriated.  He is able to handily block and parry and swing she attempts, but he offers little in the form of verbal instruction.")
+            Dialog("After an exhausting day sparring with the superior, although, drunken swordsmen;  She returns to the brothel with some minor skill improvements.")
+            girl:combat(wm.Range(1, 5))
+            girl:strength(wm.Range(0, 2))
+            girl:constitution(wm.Range(0, 2))
+            girl:make_horny(wm.Range(2, 10))
+            girl:tiredness(wm.Range(2, 20))
+            gdx = 33
+        end
+
+        if girl:progress_trait(wm.TRAITS.GLADIATRIX, 50) then
+            Dialog("Her training has turned her into a Gladiatrix.")
+        end
+    else
+        Dialog("She mumbles something about her armor still being in the dirty laundry pile and meanders away.")
+        return girl:trigger("girl:refuse")
     end
 end
