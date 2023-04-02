@@ -71,7 +71,7 @@ set(SRC cEvents.cpp
 
 set(LUA_DOC_FILE ${RESOURCE_DIR}/Scripts/_traits.lua)
 
-make_generated_header(
+make_generated_file(
         TARGET "generate_traits_ids"
         SCRIPT "traits.py"
         SOURCE "Data/Traits"
@@ -80,14 +80,21 @@ make_generated_header(
         OUTPUT "character/include/traits/ids.h"
         BYPRODUCTS "${LUA_DOC_FILE}")
 
-make_generated_header(
+make_generated_file(
         TARGET "generate_event_ids"
         SCRIPT "events.py"
         SOURCE "Scripts"
         SOURCE_FILE_TYPE "lua"
         OUTPUT "events.h")
 
-add_library(WmGameObjects OBJECT ${SCREENS_SRC} ${SRC})
+make_generated_file(
+        TARGET "generate_screens_ids"
+        SCRIPT "screens.py"
+        SOURCE "Interface/Light-16-9"
+        SOURCE_FILE_TYPE "xml"
+        OUTPUT "screens/ScreenBase.cpp")
+
+add_library(WmGameObjects OBJECT ${SCREENS_SRC} screens/ScreenBase.cpp ${SRC})
 target_link_libraries(WmGameObjects PUBLIC WMEngineObjects pthread doctest::doctest WmScriptingObjects WmCharacterObjects WmBuildingObjects WmJobsObjects)
 add_dependencies(WmGameObjects generate_event_ids)
 set_target_properties(WmGameObjects PROPERTIES CXX_STANDARD 14)

@@ -20,11 +20,8 @@
 #include <chrono>
 #include "interface/sColor.h"
 #include "interface/cWindowManager.h"
-#include "screens/cScreenPrison.h"
 #include "screens/cScreenTown.h"
 #include "screens/cScreenSlaveMarket.h"
-#include "screens/cScreenMayor.h"
-#include "screens/cScreenBank.h"
 #include "screens/cScreenHouseDetails.h"
 #include "screens/cScreenItemManagement.h"
 #include "screens/cScreenBuildingSetup.h"
@@ -32,15 +29,11 @@
 #include "screens/cScreenGirlDetails.h"
 #include "screens/cScreenDungeon.h"
 #include "screens/cScreenMainMenu.h"
-#include "screens/cScreenPreparingGame.h"
-#include "screens/cScreenNewGame.h"
 #include "screens/cScreenLoadGame.hpp"
-#include "screens/cScreenSettings.h"
 #include "screens/cScreenBrothelManagement.h"
 #include "widgets/cScreenGetInput.h"
 #include "screens/cScreenGallery.h"
 #include "screens/cScreenTurnSummary.h"
-#include "screens/cScreenTransfer.h"
 #include "screens/cScreenGameConfig.h"
 #include "screens/cScreenMovieMaker.h"
 #include "screens/cScreenMarketResearch.h"
@@ -51,6 +44,7 @@
 #include "xml/util.h"
 #include "sConfig.h"
 #include "interface/cTheme.h"
+#include "screens/ScreenBase.h"
 
 cScreenGetInput*          g_GetInput          = nullptr;
 
@@ -63,8 +57,20 @@ T* load_window(const char* name)
   return load_window<T>(name, false);
 }
 
+template<class T>
+void load_window_easy(const char* name, bool nonav)
+{
+    g_LogFile.log(ELogLevel::DEBUG, "Loading Window '", name, '\'');
+    auto window = T::create();
+    if (!nonav) {
+        register_global_nav_keys(*window);
+    }
+    window_manager().add_window(name, std::move(window));
+}
+
 void LoadInterface(const cConfig& cfg)
 {
+    using namespace screens;
     std::stringstream ss;
     std::string image; std::string text; std::string file;
     std::ifstream incol;
@@ -73,18 +79,18 @@ void LoadInterface(const cConfig& cfg)
     auto start_time = std::chrono::steady_clock::now();
 
     // `J` Bookmark - Loading the screens
-    load_window<cScreenPreparingGame>("Preparing Game", true);
+    load_window_easy<screens::cPreparingGameScreenBase>("Preparing Game", true);
     load_window<cScreenMainMenu>("Main Menu", true, cfg.saves());
-    load_window<cScreenNewGame>("New Game", true);
+    load_window_easy<screens::cNewGameBase>("New Game", true);
     load_window<cScreenLoadGame>("Load Game", true, cfg.saves());
-    load_window<cScreenSettings>("Settings", true);
+    load_window_easy<screens::cSettingsBase>("Settings", true);
 
     load_window<cScreenBrothelManagement>("Brothel Management");
     load_window<cScreenGirlDetails>("Girl Details");
     load_window<cScreenGangs>("Gangs");
     load_window<cScreenItemManagement>("Item Management");
     load_window<cMovieScreen>("Movie Screen");
-    load_window<cScreenTransfer>("Transfer Screen");
+    load_window_easy<cTransferGirlsBase>("Transfer Screen", false);
     load_window<cScreenTurnSummary>("Turn Summary");
     load_window<cScreenGallery>("Gallery");
     g_GetInput = load_window<cScreenGetInput>("GetInput");
@@ -107,10 +113,10 @@ void LoadInterface(const cConfig& cfg)
     load_window<cScreenTown>("Town");
     load_window<cScreenSlaveMarket>("Slave Market");
     load_window<cScreenBuildingSetup>("Building Setup");
-    load_window<cScreenMayor>("Mayor");
-    load_window<cScreenBank>("Bank");
+    load_window_easy<screens::cMayorScreenBase>("Mayor", false);
+    load_window_easy<screens::cBankScreenBase>("Bank", false);
     load_window<cScreenHouseDetails>("House");
-    load_window<cScreenPrison>("Prison");
+    load_window_easy<screens::cPrisonScreenBase>("Prison", false);
     load_window<cScreenMovieMaker>("Movie Maker");
     load_window<cScreenMarketResearch>("Market Research");
     load_window<cScreenInfoTraits>("Info Traits");

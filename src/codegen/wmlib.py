@@ -1,8 +1,11 @@
 from pathlib import Path
 from xml.etree import ElementTree as ET
 from collections import namedtuple
+import re
 
 TraitSpec = namedtuple("TraitSpec", ["name", "description", "modifiers"])
+camel_re = re.compile("([a-z])([A-Z])")
+special_re = re.compile("[-_.:']")
 
 
 def parse_trait(trait: ET.Element):
@@ -89,3 +92,20 @@ def prepare_xml(xml: str):
             result.append(character)
 
     return "".join(result)
+
+
+def make_uc_identifier(name: str):
+    name = special_re.sub(" ", name)
+    return name.upper().replace(" ", "_")
+
+
+def make_camel_identifier(name: str):
+    name = camel_re.sub(r"\1 \2", name)
+    name = special_re.sub(" ", name)
+    return name.title().replace(" ", "")
+
+
+def update_file_if_changed(file: Path, content: str):
+    # only write to the file if anything actually changes.
+    if not file.exists() or file.read_text() != content:
+        file.write_text(content)

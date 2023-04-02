@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http:  //pinkpetal.org
-*
-* This program is free software:   you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http:  //www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <future>
 #include "cScreenPreparingGame.h"
 #include "buildings/cBuildingManager.h"
@@ -42,34 +43,23 @@ namespace settings {
 extern std::string g_ReturnText;
 extern int g_ReturnInt;
 
-int load0new1 = 0;
+cScreenPreparingGame::cScreenPreparingGame() = default;
 
-cScreenPreparingGame::cScreenPreparingGame() : cGameWindow("preparing_game_screen.xml")
-{
-}
-void cScreenPreparingGame::set_ids()
-{
-    text1_id  = get_id("Text1");
-    text2_id  = get_id("Text2");
-    text3_id  = get_id("Text3");
-
-    cancel_id = get_id("BackButton","Back");
-
-    SetButtonCallback(cancel_id, [this]() {
+void cScreenPreparingGame::setup_callbacks() {
+    SetButtonCallback(m_BackBtn_id, [this]() {
         if (!m_Loading)
         {
             m_Loading = true;
             pop_to_window("Main Menu");
         }
     });
-
 }
 
 void cScreenPreparingGame::init(bool back)
 {
     LoadNames();
-    EditTextItem("", text2_id);
-    EditTextItem("", text3_id);
+    EditTextItem("", m_Text2_id);
+    EditTextItem("", m_Text3_id);
 
     if(!g_Game) {
         g_Game = IGame::CreateGame();
@@ -83,11 +73,11 @@ void cScreenPreparingGame::init(bool back)
         resetScreen();
 
         m_Loading = true;
-        load0new1 = g_ReturnInt;
+        m_IsNewGame = g_ReturnInt;
         if(g_ReturnInt != 0) {
             std::stringstream ss1;
             ss1 << "Starting New Game:   " << g_ReturnText;
-            EditTextItem(ss1.str(), text1_id);
+            EditTextItem(ss1.str(), m_Text1_id);
             m_AsyncLoad = std::async(std::launch::async,
                        [this](){
                return NewGame(g_ReturnText);
@@ -96,7 +86,7 @@ void cScreenPreparingGame::init(bool back)
             std::stringstream ss1;
             // TODO strip the save path here?
             ss1 << "Loading Game:   " << g_ReturnText;
-            EditTextItem(ss1.str(), text1_id);
+            EditTextItem(ss1.str(), m_Text1_id);
             g_LogFile.info("prepare", "Loading game from ", g_ReturnText);
             m_AsyncLoad = std::async(std::launch::async,
                                      [this](){
@@ -112,8 +102,8 @@ void cScreenPreparingGame::init(bool back)
 void cScreenPreparingGame::resetScreen()
 {
     m_MessagesText.str("");
-    EditTextItem("", text1_id);
-    EditTextItem("", text2_id);
+    EditTextItem("", m_Text1_id);
+    EditTextItem("", m_Text2_id);
 }
 
 bool cScreenPreparingGame::NewGame(std::string name) {
@@ -204,7 +194,7 @@ bool cScreenPreparingGame::LoadGame(const std::string& file_path) {
 
 void cScreenPreparingGame::loadFailed()
 {
-    EditTextItem("Something went wrong while loading the game. Click the back button to go to the main menu.", text3_id);
+    EditTextItem("Something went wrong while loading the game. Click the back button to go to the main menu.", m_Text3_id);
 }
 
 void cScreenPreparingGame::process()
@@ -216,7 +206,7 @@ void cScreenPreparingGame::process()
             m_MessagesText << msg << "\n";
         }
         if(!m_NewMessages.empty()) {
-            EditTextItem(m_MessagesText.str(), text2_id);
+            EditTextItem(m_MessagesText.str(), m_Text2_id);
         }
         m_NewMessages.clear();
 
@@ -224,7 +214,7 @@ void cScreenPreparingGame::process()
         m_LastError.clear();
     }
 
-    DisableWidget(cancel_id, m_Loading);
+    DisableWidget(m_BackBtn_id, m_Loading);
     if (!m_Loading)
     {
         loadFailed();
@@ -254,9 +244,13 @@ void cScreenPreparingGame::process()
         }
         set_active_building(&g_Game->buildings().get_building(0));
         replace_window("Building Management");
-        if(load0new1 == 1) {
+        if(m_IsNewGame) {
             g_Game->PushEvent("intro");
         }
     }
+}
+
+std::shared_ptr<cInterfaceWindow> screens::cPreparingGameScreenBase::create() {
+    return std::make_shared<cScreenPreparingGame>();
 }
 

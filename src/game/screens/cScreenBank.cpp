@@ -1,49 +1,42 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org     // old site: http://pinkpetal .co.cc
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "cScreenBank.h"
 #include "cGold.h"
 #include "IGame.h"
 #include <sstream>
 
-cScreenBank::cScreenBank() : cInterfaceWindowXML("bank_screen.xml")
+cScreenBank::cScreenBank() = default;
+
+
+void cScreenBank::setup_callbacks()
 {
-}
-
-
-void cScreenBank::set_ids()
-{
-    details_id     = get_id("BankDetails");
-    deposit_id     = get_id("DepositButton");
-    depositall_id  = get_id("DepositAllButton");
-    withdraw_id    = get_id("WithdrawButton");
-    withdrawall_id = get_id("WithdrawAllButton");
-
     // setup callbacks
-    SetButtonCallback(depositall_id, [this](){ deposit_all(); });
-    SetButtonCallback(withdrawall_id, [this](){ withdraw_all(); });
-    SetButtonCallback(deposit_id, [this]() {
+    SetButtonCallback(m_DepositAllBtn_id, [this](){ deposit_all(); });
+    SetButtonCallback(m_WithdrawAllBtn_id, [this](){ withdraw_all(); });
+    SetButtonCallback(m_DepositBtn_id, [this]() {
         input_integer([this](int amount){
             deposit(amount);
         });
     });
 
-    SetButtonCallback(withdraw_id, [this]() {
+    SetButtonCallback(m_WithdrawBtn_id, [this]() {
         input_integer([this](int amount){
             withdraw(amount);
         });
@@ -57,14 +50,14 @@ void cScreenBank::init(bool back)
     std::stringstream ss;
     ss << "Bank account: " << g_Game->GetBankMoney() << " gold" << std::endl;
     ss << "On hand: " << g_Game->gold().ival() << " gold";
-    EditTextItem(ss.str(), details_id);
+    EditTextItem(ss.str(), m_BankDetails_id);
 
     // disable/enable Withdraw button depending on whether player has money in bank
-    DisableWidget(withdraw_id, (g_Game->GetBankMoney() == 0));
-    DisableWidget(withdrawall_id, (g_Game->GetBankMoney() == 0));
+    DisableWidget(m_WithdrawBtn_id, (g_Game->GetBankMoney() == 0));
+    DisableWidget(m_WithdrawAllBtn_id, (g_Game->GetBankMoney() == 0));
     // likewise, if player has no money on hand, disable deposit buttons
-    DisableWidget(depositall_id, (g_Game->gold().ival() <= 0));
-    DisableWidget(deposit_id, (g_Game->gold().ival() <= 0));
+    DisableWidget(m_DepositAllBtn_id, (g_Game->gold().ival() <= 0));
+    DisableWidget(m_DepositBtn_id, (g_Game->gold().ival() <= 0));
 }
 
 void cScreenBank::withdraw_all()
@@ -106,3 +99,8 @@ void cScreenBank::withdraw(int amount)
 
     init(false);
 }
+
+std::shared_ptr<cInterfaceWindow> screens::cBankScreenBase::create() {
+    return std::make_shared<cScreenBank>();
+}
+

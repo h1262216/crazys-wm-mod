@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org     // old site: http://pinkpetal .co.cc
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #pragma region //    Includes and Externs            //
 #include "cScreenTransfer.h"
 
@@ -32,40 +33,26 @@
 
 #pragma endregion
 
-static int leftBrothel = 0;
-static int rightBrothel = 0;
+cScreenTransfer::cScreenTransfer() = default;
 
-cScreenTransfer::cScreenTransfer() : cGameWindow("TransferGirls.xml")
-{
-}
-
-void cScreenTransfer::set_ids()
-{
-    labelleft_id    = get_id("LabelLeft");
-    labelright_id   = get_id("LabelRight");
-    brothelleft_id  = get_id("BrothelLeft"); //0
-    listleft_id     = get_id("ListLeft");
-    listright_id    = get_id("ListRight");
-    brothelright_id = get_id("BrothelRight"); //3
-    shiftright_id   = get_id("ShiftRight");
-    shiftleft_id    = get_id("ShiftLeft");
-
-    SetButtonCallback(shiftright_id, [this]() {
+void cScreenTransfer::setup_callbacks() {
+    SetButtonCallback(m_ShiftRight_id, [this]() {
         if ((rightBrothel != -1 && leftBrothel != -1))
         {
             TransferGirlsRightToLeft(true, rightBrothel, leftBrothel);
         }
     });
-    SetButtonCallback(shiftleft_id, [this]() {
+    SetButtonCallback(m_ShiftLeft_id, [this]() {
         if ((rightBrothel != -1 && leftBrothel != -1))
         {
             TransferGirlsRightToLeft(false, rightBrothel, leftBrothel);
         }
     });
 
-    SetListBoxSelectionCallback(brothelleft_id, [this](int selected) { select_brothel(Side::Left, selected); });
-    SetListBoxSelectionCallback(brothelright_id, [this](int selected) { select_brothel(Side::Right, selected); });
+    SetListBoxSelectionCallback(m_BrothelLeft_id, [this](int selected) { select_brothel(Side::Left, selected); });
+    SetListBoxSelectionCallback(m_BrothelRight_id, [this](int selected) { select_brothel(Side::Right, selected); });
 }
+
 
 void cScreenTransfer::init(bool back)
 {
@@ -73,10 +60,10 @@ void cScreenTransfer::init(bool back)
     Focused();
 
     // clear list boxes
-    ClearListBox(brothelleft_id);
-    ClearListBox(brothelright_id);
-    ClearListBox(listleft_id);
-    ClearListBox(listright_id);
+    ClearListBox(m_BrothelLeft_id);
+    ClearListBox(m_BrothelRight_id);
+    ClearListBox(m_ListLeft_id);
+    ClearListBox(m_ListRight_id);
 
     // list all the brothels
 
@@ -84,52 +71,52 @@ void cScreenTransfer::init(bool back)
     for(int i = 0; i < g_Game->buildings().num_buildings(BuildingType::BROTHEL); ++i) {
         // there are 6 other buildings using 0-5 so the brothels start at 6
         auto current = g_Game->buildings().building_with_type(BuildingType::BROTHEL, i);
-        AddToListBox(brothelleft_id, i + 6, current->name());
-        AddToListBox(brothelright_id, i + 6, current->name());
+        AddToListBox(m_BrothelLeft_id, i + 6, current->name());
+        AddToListBox(m_BrothelRight_id, i + 6, current->name());
     }
 
     if (g_Game->has_building(BuildingType::STUDIO))        // add the movie studio studio
     {
         auto current = g_Game->buildings().building_with_type(BuildingType::STUDIO);
-        AddToListBox(brothelleft_id, 0, current->name());
-        AddToListBox(brothelright_id, 0, current->name());
+        AddToListBox(m_BrothelLeft_id, 0, current->name());
+        AddToListBox(m_BrothelRight_id, 0, current->name());
     }
     if (g_Game->has_building(BuildingType::ARENA))
     {
         auto current = g_Game->buildings().building_with_type(BuildingType::ARENA);
-        AddToListBox(brothelleft_id, 1, current->name());
-        AddToListBox(brothelright_id, 1, current->name());
+        AddToListBox(m_BrothelLeft_id, 1, current->name());
+        AddToListBox(m_BrothelRight_id, 1, current->name());
     }
     if (g_Game->has_building(BuildingType::CENTRE))
     {
         auto current = g_Game->buildings().building_with_type(BuildingType::CENTRE);
-        AddToListBox(brothelleft_id, 2, current->name());
-        AddToListBox(brothelright_id, 2, current->name());
+        AddToListBox(m_BrothelLeft_id, 2, current->name());
+        AddToListBox(m_BrothelRight_id, 2, current->name());
     }
     if (g_Game->has_building(BuildingType::CLINIC))
     {
         auto current = g_Game->buildings().building_with_type(BuildingType::CLINIC);
-        AddToListBox(brothelleft_id, 3, current->name());
-        AddToListBox(brothelright_id, 3, current->name());
+        AddToListBox(m_BrothelLeft_id, 3, current->name());
+        AddToListBox(m_BrothelRight_id, 3, current->name());
     }
     if (g_Game->has_building(BuildingType::FARM))
     {
         auto current = g_Game->buildings().building_with_type(BuildingType::FARM);
-        AddToListBox(brothelleft_id, 4, current->name());
-        AddToListBox(brothelright_id, 4, current->name());
+        AddToListBox(m_BrothelLeft_id, 4, current->name());
+        AddToListBox(m_BrothelRight_id, 4, current->name());
     }
     if (g_Game->has_building(BuildingType::HOUSE))
     {
         auto current = g_Game->buildings().building_with_type(BuildingType::HOUSE);
-        AddToListBox(brothelleft_id, 5, current->name());
-        AddToListBox(brothelright_id, 5, current->name());
+        AddToListBox(m_BrothelLeft_id, 5, current->name());
+        AddToListBox(m_BrothelRight_id, 5, current->name());
     }
-    SetSelectedItemInList(brothelleft_id, leftBrothel);
-    SetSelectedItemInList(brothelright_id, rightBrothel);
+    SetSelectedItemInList(m_BrothelLeft_id, leftBrothel);
+    SetSelectedItemInList(m_BrothelRight_id, rightBrothel);
 }
 void cScreenTransfer::select_brothel(Side side, int selected)
 {
-    int own_list_id = side == Side::Right ? listright_id : listleft_id;
+    int own_list_id = side == Side::Right ? m_ListRight_id : m_ListLeft_id;
 
     ClearListBox(own_list_id);
     (side == Side::Right ? rightBrothel : leftBrothel) = selected;
@@ -166,10 +153,10 @@ void cScreenTransfer::TransferGirlsRightToLeft(bool rightfirst, int rightBrothel
 {
     int brothela    = rightfirst ? rightBrothel        :    leftBrothel        ;
     int brothelb    = rightfirst ? leftBrothel        :    rightBrothel    ;
-    int brothela_id    = rightfirst ? brothelright_id    :    brothelleft_id    ;
-    int brothelb_id    = rightfirst ? brothelleft_id    :    brothelright_id    ;
-    int lista_id    = rightfirst ? listright_id        :    listleft_id        ;
-    int listb_id    = rightfirst ? listleft_id        :    listright_id    ;
+    int brothela_id    = rightfirst ? m_BrothelRight_id    :    m_BrothelLeft_id    ;
+    int brothelb_id    = rightfirst ? m_BrothelLeft_id    :    m_BrothelRight_id    ;
+    int lista_id    = rightfirst ? m_ListRight_id        :    m_ListLeft_id        ;
+    int listb_id    = rightfirst ? m_ListLeft_id        :    m_ListRight_id    ;
 
     cBuilding* brothel = getBuilding(brothela);
 
@@ -246,4 +233,8 @@ int cScreenTransfer::checkjobcolor(const sGirl& temp)
         else return COLOR_WARNING;
     }
     return COLOR_NEUTRAL;
+}
+
+std::shared_ptr<cInterfaceWindow> screens::cTransferGirlsBase::create() {
+    return std::make_shared<cScreenTransfer>();
 }

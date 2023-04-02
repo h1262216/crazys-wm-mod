@@ -2,7 +2,7 @@ find_package(Python3)
 
 set(CODEGEN_BASE_PATH ${CMAKE_SOURCE_DIR}/src/codegen)
 
-function(make_generated_header)
+function(make_generated_file)
     set(MULTI_ARGS TARGET SCRIPT SOURCE SOURCE_FILE_TYPE ARGS OUTPUT BYPRODUCTS)
     cmake_parse_arguments(MGH "" "" "${MULTI_ARGS}" ${ARGN})
     set(SCRIPT_FILE "${CODEGEN_BASE_PATH}/${MGH_SCRIPT}")

@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "cScreenNewGame.h"
 #include "character/cPlayer.h"
 #include "IGame.h"
@@ -28,34 +29,20 @@
 extern std::string monthnames[13];
 extern std::string g_ReturnText;
 extern int g_ReturnInt;
-extern cNameList g_BoysNameList;;
+extern cNameList g_BoysNameList;
 extern cNameList g_SurnameList;
 
-cScreenNewGame::cScreenNewGame() : cInterfaceWindowXML("NewGame.xml")
-{
-}
+cScreenNewGame::cScreenNewGame() = default;
 
-void cScreenNewGame::set_ids()
+void cScreenNewGame::setup_callbacks()
 {
-    ok_id            = get_id("Ok");
-    config_id        = get_id("Config");
-    cancel_id        = get_id("Cancel");
-    brothel_id        = get_id("BrothelName");
-    pname_id        = get_id("PlayerName");
-    psname_id        = get_id("PlayerSurname");
-    pbm_id            = get_id("PlayerBirthMonth");
-    pbm1_id            = get_id("PlayerBirthMonthNum");
-    pbd_id            = get_id("PlayerBirthDay");
-    pbd1_id            = get_id("PlayerBirthDayNum");
-    phn_id            = get_id("PlayerHoroscope");
-
-    SetButtonNavigation(cancel_id, "Main Menu");
-    SetButtonNavigation(config_id, "GameSetup", false);
-    SetButtonCallback(ok_id, [this]() { start_game(); });
-    SetSliderCallback(pbm_id, [this](int) {update_birthday(); });
-    SetSliderCallback(pbd_id, [this](int) {update_birthday(); });
-    SetSliderHotKeys(pbm_id, SDLK_PAGEUP, SDLK_PAGEDOWN);
-    SetSliderHotKeys(pbd_id, SDLK_HOME, SDLK_END);
+    SetButtonNavigation(m_Cancel_id, "Main Menu");
+    SetButtonNavigation(m_Config_id, "GameSetup", false);
+    SetButtonCallback(m_Ok_id, [this]() { start_game(); });
+    SetSliderCallback(m_PlayerBirthDay_id, [this](int) { update_birthday(); });
+    SetSliderCallback(m_PlayerBirthMonth_id, [this](int) { update_birthday(); });
+    SetSliderHotKeys(m_PlayerBirthMonth_id, SDLK_PAGEUP, SDLK_PAGEDOWN);
+    SetSliderHotKeys(m_PlayerBirthDay_id, SDLK_HOME, SDLK_END);
 }
 
 void cScreenNewGame::init(bool back)
@@ -75,23 +62,23 @@ void cScreenNewGame::init(bool back)
 void cScreenNewGame::update_birthday()
 {
     std::stringstream ss;
-    g_Game->player().SetBirthDay(SliderValue(pbd_id));
-    SliderValue(pbd_id, g_Game->player().BirthDay());
-    g_Game->player().SetBirthMonth(SliderValue(pbm_id));
-    SliderValue(pbm_id, g_Game->player().BirthMonth());
+    g_Game->player().SetBirthDay(SliderValue(m_PlayerBirthDay_id));
+    SliderValue(m_PlayerBirthDay_id, g_Game->player().BirthDay());
+    g_Game->player().SetBirthMonth(SliderValue(m_PlayerBirthDay_id));
+    SliderValue(m_PlayerBirthDay_id, g_Game->player().BirthMonth());
     ss << g_Game->player().BirthDay();
-    EditTextItem(ss.str(), pbd1_id);
+    EditTextItem(ss.str(), m_PlayerBirthDayNum_id);
     ss.str("");
     ss << monthnames[g_Game->player().BirthMonth()];
-    EditTextItem(ss.str(), pbm1_id);
-    EditTextItem(cGirls::GetHoroscopeName(g_Game->player().BirthMonth(), g_Game->player().BirthDay()), phn_id);
+    EditTextItem(ss.str(), m_PlayerBirthMonthNum_id);
+    EditTextItem(cGirls::GetHoroscopeName(g_Game->player().BirthMonth(), g_Game->player().BirthDay()), m_PlayerHoroscope_id);
 }
 
 void cScreenNewGame::start_game()
 {
-    std::string b = GetEditBoxText(brothel_id);
-    std::string p = GetEditBoxText(pname_id);
-    std::string s = GetEditBoxText(psname_id);
+    std::string b = GetEditBoxText(m_BrothelName_id);
+    std::string p = GetEditBoxText(m_PlayerName_id);
+    std::string s = GetEditBoxText(m_PlayerSurname_id);
     if (b.empty() || p.empty() || s.empty())
     {
         push_message("You must enter a name in all 3 boxes.", COLOR_WARNING);
@@ -123,7 +110,7 @@ void cScreenNewGame::OnKeyPress(SDL_Keysym keysym)
         return;
     }
 
-    if(HasFocus(pbd_id)) {
+    if(HasFocus(m_PlayerBirthDay_id)) {
         SDL_Keycode numbers[] = {SDLK_0, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9};
         for (int num = 0; num <= 9; ++num) {
             if (keysym.sym == numbers[num]) {
@@ -158,12 +145,17 @@ void cScreenNewGame::OnKeyPress(SDL_Keysym keysym)
 
 void cScreenNewGame::update_ui()
 {
-    SetEditBoxText(pname_id, g_Game->player().FirstName());
-    SetEditBoxText(psname_id, g_Game->player().Surname());
+    SetEditBoxText(m_PlayerName_id, g_Game->player().FirstName());
+    SetEditBoxText(m_PlayerSurname_id, g_Game->player().Surname());
 
-    SliderValue(pbd_id, g_Game->player().BirthDay());
-    EditTextItem(std::to_string(g_Game->player().BirthDay()), pbd1_id);
-    SliderValue(pbm_id, g_Game->player().BirthMonth());
-    EditTextItem(monthnames[g_Game->player().BirthMonth()], pbm1_id);
-    EditTextItem(cGirls::GetHoroscopeName(g_Game->player().BirthMonth(), g_Game->player().BirthDay()), phn_id);
+    SliderValue(m_PlayerBirthDay_id, g_Game->player().BirthDay());
+    EditTextItem(std::to_string(g_Game->player().BirthDay()), m_PlayerBirthDayNum_id);
+    SliderValue(m_PlayerBirthDay_id, g_Game->player().BirthMonth());
+    EditTextItem(monthnames[g_Game->player().BirthMonth()], m_PlayerBirthMonthNum_id);
+    EditTextItem(cGirls::GetHoroscopeName(g_Game->player().BirthMonth(), g_Game->player().BirthDay()), m_PlayerHoroscope_id);
 }
+
+std::shared_ptr<cInterfaceWindow> screens::cNewGameBase::create() {
+    return std::make_shared<cScreenNewGame>();
+}
+

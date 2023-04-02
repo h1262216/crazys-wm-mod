@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "buildings/cBuilding.h"
 #include "cRival.h"
 #include "cScreenMayor.h"
@@ -24,18 +25,12 @@
 #include <sstream>
 #include "character/cGirlPool.h"
 
-cScreenMayor::cScreenMayor() : cInterfaceWindowXML("mayor_screen.xml")
-{
-}
+cScreenMayor::cScreenMayor() = default;
 
-void cScreenMayor::set_ids()
+void cScreenMayor::setup_callbacks()
 {
-    bribe_id     = get_id("BribeButton");
-    details_id   = get_id("MayorDetails");
-    header_id    = get_id("ScreenHeader");
-
     // setup event handlers
-    SetButtonCallback(bribe_id, [this](){
+    SetButtonCallback(m_BribeBtn_id, [this](){
         input_integer([](int amount){
             if (amount >= 0) { g_Game->SetBribeRate(amount); }
         });
@@ -85,5 +80,10 @@ void cScreenMayor::init(bool back)
         ss << "Your influence: " << PlayersInfluence << "%\nNo Rivals";
     }
     ss << "\n \nNumber of girls in prison: " << g_Game->GetPrison().num();
-    EditTextItem(ss.str(), details_id);
+    EditTextItem(ss.str(), m_MayorDetails_id);
 }
+
+std::shared_ptr<cInterfaceWindow> screens::cMayorScreenBase::create() {
+    return std::make_shared<cScreenMayor>();
+}
+

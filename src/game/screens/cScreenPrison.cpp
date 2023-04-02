@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "buildings/cBuilding.h"
 #include "buildings/cDungeon.h"
 #include "cScreenPrison.h"
@@ -25,73 +26,62 @@
 #include "character/predicates.h"
 #include "character/cGirlPool.h"
 
-static int ImageNum = -1;
-
-cScreenPrison::cScreenPrison() : cGameWindow("prison_screen.xml")
-{
-    selection = -1;
-}
+cScreenPrison::cScreenPrison() = default;
 
 void cScreenPrison::init(bool back)
 {
     std::stringstream ss;
     Focused();
 
-    DisableWidget(more_id, true);
-    DisableWidget(release_id, true);
+    DisableWidget(m_ShowMoreBtn_id, true);
+    
+    DisableWidget(m_ReleaseBtn_id, true);
     selection = -1;
     update_details();
 
-    ClearListBox(prison_list_id);
+    ClearListBox(m_PrisonList_id);
     auto& prison = g_Game->GetPrison();
     for(int i = 0; i < prison.num(); ++i)
     {
         sGirl* girl = prison.get_girl(i);
         int cost = PrisonReleaseCost(*girl);
         ss << girl->FullName() << "  (release cost: " << cost << " gold)";
-        AddToListBox(prison_list_id, i, ss.str());
+        AddToListBox(m_PrisonList_id, i, ss.str());
         i++;
         ss.str("");
     }
 }
 
-void cScreenPrison::set_ids()
+void cScreenPrison::setup_callbacks()
 {
-    header_id      = get_id("ScreenHeader");
-    more_id        = get_id("ShowMoreButton");
-    release_id     = get_id("ReleaseButton");
-    prison_list_id = get_id("PrisonList");
-    girl_desc_id   = get_id("GirlDescription");
-    girlimage_id   = get_id("GirlImage", "*Unused*");//
-    DetailLevel    = 0;
-
-    SetButtonCallback(more_id, [this]() { more_button(); });
-    SetButtonCallback(release_id, [this]() {
+    SetButtonCallback(m_ShowMoreBtn_id, [this]() { more_button(); });
+    SetButtonCallback(m_ReleaseBtn_id, [this]() {
         release_button();
         init(false);
     });
 
-    SetListBoxSelectionCallback(prison_list_id, [this](int sel) { selection_change(0); });
-    SetListBoxHotKeys(prison_list_id, SDLK_a,  SDLK_d);
+    SetListBoxSelectionCallback(m_PrisonList_id, [this](int sel) { selection_change(0); });
+    SetListBoxHotKeys(m_PrisonList_id, SDLK_a,  SDLK_d);
 }
 
 void cScreenPrison::selection_change(int selection)
 {
-    DisableWidget(more_id, (selection == -1));
-    DisableWidget(release_id, (selection == -1));
+    DisableWidget(m_ShowMoreBtn_id, (selection == -1));
+    DisableWidget(m_ReleaseBtn_id, (selection == -1));
+    this->selection = selection;
     update_details();
 }
 
 void cScreenPrison::update_details()
 {
-    EditTextItem("No Prisoner Selected", girl_desc_id);
+    EditTextItem("No Prisoner Selected", m_GirlDescription_id);
     if (selection == -1) return;
     sGirl* pgirls = get_selected_girl();
     if (!pgirls) return;
 
-    if (DetailLevel == 1)        EditTextItem(cGirls::GetMoreDetailsString(*pgirls, true), girl_desc_id, true);
-    else if (DetailLevel == 2)    EditTextItem(cGirls::GetThirdDetailsString(*pgirls), girl_desc_id, true);
-    else                        EditTextItem(cGirls::GetDetailsString(*pgirls, true), girl_desc_id, true);
+    if (DetailLevel == 1)        EditTextItem(cGirls::GetMoreDetailsString(*pgirls, true), m_GirlDescription_id, true);
+    else if (DetailLevel == 2)    EditTextItem(cGirls::GetThirdDetailsString(*pgirls), m_GirlDescription_id, true);
+    else                        EditTextItem(cGirls::GetDetailsString(*pgirls, true), m_GirlDescription_id, true);
 }
 
 sGirl* cScreenPrison::get_selected_girl()
@@ -148,12 +138,7 @@ int cScreenPrison::PrisonReleaseCost(sGirl& girl)
     return cost;
 }
 
-void cScreenPrison::update_image()
-{
-    if (get_selected_girl() && !IsMultiSelected(prison_list_id))//This may need fixed CRAZY
-    {
-        PrepareImage(girlimage_id, *get_selected_girl(), EImageBaseType::JAIL);
-        HideWidget(girlimage_id, false);
-    }
-    else HideWidget(girlimage_id, true);
+std::shared_ptr<cInterfaceWindow> screens::cPrisonScreenBase::create() {
+    return std::make_shared<cScreenPrison>();
 }
+

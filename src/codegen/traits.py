@@ -4,12 +4,7 @@
 import sys
 from pathlib import Path
 import textwrap
-from wmlib import TraitsParser
-
-
-def name_as_identifier(trait_name: str):
-    return trait_name.upper().replace(" ", "_").replace("-", "_").replace(".", "_").replace(":", "_")
-
+from wmlib import TraitsParser, make_uc_identifier, update_file_if_changed
 
 # TODO what about tag:?
 _MODIFIER_PREFIXED = ["stat:", "skill:", "enjoy:", "fetish:", "skill-cap:", "sex:"]
@@ -59,28 +54,26 @@ def main():
             newline = "\n"
             if trait.description is not None:
                 out_text += f"    /// {format_description(trait.description)}\n"
-            out_text += f"    constexpr const char* {name_as_identifier(trait.name)} = \"{trait.name}\";\n\n"
-            lua_text += f"--- @field {name_as_identifier(trait.name)} string {trait.description.replace(newline, ' ')}\n"
+            out_text += f"    constexpr const char* {make_uc_identifier(trait.name)} = \"{trait.name}\";\n\n"
+            lua_text += f"--- @field {make_uc_identifier(trait.name)} string {trait.description.replace(newline, ' ')}\n"
 
     # now the modifiers
     out_text += "    namespace modifiers {\n"
 
     for mod in sorted(parser.modifiers):
         if is_generic_modifier(mod):
-            out_text += f"        constexpr const char* {name_as_identifier(mod)} = \"{mod}\";\n"
+            out_text += f"        constexpr const char* {make_uc_identifier(mod)} = \"{mod}\";\n"
 
     # finally, the groups
     out_text += "    }\n    namespace groups {\n"
 
     for group in sorted(parser.groups):
         if group != "":
-            out_text += f"        constexpr const char* {name_as_identifier(group)} = \"{group}\";\n"
+            out_text += f"        constexpr const char* {make_uc_identifier(group)} = \"{group}\";\n"
 
     out_text += "    }\n}\n"
 
-    # only write to the file if anything actually changes.
-    if not result_path.exists() or result_path.read_text() != out_text:
-        result_path.write_text(out_text)
+    update_file_if_changed(result_path, out_text)
 
     # for some reason, this helps to improve the autocomplete
     lua_text += "local t = {}\nwm.TRAITS = t"
