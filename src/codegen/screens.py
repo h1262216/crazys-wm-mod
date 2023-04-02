@@ -56,8 +56,14 @@ def read_interface_file(file: Union[str, Path]):
     base_class = "cGameWindow" if class_base_name in game_screens else "cInterfaceWindowXML"
 
     for child in doc:
+        if child.tag == "Window":
+            continue
+
         if "Name" in child.attrib:
             name = child.attrib["Name"]
+            if name == "" or name.startswith("_"):
+                continue
+
             ident = make_camel_identifier(name)
             ident = ident.replace("Button", "Btn")
             elements["m_" + ident + "_id"] = name

@@ -160,7 +160,6 @@ static std::string get_building_summary(const cBuilding& building)
     ss << "\nDisposition: \t" << g_Game->player().disposition_text();
     ss << "\nSuspicion: \t" << g_Game->player().suss_text();
     ss << "\nFilthiness: \t" << building.filthiness();
-    ss << "\nBeasts Housed Here: \t" << g_Game->storage().beasts();
 
     if(building.type() == BuildingType::FARM) {
         ss << "\nFood Stored: \t" << g_Game->storage().food()

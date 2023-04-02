@@ -1,7 +1,7 @@
 <Screen>
 <Window     Name="Town Screen Window"                                       XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
 <Image      Name="TownMap"              File="townmap.png"                  XPos="14"       YPos="14"       Width="1451"    Height="1012"    Dir="Backdrops" />
-<Button     Name="Next Week"            Image="NextWeek"                    XPos="1546"     YPos="14"       Width="225"     Height="45"     Transparency="true"/>
+    <Button     Name="Next Week"            Image="NextWeek"            XPos="1546"     YPos="14"       Width="240"     Height="48"     />
 <Button     Name="BackButton"           Image="Back"                        XPos="1588"     YPos="970"      Width="281"     Height="56"     Transparency="true"  PushWindow="<back>"/>
 <Button     Name="WalkButton"           Image="WalkAround"                  XPos="1616"     YPos="844"      Width="225"     Height="45"     Transparency="true" />
 

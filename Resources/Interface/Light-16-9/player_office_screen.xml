@@ -1,0 +1,33 @@
+<Screen>
+    <Window                                                     XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
+    <Text       Name="DateLbl"              Text="Date"         XPos="14"       YPos="3"        Width="984"     Height="56"     FontSize="28" />
+    <Image      Name="Background"           File="office.jpg"   XPos="14"       YPos="50"       Width="1500"    Height="900"    Dir="Backdrops" />
+    <Image      Name="d"                    File="DarkContrast.png"   XPos="28"       YPos="62"       Width="380"     Height="380"    Dir="Widgets" />
+
+    <Text       Name="InfoLbl"              Text="Info"         XPos="42"       YPos="75"       Width="370"    Height="340"     FontSize="18"  Red="255" Green="255" Blue="255" />
+    <Button     Name="Next Week"            Image="NextWeek"    XPos="1546"     YPos="14"       Width="240"     Height="48"     />
+
+    <Button     Name="Settings"             Image="SettingsBtn" XPos="1546"     YPos="474"      Width="240"     Height="48"      PushWindow="UserSettings"/>
+    <Button     Name="Gang Management"      Image="Staff"       XPos="1546"     YPos="544"      Width="240"     Height="48"      PushWindow="Gangs"/>
+    <Button     Name="InventoryButton"      Image="GiveGift"    XPos="1546"     YPos="614"      Width="240"     Height="48"      PushWindow="Item Management"/>
+
+    <Button     Name="Dungeon"              Image="Dungeon"     XPos="1546"     YPos="704"      Width="240"     Height="48"      PushWindow="Dungeon"/>
+    <Button     Name="Turn Summary"         Image="TurnSum"     XPos="1546"     YPos="84"       Width="240"     Height="48"      PushWindow="Turn Summary"/>
+
+    <Button     Name="Visit Buildings"      Image="VisitBuildings" XPos="1546"  YPos="774"      Width="240"     Height="48"      ReplaceWindow="Building Management"/>
+    <Button     Name="Visit Town"           Image="VisitTown"   XPos="1546"     YPos="844"      Width="240"     Height="48"      PushWindow="Town"/>
+
+    <Button     Name="Menu"                 Image="Menu"        XPos="1546"     YPos="934"      Width="240"     Height="48"      PushWindow="Game Menu"/>
+
+    <Text       Name="InteractText"         Text=""             XPos="28"       YPos="825"      Width="253"     Height="56" FontSize="18" Red="255" Green="255" Blue="255" />
+    <Button     Name="BuyInteract"          Image="Buy"         XPos="28"       YPos="881"      Width="101"     Height="45"  />
+    <Button     Name="BuyInteract10"        Image="Buy10"       XPos="166"      YPos="881"      Width="101"     Height="45"  />
+
+    <ListBox    Name="BuildingList"                             XPos="800"     YPos="474"      Width="690"     Height="452"    FontSize="17"       RowHeight="30"      Border="1"          Events="true"      Multi="true"   ShowHeaders="true"   HeaderDiv="true"   HeaderClicksSort="true"   >
+        <Column Name="Name"     Header="Building"                 Offset="0" />
+        <Column Name="Rooms"    Header="Rooms"                    Offset="200" />
+        <Column Name="Security" Header="Sec."                     Offset="300" />
+        <Column Name="Filth"    Header="Filth"                    Offset="400" />
+        <Column Name="Profit"   Header="Profit"                   Offset="500" />
+    </ListBox>
+</Screen>

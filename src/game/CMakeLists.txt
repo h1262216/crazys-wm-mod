@@ -13,7 +13,6 @@ set(SCREENS_SRC
         screens/cScreenGallery.cpp
         screens/cScreenGangs.cpp
         screens/cScreenGirlDetails.cpp
-        screens/cScreenHouseDetails.cpp
         screens/cScreenItemManagement.cpp
         screens/cScreenLoadGame.cpp
         screens/cScreenLoadGame.hpp
@@ -33,7 +32,7 @@ set(SCREENS_SRC
         screens/cScreenGameConfig.cpp
         screens/cScreenInfoTraits.cpp
         screens/cScreenGameMenu.cpp
-        )
+        screens/cScreenYourOffice.cpp)
 
 set(SRC cEvents.cpp
         cGangs.cpp

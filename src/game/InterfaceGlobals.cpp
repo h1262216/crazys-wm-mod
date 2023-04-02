@@ -22,7 +22,6 @@
 #include "interface/cWindowManager.h"
 #include "screens/cScreenTown.h"
 #include "screens/cScreenSlaveMarket.h"
-#include "screens/cScreenHouseDetails.h"
 #include "screens/cScreenItemManagement.h"
 #include "screens/cScreenBuildingSetup.h"
 #include "screens/cScreenGangs.h"
@@ -115,8 +114,8 @@ void LoadInterface(const cConfig& cfg)
     load_window<cScreenBuildingSetup>("Building Setup");
     load_window_easy<screens::cMayorScreenBase>("Mayor", false);
     load_window_easy<screens::cBankScreenBase>("Bank", false);
-    load_window<cScreenHouseDetails>("House");
     load_window_easy<screens::cPrisonScreenBase>("Prison", false);
+    load_window_easy<screens::cPlayerOfficeScreenBase>("Player's Office", false);
     load_window<cScreenMovieMaker>("Movie Maker");
     load_window<cScreenMarketResearch>("Market Research");
     load_window<cScreenInfoTraits>("Info Traits");

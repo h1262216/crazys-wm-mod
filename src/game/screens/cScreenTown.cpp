@@ -107,6 +107,7 @@ void cScreenTown::set_ids()
     });
     SetButtonCallback(house_id,    [this]() {
         set_active_building(g_Game->buildings().building_with_type(BuildingType::HOUSE));
+        window_manager().PopAll();
         push_window("Player House");
     });
     SetButtonCallback(shop_id, [this]() {
@@ -281,7 +282,8 @@ void cScreenTown::check_building(int BrothelNum)
         auto own_building = g_Game->buildings().building_with_type(type, num);
         assert(own_building);
         set_active_building(own_building);
-        replace_window("Building Management");
+        window_manager().PopAll();
+        push_window("Building Management");
     }
 }
 

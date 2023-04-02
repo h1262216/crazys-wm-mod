@@ -1,0 +1,20 @@
+<Screen>
+    <Window     Name="Brothel Management"                           XPos="18"       YPos="20"       Width="1883"    Height="1041"   Border="1"  />
+    <Text       Name="BuildingLabel"        Text="Name"             XPos="14"       YPos="3"        Width="984"     Height="56"     FontSize="28"            />
+    <Image      Name="Background"           File=""                 XPos="14"       YPos="49"       Width="1434"    Height="928"     />
+
+    <Button     Name="Next Week"            Image="NextWeek"        XPos="1546"     YPos="14"       Width="240"     Height="48"     />
+    <Text       Name="BuildingDetails"      Text="Details"          XPos="1448"     YPos="70"       Width="436"     Height="422"    FontSize="16"  />
+
+    <Button     Name="Girl Management"      Image="Girls"           XPos="1546"     YPos="544"      Width="240"     Height="48"     PushWindow="Girl Management"/>
+    <Button     Name="Setup"                Image="Building"        XPos="1546"     YPos="614"      Width="240"     Height="48"     PushWindow="Building Setup"/>
+
+    <Button     Name="YourOffice"           Image="YourOffice"      XPos="1546"     YPos="774"      Width="240"     Height="48"     ReplaceWindow="Player's Office"/>
+    <Button     Name="Visit Town"           Image="VisitTown"       XPos="1546"     YPos="844"      Width="240"     Height="48"     PushWindow="Town"/>
+
+    <Button     Name="Menu"                 Image="Menu"            XPos="1546"     YPos="934"      Width="240"     Height="48"     PushWindow="Game Menu"/>
+    <Button     Name="PrevButton"           Image="Prev"            XPos="1543"     YPos="482"      Width="101"     Height="48"     />
+    <Button     Name="NextButton"           Image="Next"            XPos="1673"     YPos="482"      Width="101"     Height="48"     />
+
+    <Image      Name="GirlImage"            File=""                 XPos="214"      YPos="21"       Width="281"     Height="281"    Hidden="true"  />
+</Screen>
