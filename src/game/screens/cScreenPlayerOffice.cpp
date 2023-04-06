@@ -38,6 +38,17 @@ void cScreenPlayerOffice::setup_callbacks()
     SetButtonCallback(m_BuyInteract_id, [this]() { buy_interactions(1); });
     SetButtonCallback(m_BuyInteract10_id, [this]() { buy_interactions(10); });
 
+    SetButtonHotKey(m_Menu_id, SDLK_ESCAPE);
+    SetButtonHotKey(m_VisitTown_id, SDLK_t);
+    SetButtonHotKey(m_VisitBuildings_id, SDLK_b);
+    SetButtonHotKey(m_Dungeon_id, SDLK_d);
+
+    SetButtonHotKey(m_GangManagement_id, SDLK_g);
+    SetButtonHotKey(m_InventoryBtn_id, SDLK_i);
+    SetButtonHotKey(m_Settings_id, SDLK_s);
+    SetButtonHotKey(m_NextWeek_id, SDLK_n);
+    SetButtonHotKey(m_TurnSummary_id, SDLK_m);
+
     SetButtonCallback(m_NextWeek_id, [this]() {
         if (!is_ctrl_held()) { AutoSaveGame(); }
         // need to switch the windows first, so that any new events will show up!
@@ -73,7 +84,6 @@ void cScreenPlayerOffice::init(bool back)
 
     ss << "\nCurrent Objective: \t" << get_objective();
 
-    std::cout << ss.str() << "\n";
     EditTextItem(ss.str(), m_InfoLbl_id, true);
 
     ss.str(""); ss << "Interactions Left: ";

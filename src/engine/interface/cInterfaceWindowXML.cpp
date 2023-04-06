@@ -41,18 +41,26 @@ cInterfaceWindowXML::~cInterfaceWindowXML()
 
 void cInterfaceWindowXML::load(cWindowManager* wm)
 {
-    cInterfaceWindow::load(wm);
     DirPath xml_source = {};
     xml_source << "Resources" << "Interface" << wm->GetTheme().directory() << m_ScreenName;
     auto doc = LoadXMLDocument(xml_source.str());
+
+    if(doc->RootElement()->Attribute("Name")) {
+        set_name(doc->RootElement()->Attribute("Name"));
+    }
+
+    cInterfaceWindow::load(wm);
+
     if(doc->RootElement()->Attribute("Extends")) {
         DirPath base_source;
         base_source << "Resources" << "Interface" << wm->GetTheme().directory() << doc->RootElement()->Attribute("Extends");
         read_definition(*LoadXMLDocument(base_source.str())->RootElement());
     }
+
     read_definition(*doc->RootElement());
 
     g_LogFile.debug("interface", "calling set_ids for window ", m_ScreenName);
+
     set_ids();
 }
 
@@ -60,14 +68,14 @@ void cInterfaceWindowXML::read_definition(const tinyxml2::XMLElement& root) {
     for (auto& el : IterateChildElements(root)) {
         std::string tag = el.Value();
         try {
-            if (tag == "Window") { read_window_definition(el);            continue; }
-            if (tag == "EditBox") { read_editbox_definition(el);        continue; }
-            if (tag == "Text") { read_text_item(el);                    continue; }
-            if (tag == "Button") { read_button_definition(el);            continue; }
-            if (tag == "Image") { read_image_definition(el);            continue; }
-            if (tag == "ListBox") { read_listbox_definition(el);        continue; }
-            if (tag == "Checkbox"){ read_checkbox_definition(el);        continue; }
-            if (tag == "Slider") { read_slider_definition(el);            continue; }
+            if (tag == "Window")  { read_window_definition(el);    continue; }
+            if (tag == "EditBox") { read_editbox_definition(el);   continue; }
+            if (tag == "Text")    { read_text_item(el);            continue; }
+            if (tag == "Button")  { read_button_definition(el);    continue; }
+            if (tag == "Image")   { read_image_definition(el);     continue; }
+            if (tag == "ListBox") { read_listbox_definition(el);   continue; }
+            if (tag == "Checkbox"){ read_checkbox_definition(el);  continue; }
+            if (tag == "Slider")  { read_slider_definition(el);    continue; }
         } catch(std::runtime_error& e) {
             g_LogFile.error("interface", "Could not create Widget ", tag, " from file '", m_ScreenName, "': ", e.what());
         }

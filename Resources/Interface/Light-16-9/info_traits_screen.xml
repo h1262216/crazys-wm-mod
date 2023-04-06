@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Info Traits">
     <Window     Name="Traits Info"                                    XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
 
     <Text       Name="TraitsListTxt"        Text="Traits"             XPos="14"       YPos="17"       Width="350"     Height="28"     FontSize="22"            />
@@ -37,8 +37,3 @@
     <Button     Name="BackButton"           Image="Back"                        XPos="1588"     YPos="970"      Width="281"     Height="56"     Transparency="true" PushWindow="<back>"/>
 
 </Screen>
-
-        <!--
-        CategoryArray<float> TurnOffs;      // Chance that a scene type is a turn-off to this group of people
-        CategoryArray<float> Desires;       // How much of a certain scene type is desired.
-        -->

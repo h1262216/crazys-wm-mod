@@ -58,67 +58,48 @@ static static_brothel_data brothel_data[] = {
         { 25000, 25, 20, 200, "Clinic.jpg", BuildingType::CLINIC }
 };
 
-cScreenTown::cScreenTown() : cGameWindow("town_screen.xml")
+cScreenTown::cScreenTown()
 {
     m_first_walk = true;
 }
 
 
-void cScreenTown::set_ids()
+void cScreenTown::setup_callbacks()
 {
-    gold_id             = get_id("Gold", "*Unused*");//
-    walk_id             = get_id("WalkButton");
-    m_MainImageId        = get_id("GirlImage");
-    curbrothel_id       = get_id("CurrentBrothel");
-    slavemarket_id      = get_id("SlaveMarket");
-    shop_id             = get_id("Shop");
-    house_id            = get_id("House");
-    clinic_id           = get_id("Clinic");
-    studio_id           = get_id("Studio");
-    arena_id            = get_id("Arena");
-    centre_id           = get_id("Centre");
-    farm_id             = get_id("Farm");
-    brothel0_id         = get_id("Brothel0");
-    brothel1_id         = get_id("Brothel1");
-    brothel2_id         = get_id("Brothel2");
-    brothel3_id         = get_id("Brothel3");
-    brothel4_id         = get_id("Brothel4");
-    brothel5_id         = get_id("Brothel5");
-    brothel6_id         = get_id("Brothel6");
-    next_week_id        = get_id("Next Week");
-
-    SetButtonCallback(brothel0_id, [this]() { check_building(0); });
-    SetButtonCallback(brothel1_id, [this]() { check_building(1); });
-    SetButtonCallback(brothel2_id, [this]() { check_building(2); });
-    SetButtonCallback(brothel3_id, [this]() { check_building(3); });
-    SetButtonCallback(brothel4_id, [this]() { check_building(4); });
-    SetButtonCallback(brothel5_id, [this]() { check_building(5); });
-    SetButtonCallback(brothel6_id, [this]() { check_building(6); });
-    SetButtonCallback(centre_id,   [this]() { check_building(7); });
-    SetButtonCallback(farm_id,     [this]() { check_building(8); });
-    SetButtonCallback(arena_id,    [this]() { check_building(9); });
-    SetButtonCallback(studio_id,   [this]() { check_building(10); });
-    SetButtonCallback(clinic_id,   [this]() { check_building(11); });
-    SetButtonCallback(next_week_id, [this]() {
+    SetButtonCallback(m_Brothel0_id, [this]() { check_building(0); });
+    SetButtonCallback(m_Brothel1_id, [this]() { check_building(1); });
+    SetButtonCallback(m_Brothel2_id, [this]() { check_building(2); });
+    SetButtonCallback(m_Brothel3_id, [this]() { check_building(3); });
+    SetButtonCallback(m_Brothel4_id, [this]() { check_building(4); });
+    SetButtonCallback(m_Brothel5_id, [this]() { check_building(5); });
+    SetButtonCallback(m_Brothel6_id, [this]() { check_building(6); });
+    SetButtonCallback(m_Centre_id,   [this]() { check_building(7); });
+    SetButtonCallback(m_Farm_id,     [this]() { check_building(8); });
+    SetButtonCallback(m_Arena_id,    [this]() { check_building(9); });
+    SetButtonCallback(m_Studio_id,   [this]() { check_building(10); });
+    SetButtonCallback(m_Clinic_id,   [this]() { check_building(11); });
+    SetButtonCallback(m_NextWeek_id, [this]() {
         if (!is_ctrl_held()) { AutoSaveGame(); }
         // need to switch the windows first, so that any new events will show up!
         push_window("Turn Summary");
         g_Game->NextWeek();
     });
-    SetButtonCallback(house_id,    [this]() {
+    SetButtonCallback(m_House_id,    [this]() {
         set_active_building(g_Game->buildings().building_with_type(BuildingType::HOUSE));
         window_manager().PopAll();
         push_window("Player House");
     });
-    SetButtonCallback(shop_id, [this]() {
+    SetButtonCallback(m_Shop_id, [this]() {
         g_AllTogle = false;
         push_window("Item Management");
     });
-    SetButtonCallback(walk_id, [this]() {
+    SetButtonCallback(m_WalkBtn_id, [this]() {
         do_walk();
         g_Game->DoWalkAround();
         init(false);
     });
+
+    m_MainImageId = m_GirlImage_id;
 }
 
 cBuilding& init_building(const static_brothel_data* data) {
@@ -129,28 +110,21 @@ cBuilding& init_building(const static_brothel_data* data) {
 
 void cScreenTown::init(bool back)
 {
-    if (gold_id >= 0)
-    {
-        std::stringstream ss; ss << "Gold: " << g_Game->gold().ival();
-        EditTextItem(ss.str(), gold_id);
-    }
-
     Focused();
 
     // buttons enable/disable
-    DisableWidget(walk_id, !g_Game->CanWalkAround());
+    DisableWidget(m_WalkBtn_id, !g_Game->CanWalkAround());
 
     int num_brothels = g_Game->buildings().num_buildings(BuildingType::BROTHEL);
-    HideWidget(brothel2_id, num_brothels < 2);
-    HideWidget(brothel3_id, num_brothels < 3);
-    HideWidget(brothel4_id, num_brothels < 4);
-    HideWidget(brothel5_id, num_brothels < 5);
-    HideWidget(brothel6_id, num_brothels < 6);
-
+    HideWidget(m_Brothel2_id, num_brothels < 2);
+    HideWidget(m_Brothel3_id, num_brothels < 3);
+    HideWidget(m_Brothel4_id, num_brothels < 4);
+    HideWidget(m_Brothel5_id, num_brothels < 5);
+    HideWidget(m_Brothel6_id, num_brothels < 6);
 
     std::string brothel = "Current Brothel: ";
     brothel += active_building().name();
-    EditTextItem(brothel, curbrothel_id);
+    EditTextItem(brothel, m_CurrentBrothel_id);
 }
 
 void cScreenTown::process()
@@ -214,10 +188,10 @@ void cScreenTown::do_walk()
         return;
     }
 
-    if (m_MainImageId != -1)
+    if (m_GirlImage_id != -1)
     {
-        PrepareImage(m_MainImageId, *m_MeetingGirl, EImageBaseType::PROFILE);
-        HideWidget(m_MainImageId, false);
+        PrepareImage(m_GirlImage_id, *m_MeetingGirl, EImageBaseType::PROFILE);
+        HideWidget(m_GirlImage_id, false);
     }
 
     m_MeetingGirl->TriggerEvent("girl:meet:town");
@@ -291,3 +265,6 @@ sGirl* cScreenTown::get_image_girl() {
     return m_MeetingGirl.get();
 }
 
+std::shared_ptr<cInterfaceWindow> screens::cTownScreenBase::create() {
+    return std::make_shared<cScreenTown>();
+}

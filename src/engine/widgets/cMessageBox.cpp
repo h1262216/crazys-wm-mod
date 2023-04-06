@@ -123,12 +123,28 @@ void cMessageBox::PushMessage(std::string text, int color)
 }
 
 bool cMessageBox::HandleKeyPress(SDL_Keysym key) {
-    Advance();
+    if(IsHidden()) {
+        SetHidden(false);
+        return true;
+    }
+
+    if(key.scancode == SDL_SCANCODE_H) {
+        SetHidden(!IsHidden());
+    } else {
+        Advance();
+    }
     return true;
 }
 
 bool cMessageBox::HandleClick(int x, int y, bool press) {
-    if(!press) Advance();
+
+    if(!press) {
+        if(IsHidden()) {
+            SetHidden(false);
+        } else {
+            Advance();
+        }
+    }
     return true;
 }
 

@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Girl Details">
 <Window     Name="Girl Details Window"                                      XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
 <Text       Name="GirlName"             Text=""                             XPos="14"       YPos="3"        Width="703"     Height="45"     FontSize="34"  />
 <Text       Name="GirlDescription"      Text=""                             XPos="14"       YPos="49"       Width="281"     Height="977"    FontSize="13"          />

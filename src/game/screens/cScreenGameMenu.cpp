@@ -19,23 +19,17 @@
 #include "cScreenGameMenu.h"
 #include "InterfaceProcesses.h"
 
-cScreenGameMenu::cScreenGameMenu() : cInterfaceWindowXML("in_game_menu.xml")
-{
-}
+cScreenGameMenu::cScreenGameMenu() = default;
 
-void cScreenGameMenu::set_ids()
+void cScreenGameMenu::setup_callbacks()
 {
-    save_id     = get_id("SaveBtn");
-    quit_id     = get_id("QuitBtn");
-    continue_id = get_id("ContinueBtn");
-
-    SetButtonCallback(quit_id, [this]() {
+    SetButtonCallback(m_QuitBtn_id, [this]() {
         input_confirm([this]() {
             pop_to_window("Main Menu");
         });
     });
 
-    SetButtonCallback(save_id, [this]() {
+    SetButtonCallback(m_SaveBtn_id, [this]() {
         SaveGame();
         push_message("Game Saved", COLOR_POSITIVE);
     });
@@ -44,4 +38,8 @@ void cScreenGameMenu::set_ids()
 void cScreenGameMenu::init(bool back)
 {
     Focused();
+}
+
+std::shared_ptr<cInterfaceWindow> screens::cInGameMenuBase::create() {
+    return std::make_shared<cScreenGameMenu>();
 }

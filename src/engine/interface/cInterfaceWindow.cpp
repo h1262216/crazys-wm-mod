@@ -36,6 +36,7 @@
 #include "interface/sColor.h"
 #include <algorithm>
 #include <cassert>
+#include <utility>
 #include "interface/cTheme.h"
 #include "widgets/theme_ids.h"
 using namespace widgets_theme;
@@ -46,6 +47,13 @@ cInterfaceWindow::~cInterfaceWindow() = default;
 void cInterfaceWindow::load(cWindowManager* root) {
     assert(!m_WindowManager);
     m_WindowManager = root;
+}
+
+void cInterfaceWindow::set_name(std::string new_name) {
+    if(m_WindowManager) {
+        throw std::logic_error("Trying to change name of registered window.");
+    }
+    m_Name = std::move(new_name);
 }
 
 void cInterfaceWindow::UpdateWindow(int x, int y)
@@ -704,7 +712,7 @@ CGraphics& cInterfaceWindow::GetGraphics() {
     return window_manager().GetGraphics();
 }
 
-cInterfaceWindow::cInterfaceWindow(std::string name) : m_Name(name) {
+cInterfaceWindow::cInterfaceWindow(std::string name) : m_Name(std::move(name)) {
 
 }
 

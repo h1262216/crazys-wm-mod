@@ -199,9 +199,10 @@ void cWindowManager::OnKeyEvent(SDL_Keysym key, bool down)
         GetWindow()->OnKeyPress(key);
 }
 
-void cWindowManager::add_window(std::string name, std::shared_ptr<cInterfaceWindow> win)
+void cWindowManager::add_window(std::shared_ptr<cInterfaceWindow> win)
 {
     win->load(this);
+    std::string name = win->name();
     windows[std::move(name)] = std::move(win);
 }
 

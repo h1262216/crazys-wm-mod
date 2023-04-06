@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Market Research">
 <Window     Name="Market Research"                                       XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
 
 <Text       Name="Target_Groups"        Text="Target Groups"             XPos="14"       YPos="17"       Width="773"     Height="28"           FontSize="22"            />

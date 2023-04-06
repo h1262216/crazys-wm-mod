@@ -144,7 +144,7 @@ void cBuildingBaseBase::set_ids() {
     setup_callbacks();
 }
 
-cBuildingSetupScreenBase::cBuildingSetupScreenBase() : cInterfaceWindowXML("building_setup_screen.xml") { };
+cBuildingSetupScreenBase::cBuildingSetupScreenBase() : cGameWindow("building_setup_screen.xml") { };
 
 void cBuildingSetupScreenBase::set_ids() {
     m_10PotionsBtn_id    = get_id("10PotionsButton");
@@ -217,7 +217,7 @@ void cClinictryScreenBase::set_ids() {
     setup_callbacks();
 }
 
-cDungeonScreenBase::cDungeonScreenBase() : cInterfaceWindowXML("dungeon_screen.xml") { };
+cDungeonScreenBase::cDungeonScreenBase() : cGameWindow("dungeon_screen.xml") { };
 
 void cDungeonScreenBase::set_ids() {
     m_AllowFoodBtn_id    = get_id("AllowFoodButton");
@@ -353,7 +353,7 @@ void cGetInputBase::set_ids() {
     setup_callbacks();
 }
 
-cGirlDetailsScreenBase::cGirlDetailsScreenBase() : cInterfaceWindowXML("girl_details_screen.xml") { };
+cGirlDetailsScreenBase::cGirlDetailsScreenBase() : cGameWindow("girl_details_screen.xml") { };
 
 void cGirlDetailsScreenBase::set_ids() {
     m_AccomSlider_id     = get_id("AccomSlider");
@@ -807,7 +807,7 @@ void cSettingsBase::set_ids() {
     setup_callbacks();
 }
 
-cSlavemarketScreenBase::cSlavemarketScreenBase() : cInterfaceWindowXML("slavemarket_screen.xml") { };
+cSlavemarketScreenBase::cSlavemarketScreenBase() : cGameWindow("slavemarket_screen.xml") { };
 
 void cSlavemarketScreenBase::set_ids() {
     m_Arena_id           = get_id("Arena");
@@ -849,7 +849,7 @@ void cStudioManagementScreenBase::set_ids() {
     setup_callbacks();
 }
 
-cTownScreenBase::cTownScreenBase() : cInterfaceWindowXML("town_screen.xml") { };
+cTownScreenBase::cTownScreenBase() : cGameWindow("town_screen.xml") { };
 
 void cTownScreenBase::set_ids() {
     m_Arena_id           = get_id("Arena");

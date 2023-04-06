@@ -1,5 +1,4 @@
-
-<Screen>
+<Screen Name="Building Setup">
 <Window     Name="Building Setup Window"                                    XPos="538"  YPos="239"   Width="843"     Height="562"    Border="1"/>
 <Text       Name="CurrentBrothel"           Text=""                         XPos="14"   YPos="14"    Width="703"     Height="45"     FontSize="22"/>
 <Text       Name="Gold"                     Text="Player Gold: 0"           XPos="562"  YPos="14"    Width="281"     Height="45"     FontSize="22" />

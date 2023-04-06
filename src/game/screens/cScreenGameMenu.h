@@ -18,20 +18,14 @@
  */
 #pragma once
 
-#include "utils/DirPath.h"
-#include "interface/cInterfaceWindowXML.h"
+#include "ScreenBase.h"
 
-class cScreenGameMenu : public cInterfaceWindowXML
+class cScreenGameMenu : public screens::cInGameMenuBase
 {
-private:
-    int save_id;
-    int quit_id;
-    int continue_id;
-
-    void set_ids() override;
 public:
     cScreenGameMenu();
 
     void init(bool back) override;
-    void process() override {};
+private:
+    void setup_callbacks() override;
 };

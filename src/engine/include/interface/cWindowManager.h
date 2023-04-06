@@ -40,7 +40,7 @@ public:
     cWindowManager(CGraphics*, std::unique_ptr<cTheme> theme);
     ~cWindowManager();
 
-    void add_window(std::string name, std::shared_ptr<cInterfaceWindow> win);
+    void add_window(std::shared_ptr<cInterfaceWindow> win);
 
     // navigation
     void push(const std::string& window_name);

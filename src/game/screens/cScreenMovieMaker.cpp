@@ -30,29 +30,16 @@ namespace settings {
     extern const char* USER_MOVIES_AUTO;
 }
 
-cScreenMovieMaker::cScreenMovieMaker() : cGameWindow("movie_maker_screen.xml")
+cScreenMovieMaker::cScreenMovieMaker() = default;
+
+void cScreenMovieMaker::setup_callbacks()
 {
-}
+    SetButtonCallback(m_AddScene_id, [this]() { movie_add_scene(); });
+    SetButtonHotKey(m_AddScene_id, SDLK_r);
+    SetButtonCallback(m_RemoveScene_id, [this]() { movie_remove_scene(); });
+    SetButtonHotKey(m_RemoveScene_id, SDLK_f);
 
-void cScreenMovieMaker::set_ids()
-{
-    autocreatemovies_id = get_id("AutoCreateMovies");
-    sceneslist_id       = get_id("ScenesList");
-    makethismovie_id    = get_id("MakeThisMovie");
-    releasemovie_id     = get_id("ReleaseMovieButton");
-    scrapscene_id       = get_id("ScrapScene");
-    addscene_id         = get_id("AddScene");
-    removescene_id      = get_id("RemoveScene");
-    moviedetails_id     = get_id("MovieDetails");
-    predict_list_id     = get_id("PredictedAudience");
-    moviename_id        = get_id("MovieName");
-
-    SetButtonCallback(addscene_id, [this]() { movie_add_scene(); });
-    SetButtonHotKey(addscene_id, SDLK_r);
-    SetButtonCallback(removescene_id, [this]() { movie_remove_scene(); });
-    SetButtonHotKey(removescene_id, SDLK_f);
-
-    SetButtonCallback(releasemovie_id, [this]() {
+    SetButtonCallback(m_ReleaseMovieBtn_id, [this]() {
         std::vector<const MovieScene*> active_scenes;
         if(m_ScenesInMovie.empty())
             return;
@@ -61,7 +48,7 @@ void cScreenMovieMaker::set_ids()
             active_scenes.push_back(&g_Game->movie_manager().get_scenes().at(index));
         }
         m_ScenesInMovie.clear();
-        auto movie_name = GetEditBoxText(moviename_id);
+        auto movie_name = GetEditBoxText(m_MovieName_id);
         if(movie_name.empty()) {
             movie_name = g_Game->movie_manager().auto_create_name(active_scenes);
         }
@@ -69,10 +56,10 @@ void cScreenMovieMaker::set_ids()
         init(false);
     });
 
-    SetButtonCallback(scrapscene_id, [this]() {
-        int selection = GetSelectedItemFromList(sceneslist_id);
+    SetButtonCallback(m_ScrapScene_id, [this]() {
+        int selection = GetSelectedItemFromList(m_ScenesList_id);
         if(selection == -1) {
-            DisableWidget(scrapscene_id);
+            DisableWidget(m_ScrapScene_id);
             return;
         }
 
@@ -90,12 +77,12 @@ void cScreenMovieMaker::set_ids()
         init(false);
     });
 
-    SetListBoxSelectionCallback(sceneslist_id, [this](int selection) { on_select_source_scene(selection); });
-    SetListBoxHotKeys(sceneslist_id, SDLK_q, SDLK_a);
-    SetListBoxSelectionCallback(makethismovie_id, [this](int selection) { on_select_movie_scene(selection); });
-    SetListBoxHotKeys(makethismovie_id, SDLK_w, SDLK_s);
+    SetListBoxSelectionCallback(m_ScenesList_id, [this](int selection) { on_select_source_scene(selection); });
+    SetListBoxHotKeys(m_ScenesList_id, SDLK_q, SDLK_a);
+    SetListBoxSelectionCallback(m_MakeThisMovie_id, [this](int selection) { on_select_movie_scene(selection); });
+    SetListBoxHotKeys(m_MakeThisMovie_id, SDLK_w, SDLK_s);
 
-    SetCheckBoxCallback(autocreatemovies_id, [this](bool on) {
+    SetCheckBoxCallback(m_AutoCreateMovies_id, [this](bool on) {
         g_Game->settings().set_value(settings::USER_MOVIES_AUTO, on);
     });
 }
@@ -140,9 +127,9 @@ void cScreenMovieMaker::init(bool back)
 {
     Focused();
 
-    ClearListBox(sceneslist_id);    // clear the lists
-    ClearListBox(makethismovie_id);
-    ClearListBox(predict_list_id);
+    ClearListBox(m_ScenesList_id);    // clear the lists
+    ClearListBox(m_MakeThisMovie_id);
+    ClearListBox(m_PredictedAudience_id);
 
     auto& scenes = g_Game->movie_manager().get_scenes();
 
@@ -151,18 +138,18 @@ void cScreenMovieMaker::init(bool back)
     for(auto& scene: scenes) {
         unsigned int item_color = COLOR_NEUTRAL;
         if(m_ScenesInMovie.count(row) > 0) {
-            GetListBox(makethismovie_id)->AddRow(row, [&](const std::string& c){ return get_scene_detail(scene, c); }, item_color);
+            GetListBox(m_MakeThisMovie_id)->AddRow(row, [&](const std::string& c){ return get_scene_detail(scene, c); }, item_color);
         } else {
-            GetListBox(sceneslist_id)->AddRow(row, [&](const std::string& c){ return get_scene_detail(scene, c); }, item_color);
+            GetListBox(m_ScenesList_id)->AddRow(row, [&](const std::string& c){ return get_scene_detail(scene, c); }, item_color);
         }
         row++;
     }
 
-    DisableWidget(scrapscene_id, GetSelectedItemFromList(sceneslist_id) == -1);
-    DisableWidget(addscene_id, GetSelectedItemFromList(sceneslist_id) == -1 || m_ScenesInMovie.size() >= 5);
-    DisableWidget(removescene_id, GetSelectedItemFromList(makethismovie_id) == -1);
+    DisableWidget(m_ScrapScene_id, GetSelectedItemFromList(m_ScenesList_id) == -1);
+    DisableWidget(m_AddScene_id, GetSelectedItemFromList(m_ScenesList_id) == -1 || m_ScenesInMovie.size() >= 5);
+    DisableWidget(m_RemoveScene_id, GetSelectedItemFromList(m_MakeThisMovie_id) == -1);
     std::stringstream movietext;
-    if (GetListBox(makethismovie_id)->NumItems() > 0)
+    if (GetListBox(m_MakeThisMovie_id)->NumItems() > 0)
     {
         std::set<std::string> directors;
         std::set<std::string> cast;
@@ -203,40 +190,40 @@ void cScreenMovieMaker::init(bool back)
 
         for(auto& aud : g_Game->movie_manager().get_audience()) {
             auto rating = g_Game->movie_manager().estimate_revenue(aud, fake_movie);
-            GetListBox(predict_list_id)->AddRow(0, [&](const std::string& col){ return get_prediction_detail(aud, rating, col); }, 0);
+            GetListBox(m_PredictedAudience_id)->AddRow(0, [&](const std::string& col){ return get_prediction_detail(aud, rating, col); }, 0);
         }
     }
-    EditTextItem(movietext.str(), moviedetails_id, true);
-    SetCheckBox(autocreatemovies_id, g_Game->settings().get_bool(settings::USER_MOVIES_AUTO));
+    EditTextItem(movietext.str(), m_MovieDetails_id, true);
+    SetCheckBox(m_AutoCreateMovies_id, g_Game->settings().get_bool(settings::USER_MOVIES_AUTO));
 }
 
 void cScreenMovieMaker::on_select_movie_scene(int selection)
 {
-    DisableWidget(removescene_id, selection == -1);
+    DisableWidget(m_RemoveScene_id, selection == -1);
 }
 
 void cScreenMovieMaker::on_select_source_scene(int selection)
 {
-    DisableWidget(addscene_id, selection == -1 || m_ScenesInMovie.size() >= 5);
-    DisableWidget(scrapscene_id, selection == -1);
+    DisableWidget(m_AddScene_id, selection == -1 || m_ScenesInMovie.size() >= 5);
+    DisableWidget(m_ScrapScene_id, selection == -1);
 }
 
 void cScreenMovieMaker::movie_add_scene() {
-    ForAllSelectedItems(sceneslist_id, [this](int selection) {
+    ForAllSelectedItems(m_ScenesList_id, [this](int selection) {
         m_ScenesInMovie.insert(selection);
     });
 
-    SetEditBoxText(moviename_id, generate_name());
+    SetEditBoxText(m_MovieName_id, generate_name());
 
     init(false);
 }
 
 void cScreenMovieMaker::movie_remove_scene() {
-    ForAllSelectedItems(makethismovie_id, [this](int selection) {
+    ForAllSelectedItems(m_MakeThisMovie_id, [this](int selection) {
         m_ScenesInMovie.erase(selection);
     });
 
-    SetEditBoxText(moviename_id, generate_name());
+    SetEditBoxText(m_MovieName_id, generate_name());
 
     init(false);
 }
@@ -246,6 +233,7 @@ std::string cScreenMovieMaker::generate_name() {
     if(m_ScenesInMovie.empty())
         return "";
 
+    active_scenes.reserve(m_ScenesInMovie.size());
     for(auto& index : m_ScenesInMovie) {
         active_scenes.push_back(&g_Game->movie_manager().get_scenes().at(index));
     }
@@ -253,3 +241,6 @@ std::string cScreenMovieMaker::generate_name() {
     return g_Game->movie_manager().auto_create_name(active_scenes);
 }
 
+std::shared_ptr<cInterfaceWindow> screens::cMovieMakerScreenBase::create() {
+    return std::make_shared<cScreenMovieMaker>();
+}

@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Settings">
 <Window     Name="Settings"                                                 XPos="257"       YPos="20"       Width="1406"    Height="1041"    Border="1"  />
 <Text       Name="ScreenHeader"             Text="Settings"                 XPos="3"        YPos="0"        Width="281"     Height="84"     FontSize="56"  />
 <Button     Name="OkButton"                 Image="Ok"                      XPos="661"      YPos="982"      Width="180"     Height="45"     Transparency="true"/>

@@ -50,10 +50,12 @@ namespace tinyxml2 {
 class cInterfaceWindow : public cInterfaceObject
 {
 public:
-    cInterfaceWindow(std::string name);
+    explicit cInterfaceWindow(std::string name);
     ~cInterfaceWindow() override;
 
     const std::string& name() const { return m_Name; }
+    /// sets the name of this window. only valid before it has been registered with the window manager
+    void set_name(std::string new_name);
 
     void CreateWindow(int x, int y, int width, int height, int BorderSize);    // and color options latter
     void UpdateWindow(int x, int y);

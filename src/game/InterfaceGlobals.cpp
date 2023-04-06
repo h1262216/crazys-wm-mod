@@ -20,13 +20,8 @@
 #include <chrono>
 #include "interface/sColor.h"
 #include "interface/cWindowManager.h"
-#include "screens/cScreenTown.h"
-#include "screens/cScreenSlaveMarket.h"
 #include "screens/cScreenItemManagement.h"
-#include "screens/cScreenBuildingSetup.h"
-#include "screens/cScreenGangs.h"
 #include "screens/cScreenGirlDetails.h"
-#include "screens/cScreenDungeon.h"
 #include "screens/cScreenMainMenu.h"
 #include "screens/cScreenLoadGame.hpp"
 #include "screens/cScreenBrothelManagement.h"
@@ -34,10 +29,6 @@
 #include "screens/cScreenGallery.h"
 #include "screens/cScreenTurnSummary.h"
 #include "screens/cScreenGameConfig.h"
-#include "screens/cScreenMovieMaker.h"
-#include "screens/cScreenMarketResearch.h"
-#include "screens/cScreenInfoTraits.h"
-#include "screens/cScreenGameMenu.h"
 #include <tinyxml2.h>
 #include "CLog.h"
 #include "xml/util.h"
@@ -57,14 +48,14 @@ T* load_window(const char* name)
 }
 
 template<class T>
-void load_window_easy(const char* name, bool nonav)
+void load_window_easy(bool nonav)
 {
-    g_LogFile.log(ELogLevel::DEBUG, "Loading Window '", name, '\'');
+    g_LogFile.log(ELogLevel::DEBUG, "Loading Window '", typeid(T).name(), '\'');
     auto window = T::create();
     if (!nonav) {
         register_global_nav_keys(*window);
     }
-    window_manager().add_window(name, std::move(window));
+    window_manager().add_window(std::move(window));
 }
 
 void LoadInterface(const cConfig& cfg)
@@ -78,18 +69,18 @@ void LoadInterface(const cConfig& cfg)
     auto start_time = std::chrono::steady_clock::now();
 
     // `J` Bookmark - Loading the screens
-    load_window_easy<screens::cPreparingGameScreenBase>("Preparing Game", true);
+    load_window_easy<screens::cPreparingGameScreenBase>(true);
     load_window<cScreenMainMenu>("Main Menu", true, cfg.saves());
-    load_window_easy<screens::cNewGameBase>("New Game", true);
+    load_window_easy<screens::cNewGameBase>(true);
     load_window<cScreenLoadGame>("Load Game", true, cfg.saves());
-    load_window_easy<screens::cSettingsBase>("Settings", true);
+    load_window_easy<screens::cSettingsBase>(true);
 
     load_window<cScreenBrothelManagement>("Brothel Management");
-    load_window<cScreenGirlDetails>("Girl Details");
-    load_window<cScreenGangs>("Gangs");
+    load_window_easy<cScreenGirlDetails>(false);
+    load_window_easy<screens::cGangsScreenBase>(false);
     load_window<cScreenItemManagement>("Item Management");
     load_window<cMovieScreen>("Movie Screen");
-    load_window_easy<cTransferGirlsBase>("Transfer Screen", false);
+    load_window_easy<cTransferGirlsBase>(false);
     load_window<cScreenTurnSummary>("Turn Summary");
     load_window<cScreenGallery>("Gallery");
     g_GetInput = load_window<cScreenGetInput>("GetInput");
@@ -108,18 +99,18 @@ void LoadInterface(const cConfig& cfg)
     load_window<cScreenArena>("Arena Screen");
     load_window<cScreenHouse>("Player House");
     load_window<cScreenFarm>("Farm Screen");
-    load_window<cScreenDungeon>("Dungeon");
-    load_window<cScreenTown>("Town");
-    load_window<cScreenSlaveMarket>("Slave Market");
-    load_window<cScreenBuildingSetup>("Building Setup");
-    load_window_easy<screens::cMayorScreenBase>("Mayor", false);
-    load_window_easy<screens::cBankScreenBase>("Bank", false);
-    load_window_easy<screens::cPrisonScreenBase>("Prison", false);
-    load_window_easy<screens::cPlayerOfficeScreenBase>("Player's Office", false);
-    load_window<cScreenMovieMaker>("Movie Maker");
-    load_window<cScreenMarketResearch>("Market Research");
-    load_window<cScreenInfoTraits>("Info Traits");
-    load_window<cScreenGameMenu>("Game Menu");
+    load_window_easy<screens::cDungeonScreenBase>(false);
+    load_window_easy<screens::cTownScreenBase>(false);
+    load_window_easy<screens::cSlavemarketScreenBase>(false);
+    load_window_easy<screens::cBuildingSetupScreenBase>(false);
+    load_window_easy<screens::cMayorScreenBase>(false);
+    load_window_easy<screens::cBankScreenBase>(false);
+    load_window_easy<screens::cPrisonScreenBase>(false);
+    load_window_easy<screens::cPlayerOfficeScreenBase>(false);
+    load_window_easy<screens::cMovieMakerScreenBase>(false);
+    load_window_easy<screens::cMovieMarketScreenBase>(false);
+    load_window_easy<screens::cInfoTraitsScreenBase>(false);
+    load_window_easy<screens::cInGameMenuBase>(true);
     load_window<cScreenGameConfig>("GameSetup", false, false);
     load_window<cScreenGameConfig>("UserSettings", false, true);
 
@@ -136,7 +127,8 @@ T* load_window(const char* name, bool nonav, Args&&... args)
     if (!nonav) {
         register_global_nav_keys(*window);
     }
-    window_manager().add_window(name, std::move(window));
+    window->set_name(name);
+    window_manager().add_window(std::move(window));
     return result;
 }
 

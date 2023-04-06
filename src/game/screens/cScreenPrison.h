@@ -27,7 +27,6 @@ public:
     cScreenPrison();
 
     void init(bool back) override;
-    void process() override { };
     void more_button();
     void release_button();
     int PrisonReleaseCost(sGirl& girl);

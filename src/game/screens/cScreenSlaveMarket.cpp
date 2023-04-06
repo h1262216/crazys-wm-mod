@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <vector>
 #include <sstream>
 #include "CLog.h"
@@ -30,6 +31,7 @@
 #include "character/predicates.h"
 #include "character/cGirlPool.h"
 #include "xml/util.h"
+#include "text/repo.h"
 
 namespace {
     class cSlaveMarketIF : public IInteractionInterface {
@@ -59,7 +61,7 @@ namespace {
 
 }
 
-cScreenSlaveMarket::cScreenSlaveMarket() : cGameWindow("slavemarket_screen.xml")
+cScreenSlaveMarket::cScreenSlaveMarket()
 {
     m_SelectedGirl = -1;
     ImageNum       = -1;
@@ -73,27 +75,10 @@ cScreenSlaveMarket::cScreenSlaveMarket() : cGameWindow("slavemarket_screen.xml")
     m_TextRepo->load(*doc->RootElement());
 }
 
-void cScreenSlaveMarket::set_ids()
+cScreenSlaveMarket::~cScreenSlaveMarket() = default;
+
+void cScreenSlaveMarket::setup_callbacks()
 {
-    more_id             = get_id("ShowMoreButton");
-    buy_slave_id        = get_id("BuySlaveButton");
-    cur_brothel_id      = get_id("CurrentBrothel","*Unused*");
-    slave_list_id       = get_id("SlaveList");
-    trait_list_id       = get_id("TraitList","*Unused*");
-    trait_list_text_id  = get_id("TraitListT");
-    details_id          = get_id("SlaveDetails");
-    trait_id            = get_id("TraitDesc","*Unused*");
-    girl_desc_id        = get_id("GirlDesc");
-    image_id            = get_id("GirlImage");
-    header_id           = get_id("ScreenHeader","*Unused*");
-    gold_id             = get_id("Gold", "*Unused*");
-    slave_market_id     = get_id("SlaveMarket");
-    releaseto_id        = get_id("ReleaseTo");
-    roomsfree_id        = get_id("RoomsFree");
-
-    /// TODO cannot handle dungeon like the others at the moment
-    dungeon_id          = get_id("Dungeon");
-
     // set up structure with all "release girl to ... " buttons
     m_ReleaseButtons.emplace_back(RelBtnData{get_id("Brothel0"), BuildingType::BROTHEL, 0});
     m_ReleaseButtons.emplace_back(RelBtnData{get_id("Brothel1"), BuildingType::BROTHEL, 1});
@@ -110,12 +95,12 @@ void cScreenSlaveMarket::set_ids()
     m_ReleaseButtons.emplace_back(RelBtnData{get_id("Farm"), BuildingType::FARM, 0});
 
     // set button callbacks
-    SetButtonCallback(buy_slave_id, [this](){
+    SetButtonCallback(m_BuySlaveBtn_id, [this](){
         buy_slaves();
         init(true);
     });
 
-    SetButtonHotKey(buy_slave_id, SDLK_SPACE);
+    SetButtonHotKey(m_BuySlaveBtn_id, SDLK_SPACE);
 
     for(const auto& btn: m_ReleaseButtons) {
         SetButtonCallback(btn.id, [this, btn](){
@@ -123,43 +108,42 @@ void cScreenSlaveMarket::set_ids()
             update_release_text();});
     }
 
-    SetButtonCallback(dungeon_id, [this]() {
+    SetButtonCallback(m_Dungeon_id, [this]() {
         m_TargetBuilding = nullptr;
-        EditTextItem("Send Girl to: The Dungeon", releaseto_id);
-        EditTextItem("", roomsfree_id);
+        EditTextItem("Send Girl to: The Dungeon", m_ReleaseTo_id);
+        EditTextItem("", m_RoomsFree_id);
     });
 
-    SetButtonCallback(more_id, [this]() {
+    SetButtonCallback(m_ShowMoreBtn_id, [this]() {
         sGirl *girl = g_Game->GetSlaveMarket().get_girl(m_SelectedGirl);
         if(!girl) {
-            EditTextItem("", details_id, true);
+            EditTextItem("", m_SlaveDetails_id, true);
             return;
         }
-        if (DetailLevel == 0)        { DetailLevel = 1; EditTextItem(cGirls::GetMoreDetailsString(*girl, true), details_id, true); }
-        else if (DetailLevel == 1)    { DetailLevel = 2; EditTextItem(cGirls::GetThirdDetailsString(*girl), details_id, true); }
-        else                        { DetailLevel = 0; EditTextItem(cGirls::GetDetailsString(*girl, true), details_id, true); }
+        if (DetailLevel == 0)        { DetailLevel = 1; EditTextItem(cGirls::GetMoreDetailsString(*girl, true), m_SlaveDetails_id, true); }
+        else if (DetailLevel == 1)    { DetailLevel = 2; EditTextItem(cGirls::GetThirdDetailsString(*girl), m_SlaveDetails_id, true); }
+        else                        { DetailLevel = 0; EditTextItem(cGirls::GetDetailsString(*girl, true), m_SlaveDetails_id, true); }
     });
 
-    SetListBoxSelectionCallback(slave_list_id, [this](int sel) { change_selected_girl(sel); });
-    SetListBoxSelectionCallback(trait_list_id, [this](int sel) { on_select_trait(sel); });
-    SetListBoxHotKeys(slave_list_id, SDLK_a, SDLK_d);
+    SetListBoxSelectionCallback(m_SlaveList_id, [this](int sel) { change_selected_girl(sel); });
+    SetListBoxHotKeys(m_SlaveList_id, SDLK_a, SDLK_d);
 
     AddKeyCallback(SDLK_s, [this](){
         sGirl *girl = g_Game->GetSlaveMarket().get_girl(m_SelectedGirl);
         if(!girl) {
-            EditTextItem("", details_id, true);
+            EditTextItem("", m_SlaveDetails_id, true);
             return true;
         }
 
         if (is_ctrl_held())
         {
             DetailLevel = 2;
-            EditTextItem(cGirls::GetThirdDetailsString(*girl), details_id);
+            EditTextItem(cGirls::GetThirdDetailsString(*girl), m_SlaveDetails_id);
         }
         else
         {
-            if (DetailLevel == 0)        { DetailLevel = 1; EditTextItem(cGirls::GetMoreDetailsString(*girl, true), details_id); }
-            else                        { DetailLevel = 0; EditTextItem(cGirls::GetDetailsString(*girl, true), details_id); }
+            if (DetailLevel == 0)        { DetailLevel = 1; EditTextItem(cGirls::GetMoreDetailsString(*girl, true), m_SlaveDetails_id); }
+            else                        { DetailLevel = 0; EditTextItem(cGirls::GetDetailsString(*girl, true), m_SlaveDetails_id); }
         }
         return true;
     });
@@ -171,12 +155,11 @@ void cScreenSlaveMarket::init(bool back)
     std::stringstream ss;
 
     //buttons enable/disable
-    DisableWidget(more_id, true);
-    DisableWidget(buy_slave_id, true);
+    DisableWidget(m_ShowMoreBtn_id, true);
+    DisableWidget(m_BuySlaveBtn_id, true);
     m_SelectedGirl = -1;
 
     ImageNum = -1;
-    if (cur_brothel_id >= 0)    EditTextItem(active_building().name(), cur_brothel_id);
 
     if(!back) {
         m_TargetBuilding = &active_building();
@@ -187,7 +170,7 @@ void cScreenSlaveMarket::init(bool back)
         HideWidget(btn.id, g_Game->buildings().num_buildings(btn.type) < btn.index + 1);
     }
 
-    ClearListBox(slave_list_id);    // clear the list
+    ClearListBox(m_SlaveList_id);    // clear the list
 
     for(std::size_t i = 0; i < g_Game->GetSlaveMarket().num(); ++i) {
         int col = COLOR_NEUTRAL;
@@ -196,55 +179,39 @@ void cScreenSlaveMarket::init(bool back)
         {
             col = COLOR_ATTENTION;
         }
-        AddToListBox(slave_list_id, i, girl->FullName(), col);
+        AddToListBox(m_SlaveList_id, i, girl->FullName(), col);
     }
 
     m_SelectedGirl = 0;
 
-    if (header_id >= 0)
-    {
-        ss.str(""); ss << "Slave Market, " << g_Game->gold().sval() << " gold";
-        EditTextItem(ss.str(), header_id);
-    }
-    if (gold_id >= 0)
+    if (m_Gold_id >= 0)
     {
         ss.str(""); ss << "Gold: " << g_Game->gold().sval();
-        EditTextItem(ss.str(), gold_id);
+        EditTextItem(ss.str(), m_Gold_id);
     }
 
     // Finds the first girl in the selection, so she is highlighted. This stops the No girl selected that was normal before. --PP
     m_SelectedGirl = g_Game->GetSlaveMarket().num() - 1;
 
-    // if there is still as selection (a non empty slave list) then highlight the current selection
-    if (m_SelectedGirl >= 0) SetSelectedItemInList(slave_list_id, m_SelectedGirl, true);
+    // if there is still as selection (a non-empty slave list) then highlight the current selection
+    if (m_SelectedGirl >= 0) SetSelectedItemInList(m_SlaveList_id, m_SelectedGirl, true);
     // now we need to populate the trait box
-    if (trait_list_id >= 0) ClearListBox(trait_list_id);
-    if (trait_list_text_id >= 0) EditTextItem("Traits:", trait_list_text_id);
-    if (girl_desc_id >= 0)    EditTextItem("", girl_desc_id);
-    int tmp = GetLastSelectedItemFromList(slave_list_id);
+    if (m_TraitListT_id >= 0) EditTextItem("Traits:", m_TraitListT_id);
+    if (m_GirlDesc_id >= 0)    EditTextItem("", m_GirlDesc_id);
+    int tmp = GetLastSelectedItemFromList(m_SlaveList_id);
     // if the last item was -1 I assume the list is empty so we can go home early (and probably should have earlier still)
     if (tmp == -1) return;
     // get the girl under the cursor.
     preparescreenitems(g_Game->GetSlaveMarket().get_girl(tmp));
 }
 
-void cScreenSlaveMarket::on_select_trait(int selection)
-{
-    if (selection != -1 && m_SelectedGirl != -1)
-    {
-        auto traits = g_Game->GetSlaveMarket().get_girl(m_SelectedGirl)->get_trait_info();
-        EditTextItem(traits.at(selection).trait->desc(), trait_id);
-    }
-    else EditTextItem("", trait_id);
-}
-
 void cScreenSlaveMarket::process()
 {
     /*
-    HideWidget(image_id, (m_SelectedGirl < 0));        // hide/show image based on whether a girl is selected
+    HideWidget(m_GirlImage_id, (m_SelectedGirl < 0));        // hide/show image based on whether a girl is selected
     if (m_SelectedGirl < 0)                                // if no girl is selected, clear girl info
     {
-        EditTextItem("No girl selected", details_id);
+        EditTextItem("No girl selected", m_SlaveDetails_id);
         if (trait_id >= 0) EditTextItem("", trait_id);
     }
     // nothing selected == nothing further to do
@@ -290,7 +257,7 @@ bool cScreenSlaveMarket::buy_slaves()
 
     int totalcost = 0;
     std::vector<sGirl*> girls_bought;
-    ForAllSelectedItems(slave_list_id, [&](int sel) {
+    ForAllSelectedItems(m_SlaveList_id, [&](int sel) {
         auto girl = g_Game->GetSlaveMarket().get_girl(sel);
         girls_bought.push_back(girl);
         totalcost += g_Game->tariff().slave_buy_price(*girl);
@@ -563,11 +530,10 @@ bool cScreenSlaveMarket::buy_slaves()
 
     // finish it
     m_SelectedGirl = -1;
-    HideWidget(image_id, true);        // hide/show image based on whether a girl is selected
+    HideWidget(m_GirlImage_id, true);        // hide/show image based on whether a girl is selected
     if (m_SelectedGirl < 0)                                // if no girl is selected, clear girl info
     {
-        EditTextItem("No girl selected", details_id);
-        if (trait_id >= 0) EditTextItem("", trait_id);
+        EditTextItem("No girl selected", m_SlaveDetails_id);
     }
 
     return true;
@@ -682,18 +648,17 @@ bool cScreenSlaveMarket::change_selected_girl(int selected)
      *    if the last clicked one is actually deselected.
      */
     m_SelectedGirl = selected;
-    HideWidget(image_id, (m_SelectedGirl < 0));        // hide/show image based on whether a girl is selected
+    HideWidget(m_GirlImage_id, (m_SelectedGirl < 0));        // hide/show image based on whether a girl is selected
     if (m_SelectedGirl < 0)
     {
         // if no girl is selected, clear girl info
-        EditTextItem("No girl selected", details_id);
-        if (trait_id >= 0) EditTextItem("", trait_id);
+        EditTextItem("No girl selected", m_SlaveDetails_id);
 
     }
     bool MatchSel = false;
     int first_candidate = -1;
 
-    ForAllSelectedItems(slave_list_id, [&](int sel) {
+    ForAllSelectedItems(m_SlaveList_id, [&](int sel) {
         MatchSel |= sel == m_SelectedGirl;
         if(first_candidate == -1)  first_candidate = sel;
     });
@@ -702,11 +667,10 @@ bool cScreenSlaveMarket::change_selected_girl(int selected)
     // if the player selected an empty slot make that into "nothing selected" and return
     //if (MarketSlaveGirls[selection] == nullptr) selection = -1;
     // disable/enable buttons based on whether a girl is selected
-    DisableWidget(more_id, (m_SelectedGirl == -1));
-    DisableWidget(buy_slave_id, (m_SelectedGirl == -1));
-    if (trait_list_id >= 0) ClearListBox(trait_list_id);
-    if (trait_list_text_id >= 0) EditTextItem("Traits:", trait_list_text_id);
-    if (girl_desc_id >= 0)    EditTextItem("", girl_desc_id);
+    DisableWidget(m_ShowMoreBtn_id, (m_SelectedGirl == -1));
+    DisableWidget(m_BuySlaveBtn_id, (m_SelectedGirl == -1));
+    if (m_TraitListT_id >= 0) EditTextItem("Traits:", m_TraitListT_id);
+    if (m_GirlDesc_id >= 0)    EditTextItem("", m_GirlDesc_id);
     // selection of -1 means nothing selected, so we get to go home early
     if (m_SelectedGirl == -1) return true;
     /*
@@ -727,12 +691,12 @@ bool cScreenSlaveMarket::change_selected_girl(int selected)
     if (DetailLevel == 0)        detail = cGirls::GetDetailsString(*girl, true);
     else if (DetailLevel == 1)    detail = cGirls::GetMoreDetailsString(*girl, true);
     else                        detail = cGirls::GetThirdDetailsString(*girl);
-    EditTextItem(detail, details_id, true);
+    EditTextItem(detail, m_SlaveDetails_id, true);
     ImageNum = -1;                                        // I don't understand where this is used...
 
     preparescreenitems(girl);
-    PrepareImage(image_id, *girl, EImageBaseType::PRESENTED);
-    HideWidget(image_id, false);
+    PrepareImage(m_GirlImage_id, *girl, EImageBaseType::PRESENTED);
+    HideWidget(m_GirlImage_id, false);
 
     return true;
 }
@@ -792,17 +756,15 @@ void cScreenSlaveMarket::preparescreenitems(sGirl* girl)
     {
         if (!traits[i].active) continue;
         trait_count++;
-        if (trait_list_id >= 0) AddToListBox(trait_list_id, i, traits[i].trait->display_name());
-        if (trait_list_text_id)
+        if (m_TraitListT_id)
         {
             if (trait_count > 1) traits_text << ",   ";
             traits_text << traits[i].trait->display_name();
         }
     }
     // and finally, highlight the selected entry?
-    if (trait_list_id >= 0) SetSelectedItemInList(trait_list_id, 0);
-    if (trait_list_text_id >= 0) EditTextItem(traits_text.str(), trait_list_text_id);
-    if (girl_desc_id >= 0)    EditTextItem(girl->m_Desc, girl_desc_id);
+    if (m_TraitListT_id >= 0) EditTextItem(traits_text.str(), m_TraitListT_id);
+    if (m_GirlDesc_id >= 0)    EditTextItem(girl->m_Desc, m_GirlDesc_id);
 }
 
 void cScreenSlaveMarket::affect_dungeon_girl_by_disposition(sGirl& girl) const
@@ -884,8 +846,13 @@ void cScreenSlaveMarket::update_release_text()
         return;
     std::stringstream  ss;
     ss << "Send Girl to: " << m_TargetBuilding->name();
-    EditTextItem(ss.str(), releaseto_id);
+    EditTextItem(ss.str(), m_ReleaseTo_id);
     ss.str("");
     ss << "Room for " << m_TargetBuilding->free_rooms() << " more girls.";
-    EditTextItem(ss.str(), roomsfree_id);
+    EditTextItem(ss.str(), m_RoomsFree_id);
 }
+
+std::shared_ptr<cInterfaceWindow> screens::cSlavemarketScreenBase::create() {
+    return std::make_shared<cScreenSlaveMarket>();
+}
+

@@ -32,7 +32,7 @@ set(SCREENS_SRC
         screens/cScreenGameConfig.cpp
         screens/cScreenInfoTraits.cpp
         screens/cScreenGameMenu.cpp
-        screens/cScreenYourOffice.cpp)
+        screens/cScreenPlayerOffice.cpp)
 
 set(SRC cEvents.cpp
         cGangs.cpp

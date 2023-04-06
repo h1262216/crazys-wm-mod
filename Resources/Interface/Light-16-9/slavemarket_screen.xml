@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Slave Market">
 <Window     Name="Slave Market Window"                                      XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
 <Text       Name="SlaveMarket"          Text="Slave Market"                 XPos="14"       YPos="3"        Width="281"     Height="45"     FontSize="34"   Red="128"          />
 <Text       Name="SlaveDetails"         Text=""                             XPos="14"       YPos="49"       Width="281"     Height="844"    FontSize="13"          />

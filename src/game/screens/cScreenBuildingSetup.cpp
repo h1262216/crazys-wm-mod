@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org     // old site: http://pinkpetal .co.cc
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "buildings/cBuilding.h"
 #include "cScreenBuildingSetup.h"
 #include "interface/cWindowManager.h"
@@ -26,48 +27,33 @@
 
 static std::stringstream ss;
 
-cScreenBuildingSetup::cScreenBuildingSetup() : cGameWindow("building_setup_screen.xml")
+cScreenBuildingSetup::cScreenBuildingSetup() = default;
+
+void cScreenBuildingSetup::setup_callbacks()
 {
-}
+    SetButtonCallback(m_BuildRoomsBtn_id, [this](){ buy_rooms(); });
+    SetButtonCallback(m_10PotionsBtn_id, [this](){ buy_potions(10); });
+    SetButtonCallback(m_20PotionsBtn_id, [this](){ buy_potions(20); });
 
-void cScreenBuildingSetup::set_ids()
-{
-    curbrothel_id    = get_id("CurrentBrothel");
-    gold_id          = get_id("Gold");
-    potioncost_id    = get_id("PotionCost");
-    potionavail_id   = get_id("AvailablePotions");
-    potions10_id     = get_id("10PotionsButton");
-    potions20_id     = get_id("20PotionsButton");
-    autopotions_id   = get_id("AutoBuyPotionToggle");
-    roomcost_id      = get_id("RoomAddCost");
-    buyrooms_id      = get_id("BuildRoomsButton");
-
-    advertsli_id     = get_id("AdvertisingSlider");
-    advertamt_id     = get_id("AdvertisingValue");
-
-    SetButtonCallback(buyrooms_id, [this](){ buy_rooms(); });
-    SetButtonCallback(potions10_id, [this](){ buy_potions(10); });
-    SetButtonCallback(potions20_id, [this](){ buy_potions(20); });
-
-    m_SexTypeAllowedMap = { {get_id("ProhibitAnalToggle"), SKILL_ANAL}, {get_id("ProhibitBDSMToggle"), SKILL_BDSM},
-                            {get_id("ProhibitBeastToggle"), SKILL_BEASTIALITY}, {get_id("ProhibitFootJobToggle"), SKILL_FOOTJOB},
-                            {get_id("ProhibitGroupToggle"), SKILL_GROUP}, {get_id("ProhibitHandJobToggle"), SKILL_HANDJOB},
-                            {get_id("ProhibitLesbianToggle"), SKILL_LESBIAN}, {get_id("ProhibitNormalToggle"), SKILL_NORMALSEX},
-                            {get_id("ProhibitOralToggle"), SKILL_ORALSEX}, {get_id("ProhibitStripToggle"), SKILL_STRIP},
-                            {get_id("ProhibitTittyToggle"), SKILL_TITTYSEX}};
+    m_SexTypeAllowedMap = { {m_ProhibitAnalToggle_id, SKILL_ANAL}, {m_ProhibitBdsmtoggle_id, SKILL_BDSM},
+                            {m_ProhibitBeastToggle_id, SKILL_BEASTIALITY}, {m_ProhibitFootJobToggle_id, SKILL_FOOTJOB},
+                            {m_ProhibitGroupToggle_id, SKILL_GROUP}, {m_ProhibitHandJobToggle_id, SKILL_HANDJOB},
+                            {m_ProhibitLesbianToggle_id, SKILL_LESBIAN}, {m_ProhibitNormalToggle_id, SKILL_NORMALSEX},
+                            {m_ProhibitOralToggle_id, SKILL_ORALSEX}, {m_ProhibitStripToggle_id, SKILL_STRIP},
+                            {m_ProhibitTittyToggle_id, SKILL_TITTYSEX}};
 
     for(const auto& data : m_SexTypeAllowedMap) {
         SetCheckBoxCallback(data.id, [this, skill=data.skill](bool on){ set_sex_type_allowed(skill, on); });
     }
 
-    SetCheckBoxCallback(autopotions_id, [this](bool on) {
+    SetCheckBoxCallback(m_AutoBuyPotionToggle_id, [this](bool on) {
         active_building().m_KeepPotionsStocked = on;
     });
 
-    SetSliderCallback(advertsli_id, [this](int value) {
+    SetSliderCallback(m_AdvertisingSlider_id, [this](int value) {
         active_building().m_AdvertisingBudget = value * 50;
         ss.str(""); ss << "Advertising Budget: " << g_Game->tariff().advertising_costs(value * 50) << " gold / week";
-        EditTextItem(ss.str(), advertamt_id);;
+        EditTextItem(ss.str(), m_AdvertisingValue_id);
     });
 }
 
@@ -87,34 +73,34 @@ void cScreenBuildingSetup::init(bool back)
     advert = building.m_AdvertisingBudget / 50;
 
     // setup check boxes
-    SetCheckBox(autopotions_id, building.GetPotionRestock());
+    SetCheckBox(m_AutoBuyPotionToggle_id, building.GetPotionRestock());
     for(const auto& data : m_SexTypeAllowedMap) {
         SetCheckBox(data.id, !building.is_sex_type_allowed(data.skill));
     }
 
-    if (gold_id >= 0)
+    if (m_Gold_id >= 0)
     {
         ss.str(""); ss << "Gold: " << g_Game->gold().ival();
-        EditTextItem(ss.str(), gold_id);
+        EditTextItem(ss.str(), m_Gold_id);
     }
 
-    EditTextItem(brothel, curbrothel_id);
+    EditTextItem(brothel, m_CurrentBrothel_id);
     ss.str("");    ss << "Anti-Preg Potions: " << g_Game->tariff().anti_preg_price(1) << " gold each.";
-    EditTextItem(ss.str(), potioncost_id);
+    EditTextItem(ss.str(), m_PotionCost_id);
 
     // let's limit advertising budget to multiples of 50 gold (~3 added customers), from 0 - 2000
-    advert = SliderRange(advertsli_id, 0, (2000 / 50), advert, 4);  // set slider min/max range
+    advert = SliderRange(m_AdvertisingSlider_id, 0, (2000 / 50), advert, 4);  // set slider min/max range
     ss.str("");    ss << "Advertising Budget: " << (advert * 50) << " gold / week";
-    EditTextItem(ss.str(), advertamt_id);
+    EditTextItem(ss.str(), m_AdvertisingValue_id);
 
     if (antipregused < 0) antipregused = 0;
     ss.str("");    ss << "         You have: " << antipregnum << "\nUsed Last Turn: " << antipregused;
-    EditTextItem(ss.str(), potionavail_id);
-    DisableWidget(autopotions_id, antipregnum < 1);
+    EditTextItem(ss.str(), m_AvailablePotions_id);
+    DisableWidget(m_AutoBuyPotionToggle_id, antipregnum < 1);
 
     ss.str("");    ss << "Add Rooms: " << g_Game->tariff().add_room_cost(5) << " gold\nCurrent: " << rooms << "\nMaximum: " << maxrooms << std::endl;
-    EditTextItem(ss.str(), roomcost_id);
-    DisableWidget(buyrooms_id, rooms >= maxrooms);
+    EditTextItem(ss.str(), m_RoomAddCost_id);
+    DisableWidget(m_BuildRoomsBtn_id, rooms >= maxrooms);
 }
 
 void cScreenBuildingSetup::buy_potions(int buypotions)
@@ -163,8 +149,8 @@ void cScreenBuildingSetup::buy_rooms()
         int maxrooms = target.m_MaxNumRooms;
 
         ss.str(""); ss << "Add Rooms: " << g_Game->tariff().add_room_cost(5) << " gold\nCurrent: " << rooms << "\nMaximum: " << maxrooms << std::endl;
-        EditTextItem(ss.str(), roomcost_id);
-        DisableWidget(buyrooms_id, rooms >= maxrooms);
+        EditTextItem(ss.str(), m_RoomAddCost_id);
+        DisableWidget(m_BuildRoomsBtn_id, rooms >= maxrooms);
         init(false);
     }
 }
@@ -174,3 +160,6 @@ void cScreenBuildingSetup::set_sex_type_allowed(SKILLS sex_type, bool is_forbidd
     active_building().set_sex_type_allowed(sex_type, !is_forbidden);
 }
 
+std::shared_ptr<cInterfaceWindow> screens::cBuildingSetupScreenBase::create() {
+    return std::make_shared<cScreenBuildingSetup>();
+}

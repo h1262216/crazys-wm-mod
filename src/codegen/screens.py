@@ -39,7 +39,8 @@ void {class_name}::set_ids() {{
 
 
 game_screens = {
-    "TransferGirls", "PreparingGameScreen", "PrisonScreen"
+    "TransferGirls", "PreparingGameScreen", "PrisonScreen", "SlavemarketScreen", "BuildingSetupScreen",
+    "TownScreen", "DungeonScreen", "GirlDetailsScreen"
 }
 
 

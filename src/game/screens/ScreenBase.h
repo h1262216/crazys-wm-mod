@@ -237,7 +237,7 @@ namespace screens {
             int m_YourOffice_id      = -1;
     };
 
-    class cBuildingSetupScreenBase : public cInterfaceWindowXML 
+    class cBuildingSetupScreenBase : public cGameWindow 
     {
         public:
             cBuildingSetupScreenBase();
@@ -364,7 +364,7 @@ namespace screens {
             int m_WalkBtn_id         = -1;
     };
 
-    class cDungeonScreenBase : public cInterfaceWindowXML 
+    class cDungeonScreenBase : public cGameWindow 
     {
         public:
             cDungeonScreenBase();
@@ -563,7 +563,7 @@ namespace screens {
             int m_TextField_id       = -1;
     };
 
-    class cGirlDetailsScreenBase : public cInterfaceWindowXML 
+    class cGirlDetailsScreenBase : public cGameWindow 
     {
         public:
             cGirlDetailsScreenBase();
@@ -1188,7 +1188,7 @@ namespace screens {
             int m_WindowWidth_id     = -1;
     };
 
-    class cSlavemarketScreenBase : public cInterfaceWindowXML 
+    class cSlavemarketScreenBase : public cGameWindow 
     {
         public:
             cSlavemarketScreenBase();
@@ -1248,7 +1248,7 @@ namespace screens {
             int m_GirlList_id        = -1;
     };
 
-    class cTownScreenBase : public cInterfaceWindowXML 
+    class cTownScreenBase : public cGameWindow 
     {
         public:
             cTownScreenBase();

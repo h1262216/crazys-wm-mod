@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <string>
 #include <sstream>
 #include <algorithm>
@@ -31,47 +32,16 @@
 
 extern cRng                    g_Dice;
 
-static int                    ImageNum = -1;
 static std::stringstream ss;
 
-cScreenDungeon::cScreenDungeon() : cGameWindow("dungeon_screen.xml")
+cScreenDungeon::cScreenDungeon()
 {
     selection = -1;
 }
 
-void cScreenDungeon::set_ids()
+void cScreenDungeon::setup_callbacks()
 {
-    header_id       = get_id("DungeonHeader");
-    gold_id         = get_id("Gold");
-    girllist_id     = get_id("GirlList");
-    m_MainImageId    = get_id("GirlImage");
-    brandslave_id   = get_id("BrandSlaveButton");
-    release_id      = get_id("ReleaseButton");
-    allowfood_id    = get_id("AllowFoodButton");
-    torture_id      = get_id("TortureButton");
-    stopfood_id     = get_id("StopFeedingButton");
-    interact_id     = get_id("InteractButton");
-    interactc_id    = get_id("InteractCount");
-    allgirls_id     = get_id("SelectAllGirls");
-    allcust_id      = get_id("SelectAllCust");
-    viewdetails_id  = get_id("DetailsButton");
-    sellslave_id    = get_id("SellButton");
-
-    releaseto_id    = get_id("ReleaseTo");
-    roomsfree_id    = get_id("RoomsFree");
-    brothel0_id     = get_id("Brothel0");
-    brothel1_id     = get_id("Brothel1");
-    brothel2_id     = get_id("Brothel2");
-    brothel3_id     = get_id("Brothel3");
-    brothel4_id     = get_id("Brothel4");
-    brothel5_id     = get_id("Brothel5");
-    brothel6_id     = get_id("Brothel6");
-    house_id        = get_id("House");
-    clinic_id       = get_id("Clinic");
-    studio_id       = get_id("Studio");
-    arena_id        = get_id("Arena");
-    centre_id       = get_id("Centre");
-    farm_id         = get_id("Farm");
+    m_MainImageId   = get_id("GirlImage");
 
     struct RelBtn {
         const char* name;
@@ -101,53 +71,53 @@ void cScreenDungeon::set_ids()
         });
     }
 
-    SetButtonCallback(brandslave_id, [this]() { enslave(); });
-    SetButtonCallback(allcust_id, [this]() { select_all_customers(); });
-    SetButtonCallback(sellslave_id, [this]() { sell_slaves(); });
-    SetButtonCallback(viewdetails_id, [this]() { view_girl(); });
-    SetButtonHotKey(viewdetails_id, SDLK_SPACE);
-    SetButtonCallback(allgirls_id, [this]() {
+    SetButtonCallback(m_BrandSlaveBtn_id, [this]() { enslave(); });
+    SetButtonCallback(m_SelectAllCust_id, [this]() { select_all_customers(); });
+    SetButtonCallback(m_SellBtn_id, [this]() { sell_slaves(); });
+    SetButtonCallback(m_DetailsBtn_id, [this]() { view_girl(); });
+    SetButtonHotKey(m_DetailsBtn_id, SDLK_SPACE);
+    SetButtonCallback(m_SelectAllGirls_id, [this]() {
         select_all_girls();
     });
 
-    SetButtonCallback(stopfood_id, [this]() {
+    SetButtonCallback(m_StopFeedingBtn_id, [this]() {
         stop_feeding();
         selection = -1;
     });
 
-    SetButtonCallback(allowfood_id, [this]() {
+    SetButtonCallback(m_AllowFoodBtn_id, [this]() {
         start_feeding();
         selection = -1;
     });
 
-    SetButtonCallback(interact_id, [this]() {
+    SetButtonCallback(m_InteractBtn_id, [this]() {
         if (selection == -1) return;
         talk();
     });
 
-    SetButtonCallback(torture_id, [this]() {
+    SetButtonCallback(m_TortureBtn_id, [this]() {
         torture();
         selection = -1;
     });
 
-    SetButtonCallback(release_id, [this]() {
+    SetButtonCallback(m_ReleaseBtn_id, [this]() {
         release();
         selection = -1;
         init(false);
     });
 
-    SetListBoxSelectionCallback(girllist_id, [this](int selected) {
+    SetListBoxSelectionCallback(m_GirlList_id, [this](int selected) {
         selection_change();
-        if (IsMultiSelected(girllist_id))         // disable buttons based on multiselection
+        if (IsMultiSelected(m_GirlList_id))         // disable buttons based on multiselection
         {
-            DisableWidget(interact_id, true);
+            DisableWidget(m_InteractBtn_id, true);
         }
         update_image();
     });
-    SetListBoxDoubleClickCallback(girllist_id, [this](int selected) {
+    SetListBoxDoubleClickCallback(m_GirlList_id, [this](int selected) {
         view_girl();
     });
-    SetListBoxHotKeys(girllist_id, SDLK_a, SDLK_d);
+    SetListBoxHotKeys(m_GirlList_id, SDLK_a, SDLK_d);
 }
 
 void cScreenDungeon::init(bool back)
@@ -156,16 +126,16 @@ void cScreenDungeon::init(bool back)
         m_ReleaseBuilding = &active_building();
 
     Focused();
-    ClearListBox(girllist_id);                // clear the lists
+    ClearListBox(m_GirlList_id);                // clear the lists
 
-    if (gold_id >= 0)
+    if (m_Gold_id >= 0)
     {
         ss.str(""); ss << "Gold: " << g_Game->gold().ival();
-        EditTextItem(ss.str(), gold_id);
+        EditTextItem(ss.str(), m_Gold_id);
     }
 
     ss.str("");    ss << "Your Dungeon where " << g_Game->dungeon().GetNumDied() << " people have died.";
-    EditTextItem(ss.str(), header_id);
+    EditTextItem(ss.str(), m_DungeonHeader_id);
     // Fill the list box
     selection = g_Game->dungeon().GetNumGirls() > 0 ? 0 : -1;
     for (int i = 0; i < g_Game->dungeon().GetNumGirls(); i++)                                                // add girls
@@ -174,7 +144,7 @@ void cScreenDungeon::init(bool back)
         if (selected_girl().get() == dgirl->m_Girl.get()) selection = i;                                                            // if selected_girl is this girl, update selection
         dgirl->m_Girl->m_DayJob = dgirl->m_Girl->m_NightJob = JOB_INDUNGEON;
         int col = ((dgirl->m_Girl->health() <= 30) || (dgirl->m_Girl->happiness() <= 30)) ? COLOR_WARNING : COLOR_NEUTRAL;            // if she's low health or unhappy, flag her entry to display in red // Anon21
-        GetListBox(girllist_id)->AddRow(i, dgirl, col);
+        GetListBox(m_GirlList_id)->AddRow(i, dgirl, col);
     }
     // now add the customers
     int offset = g_Game->dungeon().GetNumGirls();
@@ -182,77 +152,77 @@ void cScreenDungeon::init(bool back)
     {
         sDungeonCust* cust = g_Game->dungeon().GetCust(i);
         int col = (cust->m_Health <= 30) ? COLOR_WARNING : COLOR_NEUTRAL;
-        GetListBox(girllist_id)->AddRow(i + g_Game->dungeon().GetNumGirls(), cust, col);
+        GetListBox(m_GirlList_id)->AddRow(i + g_Game->dungeon().GetNumGirls(), cust, col);
     }
 
     // disable some buttons
-    DisableWidget(allowfood_id);
-    DisableWidget(stopfood_id);
-    DisableWidget(interact_id);
-    if (interactc_id >= 0)
+    DisableWidget(m_AllowFoodBtn_id);
+    DisableWidget(m_StopFeedingBtn_id);
+    DisableWidget(m_InteractBtn_id);
+    if (m_InteractCount_id >= 0)
     {
         ss.str(""); ss << "Interactions Left: ";
         if (g_Game->allow_cheats()) ss << "Infinate Cheat";
         else if (g_Game->GetTalkCount() <= 0) ss << "0 (buy in House screen)";
         else ss << g_Game->GetTalkCount();
-        EditTextItem(ss.str(), interactc_id);
+        EditTextItem(ss.str(), m_InteractCount_id);
     }
-    DisableWidget(release_id);
-    DisableWidget(brandslave_id);
-    DisableWidget(torture_id);
-    DisableWidget(sellslave_id);
+    DisableWidget(m_ReleaseBtn_id);
+    DisableWidget(m_BrandSlaveBtn_id);
+    DisableWidget(m_TortureBtn_id);
+    DisableWidget(m_SellBtn_id);
     //    cerr << "::init: disabling torture" << endl;    // `J` commented out
-    DisableWidget(viewdetails_id);
-    DisableWidget(allgirls_id, (g_Game->dungeon().GetNumGirls() <= 0));    // only enable "release all girls" if there are girls to release
-    DisableWidget(allcust_id, (g_Game->dungeon().GetNumCusts() <= 0));    // similarly...
+    DisableWidget(m_DetailsBtn_id);
+    DisableWidget(m_SelectAllGirls_id, (g_Game->dungeon().GetNumGirls() <= 0));    // only enable "release all girls" if there are girls to release
+    DisableWidget(m_SelectAllCust_id, (g_Game->dungeon().GetNumCusts() <= 0));    // similarly...
 
     HideWidget(m_MainImageId, g_Game->dungeon().GetNumGirls() <= 0);
 
     ss.str("");    ss << "Release Girl to: " << m_ReleaseBuilding->name();
-    EditTextItem(ss.str(), releaseto_id);
+    EditTextItem(ss.str(), m_ReleaseTo_id);
     ss.str("");    ss << "Room for " << m_ReleaseBuilding->free_rooms() << " more girls.";
-    EditTextItem(ss.str(), roomsfree_id);
+    EditTextItem(ss.str(), m_RoomsFree_id);
 
     int mum_brothels = g_Game->buildings().num_buildings(BuildingType::BROTHEL);
-    HideWidget(brothel1_id, mum_brothels < 2);
-    HideWidget(brothel2_id, mum_brothels < 3);
-    HideWidget(brothel3_id, mum_brothels < 4);
-    HideWidget(brothel4_id, mum_brothels < 5);
-    HideWidget(brothel5_id, mum_brothels < 6);
-    HideWidget(brothel6_id, mum_brothels < 7);
-    HideWidget(clinic_id, !g_Game->has_building(BuildingType::CLINIC));
-    HideWidget(studio_id, !g_Game->has_building(BuildingType::STUDIO));
-    HideWidget(arena_id, !g_Game->has_building(BuildingType::ARENA));
-    HideWidget(centre_id, !g_Game->has_building(BuildingType::CENTRE));
-    HideWidget(farm_id, !g_Game->has_building(BuildingType::FARM));
+    HideWidget(m_Brothel1_id, mum_brothels < 2);
+    HideWidget(m_Brothel2_id, mum_brothels < 3);
+    HideWidget(m_Brothel3_id, mum_brothels < 4);
+    HideWidget(m_Brothel4_id, mum_brothels < 5);
+    HideWidget(m_Brothel5_id, mum_brothels < 6);
+    HideWidget(m_Brothel6_id, mum_brothels < 7);
+    HideWidget(m_Clinic_id, !g_Game->has_building(BuildingType::CLINIC));
+    HideWidget(m_Studio_id, !g_Game->has_building(BuildingType::STUDIO));
+    HideWidget(m_Arena_id, !g_Game->has_building(BuildingType::ARENA));
+    HideWidget(m_Centre_id, !g_Game->has_building(BuildingType::CENTRE));
+    HideWidget(m_Farm_id, !g_Game->has_building(BuildingType::FARM));
 
     // if a selection of girls is stored, try to re-select them
-    if (selection >= 0) SetSelectedItemInList(girllist_id, selection);
+    if (selection >= 0) SetSelectedItemInList(m_GirlList_id, selection);
 }
 
 void cScreenDungeon::selection_change()
 {
-    selection = GetSelectedItemFromList(girllist_id);
+    selection = GetSelectedItemFromList(m_GirlList_id);
     // if nothing is selected, then we just need to disable some buttons and we're done
     if (selection == -1)
     {
         set_active_girl(nullptr);
-        DisableWidget(brandslave_id);
-        DisableWidget(allowfood_id);
-        DisableWidget(stopfood_id);
-        DisableWidget(interact_id);
-        DisableWidget(release_id);
-        DisableWidget(torture_id);
-        DisableWidget(viewdetails_id);
-        DisableWidget(sellslave_id);
+        DisableWidget(m_BrandSlaveBtn_id);
+        DisableWidget(m_AllowFoodBtn_id);
+        DisableWidget(m_StopFeedingBtn_id);
+        DisableWidget(m_InteractBtn_id);
+        DisableWidget(m_ReleaseBtn_id);
+        DisableWidget(m_TortureBtn_id);
+        DisableWidget(m_DetailsBtn_id);
+        DisableWidget(m_SellBtn_id);
         return;
     }
     // otherwise, we need to enable some buttons...
-    DisableWidget(sellslave_id);
-    DisableWidget(torture_id, !torture_possible());
-    DisableWidget(interact_id, g_Game->GetTalkCount() == 0 || IsMultiSelected(girllist_id));
-    EnableWidget(release_id);
-    DisableWidget(brandslave_id);
+    DisableWidget(m_SellBtn_id);
+    DisableWidget(m_TortureBtn_id, !torture_possible());
+    DisableWidget(m_InteractBtn_id, g_Game->GetTalkCount() == 0 || IsMultiSelected(m_GirlList_id));
+    EnableWidget(m_ReleaseBtn_id);
+    DisableWidget(m_BrandSlaveBtn_id);
     // and then decide if this is a customer selected, or a girl customer is easiest, so we do that first
     if ((selection - g_Game->dungeon().GetNumGirls()) >= 0)
     {
@@ -264,10 +234,10 @@ void cScreenDungeon::selection_change()
                          "provide us a description / save game of how you managed this.", COLOR_WARNING);
             return;
         }
-        DisableWidget(viewdetails_id);
-        DisableWidget(interact_id);
-        DisableWidget(allowfood_id, cust->m_Feeding);
-        DisableWidget(stopfood_id, !cust->m_Feeding);
+        DisableWidget(m_DetailsBtn_id);
+        DisableWidget(m_InteractBtn_id);
+        DisableWidget(m_AllowFoodBtn_id, cust->m_Feeding);
+        DisableWidget(m_StopFeedingBtn_id, !cust->m_Feeding);
         return;
     }
     // Not a customer then. Must be a girl...
@@ -275,35 +245,35 @@ void cScreenDungeon::selection_change()
     auto dgirl = g_Game->dungeon().GetGirl(num);
     auto girl = dgirl->m_Girl;
     // again, we're just enabling and disabling buttons
-    EnableWidget(viewdetails_id);
+    EnableWidget(m_DetailsBtn_id);
 
-    DisableWidget(allowfood_id, dgirl->m_Feeding);
-    DisableWidget(stopfood_id, !dgirl->m_Feeding);
+    DisableWidget(m_AllowFoodBtn_id, dgirl->m_Feeding);
+    DisableWidget(m_StopFeedingBtn_id, !dgirl->m_Feeding);
     // some of them partly depend upon whether she's a slave or not
     if (dgirl->m_Girl->is_slave())
     {
-        EnableWidget(sellslave_id);
-        DisableWidget(brandslave_id);
+        EnableWidget(m_SellBtn_id);
+        DisableWidget(m_BrandSlaveBtn_id);
     }
     else
     {
-        EnableWidget(brandslave_id);
-        DisableWidget(sellslave_id);
+        EnableWidget(m_BrandSlaveBtn_id);
+        DisableWidget(m_SellBtn_id);
     }
     set_active_girl(std::move(girl));
 }
 
 int cScreenDungeon::view_girl()
 {
-    selection = GetSelectedItemFromList(girllist_id);
+    selection = GetSelectedItemFromList(m_GirlList_id);
 
     if (selection == -1) return Continue;                            // nothing selected, nothing to do.
     if ((selection - g_Game->dungeon().GetNumGirls()) >= 0) return Continue;    // if this is a customer, we're not interested
     reset_cycle_list();
 
-    if(IsMultiSelected(girllist_id)) {
+    if(IsMultiSelected(m_GirlList_id)) {
         // if multiple girls are selected, put them into the selection list
-        ForAllSelectedItems(girllist_id, [&](int sel) {
+        ForAllSelectedItems(m_GirlList_id, [&](int sel) {
             if(sel < g_Game->dungeon().GetNumGirls()) {
                 add_to_cycle_list(g_Game->dungeon().GetGirl(sel)->m_Girl);
             }
@@ -356,7 +326,7 @@ int cScreenDungeon::enslave()
     std::vector<std::string> submitted;
 
     // roll on vectors!
-    ForAllSelectedItems(girllist_id, [&](int selection) {
+    ForAllSelectedItems(m_GirlList_id, [&](int selection) {
         if ((selection - (g_Game->dungeon().GetNumGirls() + numGirlsRemoved)) >= 0)    // it is a customer
         {
             enslave_customer(numGirlsRemoved, numCustsRemoved);
@@ -476,7 +446,7 @@ void cScreenDungeon::select_all_girls()
 {
     for (int i = 0; i < g_Game->dungeon().GetNumGirls(); i++)
     {
-        SetSelectedItemInList(girllist_id, i, false, false);
+        SetSelectedItemInList(m_GirlList_id, i, false, false);
     }
     selection_change();
 }
@@ -486,7 +456,7 @@ void cScreenDungeon::select_all_customers()
     int offset = g_Game->dungeon().GetNumGirls();
     for (int i = 0; i < g_Game->dungeon().GetNumCusts(); i++)
     {
-        SetSelectedItemInList(girllist_id, i + offset, false, false);
+        SetSelectedItemInList(m_GirlList_id, i + offset, false, false);
     }
     selection_change();
 }
@@ -494,18 +464,18 @@ void cScreenDungeon::select_all_customers()
 
 void cScreenDungeon::stop_feeding()
 {
-    ForAllSelectedItems(girllist_id, [&](int selection) {
+    ForAllSelectedItems(m_GirlList_id, [&](int selection) {
         g_Game->dungeon().SetFeeding(selection, false);
-        SetSelectedItemColumnText(girllist_id, selection, "No", "Feeding");
+        SetSelectedItemColumnText(m_GirlList_id, selection, "No", "Feeding");
     });
     selection_change();
 }
 
 void cScreenDungeon::start_feeding()
 {
-    ForAllSelectedItems(girllist_id, [&](int selection) {
+    ForAllSelectedItems(m_GirlList_id, [&](int selection) {
         g_Game->dungeon().SetFeeding(selection, true);
-        SetSelectedItemColumnText(girllist_id, selection, "Yes", "Feeding");
+        SetSelectedItemColumnText(m_GirlList_id, selection, "Yes", "Feeding");
     });
     selection_change();
 }
@@ -549,7 +519,7 @@ bool cScreenDungeon::torture_possible()
 {
     int nNumGirls = g_Game->dungeon().GetNumGirls();
     bool can_torture = false;
-    ForAllSelectedItems(girllist_id, [&](int nSelection) {
+    ForAllSelectedItems(m_GirlList_id, [&](int nSelection) {
         bool not_yet_tortured = false;
         // get the customer or girl under selection and find out if they've been tortured this turn
         if (nSelection >= nNumGirls)
@@ -574,7 +544,7 @@ void cScreenDungeon::torture()
     int pos = 0;
     int numGirlsRemoved = 0;
 
-    ForAllSelectedItems(girllist_id, [&](int nSelection) {
+    ForAllSelectedItems(m_GirlList_id, [&](int nSelection) {
         // if it's a customer, we have a separate routine
         if ((selection - (g_Game->dungeon().GetNumGirls() + numGirlsRemoved)) >= 0)
         {
@@ -646,7 +616,7 @@ void cScreenDungeon::update_image()
     {
         HideWidget(m_MainImageId, true);
     }
-    else if (selected_girl() && !IsMultiSelected(girllist_id))
+    else if (selected_girl() && !IsMultiSelected(m_GirlList_id))
     {
         UpdateImage(selected_girl()->m_Tort ? EImageBaseType::TORTURE : EImageBaseType::JAIL);
     }
@@ -658,7 +628,7 @@ void cScreenDungeon::update_image()
 
 void cScreenDungeon::get_selected_girls(std::vector<int> *girl_array)
 {  // take passed vector and fill it with sorted list of girl/customer IDs
-    ForAllSelectedItems(girllist_id, [&](int sel) {
+    ForAllSelectedItems(m_GirlList_id, [&](int sel) {
         girl_array->push_back(sel);
     });
     sort(girl_array->begin(), girl_array->end());
@@ -667,3 +637,8 @@ void cScreenDungeon::get_selected_girls(std::vector<int> *girl_array)
 sGirl* cScreenDungeon::get_image_girl() {
     return selected_girl().get();
 }
+
+std::shared_ptr<cInterfaceWindow> screens::cDungeonScreenBase::create() {
+    return std::make_shared<cScreenDungeon>();
+}
+

@@ -1,3 +1,9 @@
+# Version 7.2.2alpha1
+Started reworking the UI
+
+* Added a new in-game main screen (player's office) as a central location  
+* Added ability to hide dialog window by pressing `h`.
+
 # Version 7.2.1beta8
 Small bug fixes and improvements.
 
