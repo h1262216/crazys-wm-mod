@@ -26,7 +26,6 @@
 #include "screens/cScreenLoadGame.hpp"
 #include "screens/cScreenBrothelManagement.h"
 #include "widgets/cScreenGetInput.h"
-#include "screens/cScreenGallery.h"
 #include "screens/cScreenTurnSummary.h"
 #include "screens/cScreenGameConfig.h"
 #include <tinyxml2.h>
@@ -82,7 +81,7 @@ void LoadInterface(const cConfig& cfg)
     load_window<cMovieScreen>("Movie Screen");
     load_window_easy<cTransferGirlsBase>(false);
     load_window<cScreenTurnSummary>("Turn Summary");
-    load_window<cScreenGallery>("Gallery");
+    load_window_easy<screens::cGalleryScreenBase>(false);
     g_GetInput = load_window<cScreenGetInput>("GetInput");
 
     load_window<CBuildingManagementScreenDispatch>("Girl Management");

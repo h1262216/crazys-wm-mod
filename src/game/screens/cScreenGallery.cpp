@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "cScreenGallery.h"
 #include "interface/cWindowManager.h"
 #include "widgets/cImageItem.h"
@@ -37,51 +38,37 @@ namespace  {
     constexpr const EnumRange<EImageBaseType, EImageBaseType(0), EImageBaseType::NUM_TYPES> ImageTypeRange = {};
 }
 
-cScreenGallery::cScreenGallery() : cGameWindow("gallery_screen.xml")
-{
-}
+cScreenGallery::cScreenGallery() = default;
 
-
-void cScreenGallery::set_ids()
+void cScreenGallery::setup_callbacks()
 {
-    prev_id         = get_id("PrevButton","Prev");
-    next_id         = get_id("NextButton","Next");
-    image_id        = get_id("GirlImage");
-    imagename_id    = get_id("ImageName");
-    imagelist_id    = get_id("ImageList");
-    pregnant_id     = get_id("Pregnant");
-    futa_id         = get_id("Futa");
-    tied_id         = get_id("TiedUp");
-    participants_id = get_id("Participants");
-    source_id       = get_id("ImageSource");
-    info_id         = get_id("ImageData");
-    SetEditBoxText(participants_id, "Any");
+    SetEditBoxText(m_Participants_id, "Any");
 
     std::vector<std::string> parts(begin(get_participant_names()), end(get_participant_names()));
-    GetEditBox(participants_id)->SetOptions(std::move(parts));
+    GetEditBox(m_Participants_id)->SetOptions(std::move(parts));
 
     std::vector<std::string> ILColumns{ "ILName", "ILTotal" };
-    SortColumns(imagelist_id, ILColumns);
+    SortColumns(m_ImageList_id, ILColumns);
 
-    SetCheckBoxCallback(pregnant_id, [this](bool){ determine_images(); });
-    SetCheckBoxCallback(futa_id, [this](bool){ determine_images(); });
-    SetCheckBoxCallback(tied_id, [this](bool){ determine_images(); });
+    SetCheckBoxCallback(m_Pregnant_id, [this](bool){ determine_images(); });
+    SetCheckBoxCallback(m_Futa_id, [this](bool){ determine_images(); });
+    SetCheckBoxCallback(m_TiedUp_id, [this](bool){ determine_images(); });
 
-    SetButtonCallback(prev_id, [this]() {
+    SetButtonCallback(m_PrevBtn_id, [this]() {
         m_CurrentImageID--;
         if (m_CurrentImageID < 0) m_CurrentImageID = m_ImageFiles[(int)m_CurrentType].size() - 1;
         update_image();
     });
-    SetButtonHotKey(prev_id, SDLK_LEFT);
+    SetButtonHotKey(m_PrevBtn_id, SDLK_LEFT);
 
-    SetButtonCallback(next_id, [this](){
+    SetButtonCallback(m_NextBtn_id, [this](){
         m_CurrentImageID++;
         if (m_CurrentImageID == m_ImageFiles[(int)m_CurrentType].size()) m_CurrentImageID = 0;
         update_image();
     });
-    SetButtonHotKey(next_id, SDLK_RIGHT);
+    SetButtonHotKey(m_NextBtn_id, SDLK_RIGHT);
 
-    SetListBoxSelectionCallback(imagelist_id, [this](int selection) {
+    SetListBoxSelectionCallback(m_ImageList_id, [this](int selection) {
         if(selection >= 0) {
             m_CurrentType = (EImageBaseType)selection;
         }
@@ -89,13 +76,13 @@ void cScreenGallery::set_ids()
         update_image();
     });
 
-    SetListBoxHotKeys(imagelist_id, SDLK_UP, SDLK_DOWN);
+    SetListBoxHotKeys(m_ImageList_id, SDLK_UP, SDLK_DOWN);
 
-    SetEditBoxCallback(participants_id, [this](const std::string& value){
+    SetEditBoxCallback(m_Participants_id, [this](const std::string& value){
         try {
             auto id = get_participant_id(value);
         } catch (const std::out_of_range&) {
-            SetEditBoxText(participants_id, "Any");
+            SetEditBoxText(m_Participants_id, "Any");
         }
         determine_images();
     });
@@ -103,11 +90,11 @@ void cScreenGallery::set_ids()
 
 void cScreenGallery::update_image()
 {
-    cImageItem* image_ui = GetImage(image_id);
+    cImageItem* image_ui = GetImage(m_GirlImage_id);
     if(m_CurrentImageID >= m_ImageFiles[(int) m_CurrentType].size()) {
         image_ui->SetHidden(true);
-        EditTextItem("", imagename_id);
-        EditTextItem("", source_id);
+        EditTextItem("", m_ImageName_id);
+        EditTextItem("", m_ImageSource_id);
         return;
     }
 
@@ -140,8 +127,8 @@ void cScreenGallery::update_image()
     print_flag(info_txt, info.Attributes.IsFuta, "futa");
     print_flag(info_txt, info.Attributes.IsTied, "tied");
 
-    EditTextItem("Source: " + info.Source, source_id);
-    EditTextItem(info_txt.str(), info_id);
+    EditTextItem("Source: " + info.Source, m_ImageSource_id);
+    EditTextItem(info_txt.str(), m_ImageData_id);
     std::string file_name = (target << found.first.FileName).str();
 
     if(is_in(ext, {"jpg", "jpeg", "png", "bmp", "tga", "tiff"})) {
@@ -154,11 +141,11 @@ void cScreenGallery::update_image()
 
     image_ui->SetHidden(false);
     if (image_ui->m_Image)
-        EditTextItem(image_ui->m_Image.GetFileName(), imagename_id);
+        EditTextItem(image_ui->m_Image.GetFileName(), m_ImageName_id);
     else if(image_ui->m_AnimatedImage)
-        EditTextItem(image_ui->m_AnimatedImage.GetFileName(), imagename_id);
+        EditTextItem(image_ui->m_AnimatedImage.GetFileName(), m_ImageName_id);
 
-    SetSelectedItemInList(imagelist_id, (int)m_CurrentType, false);
+    SetSelectedItemInList(m_ImageList_id, (int)m_CurrentType, false);
 }
 
 void cScreenGallery::init(bool back)
@@ -167,29 +154,29 @@ void cScreenGallery::init(bool back)
 
     if(!back) {
         Focused();
-        SetCheckBox(pregnant_id, m_SelectedGirl->is_pregnant());
-        SetCheckBox(futa_id, is_futa(*m_SelectedGirl));
+        SetCheckBox(m_Pregnant_id, m_SelectedGirl->is_pregnant());
+        SetCheckBox(m_Futa_id, is_futa(*m_SelectedGirl));
     }
 
     determine_images();
 }
 
 void cScreenGallery::determine_images() {
-    cImageItem* image_ui = GetImage(image_id);
+    cImageItem* image_ui = GetImage(m_GirlImage_id);
     image_ui->SetImage("");
     m_ImageFiles.resize((int)EImageBaseType::NUM_TYPES + 1);
     sImageSpec spec {
         EImageBaseType::NUM_TYPES,
-        get_participant_id(GetEditBoxText(participants_id)),
-        IsCheckboxOn(pregnant_id) ? ETriValue::Yes : ETriValue::No,
-        IsCheckboxOn(futa_id) ? ETriValue::Yes : ETriValue::No,
-        IsCheckboxOn(tied_id) ? ETriValue::Yes : ETriValue::No
+        get_participant_id(GetEditBoxText(m_Participants_id)),
+        IsCheckboxOn(m_Pregnant_id) ? ETriValue::Yes : ETriValue::No,
+        IsCheckboxOn(m_Futa_id) ? ETriValue::Yes : ETriValue::No,
+        IsCheckboxOn(m_TiedUp_id) ? ETriValue::Yes : ETriValue::No
     };
 
     auto run_update_in_bg = [this, spec]() mutable {
         {
             std::lock_guard<std::mutex> lck(m_UpdateMutex);
-            m_ScheduledUpdates.emplace_back([this]() { ClearListBox(imagelist_id); });
+            m_ScheduledUpdates.emplace_back([this]() { ClearListBox(m_ImageList_id); });
         }
         auto& all_files = g_Game->image_lookup().lookup_files(m_SelectedGirl->GetImageFolder().str());
         std::set<const sImageRecord*> unmatched;
@@ -209,7 +196,7 @@ void cScreenGallery::determine_images() {
                 std::vector<FormattedCellData> dataP{mk_text(g_Game->image_lookup().get_display_name(img)), mk_num(result.size())};
                 std::lock_guard<std::mutex> lck(m_UpdateMutex);
                 m_ScheduledUpdates.emplace_back([this, img, data = std::move(dataP), res=std::move(result)]() {
-                    AddToListBox(imagelist_id, (int) img, std::move(data));
+                    AddToListBox(m_ImageList_id, (int) img, std::move(data));
                     m_ImageFiles[(int) img].clear();
                     std::transform(begin(res), end(res), std::back_inserter(m_ImageFiles[(int) img]), [](auto&& a){
                         return std::make_pair(*a.first, a.second);
@@ -234,7 +221,7 @@ void cScreenGallery::determine_images() {
 
             std::lock_guard<std::mutex> lck(m_UpdateMutex);
             m_ScheduledUpdates.emplace_back([this, data = std::move(dataP)]() {
-                AddToListBox(imagelist_id, (int) EImageBaseType::NUM_TYPES, std::move(data));
+                AddToListBox(m_ImageList_id, (int) EImageBaseType::NUM_TYPES, std::move(data));
             });
         }
     };
@@ -265,3 +252,8 @@ cScreenGallery::~cScreenGallery() {
         m_AsyncLoad.join();
     }
 }
+
+std::shared_ptr<cInterfaceWindow> screens::cGalleryScreenBase::create() {
+    return std::make_shared<cScreenGallery>();
+}
+

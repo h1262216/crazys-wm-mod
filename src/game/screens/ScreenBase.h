@@ -134,40 +134,6 @@ namespace screens {
             int m_PrevBtn_id         = -1;
     };
 
-    class cArenaManagementScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cArenaManagementScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_GirlList_id        = -1;
-    };
-
-    class cArenaScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cArenaScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_WalkBtn_id         = -1;
-    };
-
     class cBankScreenBase : public cInterfaceWindowXML 
     {
         public:
@@ -190,23 +156,6 @@ namespace screens {
             int m_ScreenHeader_id    = -1;
             int m_WithdrawAllBtn_id  = -1;
             int m_WithdrawBtn_id     = -1;
-    };
-
-    class cBrothelManagementBase : public cInterfaceWindowXML 
-    {
-        public:
-            cBrothelManagementBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-    
     };
 
     class cBuildingBaseBase : public cInterfaceWindowXML 
@@ -277,74 +226,6 @@ namespace screens {
             int m_SexRestrictions_id = -1;
     };
 
-    class cCentreManagementScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cCentreManagementScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_GirlList_id        = -1;
-    };
-
-    class cCentreScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cCentreScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-    
-    };
-
-    class cClinicManagementScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cClinicManagementScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_GirlList_id        = -1;
-    };
-
-    class cClinicScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cClinicScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_WalkBtn_id         = -1;
-    };
-
     class cClinictryScreenBase : public cInterfaceWindowXML 
     {
         public:
@@ -411,41 +292,7 @@ namespace screens {
             int m_TortureBtn_id      = -1;
     };
 
-    class cFarmManagementScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cFarmManagementScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_GirlList_id        = -1;
-    };
-
-    class cFarmScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cFarmScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-    
-    };
-
-    class cGalleryScreenBase : public cInterfaceWindowXML 
+    class cGalleryScreenBase : public cGameWindow 
     {
         public:
             cGalleryScreenBase();
@@ -643,40 +490,6 @@ namespace screens {
             int m_SellSlaveBtn_id    = -1;
             int m_TransferBtn_id     = -1;
             int m_ViewDetailsBtn_id  = -1;
-    };
-
-    class cGirlManagementScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cGirlManagementScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_GirlList_id        = -1;
-    };
-
-    class cHouseManagementScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cHouseManagementScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_GirlList_id        = -1;
     };
 
     class cInGameMenuBase : public cInterfaceWindowXML 
@@ -886,23 +699,6 @@ namespace screens {
             int m_TicketPriceTxt_id  = -1;
     };
 
-    class cMovieScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cMovieScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_WalkBtn_id         = -1;
-    };
-
     class cPlayerOfficeScreenBase : public cInterfaceWindowXML 
     {
         public:
@@ -934,23 +730,6 @@ namespace screens {
             int m_TurnSummary_id     = -1;
             int m_VisitBuildings_id  = -1;
             int m_VisitTown_id       = -1;
-    };
-
-    class cPlayerhouseScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cPlayerhouseScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-    
     };
 
     class cPopupMessageBase : public cInterfaceWindowXML 
@@ -1228,24 +1007,6 @@ namespace screens {
             int m_SlaveMarket_id     = -1;
             int m_Studio_id          = -1;
             int m_TraitListT_id      = -1;
-    };
-
-    class cStudioManagementScreenBase : public cInterfaceWindowXML 
-    {
-        public:
-            cStudioManagementScreenBase();
-            
-            static std::shared_ptr<cInterfaceWindow> create();
-            
-        private:
-            void process() override { };
-            void set_ids() override;
-            
-            virtual void setup_callbacks() = 0;
-    
-        protected:
-            int m_CreateMovieBtn_id  = -1;
-            int m_GirlList_id        = -1;
     };
 
     class cTownScreenBase : public cGameWindow 

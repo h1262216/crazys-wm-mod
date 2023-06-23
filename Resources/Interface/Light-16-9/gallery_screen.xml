@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Gallery">
 <Window     Name="Gallery"                                  XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
 
 <Text       Name="ImageName"            Text="Image"        XPos="14"       YPos="3"        Width="1110"     Height="34"    FontSize="14"  />

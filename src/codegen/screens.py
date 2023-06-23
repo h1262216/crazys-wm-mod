@@ -40,7 +40,7 @@ void {class_name}::set_ids() {{
 
 game_screens = {
     "TransferGirls", "PreparingGameScreen", "PrisonScreen", "SlavemarketScreen", "BuildingSetupScreen",
-    "TownScreen", "DungeonScreen", "GirlDetailsScreen"
+    "TownScreen", "DungeonScreen", "GirlDetailsScreen", "GalleryScreen"
 }
 
 
@@ -55,6 +55,8 @@ def read_interface_file(file: Union[str, Path]):
     class_name = "c" + class_base_name + "Base"
 
     base_class = "cGameWindow" if class_base_name in game_screens else "cInterfaceWindowXML"
+    if "Extends" in doc.attrib:
+        return None, None
 
     for child in doc:
         if child.tag == "Window":
@@ -81,9 +83,6 @@ def read_interface_file(file: Union[str, Path]):
     return class_header, class_impl
 
 
-read_interface_file("/home/erik/CLionProjects/cwm/crazys-wm-mod/Resources/Interface/Light-16-9/player_office_screen.xml")
-
-
 def main():
     result_path = Path(sys.argv[1])
     search_path = Path(sys.argv[2])
@@ -104,6 +103,9 @@ def main():
 
     for screen in xml_file_list:
         header, impl = read_interface_file(screen)
+        if header is None:
+            continue
+
         header_file += "    ".join(header.splitlines(keepends=True))
         impl_file += impl
 

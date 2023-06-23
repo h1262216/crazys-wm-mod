@@ -80,24 +80,8 @@ void cTurnSummaryBase::set_ids() {
     m_LabelEvent_id      = get_id("LabelEvent");
     m_LabelItem_id       = get_id("LabelItem");
     m_NextBtn_id         = get_id("NextButton");
-    m_NextWeek_id        = get_id("Next Week");
+    m_NextWeek_id        = get_id("NextWeek");
     m_PrevBtn_id         = get_id("PrevButton");
-
-    setup_callbacks();
-}
-
-cArenaManagementScreenBase::cArenaManagementScreenBase() : cInterfaceWindowXML("arena_management_screen.xml") { };
-
-void cArenaManagementScreenBase::set_ids() {
-    m_GirlList_id        = get_id("GirlList");
-
-    setup_callbacks();
-}
-
-cArenaScreenBase::cArenaScreenBase() : cInterfaceWindowXML("arena_screen.xml") { };
-
-void cArenaScreenBase::set_ids() {
-    m_WalkBtn_id         = get_id("WalkButton");
 
     setup_callbacks();
 }
@@ -113,14 +97,6 @@ void cBankScreenBase::set_ids() {
     m_ScreenHeader_id    = get_id("ScreenHeader");
     m_WithdrawAllBtn_id  = get_id("WithdrawAllButton");
     m_WithdrawBtn_id     = get_id("WithdrawButton");
-
-    setup_callbacks();
-}
-
-cBrothelManagementBase::cBrothelManagementBase() : cInterfaceWindowXML("brothel_management.xml") { };
-
-void cBrothelManagementBase::set_ids() {
-
 
     setup_callbacks();
 }
@@ -175,38 +151,6 @@ void cBuildingSetupScreenBase::set_ids() {
     setup_callbacks();
 }
 
-cCentreManagementScreenBase::cCentreManagementScreenBase() : cInterfaceWindowXML("centre_management_screen.xml") { };
-
-void cCentreManagementScreenBase::set_ids() {
-    m_GirlList_id        = get_id("GirlList");
-
-    setup_callbacks();
-}
-
-cCentreScreenBase::cCentreScreenBase() : cInterfaceWindowXML("centre_screen.xml") { };
-
-void cCentreScreenBase::set_ids() {
-
-
-    setup_callbacks();
-}
-
-cClinicManagementScreenBase::cClinicManagementScreenBase() : cInterfaceWindowXML("clinic_management_screen.xml") { };
-
-void cClinicManagementScreenBase::set_ids() {
-    m_GirlList_id        = get_id("GirlList");
-
-    setup_callbacks();
-}
-
-cClinicScreenBase::cClinicScreenBase() : cInterfaceWindowXML("clinic_screen.xml") { };
-
-void cClinicScreenBase::set_ids() {
-    m_WalkBtn_id         = get_id("WalkButton");
-
-    setup_callbacks();
-}
-
 cClinictryScreenBase::cClinictryScreenBase() : cInterfaceWindowXML("clinictry_screen.xml") { };
 
 void cClinictryScreenBase::set_ids() {
@@ -255,23 +199,7 @@ void cDungeonScreenBase::set_ids() {
     setup_callbacks();
 }
 
-cFarmManagementScreenBase::cFarmManagementScreenBase() : cInterfaceWindowXML("farm_management_screen.xml") { };
-
-void cFarmManagementScreenBase::set_ids() {
-    m_GirlList_id        = get_id("GirlList");
-
-    setup_callbacks();
-}
-
-cFarmScreenBase::cFarmScreenBase() : cInterfaceWindowXML("farm_screen.xml") { };
-
-void cFarmScreenBase::set_ids() {
-
-
-    setup_callbacks();
-}
-
-cGalleryScreenBase::cGalleryScreenBase() : cInterfaceWindowXML("gallery_screen.xml") { };
+cGalleryScreenBase::cGalleryScreenBase() : cGameWindow("gallery_screen.xml") { };
 
 void cGalleryScreenBase::set_ids() {
     m_BackBtn_id         = get_id("BackButton");
@@ -413,22 +341,6 @@ void cGirlManagementBaseBase::set_ids() {
     m_SellSlaveBtn_id    = get_id("SellSlaveButton");
     m_TransferBtn_id     = get_id("TransferButton");
     m_ViewDetailsBtn_id  = get_id("ViewDetailsButton");
-
-    setup_callbacks();
-}
-
-cGirlManagementScreenBase::cGirlManagementScreenBase() : cInterfaceWindowXML("girl_management_screen.xml") { };
-
-void cGirlManagementScreenBase::set_ids() {
-    m_GirlList_id        = get_id("GirlList");
-
-    setup_callbacks();
-}
-
-cHouseManagementScreenBase::cHouseManagementScreenBase() : cInterfaceWindowXML("house_management_screen.xml") { };
-
-void cHouseManagementScreenBase::set_ids() {
-    m_GirlList_id        = get_id("GirlList");
 
     setup_callbacks();
 }
@@ -577,14 +489,6 @@ void cMovieMarketScreenBase::set_ids() {
     setup_callbacks();
 }
 
-cMovieScreenBase::cMovieScreenBase() : cInterfaceWindowXML("movie_screen.xml") { };
-
-void cMovieScreenBase::set_ids() {
-    m_WalkBtn_id         = get_id("WalkButton");
-
-    setup_callbacks();
-}
-
 cPlayerOfficeScreenBase::cPlayerOfficeScreenBase() : cInterfaceWindowXML("player_office_screen.xml") { };
 
 void cPlayerOfficeScreenBase::set_ids() {
@@ -605,14 +509,6 @@ void cPlayerOfficeScreenBase::set_ids() {
     m_TurnSummary_id     = get_id("Turn Summary");
     m_VisitBuildings_id  = get_id("Visit Buildings");
     m_VisitTown_id       = get_id("Visit Town");
-
-    setup_callbacks();
-}
-
-cPlayerhouseScreenBase::cPlayerhouseScreenBase() : cInterfaceWindowXML("playerhouse_screen.xml") { };
-
-void cPlayerhouseScreenBase::set_ids() {
-
 
     setup_callbacks();
 }
@@ -836,15 +732,6 @@ void cSlavemarketScreenBase::set_ids() {
     m_SlaveMarket_id     = get_id("SlaveMarket");
     m_Studio_id          = get_id("Studio");
     m_TraitListT_id      = get_id("TraitListT");
-
-    setup_callbacks();
-}
-
-cStudioManagementScreenBase::cStudioManagementScreenBase() : cInterfaceWindowXML("studio_management_screen.xml") { };
-
-void cStudioManagementScreenBase::set_ids() {
-    m_CreateMovieBtn_id  = get_id("CreateMovieButton");
-    m_GirlList_id        = get_id("GirlList");
 
     setup_callbacks();
 }
