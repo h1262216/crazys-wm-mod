@@ -699,7 +699,7 @@ namespace screens {
             int m_TicketPriceTxt_id  = -1;
     };
 
-    class cPlayerOfficeScreenBase : public cInterfaceWindowXML 
+    class cPlayerOfficeScreenBase : public cGameWindow 
     {
         public:
             cPlayerOfficeScreenBase();

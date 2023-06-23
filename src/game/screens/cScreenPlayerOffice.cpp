@@ -55,6 +55,12 @@ void cScreenPlayerOffice::setup_callbacks()
         push_window("Turn Summary");
         g_Game->NextWeek();
     });
+
+    SetListBoxDoubleClickCallback(m_BuildingList_id, [&](int index){
+        auto* tgt = g_Game->buildings().buildings().at(index).get();
+        set_active_building(tgt);
+        replace_window("Building Management");
+    });
 }
 
 void cScreenPlayerOffice::init(bool back)
@@ -95,14 +101,16 @@ void cScreenPlayerOffice::init(bool back)
     if (m_BuyInteract10_id >= 0) DisableWidget(m_BuyInteract10_id, g_Game->allow_cheats() || g_Game->gold().ival() < 10000);
 
     ClearListBox(m_BuildingList_id);
-    for(auto& bld : g_Game->buildings().buildings()) {
+    auto& building_list = g_Game->buildings().buildings();
+    for(int i = 0; i < building_list.size(); ++i) {
+        auto& bld = building_list.at(i);
         std::vector<FormattedCellData> data;
         data.push_back(mk_text(bld->name()));
         data.push_back(FormattedCellData{bld->num_girls(), std::to_string(bld->num_girls()) + "/" + std::to_string(bld->m_NumRooms)});
         data.push_back(mk_num(bld->security()));
         data.push_back(mk_num(bld->filthiness()));
         data.push_back(mk_num(bld->m_Finance.total_profit()));
-        AddToListBox(m_BuildingList_id, 0, data);
+        AddToListBox(m_BuildingList_id, i, data);
     }
 
     Focused();

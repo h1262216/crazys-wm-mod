@@ -489,7 +489,7 @@ void cMovieMarketScreenBase::set_ids() {
     setup_callbacks();
 }
 
-cPlayerOfficeScreenBase::cPlayerOfficeScreenBase() : cInterfaceWindowXML("player_office_screen.xml") { };
+cPlayerOfficeScreenBase::cPlayerOfficeScreenBase() : cGameWindow("player_office_screen.xml") { };
 
 void cPlayerOfficeScreenBase::set_ids() {
     m_Background_id      = get_id("Background");
