@@ -3,6 +3,7 @@ Started reworking the UI
 
 * Added a new in-game main screen (player's office) as a central location  
 * Added ability to hide dialog window by pressing `h`.
+* re-enable "Preg" image variations without `images.xml`
 
 # Version 7.2.1beta8
 Small bug fixes and improvements.

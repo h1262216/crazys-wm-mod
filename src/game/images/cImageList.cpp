@@ -97,6 +97,12 @@ void cImageLoader::load_file_name_matchers(const std::string& spec_file) {
             for (auto& c: IterateChildElements(element, "Pattern")) {
                 m_FileNamePatterns.push_back(sFileNameMatcher{c.GetText(), spec});
             }
+
+            // auto-generate a preg version
+            spec.IsPregnant = ETriValue::Yes;
+            for (auto& c: IterateChildElements(element, "Pattern")) {
+                m_FileNamePatterns.push_back(sFileNameMatcher{std::string("preg") + c.GetText(), spec});
+            }
         } catch (std::exception& error) {
             g_LogFile.error("images", "Could not load pattern matcher from ", spec_file, " on line ", element.GetLineNum());
         }
@@ -146,6 +152,7 @@ void cImageLoader::image_types_from_file_names() {
     for (int i = 0; i < (int) EImageBaseType::NUM_TYPES; ++i) {
         m_RecordsBuffer[i].clear();
     }
+
     for (auto& spec: m_FileNamePatterns) {
         std::regex pattern(spec.Pattern, std::regex::icase | std::regex::ECMAScript | std::regex::optimize);
         for (auto& file: m_FileNameBuffer) {
