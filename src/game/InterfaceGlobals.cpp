@@ -26,7 +26,6 @@
 #include "screens/cScreenLoadGame.hpp"
 #include "screens/cScreenBrothelManagement.h"
 #include "widgets/cScreenGetInput.h"
-#include "screens/cScreenTurnSummary.h"
 #include "screens/cScreenGameConfig.h"
 #include <tinyxml2.h>
 #include "CLog.h"
@@ -74,13 +73,11 @@ void LoadInterface(const cConfig& cfg)
     load_window<cScreenLoadGame>("Load Game", true, cfg.saves());
     load_window_easy<screens::cSettingsBase>(true);
 
-    load_window<cScreenBrothelManagement>("Brothel Management");
     load_window_easy<cScreenGirlDetails>(false);
     load_window_easy<screens::cGangsScreenBase>(false);
     load_window<cScreenItemManagement>("Item Management");
-    load_window<cMovieScreen>("Movie Screen");
     load_window_easy<cTransferGirlsBase>(false);
-    load_window<cScreenTurnSummary>("Turn Summary");
+    load_window_easy<cTurnSummaryBase>(false);
     load_window_easy<screens::cGalleryScreenBase>(false);
     g_GetInput = load_window<cScreenGetInput>("GetInput");
 
@@ -93,11 +90,13 @@ void LoadInterface(const cConfig& cfg)
     load_window<cScreenCentreManagement>("Girl Management Centre");
     load_window<cScreenHouseManagement>("Girl Management House");
     load_window<cScreenFarmManagement>("Girl Management Farm");
-    load_window<cScreenClinic>("Clinic Screen");
-    load_window<cScreenCentre>("Centre Screen");
-    load_window<cScreenArena>("Arena Screen");
-    load_window<cScreenHouse>("Player House");
-    load_window<cScreenFarm>("Farm Screen");
+    load_window<IBuildingScreen>("Brothel Management", false, BuildingType::BROTHEL);
+    load_window<IBuildingScreen>("Clinic Screen", false, BuildingType::CLINIC);
+    load_window<IBuildingScreen>("Centre Screen", false, BuildingType::CENTRE);
+    load_window<IBuildingScreen>("Arena Screen", false, BuildingType::ARENA);
+    load_window<IBuildingScreen>("Player House", false, BuildingType::HOUSE);
+    load_window<IBuildingScreen>("Farm Screen", false, BuildingType::FARM);
+    load_window<IBuildingScreen>("Movie Screen", false, BuildingType::STUDIO);
     load_window_easy<screens::cDungeonScreenBase>(false);
     load_window_easy<screens::cTownScreenBase>(false);
     load_window_easy<screens::cSlavemarketScreenBase>(false);

@@ -19,6 +19,7 @@
 #include "InterfaceProcesses.h"
 #include "buildings/cBuilding.h"
 #include "interface/cWindowManager.h"
+#include "widgets/cButton.h"
 #include "character/cPlayer.h"
 #include "cScreenBrothelManagement.h"
 #include "utils/FileList.h"
@@ -50,8 +51,30 @@ void IBuildingScreen::set_ids()
     details_id       = get_id("BuildingDetails", "Details");
     menu_id          = get_id("Menu");
 
+    bool can_walk = true;
+
+    switch(m_Type) {
+        case BuildingType::ARENA:
+            GetButton(walk_id)->SetImages("arenaTryouts");
+            break;
+        case BuildingType::CLINIC:
+            GetButton(walk_id)->SetImages("WalkAroundER");
+            break;
+        case BuildingType::STUDIO:
+            GetButton(walk_id)->SetImages("HoldCasting");
+            break;
+        case BuildingType::BROTHEL:
+        case BuildingType::HOUSE:
+        case BuildingType::CENTRE:
+        case BuildingType::FARM:
+            HideWidget(walk_id, true);
+            DisableWidget(walk_id);
+            can_walk = false;
+            break;
+    }
+
     // set button callbacks
-    if(walk_id >= 0) {
+    if( can_walk ) {
         SetButtonCallback(walk_id, [this]() { try_walk(); });
     }
     SetButtonCallback(prevbrothel_id, [this]() {
@@ -80,8 +103,8 @@ void IBuildingScreen::process()
     if (girlimage_id != -1) HideWidget(girlimage_id, true);
 }
 
-IBuildingScreen::IBuildingScreen(const char * base_file, BuildingType building) :
-        cGameWindow(base_file),
+IBuildingScreen::IBuildingScreen(BuildingType building) :
+        cGameWindow("building_base.xml"),
         m_Type(building)
 {
 }
@@ -173,40 +196,6 @@ static std::string get_building_summary(const cBuilding& building)
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-
-
-cScreenBrothelManagement::cScreenBrothelManagement() : IBuildingScreen("brothel_management.xml",
-                                                                       BuildingType::BROTHEL)
-{
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-cScreenArena::cScreenArena() : IBuildingScreen("arena_screen.xml", BuildingType::ARENA)
-{
-}
-
-
-cScreenCentre::cScreenCentre() : IBuildingScreen("centre_screen.xml", BuildingType::CENTRE)
-{
-    //
-}
-
-cScreenClinic::cScreenClinic() : IBuildingScreen("clinic_screen.xml", BuildingType::CLINIC)
-{
-}
-
-cScreenFarm::cScreenFarm(): IBuildingScreen("farm_screen.xml", BuildingType::FARM)
-{
-
-}
-
-cScreenHouse::cScreenHouse() : IBuildingScreen("playerhouse_screen.xml", BuildingType::HOUSE)
-{
-}
-
-cMovieScreen::cMovieScreen() : IBuildingScreen("movie_screen.xml", BuildingType::STUDIO)
-{
-}
 
 void CBuildingScreenDispatch::init(bool back)
 {

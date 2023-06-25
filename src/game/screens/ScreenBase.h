@@ -105,7 +105,7 @@ namespace screens {
             int m_ShiftRight_id      = -1;
     };
 
-    class cTurnSummaryBase : public cInterfaceWindowXML 
+    class cTurnSummaryBase : public cGameWindow 
     {
         public:
             cTurnSummaryBase();
@@ -125,6 +125,7 @@ namespace screens {
             int m_CurrentBrothel_id  = -1;
             int m_Event_id           = -1;
             int m_GoTo_id            = -1;
+            int m_ImagePath_id       = -1;
             int m_Item_id            = -1;
             int m_LabelDesc_id       = -1;
             int m_LabelEvent_id      = -1;
@@ -183,6 +184,7 @@ namespace screens {
             int m_PrevBtn_id         = -1;
             int m_Setup_id           = -1;
             int m_VisitTown_id       = -1;
+            int m_WalkBtn_id         = -1;
             int m_YourOffice_id      = -1;
     };
 

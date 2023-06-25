@@ -71,7 +71,6 @@ private:
     int sellslave_id;        // Sell Slave button
     int viewdetails_id;        // View Details button
 
-    virtual std::string update_job_description(const sGirl& girl) { return ""; };
     virtual std::string get_job_description(int selection);
 
     void SetShift(int shift);
@@ -123,7 +122,6 @@ public:
 class cScreenCentreManagement : public IBuildingScreenManagement
 {
 private:
-    std::string update_job_description(const sGirl& girl) override;
     std::string get_job_description(int selection) override;
 public:
     cScreenCentreManagement();
@@ -132,7 +130,6 @@ public:
 class cScreenClinicManagement : public IBuildingScreenManagement
 {
 private:
-    std::string update_job_description(const sGirl& girl) override;
     std::string get_job_description(int selection) override;
 public:
     cScreenClinicManagement();
@@ -146,8 +143,6 @@ public:
 
 class cScreenHouseManagement : public IBuildingScreenManagement
 {
-private:
-    std::string update_job_description(const sGirl& girl) override;
 public:
     cScreenHouseManagement();
 };

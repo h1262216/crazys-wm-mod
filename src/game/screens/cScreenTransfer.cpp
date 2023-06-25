@@ -17,21 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma region //    Includes and Externs            //
 #include "cScreenTransfer.h"
 
 #include "buildings/cBuildingManager.h"
 #include "buildings/queries.h"
 
-#include "cGangs.h"
 #include "widgets/IListBox.h"
 
 #include "interface/cWindowManager.h"
 #include "utils/FileList.h"
 
 #include "IGame.h"
-
-#pragma endregion
 
 cScreenTransfer::cScreenTransfer() = default;
 

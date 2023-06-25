@@ -1,6 +1,6 @@
 <Screen>
     <Window     Name="Brothel Management"                           XPos="18"       YPos="20"       Width="1883"    Height="1041"   Border="1"  />
-    <Text       Name="BuildingLabel"        Text="Name"             XPos="14"       YPos="3"        Width="984"     Height="56"     FontSize="28"            />
+    <Text       Name="BuildingLabel"        Text=""                 XPos="14"       YPos="3"        Width="984"     Height="56"     FontSize="28"            />
     <Image      Name="Background"           File=""                 XPos="14"       YPos="49"       Width="1434"    Height="928"     />
 
     <Button     Name="Next Week"            Image="NextWeek"        XPos="1546"     YPos="14"       Width="240"     Height="48"     />
@@ -15,6 +15,9 @@
     <Button     Name="Menu"                 Image="Menu"            XPos="1546"     YPos="934"      Width="240"     Height="48"     PushWindow="Game Menu"/>
     <Button     Name="PrevButton"           Image="Prev"            XPos="1543"     YPos="482"      Width="101"     Height="48"     />
     <Button     Name="NextButton"           Image="Next"            XPos="1673"     YPos="482"      Width="101"     Height="48"     />
+
+    <!-- The image will be assinged dynamically based on the building type -->
+    <Button     Name="WalkButton"           Image="WalkAround"      XPos="1546"     YPos="704"      Width="240"     Height="48"     />
 
     <Image      Name="GirlImage"            File=""                 XPos="214"      YPos="21"       Width="281"     Height="281"    Hidden="true"  />
 </Screen>

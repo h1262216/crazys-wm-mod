@@ -1,4 +1,0 @@
-<Screen Extends="building_base.xml">
-    <Window     Name="Arena Window"                                     XPos="18"       YPos="20"       Width="1883"    Height="1041"    Border="1"  />
-    <Button     Name="WalkButton"           Image="arenaTryouts"        XPos="1546"     YPos="704"      Width="240"     Height="48"     />
-</Screen>

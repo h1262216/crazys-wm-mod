@@ -46,7 +46,7 @@ protected:
     void try_walk();
 
 public:
-    IBuildingScreen(const char * base_file, BuildingType building);
+    IBuildingScreen(BuildingType building);
     void process() override;
 };
 
@@ -56,50 +56,4 @@ struct CBuildingScreenDispatch: public cInterfaceWindow
     void load() {};
     void process() override {}
     void init(bool back) override;
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-class cScreenArena : public IBuildingScreen
-{
-public:
-    cScreenArena();
-};
-
-class cScreenCentre : public IBuildingScreen
-{
-public:
-    cScreenCentre();
-
-};
-
-class cScreenClinic : public IBuildingScreen
-{
-public:
-    cScreenClinic();
-};
-
-class cScreenBrothelManagement : public IBuildingScreen
-{
-public:
-    cScreenBrothelManagement();
-};
-
-class cScreenFarm : public IBuildingScreen
-{
-public:
-    cScreenFarm();
-};
-
-class cScreenHouse : public IBuildingScreen
-{
-public:
-    cScreenHouse();
-};
-
-class cMovieScreen : public IBuildingScreen
-{
-public:
-    cMovieScreen();
-
 };

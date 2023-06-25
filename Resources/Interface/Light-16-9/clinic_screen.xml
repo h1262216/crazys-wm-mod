@@ -1,3 +1,0 @@
-<Screen Extends="building_base.xml">
-    <Button Name="WalkButton" Image="WalkAroundER" XPos="1546" YPos="704" Width="240" Height="48"/>
-</Screen>

@@ -18,27 +18,13 @@
 */
 #pragma once
 
-#include "cGameWindow.h"
+#include "ScreenBase.h"
 #include "cEvents.h"
 #include <deque>
 
-class cScreenTurnSummary : public cGameWindow
+class cScreenTurnSummary : public screens::cTurnSummaryBase
 {
 private:
-    int brothel_id;
-    int gold_id;            // Player Gold
-    int category_id;
-    int labelitem_id;
-    int item_id;
-    int event_id;
-    int labeldesc_id;
-    int goto_id;
-    int nextweek_id;
-    int prev_id;
-    int next_id;
-    int image_id;
-    int imagename_id;
-
     enum SummaryCategory {
         Summary_GIRLS,
         Summary_GANGS,
@@ -49,8 +35,6 @@ private:
 
     SummaryCategory m_ActiveCategory = SummaryCategory::Summary_GIRLS;
     std::shared_ptr<const CombatReport> m_ActiveReport;
-
-    void set_ids() override;
 
 public:
     cScreenTurnSummary();
@@ -90,4 +74,5 @@ private:
     std::deque<sRecent> m_RecentImages;
 
     void present_image(const CEvent& event);
+    void setup_callbacks() override;
 };

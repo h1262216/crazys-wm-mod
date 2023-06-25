@@ -92,7 +92,14 @@ void IBuildingScreenManagement::RefreshJobList()
     {
         JOBS sel_job = selected_girl->get_job(Day0Night1);
         SetSelectedItemInList(joblist_id, sel_job, false);
-        EditTextItem(g_Game->job_manager().get_job_description(sel_job) + update_job_description(*selected_girl), jobdesc_id);
+
+        std::string change_msg = job_change_message(*selected_girl, selected_girl->m_DayJob);
+        if (!change_msg.empty())
+        {
+            change_msg = "\n** " + change_msg;
+        }
+
+        EditTextItem(g_Game->job_manager().get_job_description(sel_job) + change_msg, jobdesc_id);
         SetSelectedItemText(joblist_id, sel_job, jobname_with_count((JOBS)sel_job, Day0Night1));
     }
 }
@@ -566,22 +573,12 @@ cScreenCentreManagement::cScreenCentreManagement() :
     add_job_filter(JOBFILTER_COUNSELINGCENTRE);
 }
 
-std::string cScreenCentreManagement::update_job_description(const sGirl& girl)
-{
-    std::string jc = job_change_message(girl, girl.m_DayJob);
-    if (!jc.empty())
-    {
-        return "\n** " + jc;
-    }
-    return "";
-}
-
 std::string cScreenCentreManagement::get_job_description(int selection)
 {
     std::stringstream jdmessage; jdmessage << job_manager().JobFilters[selection].Description;
     auto& centre = active_building();
-    if ((centre.num_girls_on_job(JOB_COUNSELOR, 0) < 1 && Num_Patients(centre, 0) > 0) ||
-         (centre.num_girls_on_job(JOB_COUNSELOR, 1) < 1 && Num_Patients(centre, 1) > 0))
+    if ((centre.num_girls_on_job(JOB_COUNSELOR, 0) < 1 && Num_Patients(centre, false) > 0) ||
+         (centre.num_girls_on_job(JOB_COUNSELOR, 1) < 1 && Num_Patients(centre, true) > 0))
         jdmessage << "\n*** A Counselor is required to guide Rehab and Therapy patients. ";
     return jdmessage.str();
 }
@@ -595,16 +592,6 @@ cScreenClinicManagement::cScreenClinicManagement() :
 {
     add_job_filter(JOBFILTER_CLINICSTAFF);
     add_job_filter(JOBFILTER_CLINIC);
-}
-
-std::string cScreenClinicManagement::update_job_description(const sGirl& girl)
-{
-    std::string jc = job_change_message(girl, girl.m_DayJob);
-    if (!jc.empty())
-    {
-        return "\n** " + jc;
-    }
-    return "";
 }
 
 std::string cScreenClinicManagement::get_job_description(int selection)
@@ -629,16 +616,6 @@ cScreenHouseManagement::cScreenHouseManagement() :
 {
     add_job_filter(JOBFILTER_HOUSE);
     add_job_filter(JOBFILTER_HOUSETTRAINING);
-}
-
-std::string cScreenHouseManagement::update_job_description(const sGirl& girl)
-{
-    std::string jc = job_change_message(girl, girl.m_DayJob);
-    if (!jc.empty())
-    {
-        return "\n** " + jc;
-    }
-    return "";
 }
 
 cScreenStudioManagement::cScreenStudioManagement() :

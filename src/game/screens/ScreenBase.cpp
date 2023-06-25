@@ -66,7 +66,7 @@ void cTransferGirlsBase::set_ids() {
     setup_callbacks();
 }
 
-cTurnSummaryBase::cTurnSummaryBase() : cInterfaceWindowXML("TurnSummary.xml") { };
+cTurnSummaryBase::cTurnSummaryBase() : cGameWindow("TurnSummary.xml") { };
 
 void cTurnSummaryBase::set_ids() {
     m_BackBtn_id         = get_id("BackButton");
@@ -75,6 +75,7 @@ void cTurnSummaryBase::set_ids() {
     m_CurrentBrothel_id  = get_id("CurrentBrothel");
     m_Event_id           = get_id("Event");
     m_GoTo_id            = get_id("GoTo");
+    m_ImagePath_id       = get_id("ImagePath");
     m_Item_id            = get_id("Item");
     m_LabelDesc_id       = get_id("LabelDesc");
     m_LabelEvent_id      = get_id("LabelEvent");
@@ -115,6 +116,7 @@ void cBuildingBaseBase::set_ids() {
     m_PrevBtn_id         = get_id("PrevButton");
     m_Setup_id           = get_id("Setup");
     m_VisitTown_id       = get_id("Visit Town");
+    m_WalkBtn_id         = get_id("WalkButton");
     m_YourOffice_id      = get_id("YourOffice");
 
     setup_callbacks();

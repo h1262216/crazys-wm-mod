@@ -31,6 +31,7 @@ void cScreenGameMenu::setup_callbacks()
 
     SetButtonCallback(m_SaveBtn_id, [this]() {
         SaveGame();
+        pop_window();
         push_message("Game Saved", COLOR_POSITIVE);
     });
 }

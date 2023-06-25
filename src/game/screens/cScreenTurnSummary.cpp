@@ -50,70 +50,7 @@ const sGirl* find_girl_by_name(cBuilding& source, std::string name)
     return source.girls().get_first_girl(HasName(std::move(name))) ;
 }
 
-cScreenTurnSummary::cScreenTurnSummary() : cGameWindow("TurnSummary.xml")
-{
-}
-
-void cScreenTurnSummary::set_ids()
-{
-    brothel_id        = get_id("CurrentBrothel");
-    category_id        = get_id("Category");
-    gold_id            = get_id("Gold", "*Unused*");//
-    labelitem_id    = get_id("LabelItem");
-    item_id            = get_id("Item");
-    event_id        = get_id("Event");
-    labeldesc_id    = get_id("LabelDesc");
-    goto_id            = get_id("GoTo");
-    nextweek_id        = get_id("NextWeek");
-    prev_id            = get_id("PrevButton","Prev");
-    next_id            = get_id("NextButton","Next");
-    image_id        = get_id("Background");
-    imagename_id    = get_id("ImageName", "*Unused*");//
-
-    /*
-    SetButtonCallback(next_id, [this]() {
-        cycle_building(1);
-        change_category(m_ActiveCategory);
-    });
-    SetButtonCallback(prev_id, [this]() {
-        cycle_building(-1);
-        change_category(m_ActiveCategory);
-    });
-    */
-    SetButtonCallback(nextweek_id, [this]() {
-        if (!is_ctrl_held()) { AutoSaveGame(); }
-        g_Game->NextWeek();
-        init(true);
-    });
-    SetButtonHotKey(nextweek_id, SDLK_RETURN);
-
-    SetListBoxHotKeys(category_id, SDLK_e, SDLK_q);
-    SetListBoxSelectionCallback(category_id, [this](int selection) {
-        int sc = selection % 10;
-        if(sc == Summary_GIRLS) {
-            set_active_building( &g_Game->buildings().get_building(selection / 10) );
-        }
-        change_category((SummaryCategory)sc);
-    });
-
-    SetListBoxHotKeys(item_id, SDLK_a, SDLK_d);
-    SetListBoxSelectionCallback(item_id, [this](int selection) {
-        change_item(selection);
-    });
-
-    SetListBoxHotKeys(event_id, SDLK_w, SDLK_s);
-    SetListBoxSelectionCallback(event_id, [this](int selection) {
-        change_event(selection);
-    });
-
-    SetButtonCallback(goto_id, [this]() { goto_selected(); });
-    SetButtonHotKey(goto_id, SDLK_SPACE);
-
-    AddKeyCallback(SDLK_o, [this]() {
-        summarysortorder = summarysortorder == 0 ? 1 : 0;
-        change_category(m_ActiveCategory);
-    });
-}
+cScreenTurnSummary::cScreenTurnSummary() = default;
 
 void cScreenTurnSummary::init(bool back)
 {
@@ -129,26 +66,23 @@ void cScreenTurnSummary::init(bool back)
         }
     }
 
-    EditTextItem(active_building().name(), brothel_id);
-
-    if (gold_id >= 0)
-    {
-        std::stringstream ss; ss << "Gold: " << g_Game->gold().ival();
-        EditTextItem(ss.str(), gold_id);
-    }
-
+    EditTextItem(active_building().name(), m_CurrentBrothel_id);
+    
+    
+    
+    
     // Clear everything
-    ClearListBox(category_id);
-    ClearListBox(item_id);
-    ClearListBox(event_id);
-    EditTextItem("", labeldesc_id);
+    ClearListBox(m_Category_id);
+    ClearListBox(m_Item_id);
+    ClearListBox(m_Event_id);
+    EditTextItem("", m_LabelDesc_id);
 
-    AddToListBox(category_id, Summary_BUILDINGS, "BUILDINGS");
-    AddToListBox(category_id, Summary_RIVALS, "RIVALS");
-    AddToListBox(category_id, Summary_GANGS, "GANGS");
-    AddToListBox(category_id, Summary_DUNGEON, "DUNGEON");
+    AddToListBox(m_Category_id, Summary_BUILDINGS, "BUILDINGS");
+    AddToListBox(m_Category_id, Summary_RIVALS, "RIVALS");
+    AddToListBox(m_Category_id, Summary_GANGS, "GANGS");
+    AddToListBox(m_Category_id, Summary_DUNGEON, "DUNGEON");
     for(int i = 0; i < g_Game->buildings().num_buildings(); ++i) {
-        AddToListBox(category_id, Summary_GIRLS + 10 * i, g_Game->buildings().get_building(i).name());
+        AddToListBox(m_Category_id, Summary_GIRLS + 10 * i, g_Game->buildings().get_building(i).name());
     }
     change_category(m_ActiveCategory);
 }
@@ -163,7 +97,7 @@ void cScreenTurnSummary::process()
         Item_Change = false;
     }
 
-    EditTextItem(active_building().name(), brothel_id);
+    EditTextItem(active_building().name(), m_CurrentBrothel_id);
 }
 
 
@@ -171,8 +105,8 @@ void cScreenTurnSummary::change_category(SummaryCategory new_category)
 {
     SummaryCategory old = m_ActiveCategory;
     m_ActiveCategory = new_category;
-    ClearListBox(item_id);
-    ClearListBox(event_id);
+    ClearListBox(m_Item_id);
+    ClearListBox(m_Event_id);
     switch(new_category) {
     case Summary_GANGS:
         Fill_Items_GANGS();
@@ -193,10 +127,10 @@ void cScreenTurnSummary::change_category(SummaryCategory new_category)
     // if the category has not changed, keep the selected item
     int new_item = 0;
     if (m_ActiveCategory == old) {
-        new_item = GetSelectedItemFromList(item_id);
+        new_item = GetSelectedItemFromList(m_Item_id);
     }
-    if (new_item >= GetListBoxSize(item_id) || new_item < 0) new_item = 0;
-    SetSelectedItemInList(item_id, new_item);
+    if (new_item >= GetListBoxSize(m_Item_id) || new_item < 0) new_item = 0;
+    SetSelectedItemInList(m_Item_id, new_item);
 
     std::string sorttext = "ITEM";
     if (summarysortorder == 1 && m_ActiveCategory == Summary_GIRLS)
@@ -204,7 +138,7 @@ void cScreenTurnSummary::change_category(SummaryCategory new_category)
         if (active_building().type() == BuildingType::STUDIO)    { sorttext += " (Jobs)"; }
         if (active_building().type() == BuildingType::CLINIC)    { sorttext += " (Triage)"; }
     }
-    EditTextItem(sorttext, labelitem_id);
+    EditTextItem(sorttext, m_LabelItem_id);
 
     change_item(0);
 }
@@ -212,7 +146,7 @@ void cScreenTurnSummary::change_category(SummaryCategory new_category)
 void cScreenTurnSummary::change_event(int selection)
 {
     Event = selection;
-    if(selection < 0 || selection >= GetListBoxSize(event_id)) {
+    if(selection < 0 || selection >= GetListBoxSize(m_Event_id)) {
         set_backdrop("");
         return;
     }
@@ -237,7 +171,7 @@ void cScreenTurnSummary::change_event(int selection)
             set_backdrop("");
         }
     } else if (m_ActiveCategory == Summary_GANGS) {
-        int active_gang = GetSelectedItemFromList(item_id);
+        int active_gang = GetSelectedItemFromList(m_Item_id);
         auto* gang = g_Game->gang_manager().GetGang(active_gang);
         if (gang && !gang->GetEvents().IsEmpty()) {
             const CEvent& event = gang->GetEvents().GetMessage(selection);
@@ -248,28 +182,28 @@ void cScreenTurnSummary::change_event(int selection)
         }
         set_backdrop("");
     } else if (m_ActiveCategory == Summary_BUILDINGS) {
-        auto building_id = GetSelectedItemFromList(item_id);
+        auto building_id = GetSelectedItemFromList(m_Item_id);
         if(building_id < 0 || building_id >= g_Game->buildings().num_buildings())
             building_id = 0;
         cBuilding * brothel = &g_Game->buildings().get_building(building_id);
         if (!brothel->m_Events.IsEmpty()) {
             text = brothel->m_Events.GetMessage(selection).GetMessage();
-            EditTextItem(brothel->name(), brothel_id);
+            EditTextItem(brothel->name(), m_CurrentBrothel_id);
         }
         set_backdrop(brothel->background_image());
     } else if (m_ActiveCategory == Summary_RIVALS) {
         if (!g_Game->rivals().GetEvents().IsEmpty()) {
             text = g_Game->rivals().GetEvents().GetMessage(selection).GetMessage();
-            EditTextItem("Rival", brothel_id);
+            EditTextItem("Rival", m_CurrentBrothel_id);
         }
         set_backdrop("");
     }
-    EditTextItem(text, labeldesc_id);
+    EditTextItem(text, m_LabelDesc_id);
 }
 
 void cScreenTurnSummary::change_item(int selection)
 {
-    ClearListBox(event_id);
+    ClearListBox(m_Event_id);
     switch(m_ActiveCategory) {
     case Summary_GANGS:
         Fill_Events_Gang(selection);
@@ -280,7 +214,7 @@ void cScreenTurnSummary::change_item(int selection)
         }
         break;
     case Summary_DUNGEON: {
-        auto girl = g_Game->dungeon().GetGirlByID(GetSelectedItemFromList(item_id));
+        auto girl = g_Game->dungeon().GetGirlByID(GetSelectedItemFromList(m_Item_id));
         if (girl) {
             set_active_girl(girl->m_Girl);
         }
@@ -288,7 +222,7 @@ void cScreenTurnSummary::change_item(int selection)
     }
         break;
     case Summary_GIRLS: {
-        auto girl = find_girl_by_name(active_building(), GetSelectedTextFromList(item_id));
+        auto girl = find_girl_by_name(active_building(), GetSelectedTextFromList(m_Item_id));
         if (girl && girl->m_Building) {
             set_active_girl(girl->m_Building->girls().get_ref_counted(girl));
         } else {
@@ -303,8 +237,8 @@ void cScreenTurnSummary::change_item(int selection)
     }
 
     Event = 0;
-    if(GetListBoxSize(event_id) > 0) {
-        SetSelectedItemInList(event_id, Event);
+    if(GetListBoxSize(m_Event_id) > 0) {
+        SetSelectedItemInList(m_Event_id, Event);
     } else {
         change_event(-1);
     }
@@ -318,8 +252,8 @@ void cScreenTurnSummary::goto_selected()
         }
         return;
     }
-    std::string selectedName = GetSelectedTextFromList(item_id);
-    std::uint64_t selectedID = GetSelectedItemFromList(item_id);
+    std::string selectedName = GetSelectedTextFromList(m_Item_id);
+    std::uint64_t selectedID = GetSelectedItemFromList(m_Item_id);
     switch (m_ActiveCategory)
     {
     case Summary_RIVALS:
@@ -352,7 +286,7 @@ void cScreenTurnSummary::goto_selected()
     break;
     case Summary_BUILDINGS: {
         // set active building?
-        auto bld_id = GetSelectedItemFromList(item_id);
+        auto bld_id = GetSelectedItemFromList(m_Item_id);
         // TODO disable the goto button if nothing is selected!
         if(bld_id == -1)
             return;
@@ -367,14 +301,14 @@ void cScreenTurnSummary::goto_selected()
 void cScreenTurnSummary::Fill_Items_GANGS()
 {
     for (int i = 0; i < g_Game->gang_manager().GetNumGangs(); i++)
-        AddToListBox(item_id, i, g_Game->gang_manager().GetGang(i)->name());
+        AddToListBox(m_Item_id, i, g_Game->gang_manager().GetGang(i)->name());
 }
 
 void cScreenTurnSummary::Fill_Items_BUILDINGS()
 {
     for (int i = 0; i < g_Game->buildings().num_buildings(); i++) {
         cBuilding& next = g_Game->buildings().get_building(i);
-        AddToListBox(item_id, i, next.name());
+        AddToListBox(m_Item_id, i, next.name());
     }
 }
 
@@ -388,10 +322,10 @@ void cScreenTurnSummary::Fill_Events(sGirl* girl)
         {
             std::string              sTitle = events.GetMessage(l).TitleText();
             unsigned int    uiListboxColour = events.GetMessage(l).ListboxColour();
-            AddToListBox(event_id, l, sTitle, uiListboxColour);
+            AddToListBox(m_Event_id, l, sTitle, uiListboxColour);
         }
     }
-    if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
+    if (GetListBoxSize(m_Event_id) > 0) SetSelectedItemInList(m_Event_id, 0);
 }
 
 void cScreenTurnSummary::Fill_Events_Gang(int gang_id)
@@ -407,10 +341,10 @@ void cScreenTurnSummary::Fill_Events_Gang(int gang_id)
         {
             std::string            sTitle = events.GetMessage(l).TitleText();
             unsigned int    uiListboxColour = events.GetMessage(l).ListboxColour();
-            AddToListBox(event_id, l, sTitle, uiListboxColour);
+            AddToListBox(m_Event_id, l, sTitle, uiListboxColour);
         }
     }
-    if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
+    if (GetListBoxSize(m_Event_id) > 0) SetSelectedItemInList(m_Event_id, 0);
 }
 void cScreenTurnSummary::Fill_Events_Buildings(int building_id)
 {
@@ -423,7 +357,7 @@ void cScreenTurnSummary::Fill_Events_Buildings(int building_id)
         {
             std::string            sTitle = pSelectedBrothel.m_Events.GetMessage(l).TitleText();
             unsigned int    uiListboxColour = pSelectedBrothel.m_Events.GetMessage(l).ListboxColour();
-            AddToListBox(event_id, l, sTitle, uiListboxColour);
+            AddToListBox(m_Event_id, l, sTitle, uiListboxColour);
         }
     }
 }
@@ -580,9 +514,9 @@ void cScreenTurnSummary::Fill_Items_GIRLS(cBuilding * building)
     });
 
     for(auto& girl : all_girls) {
-        AddToListBox(item_id, girl->GetID(), girl->FullName(), rating_fn(*girl).color);
+        AddToListBox(m_Item_id, girl->GetID(), girl->FullName(), rating_fn(*girl).color);
         if (selected_girl().get() == girl) {
-            SetSelectedItemInList(item_id, girl->GetID());
+            SetSelectedItemInList(m_Item_id, girl->GetID());
         }
     }
 }
@@ -603,9 +537,9 @@ void cScreenTurnSummary::Fill_Items_DUNGEON()
     });
 
     for(auto& girl : all_girls) {
-        AddToListBox(item_id, girl->GetID(), girl->FullName(), rating_fn(*girl).color);
+        AddToListBox(m_Item_id, girl->GetID(), girl->FullName(), rating_fn(*girl).color);
         if (selected_girl().get() == girl) {
-            SetSelectedItemInList(item_id, girl->GetID());
+            SetSelectedItemInList(m_Item_id, girl->GetID());
         }
     }
 }
@@ -622,23 +556,23 @@ void cScreenTurnSummary::Fill_Events_Rivals() {
         {
             std::string     sTitle          = rivals.GetEvents().GetMessage(l).TitleText();
             unsigned int    uiListboxColour = rivals.GetEvents().GetMessage(l).ListboxColour();
-            AddToListBox(event_id, l, sTitle, uiListboxColour);
+            AddToListBox(m_Event_id, l, sTitle, uiListboxColour);
         }
     }
-    if (GetListBoxSize(event_id) > 0) SetSelectedItemInList(event_id, 0);
+    if (GetListBoxSize(m_Event_id) > 0) SetSelectedItemInList(m_Event_id, 0);
 }
 
 void cScreenTurnSummary::set_backdrop(const std::string& bd) {
     if(bd.empty()) {
-        SetImage(image_id, "");
+        SetImage(m_Background_id, "");
     } else {
-        SetImage(image_id, "Backdrops", bd);
+        SetImage(m_Background_id, "Backdrops", bd);
     }
-    if (imagename_id >= 0)    EditTextItem("", imagename_id);
+    if (m_ImagePath_id >= 0)    EditTextItem("", m_ImagePath_id);
 }
 
 void cScreenTurnSummary::present_image(const CEvent& event) {
-    cImageItem* image_item = GetImage(image_id);
+    cImageItem* image_item = GetImage(m_Background_id);
     std::uint64_t seed = reinterpret_cast<std::intptr_t>(&event) + g_Game->get_weeks_played();
 
     std::string image_file;
@@ -665,10 +599,60 @@ void cScreenTurnSummary::present_image(const CEvent& event) {
             m_RecentImages.pop_front();
         }
     }
-    PrepareImage(image_id, image_file);
-    if (imagename_id >= 0){
+    PrepareImage(m_Background_id, image_file);
+    if (m_ImagePath_id >= 0){
         std::string t;
         if (image_item) t = image_item->m_Image.GetFileName();
-        EditTextItem(t, imagename_id);
+        EditTextItem(t, m_ImagePath_id);
     }
+}
+
+void cScreenTurnSummary::setup_callbacks() {
+/*
+    SetButtonCallback(next_id, [this]() {
+        cycle_building(1);
+        change_category(m_ActiveCategory);
+    });
+    SetButtonCallback(prev_id, [this]() {
+        cycle_building(-1);
+        change_category(m_ActiveCategory);
+    });
+    */
+    SetButtonCallback(m_NextWeek_id, [this]() {
+        if (!is_ctrl_held()) { AutoSaveGame(); }
+        g_Game->NextWeek();
+        init(true);
+    });
+    SetButtonHotKey(m_NextWeek_id, SDLK_RETURN);
+
+    SetListBoxHotKeys(m_Category_id, SDLK_e, SDLK_q);
+    SetListBoxSelectionCallback(m_Category_id, [this](int selection) {
+        int sc = selection % 10;
+        if(sc == Summary_GIRLS) {
+            set_active_building( &g_Game->buildings().get_building(selection / 10) );
+        }
+        change_category((SummaryCategory)sc);
+    });
+
+    SetListBoxHotKeys(m_Item_id, SDLK_a, SDLK_d);
+    SetListBoxSelectionCallback(m_Item_id, [this](int selection) {
+        change_item(selection);
+    });
+
+    SetListBoxHotKeys(m_Event_id, SDLK_w, SDLK_s);
+    SetListBoxSelectionCallback(m_Event_id, [this](int selection) {
+        change_event(selection);
+    });
+
+    SetButtonCallback(m_GoTo_id, [this]() { goto_selected(); });
+    SetButtonHotKey(m_GoTo_id, SDLK_SPACE);
+
+    AddKeyCallback(SDLK_o, [this]() {
+        summarysortorder = summarysortorder == 0 ? 1 : 0;
+        change_category(m_ActiveCategory);
+    });
+}
+
+std::shared_ptr<cInterfaceWindow> screens::cTurnSummaryBase::create() {
+    return std::make_shared<cScreenTurnSummary>();
 }
