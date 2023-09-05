@@ -17,12 +17,13 @@ def generate_image(text, mode):
             draw.font = '../../HoboStd.otf'
 
             draw.text_alignment = 'center'
-            draw.font_size = 32
+            draw.font_size = 34
+            if len(text) > 20:
+                draw.text_kerning = -1
             draw.fill_color = Color(f'rgb({text_col})')
             draw.text(img.width // 2, img.height // 2 + 15, text)
             draw(img)
             img.save(filename='template/.main_text.png')
-
 
     if mode != "Disabled":
         border_col = border_colors[mode]
@@ -31,7 +32,9 @@ def generate_image(text, mode):
                 draw.font = '../../HoboStd.otf'
 
                 draw.text_alignment = 'center'
-                draw.font_size = 32
+                draw.font_size = 34
+                if len(text) > 20:
+                    draw.text_kerning = -1
                 draw.fill_color = Color(f'rgb({border_col})')
                 draw.text(img.width // 2, img.height // 2 + 15, text)
                 draw(img)
