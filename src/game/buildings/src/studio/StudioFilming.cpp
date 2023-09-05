@@ -306,8 +306,6 @@ sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
         }
     }
 
-
-
     ss << "\n";
 
     // consequences of forcing are loss of iron will and potential gain of Mind Fucked
@@ -376,26 +374,37 @@ void cFilmSceneJob::PrintPerfSceneEval() {
     if (m_Performance >= 300)
     {
         add_text("work.perfect");
+        ss << "\n\nIt was an excellent scene.";
     }
     else if (m_Performance >= 220)
     {
         add_text("work.great");
+        ss << "\n\nIt was a great scene.";
     }
     else if (m_Performance >= 175)
     {
         add_text("work.good");
+        ss << "\n\nIt was a good scene.";
     }
     else if (m_Performance >= 135)
     {
         add_text("work.ok");
+        ss << "\n\nIt was an OK scene.";
+        // <Text>Overall, it was an solid scene.</Text>
+        // <Text>Overall, it wasn't a bad scene.</Text>
     }
     else if (m_Performance >= 90)
     {
         add_text("work.bad");
+        ss << "\n\nIt was a bad scene.";
+        // <Text>It wasn't a great scene.</Text>
     }
     else
     {
         add_text("work.worst");
+        ss << "\n\nIt was an abysmal scene.";
+        // <Text>It was a poor scene.</Text>
+        //  Terrible scene.
     }
 
     ss << "\n";

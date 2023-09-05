@@ -1,0 +1,150 @@
+<!DOCTYPE Job SYSTEM "job.dtd">
+<Job ShortName="FJOI">
+    <Description>
+        She will give jerk-off instructions to her viewers.
+    </Description>
+    <Performance>
+        <Factor Stat="Charisma" Weight="2"/>
+        <Factor Stat="Beauty" Weight="2"/>
+        <Factor Stat="Confidence" Weight="1"/>
+        <Factor Skill="Performance" Weight="1"/>
+        <Factor Skill="Handjob" Weight="1"/>
+
+        <Mod>work.actress</Mod>
+
+        <!-- good traits -->
+        <Trait Name="Sexy Air" Value="25"/>    <!-- nice video -->
+        <Trait Name="Agile" Value="10"/>
+        <Trait Name="Cool Person" Value="15"/>
+        <Trait Name="Cute" Value="20"/>    <!-- Attractive to some -->
+        <Trait Name="Exotic" Value="15"/>
+        <Trait Name="Idol" Value="15"/>
+
+        <!-- bad traits -->
+        <Trait Name="Mind Fucked" Value="-40"/>    <!-- too messed up -->
+        <Trait Name="Nervous" Value="-15"/>    <!-- weakens performance -->
+        <Trait Name="Shy" Value="-20"/>
+        <Trait Name="Retarded" Value="-15"/>
+    </Performance>
+
+    <Gains XP="15" Skill="2">
+        <Skill Name="Performance" Weight="1" Max="33" />
+        <Stat Name="Charisma" Weight="1" Max="50"/>
+        <Stat Name="Confidence" Weight="1" Max="50" />
+    </Gains>
+
+    <Config PrimaryAction="ACTRESS" SecondaryAction="ACTRESS">
+    </Config>
+
+    <Messages>
+        <Message Name="work">
+            <Text>${name} was filmed giving jerk-off instructions to her viewers.</Text>
+        </Message>
+        <Message Name="refuse">
+            <Text>${name} refused to shoot a JOI movie today.</Text>
+        </Message>
+
+        <Message Name="work.perfect">
+            <Text>
+                She confidently delivered every line of sultry words
+                that tantalized viewers into getting hard and stroking themselves for hours on end.
+                With her voice full of promise and desire,
+                each sentence dripped with eroticism as she encouraged them to take matters into their own hands.
+                The combination of her sensual delivery and powerful words created an experience unlike any other; one which left even veteran masturbators begging for more!
+            </Text>
+            <Text Condition="Tsundere">
+                She spoke in a tone that could be both playful and serious,
+                teasing them with her words while making sure they were following orders properly.
+                By alternating between flirty commands and strict demands,
+                she managed to keep their attention focused solely on what she was saying rather than anything else around them.
+            </Text>
+            <Text>
+                As a master of dirty talk, she managed to make countless viewers crave
+                for more while pleasuring themselves with her sexy commands and moans.
+            </Text>
+            <Text>
+                The camera zoomed in tightly on ${name}'s face while she spoke to them passionately about how they could please themselves better.
+                Her soft brown hair cascaded down her back
+                and accentuated her mesmerizing eyes.
+                She spoke directly into the lens, making it feel like you were alone
+                with only her guidance leading you through your fantasies.
+                Each word exuded pure desire for what lies ahead—a journey into
+                self-discovery fueled by pleasure itself!
+                With such an irresistible presentation from someone so captivating,
+                who wouldn't want to follow her instructions?
+            </Text>
+        </Message>
+        <Message Name="work.great">
+            <Text Condition="Meek|Shy">
+                Despite her timid demeanor, she managed to captivate viewers with her seductive voice and hypnotizing gaze.
+                Her soft tones and gentle touch encouraged men to let go of their inhibitions and get lost in the moment under her guidance.
+                With every instruction given, audiences became more aroused as they followed along with anticipation and excitement.
+            </Text>
+            <Text>
+                In the video, she wore a white shirt tied up above her waist,
+                revealing her perky breasts and toned abs. Her long brown hair was
+                styled in loose waves that cascaded down her back while she
+                confidently directed viewers through each stroke. As she spoke, her
+                lips curved into a sultry smile, making it clear that she enjoyed
+                every second of guiding men towards ecstatic release.
+            </Text>
+            <Text>
+                The video featured clips from different angles, showing off her body
+                and seductive gaze. Her instructions were both playful and naughty
+                as she directed viewers through each step with ease.
+                Throughout the clip, it became clear why she is such a popular webcam model -
+                her confidence, personality, and talent are truly captivating!
+            </Text>
+            <Text Condition="Sexy Air">
+                As she spoke, her hand gracefully caressed her full breasts while
+                her plump lips curved into a teasing smile. Her voice was seductive and
+                captivating, inviting listeners to join in on the fun. The combination
+                of her sultry words combined with alluring movements were enough to send viewers spiraling out of control.
+            </Text>
+        </Message>
+        <Message Name="work.good">
+            <Text Condition="stat:Beauty>75">
+                As they watched, each stroke caused their hearts to beat faster while
+                enjoying the visual stimulation provided by this gorgeous woman.
+                She confidently spoke with authority as she guided men on how to properly pleasure themselves without shame or embarrassment.
+            </Text>
+            <Text>
+                While the content of her video was fairly standard fare,
+                she managed to make it sexy nonetheless.
+                From her flirtatious mannerisms to sultry sounds,
+                every element of her instructional clip exuded sexual energy that kept viewers glued to their screens.
+            </Text>
+        </Message>
+        <Message Name="work.ok">
+            <Text>
+                While it wasn't the most thrilling or captivating display of erotica,
+                her gentle commands and soothing voice managed to keep viewers entertained.
+                Even though there wasn't much excitement involved, ${name} was able to provide enough guidance
+                that viewers were able to enjoy themselves.
+            </Text>
+        </Message>
+        <Message Name="work.bad">
+            <Text>
+                While attempting to be sexy and seductive, she ends up sounding like a robot instead.
+                Her monotone voice fails to stimulate any feelings or emotions within you.
+                You are left feeling nothing but disappointment after watching such an unsatisfying display.
+                If only they could have found someone who knew what they were doing...
+            </Text>
+            <Text Condition="Nervous|Shy|Chaste">
+                While she tried her best to give directions, it was obvious that she wasn't comfortable in front of the camera.
+                She kept looking around nervously and stammering through her lines, making it difficult for viewers to follow along.
+                At one point, she even forgot what she was supposed to say next.
+                Overall, it was a cringe-worthy experience
+                for both her and anyone watching who wished they could turn back time.
+            </Text>
+        </Message>
+        <Message Name="work.worst">
+            <Text>
+                Her attempt at encouraging her viewers to masturbate isn't erotic at all. In fact,
+                you are thinking of whether you might still make some money with this by selling
+                the clip to a local priest, who is teaching his followers abstinence and that masturbation is evil.
+                But then, do you really want to help this man?
+            </Text>
+        </Message>
+    </Messages>
+</Job>

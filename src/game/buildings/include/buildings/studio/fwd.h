@@ -36,8 +36,11 @@ enum class SceneType {
     CHEF,
     MUSIC,
     TEASE,
+    COMEDY,
+    HORROR,
     // Soft
     TITTY,
+    JOI,
     STRIP,
     HAND,
     FOOT,

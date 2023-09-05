@@ -1,0 +1,210 @@
+<!DOCTYPE Job SYSTEM "job.dtd">
+<Job ShortName="FCmd">
+    <Description>
+        She will star in a comedy movie.
+    </Description>
+    <Performance>
+        <Factor Stat="Charisma" Weight="2"/>
+        <Factor Stat="Beauty" Weight="1"/>
+        <Factor Stat="Confidence" Weight="1"/>
+        <Factor Skill="Performance" Weight="2"/>
+
+        <Mod>work.actress</Mod>
+
+        <!-- good traits -->
+        <Trait Name="Sexy Air" Value="22"/>    <!-- nice video -->
+        <Trait Name="Agile" Value="20"/>
+        <Trait Name="Cool Person" Value="10"/>
+        <Trait Name="Audacity" Value="10"/>
+        <Trait Name="Cute" Value="20"/>    <!-- Attractive to some -->
+        <Trait Name="Exotic" Value="15"/>
+        <Trait Name="Idol" Value="15"/>
+        <Trait Name="Lolita" Value="10"/>
+        <Trait Name="Elegant" Value="10"/>
+        <Trait Name="Beauty Mark" Value="5"/>
+        <Trait Name="Social Drinker" Value="5"/>   <!-- relaxed -->
+
+        <!-- bad traits -->
+        <Trait Name="Mind Fucked" Value="-40"/>    <!-- too messed up -->
+        <Trait Name="Nervous" Value="-25"/>    <!-- weakens performance -->
+        <Trait Name="Shy" Value="-30"/>
+        <Trait Name="Retarded" Value="-30"/>
+    </Performance>
+
+    <Gains XP="15" Skill="2">
+        <Skill Name="Performance" Weight="2"/>
+        <Stat Name="Charisma" Weight="1"/>
+        <Stat Name="Confidence" Weight="1" Max="50" />
+
+        <GainTrait Trait="Actress" >
+            <TraitChangeAmount Value="20" Chance="25" />
+            <Text>She has performed in enough scenes that she has become a good Actress.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Charming" >
+            <TraitChangeAmount Value="33" Chance="25" />
+            <Text>Her ability to tell jokes in any situation make ${name} quite Charming.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="75" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>Her talented and charismatic performances have got a large number of fans Idolizing her.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Cool Person" >
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Agility" Lower="33" Upper="66" />
+            </TraitChangeAmount>
+            <Text>Performing in a comedy movie makes ${name} a really Cool Person.</Text>
+        </GainTrait>
+    </Gains>
+
+    <Config PrimaryAction="ACTRESS" SecondaryAction="ACTRESS">
+    </Config>
+
+    <Messages>
+        <Message Name="work">
+            <Text>${name} played a part in a comedy production.</Text>
+        </Message>
+        <Message Name="refuse">
+            <Text>${name} refused to shoot a comedy movie today.</Text>
+        </Message>
+
+        <Message Name="work.perfect">
+            <Text>
+                From her very first take, you could tell that she had nailed her lines down pat, bringing laughs from everyone who watched them unfold.
+                Her physical comedy skills were top-notch too; no matter how many takes they did of a certain scene,
+                she always managed to come up with something fresh that kept everyone entertained.
+                The end result is a truly perfect comedy scene.
+            </Text>
+            <Text>
+                Her timing and delivery were impeccable, eliciting laughter from both cast and crew alike.
+                No matter how difficult the line or situation might be, ${name} always found a way to make it funny with her clever wit and charisma.
+                It truly was a sight to behold!
+            </Text>
+            <Text Condition="Titanic Tits|Abnormally Large Boobs|Massive Melons|Giant Juggs">
+                Her timing and delivery were impeccable, eliciting laughter from both cast and crew alike. Most striking was how deftly she used her large chest as part of her comedic toolkit; her bouncing breasts became a source of many jokes throughout the scene.
+                The result? A perfectly crafted comedy scene that had everyone rolling in the aisles!
+            </Text>
+            <Text>
+                She had a unique ability to make even the most mundane tasks entertaining and funny to watch.
+                Her facial expressions and body language were perfect for creating humor out of any situation, whether she was having trouble with a prop or playing off one-liners delivered by other cast members.
+                Everyone involved in the production couldn't help but laugh along with her throughout every take – truly making it a perfect comedy scene!
+            </Text>
+            <Text Condition="Slut">
+                She didn't have to act much to play the role of
+                a slutty girlfriend who gets drunk and causes chaos while out with friends - because in real life
+                she was already doing it! Her drunken behavior was so convincing that even
+                the cast members couldn't tell if she was playing
+                or really getting intoxicated off camera; it made for some truly hilarious moments
+                on-screen which will have viewers laughing nonstop.
+            </Text>
+            <Text Condition="Singer">
+                The director made good use of her talents by having her sing various catchy songs throughout the show.
+                Each performance left audiences in stitches as
+                they laughed along to her hilarious lyrics and melodies.
+            </Text>
+            <Text Condition="Mute">
+                Though she is mute, her facial expressions are enough to convey any emotion needed.
+                Without saying a word, ${name} manages to make people laugh and feel happy inside.
+                The audience loves watching ${name}'s hilarious antics without needing verbal cues.
+                No wonder why ${name} is such a beloved actor - even if she can't speak!
+            </Text>
+            <Text Condition="Dwarf">
+                Despite being a Dwarf, ${name} proved to be more than capable of producing belly-aching laughs with her outrageous antics on camera.
+                Her timing was spot-on and her physical gags were executed flawlessly, making even the most mundane scenarios seem hilarious through ${name}'s eyes.
+                Everyone involved in this production can attest to just how perfect this little person truly was for her roles!
+            </Text>
+        </Message>
+        <Message Name="work.great">
+            <Text Condition="Charming|Charismatic">
+                She brought a natural charm to each performance, making her characters believable and relatable despite being exaggerated or even ridiculous at times.
+                Her comedic timing was spot-on, allowing her to deliver punchlines perfectly.
+                No matter what role she played or how silly the situation got,
+                ${name} always managed to make audiences laugh out loud without ever becoming too goofy or unrealistic
+            </Text>
+            <Text>
+                She was known for being able to make any joke work, no matter how bad it might be.
+                Her timing, delivery, and comedic ability were so spot-on that each take resulted in laughter from the cast and crew alike.
+                No matter what situation she found herself in, ${name} always managed to find a way out of it while still keeping everyone entertained.
+            </Text>
+            <Text Condition="Titanic Tits|Abnormally Large Boobs|Massive Melons|Giant Juggs">
+                Her breasts were so large that they became an integral part of her comedic timing - providing both visual humor and physical gags.
+                Every time she moved or made a joke, those big boobs bounced along
+                with her - turning what would have otherwise been dull material into something hilarious!
+            </Text>
+        </Message>
+        <Message Name="work.good">
+            <Text Condition="Titanic Tits|Abnormally Large Boobs|Massive Melons|Giant Juggs">
+                Throughout most of the movie she relied heavily on her large breasts for comedic relief;
+                whether it was dropping something while trying to cover them up or bouncing around wildly when running away from someone -
+                her large chest provided plenty of opportunities for laughter throughout each scene.
+                While most of these moments were certainly amusing, they sometimes felt a bit forced and didn't always land well with audiences.
+                Ultimately though, viewers still enjoyed what they saw thanks partly due to the fact that no matter what happened during those moments
+                of comic genius - one thing remained constant:
+                the undeniable power of big tits!
+            </Text>
+            <Text>
+                ${name} worked as an actress filming comedy scenes.
+                Her timing was impeccable, never missing a beat even when delivering jokes that were borderline corny at best.
+                The audience could tell she put all her effort into every role she took on, which made them appreciate her performances more than ever before.
+                Even though some gags weren't exactly funny,
+                they still managed to elicit laughs from those watching due to how hard she tried making sure everything came out right.
+                In short, viewers got an entertaining experience thanks largely to ${name}'s dedication towards her craft.
+            </Text>
+        </Message>
+        <Message Name="work.ok">
+            <Text>
+                Her performance wasn't bad per se; however, there were noticeable flaws that made it far from perfect.
+                There were occasional moments where she struggled with lines or forgot a key part of her character's personality,
+                taking away from the overall effectiveness of each take.
+                Nonetheless, despite these small hiccups here and there,
+                she still brought plenty laughter out of audiences everywhere with her funny antics
+            </Text>
+            <Text Condition="Titanic Tits|Abnormally Large Boobs|Massive Melons|Giant Juggs">
+                Throughout most of the movie she relied heavily on her large breasts for comedic relief;
+                whether it was dropping something while trying to cover them up or bouncing around wildly when running away from someone -
+                her large chest provided plenty of opportunities for laughter throughout each scene.
+                While these moments were certainly amusing at times, they often felt somewhat forced and didn't always land well with audiences.
+                Ultimately though, viewers still enjoyed what they saw thanks largely due to the fact that no matter what happened during those moments
+                of comic genius - one thing remained constant:
+                the undeniable power of big tits!
+            </Text>
+            <Text>
+                One day, during the filming of her big scene, she forgot all her lines
+                and tried to improvise with some hilarious punchlines that left
+                everyone on set rolling with laughter - except for the director who
+                had no idea what was going through her mind!
+            </Text>
+        </Message>
+        <Message Name="work.bad">
+            <Text>
+                ${name}'s comedic timing was off, and she often missed cues or forgot lines during shooting.
+                The end result was a very awkward performance that made everyone cringe at times.
+                She tried hard but ultimately fell short of expectations in terms of quality.
+            </Text>
+            <Text>
+                Her performance was awkward at best, consisting mostly of fumbling words, facial expressions, and clumsiness that made for an uncomfortable watch.
+                Even though she tried hard to make things work out during filming, the results were less than desirable.
+                The director had to spend hours editing and re-shooting certain parts to salvage this disaster of a scene.
+            </Text>
+        </Message>
+        <Message Name="work.worst">
+            <Text Condition="stat:Beauty<33">
+                If she were pretty, maybe it wouldn't have been too bad that her comedic timing was non-existent.
+                If she were funny, the scene could have been decent despite her face.
+
+                Alas, she was neither.
+            </Text>
+
+            <Text>
+                She tells a joke. Then she starts to explain it. Then she realizes that she forgot the punchline.
+                Repeat this process ten times, and you get the worst attempt at comedy ever recorded.
+            </Text>
+        </Message>
+    </Messages>
+</Job>

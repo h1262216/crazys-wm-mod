@@ -61,7 +61,7 @@ namespace {
             int impact = uniform(0, 10);
             if (girl.has_active_trait(traits::STRONG_GAG_REFLEX))
             {
-                ss << "She was gagging and retching the whole scene, and was violently sick. She was exhausted and felt awful afterward.\n \n";
+                ss << "She was gagging and retching the whole scene, and was violently sick. She was exhausted and felt awful afterwards.\n \n";
                 girl.health((10 + impact));
                 girl.tiredness((10 + impact));
                 girl.pclove(-2);
@@ -125,41 +125,6 @@ namespace {
                 add_text("scene.position");
                 add_text("scene.action") << "\n";
                 PrintPerfSceneEval();
-            }
-        }
-    };
-
-    struct FilmAction : cFilmSceneJob {
-        FilmAction() : cFilmSceneJob(JOB_FILMACTION, "FilmAction.xml", EImageBaseType::COMBAT, SceneType::ACTION) {}
-        void Narrate(sGirl& girl) override {
-            if (m_Performance >= 350)
-            {
-                ss << "${name} made an outstanding action scene, " << get_text("story");
-                ss << " It will definitely win her some fans.";
-            }
-            else if (m_Performance >= 245)
-            {
-                ss << "${name} made a great action scene, " << get_text("story");
-                ss << " It should win her some fans.";
-            }
-            else if (m_Performance >= 185)
-            {
-                ss << "${name} made a fairly good action scene, " << get_text("story");
-                ss << " Her fans will enjoy it.";
-            }
-            else if (m_Performance >= 145)
-            {
-                ss << "${name} made an uninspired action scene, " << get_text("story");
-                ss << " Her diehard fans might enjoy it.";
-            }
-            else if (m_Performance >= 100)
-            {
-                ss << "${name} made a weak action scene, " << get_text("story");
-            }
-            else
-            {
-                ss << "${name} made an awful action scene, " << get_text("story");
-                ss << " Even her fans will hate it.";
             }
         }
     };
@@ -233,8 +198,17 @@ void RegisterFilmingJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMTEASE, "FilmTease.xml",
                                                      EImageBaseType::ECCHI, SceneType::TEASE));
 
+    mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMCOMEDY, "FilmComedy.xml",
+                                                     EImageBaseType::PROFILE, SceneType::COMEDY));
+
+    mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMHORROR, "FilmHorror.xml",
+                                                     EImageBaseType::DEATH, SceneType::HORROR));
+
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMMUSIC, "FilmMusic.xml",
                                                      EImageBaseType::SINGING, SceneType::MUSIC));
+
+    mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMJOI, "FilmJOI.xml",
+                                                     EImageBaseType::ECCHI, SceneType::JOI));
 
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMSEX, "FilmSex.xml",
                                                      EImageBaseType::VAGINAL, SceneType::SEX, cFilmSceneJob::SexAction::HUMAN));
@@ -248,11 +222,13 @@ void RegisterFilmingJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMGROUP, "FilmGroup.xml",
                                                      EImagePresets::ORGY, SceneType::GROUP, cFilmSceneJob::SexAction::HUMAN));
 
+    mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMACTION, "FilmAction.xml",
+                                                     EImageBaseType::COMBAT, SceneType::ACTION));
+
     mgr.register_job(std::make_unique<FilmOral>());
     mgr.register_job(std::make_unique<FilmThroat>());
     mgr.register_job(std::make_unique<FilmBeast>());
     mgr.register_job(std::make_unique<FilmBuk>());
-    mgr.register_job(std::make_unique<FilmAction>());
     mgr.register_job(std::make_unique<FilmPubBDSM>());
     mgr.register_job(std::make_unique<FilmRandom>());
 }

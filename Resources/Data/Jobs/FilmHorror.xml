@@ -1,0 +1,233 @@
+<!DOCTYPE Job SYSTEM "job.dtd">
+<Job ShortName="FHor">
+    <Description>
+        She will star in a horror movie.
+    </Description>
+    <Performance>
+        <Factor Stat="Charisma" Weight="1"/>
+        <Factor Stat="Beauty" Weight="1"/>
+        <Factor Stat="Confidence" Weight="1"/>
+        <Factor Skill="Performance" Weight="3"/>
+
+        <Mod>work.actress</Mod>
+
+        <!-- good traits -->
+        <Trait Name="Sexy Air" Value="22"/>    <!-- nice video -->
+        <Trait Name="Agile" Value="20"/>
+        <Trait Name="Cool Person" Value="10"/>
+        <Trait Name="Audacity" Value="10"/>
+        <Trait Name="Cute" Value="20"/>    <!-- Attractive to some -->
+        <Trait Name="Exotic" Value="15"/>
+        <Trait Name="Idol" Value="15"/>
+        <Trait Name="Elegant" Value="10"/>
+        <Trait Name="Beauty Mark" Value="5"/>
+
+        <!-- bad traits -->
+        <Trait Name="Mind Fucked" Value="-40"/>    <!-- too messed up -->
+        <Trait Name="Nervous" Value="-15"/>    <!-- weakens performance -->
+        <Trait Name="Shy" Value="-20"/>
+        <Trait Name="Retarded" Value="-15"/>
+    </Performance>
+
+    <Gains XP="15" Skill="2">
+        <Skill Name="Performance" Weight="2"/>
+        <Stat Name="Charisma" Weight="1"/>
+        <Stat Name="Confidence" Weight="1" Max="50" />
+
+        <GainTrait Trait="Actress" >
+            <TraitChangeAmount Value="20" Chance="25" />
+            <Text>She has performed in enough scenes that she has become a good Actress.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Idol" >
+            <TraitChangeAmount Value="75" Chance="20">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Fame" Lower="50" Upper="100" />
+            </TraitChangeAmount>
+            <Text>Her talented and charismatic performances have got a large number of fans Idolizing her.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Cool Person" >
+            <TraitChangeAmount Value="40" Chance="33">
+                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
+                <TraitChangeCondition What="Agility" Lower="33" Upper="66" />
+            </TraitChangeAmount>
+            <Text>Performing in a horror flick makes ${name} a really Cool Person.</Text>
+        </GainTrait>
+    </Gains>
+
+    <Config PrimaryAction="ACTRESS" SecondaryAction="ACTRESS">
+    </Config>
+
+    <Messages>
+        <Message Name="work">
+            <Text>${name} played a part in a horror movie production.</Text>
+        </Message>
+        <Message Name="refuse">
+            <Text>${name} refused to shoot a horror movie today.</Text>
+        </Message>
+
+        <Message Name="work.perfect">
+            <Text Condition="stat:Age<25">
+                She had been handpicked for the role of playing a young girl who,
+                while exploring her abandoned mansion home alone, encounters something
+                sinister lurking within its walls. In order to truly capture the essence
+                of terror and unease that comes with this type of situation,
+                the director needed someone who could exude innocence yet also project fear
+                all at once - which ${name} did brilliantly! Her performance brought life to every single scene
+                and helped build suspense throughout the entirety of the movie.  As such,
+                it earned high praise from both critics and fans alike.
+            </Text>
+
+            <Text>
+                She was required to play the role of a
+                seductive woman who lured unsuspecting men into her lair - only for
+                them to meet their untimely demise. As such, it called for her to be
+                incredibly alluring and tantalizingly dangerous at the same time. She
+                had to use every bit of charm and sexuality that she possessed to make
+                the audience believe that any man would willingly follow her anywhere.
+                Her costume played a significant part in creating the desired effect.
+                It consisted of a tight, revealing dress that hugged her curves and
+                left little to the imagination. Her hair was styled in a way that made
+                her look both innocent and tempting, with flowing locks cascading down
+                her back. To top it off, she wore high heels that added extra inches
+                to her already impressive height, making her seem even more
+                commanding.
+
+                As the camera rolled, ${name} moved around the set with a
+                sensual grace, using slow, deliberate movements to draw attention to
+                her body. When she spoke, her voice was low and sultry, sending
+                shivers down the spines of those watching. Every step she took seemed
+                to ooze confidence and invitation, as if daring anyone to come closer.
+                It wasn't just her physical appearance or mannerisms that were key to
+                pulling off this scene; ${name}'s facial expressions also held great
+                importance. They needed to convey a sense of danger mixed with desire
+                - an intoxicating combination that left audiences captivated yet wary.
+                As the tension built between her character and the unsuspecting
+                victim, ${name}'s eyes gleamed with promise and threat, hinting at
+                what was to come when the moment finally arrived for her to strike.
+                Throughout the entire shoot, ${name} remained completely focused on
+                delivering the performance required, pouring all of herself into every
+                seductive gesture and sinister glance. In doing so, she created a
+                character who was undeniably sexy but equally terrifying - a woman who
+                could lure men to their doom without ever having to raise her voice in
+                anger.
+            </Text>
+
+            <Text Condition="Aggressive">
+                In one particular scene, she played the role of an enraged young woman
+                who was hellbent on causing destruction and chaos around her. The
+                atmosphere was tense with smoke filling up the air from burning
+                objects that were being destroyed by her fury. Sweat dripped down her
+                face as she furiously threw things around, screaming at the top of her
+                lungs while her eyes burned with anger. Despite how intense the scene
+                was, ${name} relished every moment of it, giving her all to make the
+                character come alive on screen.
+            </Text>
+
+            <Text Condition="Slut">
+                In this scene, she played the slutty girl who gets murdered gruesomely by her boyfriend after being caught cheating on him.
+                She is perfect for this role. In fact, the clothes she wears in the scene are exactly how she arrived on set.
+                No makeup or wardrobe changes were needed - she actually *is* the Slut the director envisioned.
+                When she takes off her top revealing her breasts for all to see, it's like watching an actual sex tape come to life right there on screen.
+                ${name} seemed somewhat disappointed that no actual intercourse occurred during filming,
+                but nonetheless delivered an incredible performance filled with passion and intensity from start to finish!
+            </Text>
+        </Message>
+        <Message Name="work.great">
+            <Text Condition="stat:Age<25">
+                She had been picked for the role of playing a young girl who,
+                while exploring her abandoned mansion home alone, encounters something
+                sinister lurking within its walls.  The character requires acting talent beyond her years
+                and ${name} delivered flawlessly - captivating audiences with every scene she appeared in.
+                Her portrayal of fear and terror was so convincingly realistic that it left many viewers feeling scared even after watching the film multiple times.
+                Not only did she manage to convey strong emotion through facial expressions but also physical movements such as shaking limbs or wide eyes conveying absolute terror.
+                This combination allowed for an intense atmosphere which kept people glued onto their seats until the end credits rolled
+            </Text>
+            <Text>
+                In one particularly intense moment, she delivered her lines with such conviction that it sent chills down every viewer's spine.
+                If the entire scene had been like this, it would have been the performance of the year. As it was, the
+                scene was great, but not outstanding.
+            </Text>
+        </Message>
+        <Message Name="work.good">
+            <Text>
+                As the camera rolled, she gave life to her character - a terrified and
+                helpless victim of unspeakable horrors.
+                Her facial expressions conveyed fear and panic perfectly, allowing viewers to fully immerse themselves in the story unfolding before their eyes.
+                Though at times she may have fallen short of delivering an award-winning performance,
+                it was clear that ${name} had put effort into getting into character.
+                Despite some minor flaws, ${name}'s portrayal still proved effective
+                in creating suspenseful moments that kept viewers hooked until
+                the very end.
+            </Text>
+            <Text>
+                In this particular scene, she found herself trapped in a dark room filled
+                with cobwebs and dusty furniture.
+                As she explored further into the unknown space,
+                she began to hear strange sounds emanating from within its walls.
+                Fearful for her life but determined not to give up without some sort
+                of fight against whatever creature lurked inside this place, she slowly
+                made her way towards where the noise originated...
+
+                ${name} managed to deliver a solid performance full of fear
+                and excitement which captivated viewers until its final moments.
+                Overall, although far from perfect,
+                this particular scene showcased her ability to create
+                dynamic characters.
+            </Text>
+        </Message>
+        <Message Name="work.ok">
+            <Text>
+                Though her acting wasn't terrible, it could have been better.
+                The scene required ${name}'s character to seem terrified and paranoid; however, she simply seemed confused or distracted instead.
+                Her facial expressions also lacked any real emotion or intensity that would have helped convey the desired effect.
+                These shortcomings rendered the entire sequence less impactful than intended.
+                Fortunately, other parts of the story made up for this lackluster performance by offering some truly frightening moments instead
+            </Text>
+            <Text Condition="Aggressive">
+                ${name} played a part in a horror movie production.
+                In one particular scene, she played the role of an enraged young woman
+                who was hellbent on causing destruction and chaos around her.
+                She pulled off the aggressive nature of the character convincingly;
+                In fact, she hurt several crew members in a fury that was not at all an act.
+                All in all, it was not exactly an award-winning performance but rather one
+                that would be remembered because of its sheer violence and intensity.
+            </Text>
+        </Message>
+        <Message Name="work.bad">
+            <Text>
+                She tried her best to convey the
+                appropriate emotions for the role, but inside, she felt nothing but
+                dread at being surrounded by such gruesome props and special effects.
+            </Text>
+            <Text>
+                Unfortunately, her acting abilities were far from impressive.
+                She lacked any emotion or expression as she delivered lines that were supposed to send shivers down viewers’
+                spines but instead elicited nothing but snickering and giggles from the audience.
+                Her performance was simply not up to par with what was expected from such an important role within the movie.
+            </Text>
+            <Text Condition="Meek">
+                In the scene, her character was meant to be a strong and confident woman who could take care of herself.
+                However, her performance fell flat as she failed miserably at conveying these traits through body language and facial expressions alone.
+                Instead of appearing brave and independent,
+                she came across more like a timid girl afraid of everything around her - including herself.
+                This made it difficult for viewers to believe that she was capable of handling dangerous situations without help from others.
+            </Text>
+        </Message>
+        <Message Name="work.worst">
+            <Text>
+                Her portrayal of her character was lacking the desired
+                emotional depth, and she failed to convey the intended sense of fear or
+                terror that would have made for a more engaging and gripping scene.
+            </Text>
+            <Text>
+                Her character was intended to be frightening and intimidating,
+                but unfortunately her lackluster performance failed miserably at this goal.
+                Instead of striking fear into the hearts of viewers,
+                she merely came across as goofy and awkward, completely missing the mark with her delivery.
+                The result was a very unintentionally funny scene that became more cringe-worthy than anything else.
+            </Text>
+        </Message>
+    </Messages>
+</Job>

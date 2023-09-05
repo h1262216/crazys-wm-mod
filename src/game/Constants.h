@@ -260,15 +260,16 @@ enum JOBS {
     // Studio - Non-Sex Scenes
     JOB_FILMACTION,            // For sexy combatants
     JOB_FILMCHEF,            // For sexy cooking
-    //JOB_FILMCOMEDY,            // For Comedy scenes
+    JOB_FILMCOMEDY,            // For Comedy scenes
     //JOB_FILMDRAMA,            // For Drama scenes
-    //JOB_FILMHORROR,            // For Horror scenes
+    JOB_FILMHORROR,            // For Horror scenes
     //JOB_FILMIDOL,            //For cool, sexy & cute girls
     JOB_FILMMUSIC,            // For cute music videos
     JOB_FILMTEASE,            // Fex sensual and cute
 
     // Studio - Softcore Porn
     JOB_FILMMAST,
+    JOB_FILMJOI,
     JOB_FILMSTRIP,
     JOB_FILMFOOTJOB,
     JOB_FILMHANDJOB,

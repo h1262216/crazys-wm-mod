@@ -51,7 +51,7 @@ protected:
     int jobtypehead_id;        // Job Types header text
 
     int day_id;                // Day button
-    int night_id;            // Night button
+    int night_id;              // Night button
 
     std::string jobname_with_count(JOBS job_id, bool is_night);
 

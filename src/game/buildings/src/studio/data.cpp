@@ -41,8 +41,8 @@ namespace {
 
     const std::array<const char*, (int)SceneType::COUNT>& get_scene_type_names() {
         static std::array<const char*, (int)SceneType::COUNT> names {
-            "Action", "Chef", "Music", "Tease",
-            "Titty", "Strip", "Hand", "Foot", "Mast",
+            "Action", "Chef", "Music", "Tease", "Comedy", "Horror",
+            "Titty", "JOI", "Strip", "Hand", "Foot", "Mast",
             "Oral", "Anal", "Sex", "Les", "Group",
             "Beast", "BDSM", "Bukkake", "Public BDSM", "Throat"
         };
@@ -66,11 +66,14 @@ namespace {
 
     std::array<sSceneTypeData, (int)SceneType::COUNT> TypeToCategory = {
             sSceneTypeData{SceneCategory::TEASE, 0, 10},                  // Action
-            {SceneCategory::TEASE, 0, 10},                  // Chef
-            {SceneCategory::TEASE, 0, 10},                  // Music
+            {SceneCategory::TEASE, 0, 10},                 // Chef
+            {SceneCategory::TEASE, 0, 10},                 // Music
             {SceneCategory::TEASE, 0, 5},                  // Tease
+            {SceneCategory::TEASE, 0, 2},                  // Comedy
+            {SceneCategory::TEASE, 0, 10},                 // Horror
             {SceneCategory::SOFT, 5, 5},                   // Titty
-            {SceneCategory::SOFT, 0, 10},                   // Strip
+            {SceneCategory::SOFT, 0, 5},                   // JOI
+            {SceneCategory::SOFT, 0, 10},                  // Strip
             {SceneCategory::SOFT, 5, 5},                   // Hand
             {SceneCategory::SOFT, 5, 5},                   // Foot
             {SceneCategory::SOFT, 0, 5},                   // Mast
@@ -78,11 +81,11 @@ namespace {
             {SceneCategory::HARD, 5, 5},                   // Anal
             {SceneCategory::HARD, 5, 5},                   // Sex
             {SceneCategory::HARD, 0, 5},                   // Les
-            {SceneCategory::HARD, 15, 10},                  // Group
-            {SceneCategory::EXTREME, 10, 15},               // Beast
-            {SceneCategory::EXTREME, 5, 10},                // BDSM
-            {SceneCategory::EXTREME, 20, 10},               // Bukkake
-            {SceneCategory::EXTREME, 0, 10},                // Public BDSM
+            {SceneCategory::HARD, 15, 10},                 // Group
+            {SceneCategory::EXTREME, 10, 15},              // Beast
+            {SceneCategory::EXTREME, 5, 10},               // BDSM
+            {SceneCategory::EXTREME, 20, 10},              // Bukkake
+            {SceneCategory::EXTREME, 0, 10},               // Public BDSM
             {SceneCategory::EXTREME, 5, 5},                // Throat
     };
 }

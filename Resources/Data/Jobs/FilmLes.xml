@@ -77,6 +77,52 @@
                 as the director yells "Action!" she starts eating out her co-star with such vigor that you
                 fear she might not be able to walk for the next hours. This is going to be one hell of a scene.
             </Text>
+            <Text Condition="Titanic Tits|Abnormally Large Boobs|Massive Melons|Giant Juggs|Big Boobs|Busty Boobs">
+                ${name} strutted confidently onto the set, dressed in a provocative ensemble of lingerie and sheer stockings that accentuated her voluptuous form.
+                Surrounded by the serenity of nature beneath the canopy of a towering tree, the cameras rolled as ${name} locked lips with a stunning woman.
+                Their passionate and eager kisses quickly escalated into a sensual embrace, with their hands roaming all over each other's bodies.
+                They undressed one another slowly, revealing their naked forms bathed in the warm sunlight.
+                ${name} then knelt down and began to explore her partner's body, her tongue to darting and flicking between her legs with expert precision.
+                Her partner writhed and moaned in ecstasy, begging for more as ${name} brought her to unparalleled heights of pleasure.
+                It was an amazing performance.
+            </Text>
+            <Text Condition="Slut">
+                She really got into her role as a dirty slut and went above and beyond what was expected from her to make sure every frame of footage was perfect!
+                Her enthusiasm for getting down and dirty with other women made for some incredible performances that will stay engraved in viewers' memories forever!
+            </Text>
+            <Text>
+                Her partner was incredibly beautiful, and ${name} couldn’t help but admire her stunning form as they began their love making session together.
+                The chemistry between them was palpable, which translated into some truly magnificent moments in front of the camera.
+                Every touch, every caress, every kiss was filled with such intensity that even viewers could feel themselves being drawn into this world of pure sexual desire.
+                And when it finally ended, there was nothing left but pure satisfaction – both physically and emotionally.
+            </Text>
+            <Text Condition="skill:Lesbian>90^skill:OralSex>90">
+                ${name} has mastered the art of Cunnilingus.
+                During this particular scene she managed to bring her partner to climax three times over in just a few minutes.
+                It was quite an amazing feat, leaving the director speechless and everyone else on set thoroughly impressed by her skills.
+            </Text>
+            <Text>
+                During this scene, her passionate performance will give viewers goosebumps when they watch her intense lovemaking unfold before their eyes.
+                She brought her partner multiple orgasms throughout the scene, leaving no doubt about how much she enjoyed giving pleasure.
+                Her enthusiasm and skillful technique made for a perfect scene that will be remembered fondly by fans for years to come
+            </Text>
+            <Text Condition="Fake Orgasm Expert|Fast Orgasms">
+                During her shoot she achieved multiple orgasms in rapid succession, leaving the audience in awe at such a feat.
+                She made it look effortless as she moaned loudly while writhing in pleasure from each powerful release.
+                The resulting scene was truly breathtaking; something that would be remembered by all who witnessed it!
+            </Text>
+            <Text Condition="Porn Star">
+                ${name} is one of the most talented and experienced performers in the industry.
+                Her ability to make every scene look genuine and believable earned her high praise among directors and viewers alike.
+                She knows exactly when to use a certain move or technique, making sure that every detail in every shot looks perfect – even down to the slightest facial expressions!
+                With such skillful workmanship, it's no surprise why fans continue flocking towards her work.
+            </Text>
+            <Text Condition="Flat Chest|Small Boobs|Petite Breasts">
+                ${name}'s chest might not be large but that doesn't stop her from giving an amazing performance! She's got great technique and knows how to please her partners.
+                Even viewers who prefer more well-endowed women will find themselves enthralled by the passion and energy between these two ladies.
+                With each caress, kiss, and moan captured on camera, anyone watching can tell that they are genuinely enjoying themselves; their connection is undeniable.
+                Their chemistry is so strong that it almost feels like you're right there in the room watching them make sweet love!
+            </Text>
         </Message>
         <Message Name="work.great">
             <Text>${name} pleased her lover in amazing ways.</Text>
@@ -84,12 +130,55 @@
                 ${name} really prefers dick over pussy, but she is a competent actress and does not let it show in
                 the scene. In fact, the end result is a pretty great movie clip.
             </Text>
+            <Text Condition="Straight">
+                ${name} is notably more comfortable working with male actors than females,
+                but that doesn't stop her from delivering a fantastic performance in this particular scene.
+                Despite her personal preference for penetrative sex,
+                she skillfully portrays the character of a woman engaging in cunnilingus with an impressive level of enthusiasm and believability.
+                The final product is a high-quality movie clip that is sure to leave viewers satisfied.
+            </Text>
+            <Text Condition="Clumsy">
+                Despite her initial clumsiness, ${name} was able to find her rhythm and move with more natural ease as the scene progressed.
+                The passion between her and her female partner was undeniably palpable, as they locked eyes and moved in sync with one another.
+                The chemistry they shared was captivating, making for a truly great lesbian sex scene that left viewers eager for more.
+            </Text>
+            <Text>
+                Her partner was gorgeous and their chemistry was undeniable;
+                their lovemaking was passionate and intense, leaving viewers wanting more.
+                Even though there were times when things got too hot to handle between them,
+                they managed to keep going until they reached orgasm together in perfect synchronicity.
+                It truly was an amazing scene!
+            </Text>
+            <Text Condition="Big Boobs|Busty Boobs">
+                As soon as she took off her clothes, the audience could tell that this was going to be a good scene.
+                Her breasts were perfect, firm and round, begging to be touched by eager hands.
+                The camera moved closer and closer until all one could see was her face; full of passion and desire.
+                They kissed passionately before moving onto other areas of each others bodies.
+                With every touch, every stroke, it became clearer how much these two loved each other.
+                It was a truly mesmerizing experience watching them perform together on screen.
+            </Text>
+            <Text Condition="Slut">
+                Her reputation for being slutty followed her from set to set,
+                which made for some very hot lesbian action when cameras rolled on her shoot today!
+            </Text>
+            <Text Condition="Fat|Plump">
+                Even though she was far from model-like, her enthusiasm and willingness to explore made
+                her performance more than worthwhile. The two women had great chemistry on screen and
+                their intimate moments were captured beautifully by the cameras.
+                They were able to bring out each other's best features while creating some memorable moments
+                that will be sure to leave an impression on viewers everywhere.
+            </Text>
         </Message>
         <Message Name="work.good">
             <Text>${name} gave several good orgasm's to her lover.</Text>
             <Text Condition="Straight">
                 Despite being Straight, ${name} gave a decent performance in this Lesbian
                 scene.
+            </Text>
+            <Text>
+                Despite not having much experience working together, the pair managed to create some decent chemistry between them,
+                leading to some nice shots capturing the intensity of their love making.
+                Though the scene wasn't perfect, it still looked good enough for viewers to enjoy watching it.
             </Text>
         </Message>
         <Message Name="work.ok">
@@ -99,6 +188,22 @@
                 while performing with another woman. Still, with some clever editing a halfway
                 decent scene could be produced.
             </Text>
+            <Text Condition="Shy">
+                ${name} worked as a pornstar performing in Lesbian scenes.
+                She was initially shy around her partner, but once they started kissing and exploring one another
+                physically, ${name} seemed to loosen up a bit. While she may not have been super expressive or vocalized her pleasure,
+                it was clear that ${name} did indeed enjoy herself in the end, resulting in an OK scene.
+            </Text>
+            <Text>
+                ${name} worked as a porn star filming lesbian scenes.
+                Though they tried their hardest, the lack of enthusiasm and chemistry between the women was noticeable on camera.
+                The result was a less than desirable performance but still manageable enough for viewers to watch without discomfort.
+                They were able to get through the scene with minimal issues thanks to some strategic editing from director.
+            </Text>
+            <Text>
+                They had no chemistry whatsoever, but they still managed to pull off some pretty decent looking shots thanks to some creative editing from the director afterwards!
+                In fact, if you didn't know any better you might think they were actually enjoying each other during those moments on screen!
+            </Text>
         </Message>
         <Message Name="work.bad">
             <Text>${name} visually wasn't interested in her lover at all. Terrible scene.</Text>
@@ -107,9 +212,36 @@
                 be clearly seen on camera. The result is pretty terrible. Maybe you should find a
                 girl who is more into this.
             </Text>
+            <Text>
+                ${name} was not so excited about her love making,
+                and it showed through her lackluster performance during filming.
+                The entire thing felt more like a chore than something passionate or enjoyable
+                for both parties involved. Despite this, they managed to get through
+                the scene without any major mishaps - except for perhaps some
+                awkwardly timed moans that didn't quite sync up with the movements on
+                screen.
+            </Text>
+            <Text Condition="Zombie">
+                ${name} worked as a pornstar filming lesbian scenes.
+                ${name} did not show much interest in playing the role, and often seemed bored or uninterested during filming sessions.
+                This resulted in a performance that could best be described as "zombie-like",
+                with very little emotion or expression displayed throughout the entirety of production process.
+            </Text>
         </Message>
         <Message Name="work.worst">
-            <Text>${name} was totally horrible today.  She was scorned for hours by the entire crew.</Text>
+            <Text>${name} was totally horrible today. She was scorned for hours by the entire crew.</Text>
+            <Text Condition="stat:Beauty<33^Straight">
+                ${name} is really not very good at this at all.
+                Her technique is unrefined and her face conveys absolute repulsion while her co-star is giving her oral pleasure.
+                To make things even worse, she also has quite an Ugly appearance in general.
+                The end product of this scene is just plain hideous and difficult to watch.
+            </Text>
+            <Text Condition="Straight">
+                ${name} looked like a fish out of water as she stumbled her way through this horrendous
+                lesbian scene. It was painful to watch and even more so for those poor souls
+                forced to be a part of it. Thankfully this debacle will soon be forgotten
+                and buried deep within the depths of the internet, never to be seen again.
+            </Text>
         </Message>
 
         <Message Name="disobey.free">
