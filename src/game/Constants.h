@@ -137,6 +137,7 @@ SKILLS get_skill_id(const std::string& name);
 
 using StatSkill = boost::variant<STATS, SKILLS>;
 StatSkill get_stat_skill_id(const std::string& name);
+const char* get_stat_skill_name(StatSkill);
 
 // STATUS
 //STATUS enum
@@ -166,14 +167,14 @@ STATUS get_status_id(const std::string& name);
 // `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >> Constants.h
 
 // Job Filter Enum
-enum JOBFILTER {
+enum EJobFilter {
   JOBFILTER_GENERAL = 0,
   JOBFILTER_BAR,
   JOBFILTER_GAMBHALL,
   JOBFILTER_SLEAZYBAR,
   JOBFILTER_BROTHEL,
 
-  // `J` When adding new Studio Scenes, search for "J-Add-New-Scenes"  :  found in >> Constants.h > JOBFILTER
+  // `J` When adding new Studio Scenes, search for "J-Add-New-Scenes"  :  found in >> Constants.h > EJobFilter
   JOBFILTER_STUDIOCREW,
   JOBFILTER_STUDIOTEASE,
   JOBFILTER_STUDIOSOFTCORE,        
@@ -197,7 +198,7 @@ enum JOBFILTER {
   JOBFILTER_HOUSETTRAINING,
   //JOBFILTER_DRUGLAB,
   NUMJOBTYPES
-};// END JOBFILTER Enum
+};// END EJobFilter Enum
 
 // Jobs Enum
 enum JOBS {
@@ -353,11 +354,11 @@ enum JOBS {
     JOB_FERTILITY,            // magical plastic surgery (takes 5 days)
 
     // `J` Job Clinic - Staff
-    JOB_CHAIRMAN,            // Matron of clinic    
-    JOB_DOCTOR,                // becomes a doctor (requires 1) (will make some extra cash for treating locals)
-    JOB_NURSE,                // helps girls recover from surgery on healing
-    JOB_INTERN,                // training for nurse job
-    JOB_JANITOR,            // cleans clinic
+    JOB_CHAIRMAN,               // Matron of clinic
+    JOB_DOCTOR,                 // becomes a doctor (requires 1) (will make some extra cash for treating locals)
+    JOB_NURSE,                  // helps girls recover from surgery on healing
+    JOB_INTERN,                 // training for nurse job
+    JOB_JANITOR,                // cleans clinic
 
     // Job Clinic - Drug lab
     //JOB_DRUGDEALER,    
@@ -510,6 +511,8 @@ enum class BuildingType {
     FARM
 };
 
+const char* get_building_type_name(BuildingType type);
+
 // Town Constants
 const int TOWN_NUMBUSINESSES        = 250;    // the amount of businesses in the town
 const int TOWN_OFFICIALSWAGES       = 10;    // how much the authorities in the town are paid by the govenment
@@ -600,7 +603,7 @@ enum Goals{                                // `J` new
     GOAL_FREAKSHOW,                        // They want to see something strange, nonhuman or just different
     GOAL_CULTURALEXPLORER,                // They want to have sex with something strange, nonhuman or just different
     GOAL_OTHER,                            // The customer wants to do something different
-    NUM_GOALS                            // 
+    NUM_GOALS                            //
 };
 
 

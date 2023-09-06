@@ -61,3 +61,5 @@
 * [ ] WalkTown image appears too early
 * [ ] Check spawning of "Your daughter" girls
 * [ ] Player seems to impregnate with 100% no matter settings.
+* [ ] Investigate video files with 24 FPS frame rate
+* [ ] InputChoice graphic bugs when list needs scroll bar

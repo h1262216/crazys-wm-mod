@@ -143,7 +143,7 @@ namespace {
             cJobManager& mgr = g_Game->job_manager();
             RandomSelector<void> select_job;
 
-            std::initializer_list<JOBFILTER> filters = {JOBFILTER_STUDIOTEASE, JOBFILTER_STUDIOSOFTCORE, JOBFILTER_STUDIOPORN, JOBFILTER_STUDIOHARDCORE};
+            std::initializer_list<EJobFilter> filters = {JOBFILTER_STUDIOTEASE, JOBFILTER_STUDIOSOFTCORE, JOBFILTER_STUDIOPORN, JOBFILTER_STUDIOHARDCORE};
             for(auto& filter : filters) {
                 auto jobs = mgr.JobFilters[filter];
                 // note: we really need to capture by reference here, because the selector works with pointers!

@@ -216,11 +216,11 @@ settings_value_t& cSimpleKeyValue::get_value(const char* tag) {
 }
 
 std::string cSimpleKeyValue::get_display_name(const char* name) const {
-    return m_Settings.at(name).name;
+    return lookup_with_error(m_Settings, name, "Could not find key").name;
 }
 
 std::string cSimpleKeyValue::get_description(const char* name) const {
-    return m_Settings.at(name).description;
+    return lookup_with_error(m_Settings, name, "Could not find key").description;
 }
 
 void cSimpleKeyValue::save_xml(tinyxml2::XMLElement& target) const {

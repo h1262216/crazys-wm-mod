@@ -86,6 +86,14 @@ StatSkill get_stat_skill_id(const std::string& name) {
     }
 }
 
+const char* get_stat_skill_name(StatSkill val) {
+    if(val.which() == 0) {
+        return get_stat_name(boost::get<STATS>(val));
+    } else {
+        return get_skill_name(boost::get<SKILLS>(val));
+    }
+}
+
 const std::array<sAttribute, NUM_SKILLS>& get_all_skills() {
     static std::array<sAttribute, NUM_SKILLS> skills {
             sAttribute{"Anal",         "Anl", ""},
@@ -327,4 +335,24 @@ auto get_spawn_lookup() -> const auto& {
 
 SpawnReason get_spawn_id(const std::string& name) {
     return get_spawn_lookup().at(name, "Trying to get invalid spawn location");
+}
+
+const char* get_building_type_name(BuildingType type) {
+    switch(type) {
+        case BuildingType::BROTHEL:
+            return "Brothel";
+        case BuildingType::ARENA:
+            return "Arena";
+        case BuildingType::CLINIC:
+            return "Clinic";
+        case BuildingType::FARM:
+            return "Farm";
+        case BuildingType::HOUSE:
+            return "House";
+        case BuildingType::CENTRE:
+            return "Centre";
+        case BuildingType::STUDIO:
+            return "MovieStudio";
+    }
+    assert(false);
 }

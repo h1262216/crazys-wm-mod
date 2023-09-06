@@ -75,14 +75,14 @@ inline id_lookup_t<T> create_lookup_table(const std::array<const char*, N>& name
 }
 
 template<class Map, class Key>
-inline auto&& lookup_with_error(const Map& map, const Key& name, const char* error_msg, const char* error_channel = nullptr) {
-    try {
-        return map.at(name);
-    } catch (const std::out_of_range& oor ) {
+inline auto&& lookup_with_error(Map&& map, const Key& name, const char* error_msg, const char* error_channel = nullptr) {
+    auto found = map.find(name);
+    if(found == map.end()) {
         g_LogFile.error(error_channel ? error_channel : "lookup", error_msg, ": '", name, "'");
         throw std::out_of_range(std::string(error_msg) + ": '" + std::string(name) + "'");
+    } else {
+        return found->second;
     }
 }
-
 
 #endif //WM_LOOKUP_H

@@ -117,7 +117,7 @@ bool cTextRepository::has_text(const std::string& prompt) {
 
 const std::string& cTextRepository::get_text(const std::string& prompt,
                                              const IInteractionInterface& lookup) {
-    auto& texts = m_Texts.at(prompt);
+    auto& texts = lookup_with_error(m_Texts, prompt, "Could not find text", "text");
     if(texts.empty()) {
         throw std::runtime_error("No text available for prompt '" + prompt + "'.");
     }

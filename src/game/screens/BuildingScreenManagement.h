@@ -37,7 +37,7 @@ protected:
     void ViewSelectedGirl();
     void RefreshJobList();
 
-    void add_job_filter(JOBFILTER filter);
+    void add_job_filter(EJobFilter filter);
     cJobManager& job_manager();
 
 
@@ -86,7 +86,7 @@ private:
 
     sGirl* m_LastSelection = nullptr;
 
-    std::vector<JOBFILTER> m_JobFilters;
+    std::vector<EJobFilter> m_JobFilters;
 protected:
     bool Day0Night1 = SHIFT_DAY;
 

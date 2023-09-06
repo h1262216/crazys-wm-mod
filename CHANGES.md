@@ -4,6 +4,8 @@ Started reworking the UI
 * Added a new in-game main screen (player's office) as a central location  
 * Added ability to hide dialog window by pressing `h`.
 * re-enable "Preg" image variations without `images.xml`
+* Added a cheating menu in the interactions if cheats are enabled.
+  For now, it allows to add arbitrary traits to the girl. Very helpful for testing.
 
 # Version 7.2.1beta8
 Small bug fixes and improvements.
@@ -50,8 +52,6 @@ An overview of which trait can be gained/lost by which job is given [here](Docs&
 ## Gameplay
 * Reworked the way how traits are gained from working jobs.
 * Added a `Compassionate` tag as the opposite of `Sadistic`/`Merciless`
-* Split `Libido` stat into (permanent) `Libido` and (temporary) `Lust`. Lust increases more quickly with high libido 
-(and decreases if Libido is too low), and is the stat generally used for checks.
 
 ## Other
 * Trait xml files now specify which traits are gained / lost on level-up

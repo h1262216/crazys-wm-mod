@@ -75,7 +75,7 @@ void cJobManager::Setup()
 {
     m_OOPJobs.resize(NUM_JOBS);
 
-    auto register_filter = [&](JOBFILTER filter, JOBS first, JOBS last, std::initializer_list<JOBS> extra) {
+    auto register_filter = [&](EJobFilter filter, JOBS first, JOBS last, std::initializer_list<JOBS> extra) {
         for(int i = first; i <= last; ++i) {
             JobFilters[filter].Contents.push_back((JOBS)i);
         }

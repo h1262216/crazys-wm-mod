@@ -105,6 +105,7 @@ public:
     // setup pronouns
     void set_male();
     void set_female();
+    void set_monster();
 
     const char* heshe() const { return he_she; }
     const char* himher() const { return him_her; }
