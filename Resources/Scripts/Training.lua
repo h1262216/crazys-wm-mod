@@ -18,7 +18,7 @@ function Training(girl)
         return
     elseif action == 0 then -- Magic Lesson
         Dialog("Today you will spend the day at in the care of the mages at the Citadel.  Learn well from them. ")
-        if girl:obey_check(wm.ACTIONS.GENERAL) then
+        if girl:obey_check(wm.ACTIVITIES.GENERIC) then
             Dialog("You hand her a bag of gold containing the lesson fee and send her on her way.")
             wm.UpdateImage(wm.IMG.MAGIC)
             wm.TakePlayerGold(500)
@@ -47,7 +47,7 @@ function Training(girl)
         end
     elseif action == 1 then
         Dialog("\"I have made arrangements with a local acrobatics troupe.  They have agreed to show you some of their techniques.\"  You hand her a parchment with a crude map and the name of the troupe leader.")
-        if girl:obey_check(wm.ACTIONS.GENERAL) then
+        if girl:obey_check(wm.ACTIVITIES.GENERIC) then
             wm.TakePlayerGold(250)
             girl:experience(wm.Range(5, 10))
             wm.UpdateImage(wm.IMG.SPORT)
@@ -80,7 +80,7 @@ function Training(girl)
         end
     elseif action == 2 then
         Dialog("You have been lacking in exercise lately.  I've bribed the foreman of the shipyard workers to let you work with them for the day.")
-        if girl:obey_check(wm.ACTIONS.GENERAL) then
+        if girl:obey_check(wm.ACTIVITIES.GENERIC) then
             wm.TakePlayerGold(300)
             wm.UpdateImage(wm.IMG.SPORT)
             girl:experience(wm.Range(5, 10))
@@ -113,7 +113,7 @@ function Training(girl)
         end
     elseif action == 3 then
         Dialog("\"Grab your armor and gear.  I'm sending you to study with the veteran warrior, Titus Pullo.\"")
-        if girl:obey_check(wm.ACTIONS.GENERAL) then
+        if girl:obey_check(wm.ACTIVITIES.GENERIC) then
             wm.TakePlayerGold(500)
             girl:experience(wm.Range(5, 10))
             wm.UpdateImage(wm.IMG.COMBAT)
@@ -149,7 +149,7 @@ function Training(girl)
             Dialog("\"I want you to go to the conservatory and perfect your skills in the performing arts!\"")
         end
         wm.UpdateImage(wm.IMG.SING)
-        if girl:obey_check(wm.ACTIONS.ACTRESS) then
+        if girl:obey_check(wm.ACTIVITIES.PERFORMANCE) then
             wm.TakePlayerGold(300)
             girl:experience(wm.Range(5, 10))
             if girl:performance() < 33 then

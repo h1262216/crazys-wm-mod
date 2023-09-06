@@ -56,7 +56,7 @@ namespace {
 }
 
 cWhoreJob::cWhoreJob(JOBS job, const char* short_name, const char* description) :
-        cSimpleJob(job, "Whore.xml", {ACTION_SEX}) {
+        cSimpleJob(job, "Whore.xml", {EActivity::FUCKING}) {
     m_CacheDescription = description;
     m_CacheShortName = short_name;
 }

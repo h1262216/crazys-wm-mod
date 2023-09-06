@@ -53,7 +53,7 @@ namespace {
     };
 }
 
-HouseCook::HouseCook() : cSimpleJob(JOB_HOUSECOOK, "HouseCook.xml", {ACTION_WORKCOOKING, 20, EImageBaseType::COOK}) {
+HouseCook::HouseCook() : cSimpleJob(JOB_HOUSECOOK, "HouseCook.xml", {EActivity::COOKING, 20, EImageBaseType::COOK}) {
 
 }
 
@@ -82,7 +82,7 @@ sWorkJobResult HousePet::DoWork(sGirl& girl, bool is_night) {
     if (is_night) return {false, 0, 0, 0};
     auto brothel = girl.m_Building;
 #pragma region //    Job setup                //
-    Action_Types actiontype = ACTION_WORKHOUSEPET;
+    EActivity actiontype = EActivity::SUBMISSION;
     int roll_a = d100(), roll_b = d100(), roll_c = d100();
     int train = roll_a - girl.obedience() - girl.get_training(TRAINING_PUPPY);
 
@@ -353,7 +353,7 @@ sWorkJobResult HousePet::DoWork(sGirl& girl, bool is_night) {
 
     // Improve stats
     girl.exp(15);
-    girl.upd_Enjoyment(actiontype, enjoy);
+    girl.enjoyment(actiontype, enjoy);
     girl.upd_Training(TRAINING_PUPPY, training);
     girl.obedience(ob);
 
@@ -655,7 +655,7 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
 }
 
 IGenericJob::eCheckWorkResult PersonalTraining::CheckWork(sGirl& girl, bool is_night) {
-    return SimpleRefusalCheck(girl, ACTION_SEX);
+    return SimpleRefusalCheck(girl, EActivity::FUCKING);
 }
 
 double PersonalTraining::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -665,7 +665,7 @@ double PersonalTraining::GetPerformance(const sGirl& girl, bool estimate) const 
     return 0;
 }
 
-Recruiter::Recruiter() : cSimpleJob(JOB_RECRUITER, "Recruiter.xml", {ACTION_WORKRECRUIT, 100, EImageBaseType::PROFILE}) {
+Recruiter::Recruiter() : cSimpleJob(JOB_RECRUITER, "Recruiter.xml", {EActivity::SOCIAL, 100, EImageBaseType::PROFILE}) {
     m_Info.FullTime = true;
     m_Info.FreeOnly = true;
 }

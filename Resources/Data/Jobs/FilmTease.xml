@@ -88,7 +88,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config PrimaryAction="ACTRESS" SecondaryAction="WORKSTRIP">
+    <Config PrimaryAction="Performing" SecondaryAction="Stripping">
         <LustInfluence Amount="5" SkillMin="5" BaseValue="5" Skill="Strip" />
     </Config>
 

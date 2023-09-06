@@ -30,7 +30,7 @@ bool WorkFarmPonyGirl(sGirl& girl, bool Day0Night1, cRng& rng)
 {
     if (Day0Night1) return false;
 #pragma region //    Job setup                //
-    Action_Types actiontype = ACTION_WORKHOUSEPET;
+    EActivity actiontype = EActivity::SUBMISSION;
     std::stringstream ss;
     int roll_a = rng.d100(), roll_b = rng.d100();
     int train = roll_a - girl.obedience() - girl.get_training(TRAINING_PUPPY);
@@ -209,7 +209,7 @@ bool WorkFarmPonyGirl(sGirl& girl, bool Day0Night1, cRng& rng)
     else if (girl.has_active_trait(traits::SLOW_LEARNER))    { skill -= 1; xp -= 3; }
 
     girl.exp(xp);
-    girl.upd_Enjoyment(actiontype, enjoy);
+    girl.enjoyment(actiontype, enjoy);
     girl.upd_Training(TRAINING_PUPPY, training);
     girl.obedience(ob);
 

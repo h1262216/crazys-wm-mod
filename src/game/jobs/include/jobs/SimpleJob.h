@@ -26,7 +26,7 @@
 #include "images/sImageSpec.h"
 
 struct sSimpleJobData {
-    Action_Types Action;
+    EActivity Action;
     int BaseWages = 0;
     sImagePreset DefaultImage = EImageBaseType::PROFILE;
     bool IsCombatJob = false;

@@ -728,20 +728,20 @@ string cGirls::GetMoreDetailsString(const sGirl& girl, bool purchase)
         string base = "She";
         string text;
         int enjcount = 0;
-        for (int i = 0; i < NUM_ACTIONTYPES; ++i)
+        for (auto activity : ActivityRange)
         {
-            int e = girl.get_enjoyment((Action_Types)i);
+            int e = girl.enjoyment(activity);
             /* */if (e < -70)    { text = " hates "; }
             else if (e < -50)    { text = " really dislikes "; }
             else if (e < -30)    { text = " dislikes "; }
-            else if (e < -20)    { text = " doesn't particularly enjoy "; }
+            else if (e < -15)    { text = " doesn't particularly enjoy "; }
             // if she's indifferent, why specify it? Let's instead skip it.
             else if (e < 15)    { continue; }
             else if (e < 30)    { text = " is happy enough with "; }
             else if (e < 50)    { text = " likes "; }
             else if (e < 70)    { text = " really enjoys "; }
             else                { text = " loves "; }
-            ss << base << text << get_action_descr((Action_Types)i) << ".";
+            ss << base << text << get_activity_descr(activity) << ".";
             ss << '\n';
             enjcount++;
         }
@@ -1550,7 +1550,7 @@ void cGirls::UseItems(sGirl& girl)
                 }
                 else if (curEffect->m_Affects == sEffect::Enjoy)
                 {
-                    if ((curEffect->m_Amount > 0) && (girl.get_enjoyment((Action_Types)curEffect->m_EffectID) < 100))
+                    if ((curEffect->m_Amount > 0) && (girl.enjoyment((EActivity)curEffect->m_EffectID) < 100))
                     {  // enjoyment would actually increase (wouldn't want to lose any enjoyment)
                         checktouseit--;
                     }
@@ -2058,8 +2058,8 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     else
     {
         if (currentjob == JOB_PEEP){}
-        else if ((girl->has_active_trait(traits::NERVOUS) && girl->m_Enjoyment[ACTION_SEX] < 10) ||
-            girl->m_Enjoyment[ACTION_SEX] < -20)
+        else if ((girl->has_active_trait(traits::NERVOUS) && girl->enjoyment(EActivity::FUCKING) < 10) ||
+                 girl->enjoyment(EActivity::FUCKING) < -20)
         {
             introtext += "She is clearly uncomfortable with the arrangement, and it makes the customer feel uncomfortable.\n";
             customer->happiness(-5);
@@ -3183,7 +3183,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
         enjoy -= 30;
     }
 
-    girl->upd_Enjoyment(ACTION_SEX, enjoy);
+    girl->enjoyment(EActivity::FUCKING, enjoy);
 
     g_LogFile.log(ELogLevel::DEBUG, "STD Debug ::: Sex Type : ", get_skill_name((SKILLS)SexType)
             , " :: Contraception: ", (contraception ? "True" : "False")
@@ -3321,30 +3321,8 @@ bool cGirls::GirlInjured(sGirl& girl, unsigned int unModifier, std::function<voi
 
 void cGirls::UpdateEnjoymentMod(sGirl& girl, int whatSheEnjoys, int amount)
 {
-    girl.m_EnjoymentMods[whatSheEnjoys] += amount;
+    //girl.m_EnjoymentMods[whatSheEnjoys] += amount;
 }
-
-// Normalise to zero by 30%
-void cGirls::updateTempEnjoyment(sGirl& girl)
-{
-    // Sanity check. Abort on dead girl
-    if (girl.is_dead()) return;
-
-    for (int i = 0; i < NUM_ACTIONTYPES; i++)
-    {
-        if (girl.m_EnjoymentTemps[i] != 0)
-        {                                            // normalize towards 0 by 30% each week
-            int newEnjoy = (int)(float(girl.m_EnjoymentTemps[i]) * 0.7);
-            if (newEnjoy != girl.m_EnjoymentTemps[i])    girl.m_EnjoymentTemps[i] = newEnjoy;
-            else
-            {                                        // if 30% did nothing, go with 1 instead
-                /* */if (girl.m_EnjoymentTemps[i] > 0)    girl.m_EnjoymentTemps[i]--;
-                else if (girl.m_EnjoymentTemps[i] < 0)    girl.m_EnjoymentTemps[i]++;
-            }
-        }
-    }
-}
-
 
 // Increment birthday counter and update Girl's age if needed
 void cGirls::updateGirlAge(sGirl& girl, bool inc_inService)

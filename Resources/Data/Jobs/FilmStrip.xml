@@ -40,7 +40,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config PrimaryAction="PORNSTAR" SecondaryAction="WORKSTRIP">
+    <Config PrimaryAction="Stripping" SecondaryAction="Performing">
         <LustInfluence Amount="5" SkillMin="5" BaseValue="5" Skill="Strip" />
     </Config>
 

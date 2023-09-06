@@ -78,8 +78,8 @@ private:
 
     // enjoyment
     sFilmPleasureData m_PleasureFactor;         // Determines the influence of libido
-    Action_Types m_PrimaryAction;               // Actress or Pornstar
-    Action_Types m_SecondaryAction = Action_Types::NUM_ACTIONTYPES;
+    EActivity m_PrimaryAction;               // Actress or Pornstar
+    EActivity m_SecondaryAction = EActivity::GENERIC;
 
 protected:
     // Processing Data

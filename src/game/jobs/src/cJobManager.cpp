@@ -668,7 +668,7 @@ bool cJobManager::work_related_violence(sGirl& girl, bool Day0Night1, bool stree
         customer_rape(girl, enemy_gang.m_Num);
         return true;
     }
-    girl.upd_Enjoyment(ACTION_SEX, +1);
+    girl.enjoyment(EActivity::FUCKING, +1);
     /*
      *    the fame thing could work either way.
      *    of course, that road leads to us keeping reputation for
@@ -786,8 +786,7 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
         make_horny(*SecGuard, num);  // There's nothing like killin ta make ya horny!
         SecGuard->confidence(num);
         SecGuard->fame(num);
-        girl.upd_Enjoyment(ACTION_COMBAT, num);
-        girl.upd_Enjoyment(ACTION_WORKSECURITY, num);
+        girl.enjoyment(EActivity::FIGHTING, num);
 
         std::stringstream Gmsg;
         std::stringstream SGmsg;
@@ -835,8 +834,8 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
                     custgirl->add_temporary_trait(traits::EMPRISONED_CUSTOMER, std::max(5, g_Dice.bell(0, 20)));
                     custgirl->pclove(-(g_Dice % 100 + 100));
                     custgirl->pcfear(g_Dice % 50 + 50);
-                    custgirl->m_Enjoyment[ACTION_COMBAT] -= (g_Dice % 50 + 20);
-                    custgirl->m_Enjoyment[ACTION_SEX] -= (g_Dice % 50 + 20);
+                    custgirl->enjoyment(EActivity::FIGHTING, -(g_Dice % 50 + 20));
+                    custgirl->enjoyment(EActivity::FUCKING, -(g_Dice % 50 + 20));
                     g_Game->player().suspicion(g_Dice % 10);
                     g_Game->player().disposition(-(g_Dice % 10));
                     g_Game->player().customerfear(g_Dice % 10);
@@ -922,8 +921,7 @@ bool cJobManager::security_stops_rape(sGirl& girl, sGang *enemy_gang, int day_ni
         SecGuard->pcfear(20);
         SecGuard->pclove(-40);
         cGirls::GirlInjured(*SecGuard, 10); // MYR: Note
-        SecGuard->upd_Enjoyment(ACTION_WORKSECURITY, -30);
-        SecGuard->upd_Enjoyment(ACTION_COMBAT, -30);
+        SecGuard->enjoyment(EActivity::FIGHTING, -30);
         return false;
     }
 }
@@ -1019,7 +1017,7 @@ bool cJobManager::girl_fights_rape(sGirl& girl, sGang *enemy_gang, int day_night
         girl.confidence(num);
         girl.fame(num);
 
-        girl.upd_Enjoyment(ACTION_COMBAT, num);
+        girl.enjoyment(EActivity::FIGHTING, num);
 
         std::stringstream msg;
 
@@ -1072,7 +1070,7 @@ void cJobManager::customer_rape(sGirl& girl, int numberofattackers)
     girl.pcfear(20);
     girl.pclove(-40);
     cGirls::GirlInjured(girl, 10); // MYR: Note
-    girl.upd_Enjoyment(ACTION_SEX, -30);
+    girl.enjoyment(EActivity::FIGHTING, -30);
 
     // `J` do Pregnancy and/or STDs
     bool preg = false, std = false, a = false, c = false, h = false, s = false;
@@ -1505,8 +1503,8 @@ void cJobManager::CatchGirl(sGirl& girl, std::stringstream& fuckMessage, const s
         int emprisontraittime = 1;
         custgirl->pclove(-(g_Dice % 100 + 100));
         custgirl->pcfear(g_Dice % 50 + 50);
-        custgirl->m_Enjoyment[ACTION_COMBAT] -= (g_Dice % 50 + 20);
-        custgirl->m_Enjoyment[ACTION_SEX] -= (g_Dice % 50 + 20);
+        custgirl->enjoyment(EActivity::FIGHTING, -(g_Dice % 50 + 20));
+        custgirl->enjoyment(EActivity::FUCKING,  -(g_Dice % 50 + 20));
 
         if (!item)    // no item
         {

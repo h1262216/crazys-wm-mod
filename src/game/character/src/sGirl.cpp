@@ -88,8 +88,10 @@ sGirl::sGirl(bool unique) : ICharacter( g_Game->create_traits_collection(), uniq
     m_Spotted = 0;
 
     // Enjoyment
-    for (int i = 0; i < NUM_ACTIONTYPES; i++)    // `J` Added m_Enjoyment here to zero out any that are not specified
+    for (auto activity : ActivityRange) {
+        int i = static_cast<int>(activity);
         m_Enjoyment[i] = m_EnjoymentMods[i] = m_EnjoymentTemps[i] = 0;
+    }
     for (int& enjoy : m_Enjoyment)    // `J` randomize starting likes -10 to 10 most closer to 0
         enjoy = g_Dice.bell(-10, 10);
 
@@ -124,11 +126,11 @@ std::string stringtolowerj(std::string name)
     return s;
 }
 
-bool sGirl::disobey_check(Action_Types action, JOBS job)
+bool sGirl::disobey_check(EActivity action, JOBS job, int offset)
 {
     int diff;
     int chance_to_obey = 0;                            // high value - more likely to obey
-    chance_to_obey = -cGirls::GetRebelValue(*this, job);    // let's start out with the basic rebelliousness
+    chance_to_obey = -cGirls::GetRebelValue(*this);    // let's start out with the basic rebelliousness
     chance_to_obey += 100;                            // make it range from 0 to 200
     chance_to_obey /= 2;                            // get a conventional percentage value
     /*
@@ -151,31 +153,29 @@ bool sGirl::disobey_check(Action_Types action, JOBS job)
     *    0 to 100, and invert it so it's basically an obedience check
     */
 
+    // TODO maybe get rid of this?
     switch (action)
     {
-    case ACTION_COMBAT:
+    case EActivity::FIGHTING:
         // WD use best stat as many girls have only one stat high
         diff = std::max(combat(), magic()) - 50;
         diff /= 3;
         chance_to_obey += diff;
         break;
-    case ACTION_SEX:
+    case EActivity::FUCKING:
         // Let's do the same thing here
         diff = lust();
         diff /= 5;
         chance_to_obey += diff;
         break;
-    case ACTION_WORKCLEANING:
-        //
-        break;
     default:
         break;
     }
-    chance_to_obey += m_Enjoyment[action];            // add in her enjoyment level
-    chance_to_obey += pclove() / 5;                     // let's add in some mods for love, fear and hate
+    chance_to_obey += m_Enjoyment[(int)action];            // add in her enjoyment level
+    chance_to_obey += pclove() / 5;                   // let's add in some mods for love, fear and hate
     chance_to_obey += pcfear() / 10;
-    chance_to_obey += 30;                                    // Let's add a blanket 30% to all of that
-    int roll = g_Dice.d100();                                // let's get a percentage roll
+    chance_to_obey += offset;                         // Let's add a blanket 30% to all of that
+    int roll = g_Dice.d100();                         // let's get a percentage roll
     diff = chance_to_obey - roll;
     bool girl_obeys = (diff >= 0);
     if (girl_obeys)                                            // there's a price to be paid for relying on love or fear
@@ -386,7 +386,7 @@ bool sGirl::fights_back()
     if (health() < 10 || tiredness() > 90)/* */    return false;
 
     // TODO not sure what this check does
-    if (disobey_check(ACTION_COMBAT))/*            */    return true;
+    if (disobey_check(EActivity::FIGHTING))/*            */    return true;
     int chance = get_trait_modifier(traits::modifiers::FIGHT_BACK_CHANCE);
     return g_Dice.percent(chance);
 }
@@ -1238,21 +1238,6 @@ bool sGirl::FixFreeTimeJobs()
     return fixedD || fixedN;
 }
 
-int sGirl::upd_temp_Enjoyment(Action_Types stat_id, int amount)
-{
-    m_EnjoymentTemps[stat_id] += amount;
-    return get_enjoyment(stat_id);
-}
-
-int sGirl::upd_Enjoyment(Action_Types stat_id, int amount)
-{
-    assert(stat_id >= 0);
-    m_Enjoyment[stat_id] += amount;
-    /* */if (m_Enjoyment[stat_id] > 100)     m_Enjoyment[stat_id] = 100;
-    else if (m_Enjoyment[stat_id] < -100)     m_Enjoyment[stat_id] = -100;
-    return get_enjoyment(stat_id);
-}
-
 int sGirl::upd_Training(int stat_id, int amount, bool usetraits)
 {
     m_Training[stat_id] += amount;
@@ -1341,15 +1326,30 @@ void sGirl::set_default_house_percent() {
     house(g_Game->settings().get_integer(is_slave() ? settings::USER_HOUSE_PERCENT_SLAVE : settings::USER_HOUSE_PERCENT_FREE));
 }
 
-int sGirl::get_enjoyment(Action_Types actiontype) const {
-    if (actiontype < 0) return 0;
-    // Generic calculation
-    int value = m_Enjoyment[actiontype] + get_trait_modifier(("enjoy:" + std::string(get_action_name(actiontype))).c_str()) +
-                m_EnjoymentMods[actiontype] + m_EnjoymentTemps[actiontype];
+int sGirl::enjoyment(EActivity activity) const {
+    if(activity == EActivity::GENERIC) return 0;
+    int index = static_cast<int>(activity);
+    int value = m_Enjoyment[index] + m_EnjoymentMods[index] + m_EnjoymentTemps[index];
+    value += m_Traits->enjoy_effects()[index];
 
     if (value < -100) value = -100;
     else if (value > 100) value = 100;
     return value;
+}
+
+void sGirl::enjoyment(EActivity activity, int delta) {
+    if(activity == EActivity::GENERIC) return;
+    int index = static_cast<int>(activity);
+    int new_value = m_Enjoyment[index] + delta;
+    if(new_value < -100) new_value = -100;
+    else if (new_value > 100) new_value = 100;
+    m_Enjoyment[index] = new_value;
+}
+
+void sGirl::temp_enjoyment(EActivity activity, int delta) {
+    if(activity == EActivity::GENERIC) return;
+    int index = static_cast<int>(activity);
+    m_EnjoymentTemps[index] += delta;
 }
 
 int sGirl::get_training(int actiontype) const {
@@ -1387,7 +1387,7 @@ void sGirl::remove_status(STATUS stat) {
 }
 
 double sGirl::job_performance(JOBS job, bool estimate) const {
-    const auto& job_handler = g_Game->job_manager().m_OOPJobs.at(job);
+    const auto& job_handler = g_Game->job_manager().get_job(job);
     assert(job_handler);
     return job_handler->GetPerformance(*this, estimate);
 }
@@ -1492,15 +1492,16 @@ id_lookup_t<int> sGirl::get_trait_progress() const {
 void sGirl::DecayTemp() {
     ICharacter::DecayTemp();
 
-    for (int i = 0; i < NUM_ACTIONTYPES; i++)
+    for (auto activity : ActivityRange)
     {
+        int i = static_cast<int>(activity);
         if (m_EnjoymentTemps[i] != 0)
         {                                            // normalize towards 0 by 30% each week
-            int newEnjoy = (int)(float(m_EnjoymentTemps[i]) * 0.7);
+            int newEnjoy = (m_EnjoymentTemps[i] * 70) / 100;
             if (newEnjoy != m_EnjoymentTemps[i])    m_EnjoymentTemps[i] = newEnjoy;
             else
             {                                        // if 30% did nothing, go with 1 instead
-                /* */if (m_EnjoymentTemps[i] > 0)    m_EnjoymentTemps[i]--;
+                if (m_EnjoymentTemps[i] > 0)    m_EnjoymentTemps[i]--;
                 else if (m_EnjoymentTemps[i] < 0)    m_EnjoymentTemps[i]++;
             }
         }

@@ -5,7 +5,7 @@ function FFMSex(girl)
     wm.UpdateImage(wm.IMG.BED)
     Dialog("You find her relaxing on her bed looking through some of her lingerie. She looks up as you speak. " ..
             "\"I wonder if you could help me, my dear. ".. other_name .. " and I would like you to join us in some fun\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         if girl:has_trait(wm.TRAITS.LESBIAN) and girl:pclove() < 50 then
             if wm.Percent(50) or girl:is_slave() then
                 Dialog("She looks at you skeptically, but starts to smile as soon as " .. other_name .. " enters the room. \"Sure, should be fun!\"")
@@ -129,7 +129,7 @@ function MMFSex(girl)
     local other_name = RandomChoice("John", "James", "Tommy", "Chad", "Steve", "Alex")
     Dialog("You find her relaxing on her bed looking through some of her lingerie. She looks up as you speak." ..
             "\"" .. other_name .. " and I are looking for some entertainment for the evening. A threesome would be nice, don't you think my dear...\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         if girl:has_trait(wm.TRAITS.LESBIAN) and wm.Percent(33) then
             Dialog("Her face looks disgusted for a second, but she catches herself and beckons \"Come in.\"")
             girl:happiness(-3)
@@ -204,7 +204,7 @@ function OrgySex(girl)
     Dialog("You ask the group of men to wait in the hall as you enter her room.")
     wm.UpdateImage(wm.IMG.BED)
     Dialog("You find her relaxing on her bed looking through some of her lingerie.  She looks up as you speak.\"I wonder if you could help me, my dear.  I've got a group of gentlemen outside and I was wondering if you could help me entertain them?\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         girl:experience(6)
         girl:tiredness(5)
         Dialog("She nods in agreement, but asks for a few minutes to get ready.  As the door closes behind you, many rumbling and rustling sounds can be heard.  A minute or so later she declares that she is ready.")

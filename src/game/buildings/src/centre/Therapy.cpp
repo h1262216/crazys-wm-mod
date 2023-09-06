@@ -81,7 +81,7 @@ void TherapyJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
 }
 
 void TherapyJob::ReceiveTreatment(sGirl& girl, bool is_night) {
-    Action_Types actiontype = ACTION_WORKTHERAPY;
+    EActivity actiontype = EActivity::SOCIAL;
 
     sGirl* counselor = RequestInteraction(CounselingInteractionId);
 
@@ -131,7 +131,7 @@ void TherapyJob::ReceiveTreatment(sGirl& girl, bool is_night) {
     if (girl.get_treatment_progress() >= 100 && is_night)
     {
         enjoy += uniform(0, SuccessBonus);
-        girl.upd_Enjoyment(ACTION_WORKCOUNSELOR, uniform(-2, 4));    // `J` She may want to help others with their problems
+        girl.enjoyment(EActivity::SOCIAL, uniform(-2, 4));    // `J` She may want to help others with their problems
         girl.happiness(uniform(0, SuccessBonus));
 
         ss << "The " << TreatmentName << " is a success.\n";
@@ -172,7 +172,7 @@ void TherapyJob::ReceiveTreatment(sGirl& girl, bool is_night) {
 
     // Improve girl
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, msgtype);
-    girl.upd_Enjoyment(actiontype, enjoy);
+    girl.enjoyment(actiontype, enjoy);
 }
 
 bool TherapyJob::needs_therapy(const sGirl& girl) const {
@@ -185,7 +185,7 @@ bool TherapyJob::needs_therapy(const sGirl& girl) const {
 void TherapyJob::FightEvent(sGirl& girl, bool is_night) {
     ss << "${name} fought with her counselor and did not make any progress this week.";
     girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
-    girl.upd_Enjoyment(ACTION_WORKTHERAPY, -1);
+    girl.enjoyment(EActivity::SOCIAL, -1);
     if (is_night) {
         girl.make_treatment_progress(-uniform(10, 20));
     }
@@ -234,11 +234,11 @@ struct AngerManagement : public TherapyJob {
 };
 
 void AngerManagement::FightEvent(sGirl& girl, bool is_night) {
-    girl.upd_Enjoyment(ACTION_WORKTHERAPY, -1);
+    girl.enjoyment(EActivity::SOCIAL, -1);
     girl.make_treatment_progress(-uniform(10, 20));
     if (chance(10))
     {
-        girl.upd_Enjoyment(ACTION_WORKTHERAPY, -5);
+        girl.enjoyment(EActivity::SOCIAL, -5);
         bool runaway = false;
         // if there is no counselor, it should not get to here
         sGirl* counselor = girl.m_Building->girls().get_random_girl(HasJob(JOB_COUNSELOR, is_night));
@@ -248,9 +248,9 @@ void AngerManagement::FightEvent(sGirl& girl, bool is_night) {
         if (winner != EFightResult::VICTORY)    // the patient won
         {
             ss << " and won.\n \n";
-            girl.upd_Enjoyment(ACTION_COMBAT, 5);
-            counselor->upd_Enjoyment(ACTION_WORKCOUNSELOR, -5);
-            counselor->upd_Enjoyment(ACTION_COMBAT, -2);
+            girl.enjoyment(EActivity::FIGHTING, 5);
+            counselor->enjoyment(EActivity::SOCIAL, -5);
+            counselor->enjoyment(EActivity::FIGHTING, -2);
 
             if (chance(10))    // and ran away
             {
@@ -265,10 +265,10 @@ void AngerManagement::FightEvent(sGirl& girl, bool is_night) {
         else    // the counselor won
         {
             ss << " and lost.\n \n";
-            girl.upd_Enjoyment(ACTION_WORKTHERAPY, -5);
-            girl.upd_Enjoyment(ACTION_COMBAT, -5);
-            counselor->upd_Enjoyment(ACTION_WORKCOUNSELOR, -1);
-            counselor->upd_Enjoyment(ACTION_COMBAT, 2);
+            girl.enjoyment(EActivity::SOCIAL, -5);
+            girl.enjoyment(EActivity::FIGHTING, -5);
+            counselor->enjoyment(EActivity::SOCIAL, -1);
+            counselor->enjoyment(EActivity::FIGHTING, 2);
         }
         std::stringstream ssc;
         ssc << "${name} had to defend herself from " << girl.FullName() << " who she was counseling.\n";

@@ -66,7 +66,7 @@ struct cBarCookJob : public cBarJob {
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cBarCookJob::cBarCookJob() : cBarJob(JOB_BARCOOK, "BarCook.xml", {ACTION_WORKBAR}) {
+cBarCookJob::cBarCookJob() : cBarJob(JOB_BARCOOK, "BarCook.xml", {EActivity::COOKING}) {
 }
 
 bool cBarCookJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
@@ -102,12 +102,12 @@ struct cBarMaidJob : public cBarJob {
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cBarMaidJob::cBarMaidJob() : cBarJob(JOB_BARMAID, "BarMaid.xml", {ACTION_WORKBAR}) {
+cBarMaidJob::cBarMaidJob() : cBarJob(JOB_BARMAID, "BarMaid.xml", {EActivity::SOCIAL}) {
 }
 
 bool cBarMaidJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     //    Job setup                //
-    Action_Types actiontype = ACTION_WORKBAR;
+    EActivity actiontype = EActivity::SOCIAL;
     int roll_jp = d100(), roll_e = d100(), roll_c = d100();
 
     m_Earnings = 15 + (int)m_PerformanceToEarnings(float(m_Performance));
@@ -140,12 +140,12 @@ bool cBarMaidJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
         // FIXME: We *know* that `actiontype == ACTION_WORKBAR ==
         // 5`. Figure out a condition here that makes sense and isn't
         // too swingy.
-        if (actiontype >= 75)
+        if (girl.enjoyment(actiontype) >= 75)
         {
             ss << "Excited to get to work ${name} brings her 'A' game " << (is_night ? "tonight." : "today.");
             m_Performance += 40;
         }
-        else if (actiontype <= 25)
+        else if (girl.enjoyment(actiontype) <= 25)
         {
             ss << "The thought of working " << (is_night ? "tonight." : "today.") << " made ${name} feel uninspired so she didn't really try.";
             m_Performance -= 40;
@@ -427,7 +427,7 @@ struct cBarWaitressJob : public cBarJob {
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cBarWaitressJob::cBarWaitressJob() : cBarJob(JOB_WAITRESS, "BarWaitress.xml",{ACTION_WORKBAR}) {
+cBarWaitressJob::cBarWaitressJob() : cBarJob(JOB_WAITRESS, "BarWaitress.xml",{EActivity::SOCIAL}) {
 }
 
 bool cBarWaitressJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -563,7 +563,7 @@ struct cBarPianoJob : public cBarJob {
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cBarPianoJob::cBarPianoJob() : cBarJob(JOB_PIANO, "BarPiano.xml", {ACTION_WORKMUSIC}) {
+cBarPianoJob::cBarPianoJob() : cBarJob(JOB_PIANO, "BarPiano.xml", {EActivity::PERFORMANCE}) {
 }
 
 bool cBarPianoJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -658,7 +658,7 @@ struct cBarSingerJob : public cBarJob {
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cBarSingerJob::cBarSingerJob() : cBarJob(JOB_SINGER, "BarSinger.xml",{ACTION_WORKMUSIC}) {
+cBarSingerJob::cBarSingerJob() : cBarJob(JOB_SINGER, "BarSinger.xml",{EActivity::PERFORMANCE}) {
 }
 
 bool cBarSingerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
@@ -721,7 +721,7 @@ public:
 };
 
 // TODO rename this, I would expect 'Dealer' to refer to a different job
-cDealerJob::cDealerJob() : cSimpleJob(JOB_DEALER, "Dealer.xml", {ACTION_WORKHALL}) {
+cDealerJob::cDealerJob() : cSimpleJob(JOB_DEALER, "Dealer.xml", {EActivity::SOCIAL}) {
 }
 
 bool cDealerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -818,7 +818,7 @@ bool cDealerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             ss << "\nShe cleaned him out, deliberately humiliating him and taunting him into gambling more than he could afford. ";
             ss << "He ended up losing every penny and all his clothes to this 'dumb whore'. He was finally kicked out, naked into the streets.\n \n";
             ss << "${name} enjoyed this. A lot.";
-            girl.upd_Enjoyment(ACTION_WORKHALL, 3);
+            girl.enjoyment(EActivity::SOCIAL, 3);
             girl.happiness(5);
             m_Earnings += 100;
         }
@@ -839,7 +839,7 @@ bool cDealerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
                 ss << "\"I'm not doing that today, sir,\" she mumbled. \"But there are other girls.\"\nHe left for the brothel.";
             }
             ss << "\n \nShe really hated losing at this stupid card game.";
-            girl.upd_Enjoyment(ACTION_WORKHALL, -3);
+            girl.enjoyment(EActivity::SOCIAL, -3);
             girl.happiness(-5);
             m_Earnings -= 50;
         }
@@ -896,7 +896,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cEntertainerJob::cEntertainerJob() : cSimpleJob(JOB_ENTERTAINMENT, "Entertainer.xml", {ACTION_WORKHALL}) {
+cEntertainerJob::cEntertainerJob() : cSimpleJob(JOB_ENTERTAINMENT, "Entertainer.xml", {EActivity::SOCIAL}) {
 }
 
 
@@ -989,7 +989,7 @@ public:
 };
 
 
-cXXXEntertainerJob::cXXXEntertainerJob() : cSimpleJob(JOB_XXXENTERTAINMENT, "XXXEntertainer.xml", {ACTION_WORKSTRIP}) {
+cXXXEntertainerJob::cXXXEntertainerJob() : cSimpleJob(JOB_XXXENTERTAINMENT, "XXXEntertainer.xml", {EActivity::STRIPPING}) {
 }
 
 bool cXXXEntertainerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -1203,7 +1203,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml", {ACTION_WORKMASSEUSE, 0, EImageBaseType::MASSAGE}) {
+cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml", {EActivity::STRIPPING, 0, EImageBaseType::MASSAGE}) {
 }
 
 bool cMasseuseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -1280,7 +1280,7 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
         girl.lust_release_regular();
         m_Earnings += 225;
         m_Tips += 30 + girl.get_skill(target_sex) / 5;
-        girl.upd_Enjoyment(ACTION_SEX, +1);
+        girl.enjoyment(EActivity::FUCKING, +1);
         fame += 1;
         girl.m_NumCusts++;
         //girl.m_Events.AddMessage(ss.str(), imageType, Day0Night1);
@@ -1318,7 +1318,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cPeepShowJob::cPeepShowJob() : cSimpleJob(JOB_PEEP, "PeepShow.xml", {ACTION_WORKSTRIP}) {
+cPeepShowJob::cPeepShowJob() : cSimpleJob(JOB_PEEP, "PeepShow.xml", {EActivity::STRIPPING}) {
 }
 
 bool cPeepShowJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -1562,7 +1562,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-cBrothelStripper::cBrothelStripper() : cSimpleJob(JOB_BROTHELSTRIPPER, "BrothelStripper.xml", {ACTION_WORKSTRIP}) {
+cBrothelStripper::cBrothelStripper() : cSimpleJob(JOB_BROTHELSTRIPPER, "BrothelStripper.xml", {EActivity::STRIPPING}) {
 }
 
 bool cBrothelStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -1793,7 +1793,7 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
         }
         girl.upd_skill(n, 2);
         girl.lust_release_regular();
-        girl.upd_Enjoyment(ACTION_SEX, +1);
+        girl.enjoyment(EActivity::FUCKING, +1);
         // work out the pay between the house and the girl
         m_Earnings += girl.askprice();
         int roll_max = (girl.beauty() + girl.charisma());
@@ -1865,7 +1865,7 @@ public:
 };
 
 
-ClubBarmaid::ClubBarmaid() : cSimpleJob(JOB_SLEAZYBARMAID, "StripBarMaid.xml", {ACTION_WORKCLUB}) {
+ClubBarmaid::ClubBarmaid() : cSimpleJob(JOB_SLEAZYBARMAID, "StripBarMaid.xml", {EActivity::SOCIAL}) {
 
 }
 
@@ -1958,7 +1958,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-ClubStripper::ClubStripper() : cSimpleJob(JOB_BARSTRIPPER, "StripStripper.xml", {ACTION_WORKSTRIP}) {
+ClubStripper::ClubStripper() : cSimpleJob(JOB_BARSTRIPPER, "StripStripper.xml", {EActivity::STRIPPING}) {
 }
 
 bool ClubStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -2126,7 +2126,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-ClubWaitress::ClubWaitress() : cSimpleJob(JOB_SLEAZYWAITRESS, "StripWaitress.xml", {ACTION_WORKCLUB}) {
+ClubWaitress::ClubWaitress() : cSimpleJob(JOB_SLEAZYWAITRESS, "StripWaitress.xml", {EActivity::SOCIAL}) {
 
 }
 
@@ -2483,7 +2483,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
         girl.footjob(uniform(0, 3));
         girl.happiness(-5);
         girl.health(-1);
-        girl.upd_Enjoyment(ACTION_SEX, -2);
+        girl.enjoyment(EActivity::FUCKING, -2);
         girl.spirit(-2);
         // TODO what is this doing?
         imagetype = EImagePresets::GROUP;
@@ -2492,7 +2492,7 @@ bool ClubWaitress::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
         {
             ss << "\nShe is no longer a virgin.\n";
             girl.happiness(-10);
-            girl.upd_Enjoyment(ACTION_SEX, -2);
+            girl.enjoyment(EActivity::FUCKING, -2);
             girl.health(-1);
             girl.spirit(-1);
         }
@@ -2647,7 +2647,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-AdvertisingJob::AdvertisingJob() : cSimpleJob(JOB_ADVERTISING, "Advertising.xml", {ACTION_WORKADVERTISING}) {
+AdvertisingJob::AdvertisingJob() : cSimpleJob(JOB_ADVERTISING, "Advertising.xml", {EActivity::SOCIAL}) {
 
 }
 
@@ -2722,9 +2722,9 @@ bool AdvertisingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_nigh
     *    Submitted by MuteDay as a subcode of bad complications but I liked it and made it as a separate section
     *    I will probably make it its own function when it works better.
     */
-    if (girl.m_Enjoyment[ACTION_WORKADVERTISING] < -10)                         // if she does not like the job
+    if (girl.enjoyment(EActivity::SOCIAL) < -10)                         // if she does not like the job
     {
-        int enjoyamount = girl.m_Enjoyment[ACTION_WORKADVERTISING];
+        int enjoyamount = girl.enjoyment(EActivity::SOCIAL);
         int saysomething = uniform(0, girl.confidence()) - enjoyamount;    // the more she does not like the job the more likely she is to say something about it
         saysomething -= girl.pcfear() / (girl.is_free() ? 2 : 1);    // reduce by fear (half if free)
 
@@ -2773,12 +2773,12 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-CustServiceJob::CustServiceJob() : cSimpleJob(JOB_CUSTOMERSERVICE, "CustService.xml", {ACTION_WORKCUSTSERV}) {
+CustServiceJob::CustServiceJob() : cSimpleJob(JOB_CUSTOMERSERVICE, "CustService.xml", {EActivity::SERVICE}) {
 
 }
 
 bool CustServiceJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    Action_Types actiontype = ACTION_WORKCUSTSERV;
+    EActivity actiontype = EActivity::SERVICE;
     // Note: Customer service needs to be done last, after all the whores have worked.
 
     int numCusts = 0; // The number of customers she can handle
@@ -2893,7 +2893,7 @@ public:
     bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 };
 
-BeastCareJob::BeastCareJob() : cSimpleJob(JOB_BEASTCARER, "BeastCarer.xml", {ACTION_WORKCARING, 20}) {
+BeastCareJob::BeastCareJob() : cSimpleJob(JOB_BEASTCARER, "BeastCarer.xml", {EActivity::FARMING, 20}) {
 }
 
 bool BeastCareJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
@@ -3005,7 +3005,7 @@ public:
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
 
-SecurityJob::SecurityJob() : cSimpleJob(JOB_SECURITY, "Security.xml", {ACTION_WORKSECURITY}) {
+SecurityJob::SecurityJob() : cSimpleJob(JOB_SECURITY, "Security.xml", {EActivity::FIGHTING}) {
 
 }
 
@@ -3275,8 +3275,8 @@ bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
         girl.happiness(happy);
         girl.spirit(spirit);
         cGirls::GirlInjured(girl, injury);
-        girl.upd_Enjoyment(ACTION_SEX, sex);
-        girl.upd_Enjoyment(ACTION_COMBAT, combat);
+        girl.enjoyment(EActivity::FUCKING, sex);
+        girl.enjoyment(EActivity::FIGHTING, combat);
 
         return false;
     }
@@ -3400,7 +3400,7 @@ bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
     return false;
 }
 
-CatacombJob::CatacombJob() : cSimpleJob(JOB_EXPLORECATACOMBS, "ExploreCatacombs.xml", {ACTION_COMBAT}){
+CatacombJob::CatacombJob() : cSimpleJob(JOB_EXPLORECATACOMBS, "ExploreCatacombs.xml", {EActivity::FIGHTING}){
 }
 
 void RegisterBarJobs(cJobManager& mgr) {

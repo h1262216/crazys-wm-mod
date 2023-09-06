@@ -125,7 +125,7 @@ sFilmObedienceData cFilmSceneJob::CalcChanceToObey(const sGirl& girl) const {
     base_chance /= 2;      // get a conventional percentage value
 
     int lust = lust_influence(m_PleasureFactor, girl);
-    int enjoy = (2 * girl.get_enjoyment(m_PrimaryAction) + girl.get_enjoyment(m_SecondaryAction)) / 3;
+    int enjoy = (2 * girl.enjoyment(m_PrimaryAction) + girl.enjoyment(m_SecondaryAction)) / 3;
     int love_fear = (girl.pclove() + girl.pcfear()) / 10;
 
     if(get_category(m_SceneType) == SceneCategory::TEASE) {
@@ -164,9 +164,9 @@ bool cFilmSceneJob::CheckRefuseWork(sGirl& girl) {
     // if she doesn't want to do it, but still works, her enjoyment decreases
     m_Dbg_Msg << "Enjoyment: \n  Init " << m_Enjoyment << "\n";
     m_Dbg_Msg << "  Libido " << lust_influence(m_PleasureFactor, girl) << "\n";
-    m_Dbg_Msg << "  Base " << (2*(2 * girl.get_enjoyment(m_PrimaryAction) + girl.get_enjoyment(m_SecondaryAction)) / 3) / 3 << "\n";
+    m_Dbg_Msg << "  Base " << (2*(2 * girl.enjoyment(m_PrimaryAction) + girl.enjoyment(m_SecondaryAction)) / 3) / 3 << "\n";
     m_Enjoyment += lust_influence(m_PleasureFactor, girl);
-    m_Enjoyment += (2*(2 * girl.get_enjoyment(m_PrimaryAction) + girl.get_enjoyment(m_SecondaryAction)) / 3) / 3;
+    m_Enjoyment += (2*(2 * girl.enjoyment(m_PrimaryAction) + girl.enjoyment(m_SecondaryAction)) / 3) / 3;
     if(chance_to_obey < 60) {
         m_Enjoyment += (chance_to_obey - 60) / 10;
         m_Dbg_Msg << "  Obey " << (chance_to_obey - 60) / 10 << "\n";
@@ -347,24 +347,24 @@ void cFilmSceneJob::produce_debug_message(sGirl& girl) const {
 }
 
 void cFilmSceneJob::update_enjoyment(sGirl& girl) const {
-    m_Dbg_Msg << "Enjoyment: " << m_Enjoyment << " [" << girl.get_enjoyment(m_PrimaryAction) << "]\n";
-    int old_enjoyment = girl.m_Enjoyment[m_PrimaryAction];
+    m_Dbg_Msg << "Enjoyment: " << m_Enjoyment << " [" << girl.enjoyment(m_PrimaryAction) << "]\n";
+    int old_enjoyment = girl.enjoyment(m_PrimaryAction);
     if (m_Enjoyment > old_enjoyment + 2) {
         int delta = m_Enjoyment - old_enjoyment;
         if(chance(25 + 5 * delta)) {
-            girl.upd_Enjoyment(m_PrimaryAction, uniform(1, delta));
+            girl.enjoyment(m_PrimaryAction, uniform(1, delta));
             std::stringstream enjoy_message;
             enjoy_message << "${name} had fun working today (" << m_Enjoyment
-                          << "), and now enjoys this job a little more (" << old_enjoyment << " -> " << girl.get_enjoyment(m_PrimaryAction) << ").";
+                          << "), and now enjoys this job a little more (" << old_enjoyment << " -> " << girl.enjoyment(m_PrimaryAction) << ").";
             girl.AddMessage(enjoy_message.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
         }
     } else if (m_Enjoyment < old_enjoyment - 6) {
         int delta = old_enjoyment - 4 - m_Enjoyment;
         if(chance(25 + 5 * delta)) {
-            girl.upd_Enjoyment(m_PrimaryAction, -uniform(1, 1 + delta));
+            girl.enjoyment(m_PrimaryAction, -uniform(1, 1 + delta));
             std::stringstream enjoy_message;
             enjoy_message << "${name} disliked working today (" << m_Enjoyment
-                          << "), and now enjoys this job a little less (" << old_enjoyment << " -> " << girl.get_enjoyment(m_PrimaryAction) << ").";
+                          << "), and now enjoys this job a little less (" << old_enjoyment << " -> " << girl.enjoyment(m_PrimaryAction) << ").";
             girl.AddMessage(enjoy_message.str(), EImageBaseType::PROFILE, EVENT_WARNING);
         }
     }
@@ -425,8 +425,8 @@ cFilmSceneJob::cFilmSceneJob(JOBS job, const char* xml, sImagePreset event_image
 }
 
 void cFilmSceneJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element) {
-    m_PrimaryAction = get_action_id( GetStringAttribute(job_element, "PrimaryAction") );
-    m_SecondaryAction = get_action_id( GetStringAttribute(job_element, "SecondaryAction") );
+    m_PrimaryAction = get_activity_id( GetStringAttribute(job_element, "PrimaryAction") );
+    m_SecondaryAction = get_activity_id( GetStringAttribute(job_element, "SecondaryAction") );
     m_MinimumHealth = job_element.IntAttribute("MinimumHealth", -100);
     m_RefuseIfPregnant = job_element.IntAttribute("RefuseIfPregnant", 0);
     m_CanBeForced = job_element.IntAttribute("CanBeForced", 0);

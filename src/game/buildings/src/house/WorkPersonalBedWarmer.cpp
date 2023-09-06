@@ -54,7 +54,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
     std::string headName = (headGirl ? headGirl->FullName() : "");
 
     //    refusal check
-    if (girl.disobey_check(ACTION_WORKHAREM, JOB_PERSONALBEDWARMER))
+    if (girl.disobey_check(EActivity::FUCKING, JOB_PERSONALBEDWARMER))
     {
 #if 1
         ss << " but she refuses to lay with you.";
@@ -96,7 +96,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << headName << " quickly drives her wild, bringing her to the brink of orgasm several times, but never quite letting her come.\n \n"
                         << headName << " suddenly stops, leaving ${name} on your bed, wet, frustrated, horny as hell and begging to be fucked.";
 
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                     make_horny(girl, 10);
                     headGirl->lesbian(+4);
                 }
@@ -107,7 +107,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                 {
                     ss << "Because " << headName << " is so cool with her and makes it all seem exciting, ${name} soon agrees.";
                     girl.happiness(5);
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                 }
 
                 //if slave is an addict
@@ -141,14 +141,14 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         girl.obedience(5);
                         girl.spirit(-5);
                         girl.pcfear(5);
-                        girl.upd_Enjoyment(ACTION_WORKHAREM, 1);  //relief
+                        girl.enjoyment(EActivity::FUCKING, 1);  //relief
                     }
                     else
                     {
                         ss << headName << " grabs her hair and threatens her. She sees no choice but to stay.";
                         girl.happiness(-5);
                         girl.obedience(1);
-                        girl.upd_Enjoyment(ACTION_WORKHAREM, -1);
+                        girl.enjoyment(EActivity::FUCKING, -1);
                     }
                 }
 
@@ -187,7 +187,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     ss << ", which she eagerly licks. ${name} is shocked, but is quickly aroused by "
                         << headName << "'s expert tongue.\n \nThey're soon putting on a hell of a show together";
 
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                     if (effectiveness < 60)
                     {
                         ss << ", licking, rubbing, and bringing each other to orgasm after orgasm there on your bed.\n \n"
@@ -238,7 +238,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     {
                         ss << " leaving her no choice but to stay.\n";
                         girl.happiness(-20);
-                        girl.upd_Enjoyment(ACTION_WORKHAREM, -5);
+                        girl.enjoyment(EActivity::FUCKING, -5);
                     }
                 }
 
@@ -295,14 +295,14 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     ss << ". Blushing, she says she'll do it... as long as she gets to finish you off with her mouth."
                         << "\nYou do not have a problem with this.";
                     girl.happiness(5);
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                 }
                 else if (girl.has_active_trait(traits::NYMPHOMANIAC) && effectiveness > 30)
                 {
                     ss << ". She raises her eyebrows and drops her clothes to the floor.\n"
                         << "\"Then get on and fuck me already... 'Master.'\"";
                     girl.happiness(5);
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                 }
                 else if (is_addict(girl, true) && effectiveness > 10)
                 {
@@ -329,7 +329,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                         << "${name} apologizes, promising to do better in future.\n";
                     girl.obedience(4);
                     girl.spirit(-4);
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                 }
                 //does she like you
                 else if (HateLove > 40)
@@ -396,14 +396,14 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                     ss << "Blushing, she says she might do it... if you'll finish in her mouth."
                         << "\nYou agree to this.\n";
                     girl.happiness(5);
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                 }
                 else if (is_sex_crazy(girl) && effectiveness > 40)
                 {
                     ss << "Aware of her love for sex, you quickly snake your hand between her legs and start to rub on her panties. "
                         << "She doesn't try to stop you, instead just moving her panties aside and guiding your hand.\nShe is quickly naked, panting and aroused and is now happy to stay.\n";
                     girl.happiness(2);
-                    girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+                    girl.enjoyment(EActivity::FUCKING, 2);
                 }
                 //if she's an addict
                 else if (is_addict(girl, true) && effectiveness > 40)
@@ -513,19 +513,19 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
     if (roll_a <= 15)
     {
         ss << "\nYou did something to piss her off.\n \n";
-        girl.upd_Enjoyment(ACTION_WORKHAREM, -1);
+        girl.enjoyment(EActivity::FUCKING, -1);
         girl.pclove(-1);
     }
     else if (roll_a >= 90)
     {
         ss << "\nShe had a pleasant time with you.\n \n";
-        girl.upd_Enjoyment(ACTION_WORKHAREM, +3);
+        girl.enjoyment(EActivity::FUCKING, +3);
         girl.pclove(2);
     }
     else
     {
         ss << "\nIt was as she expected.\n \n";
-        girl.upd_Enjoyment(ACTION_WORKHAREM, +1);
+        girl.enjoyment(EActivity::FUCKING, +1);
     }
 
 
@@ -661,7 +661,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             if (girl.has_active_trait(traits::FAST_ORGASMS))
             {
                 ss << "${name} orgasms loudly and repeatedly.\n \n";
-                girl.upd_Enjoyment(ACTION_WORKHAREM, 1);
+                girl.enjoyment(EActivity::FUCKING, 1);
                 girl.happiness(1);
             }
             else ss << "\n \n";
@@ -677,12 +677,12 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             if (girl.has_active_trait(traits::SADISTIC))
             {
                 ss << "${name} loves this and loves the squeal every time she manages to crack her whip right on another girl's clit or nipples.\n \n";
-                girl.upd_Enjoyment(ACTION_WORKTORTURER, 2);
+                girl.enjoyment(EActivity::FIGHTING, 2);
             }
             else if (girl.has_active_trait(traits::MASOCHIST))
             {
                 ss << "${name} is awful at this, with a stance like she wants to be hit. She seems to be enjoying it though.\n \n";
-                girl.upd_Enjoyment(ACTION_WORKHAREM, 1);
+                girl.enjoyment(EActivity::FUCKING, 1);
             }
             else ss << "\n \n";
             break;
@@ -730,7 +730,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                 ss << " so you fuck her gently and with extra care.\n";
                 girl.normalsex(1);
                 girl.pclove(1);
-                girl.upd_Enjoyment(ACTION_WORKHAREM, +1);
+                girl.enjoyment(EActivity::FUCKING, +1);
                 girl.lose_trait(traits::VIRGIN);
                 ss << "She is no longer a virgin.\n";
                 imagetype = EImageBaseType::VAGINAL;
@@ -856,7 +856,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
                 ss << "\n${name} is a Cum Addict doing something totally wild and unexpected (error).";
             }
             girl.lesbian(2);
-            girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+            girl.enjoyment(EActivity::FUCKING, 2);
         }
         else if (rng.percent(30) && HateLove > 0 && girl.has_active_trait(traits::GOOD_KISSER))
         {
@@ -1036,7 +1036,7 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
             {
                 ss << "was horny so she just Masturbated.\n \n";
             }
-            girl.upd_Enjoyment(ACTION_SEX, +1);
+            girl.enjoyment(EActivity::FUCKING, +1);
             girl.lust_release_regular();
             imagetype = EImagePresets::MASTURBATE;
             //girl.m_Events.AddMessage(ss.str(), EBaseImage::MAST, Day0Night1);
@@ -1252,14 +1252,14 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
     if (rng.percent(30) && (girl.any_active_trait({traits::EXOTIC, traits::FURRY})))
     {
         ss << "\n${name} mentions that this reminds her of a 'coming of age' ritual back home.";
-        girl.upd_Enjoyment(ACTION_WORKHAREM, 1);
+        girl.enjoyment(EActivity::FUCKING, 1);
     }
     else if (rng.percent(20) && get_sex_openness(girl) > 66)
     {
         ss << "\n${name} actually seems suited to this.\n\"Can I do this again";
         if (girl.is_slave()) ss << ", master?\"\n";
         else ss << "?\"\n";
-        girl.upd_Enjoyment(ACTION_WORKHAREM, 2);
+        girl.enjoyment(EActivity::FUCKING, 2);
     }
 
     //BSIN - disease risk, mostly a cost, but also an expensive way to cure a girl of serious disease

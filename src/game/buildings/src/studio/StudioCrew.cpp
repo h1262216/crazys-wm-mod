@@ -132,15 +132,15 @@ bool cCrewJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 }
 
 
-cJobCameraMage::cJobCameraMage() : cCrewJob(JOB_CAMERAMAGE, "CameraMage.xml", {ACTION_MOVIECREW, 50, EImageBaseType::CAMERA_MAGE}) {
+cJobCameraMage::cJobCameraMage() : cCrewJob(JOB_CAMERAMAGE, "CameraMage.xml", {EActivity::CRAFTING, 50, EImageBaseType::CAMERA_MAGE}) {
     m_Info.Provides.emplace_back(CamMageInteractionId);
 }
 
-cJobCrystalPurifier::cJobCrystalPurifier() : cCrewJob(JOB_CRYSTALPURIFIER, "CrystalPurifier.xml", {ACTION_MOVIECREW, 50, EImageBaseType::PURIFIER}) {
+cJobCrystalPurifier::cJobCrystalPurifier() : cCrewJob(JOB_CRYSTALPURIFIER, "CrystalPurifier.xml", {EActivity::CRAFTING, 50, EImageBaseType::PURIFIER}) {
     m_Info.Provides.emplace_back(CrystalPurifierInteractionId);
 }
 
-cJobFluffer::cJobFluffer() : cCrewJob(JOB_FLUFFER, "Fluffer.xml", {ACTION_MOVIECREW, 50, EImagePresets::BLOWJOB}) {
+cJobFluffer::cJobFluffer() : cCrewJob(JOB_FLUFFER, "Fluffer.xml", {EActivity::FUCKING, 50, EImagePresets::BLOWJOB}) {
     m_Info.Provides.emplace_back(FluffPointsId);
 }
 
@@ -148,7 +148,7 @@ void cJobFluffer::HandleUpdate(sGirl& girl, float performance) {
     ProvideResource(FluffPointsId, (int)performance);
 }
 
-cJobDirector::cJobDirector() : cCrewJob(JOB_DIRECTOR, "Director.xml", {ACTION_MOVIECREW, 50, EImageBaseType::DIRECTOR}) {
+cJobDirector::cJobDirector() : cCrewJob(JOB_DIRECTOR, "Director.xml", {EActivity::CRAFTING, 50, EImageBaseType::DIRECTOR}) {
     m_Info.Provides.emplace_back(DirectorInteractionId);
 }
 
@@ -164,7 +164,7 @@ public:
 
 IGenericJob::eCheckWorkResult cJobStageHand::CheckWork(sGirl& girl, bool is_night) {
     int roll_a = d100();
-    if (roll_a <= 50 && (girl.disobey_check(ACTION_MOVIECREW, JOB_STAGEHAND) || girl.disobey_check(ACTION_WORKCLEANING, JOB_STAGEHAND)))
+    if (roll_a <= 50 && (girl.disobey_check(EActivity::CRAFTING, JOB_STAGEHAND) || girl.disobey_check(EActivity::SERVICE, JOB_STAGEHAND)))
     {
         ss << "${name} refused to work as a stagehand today.";
         girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
@@ -276,8 +276,8 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     girl.exp(xp);
     girl.service(uniform(2, skill+1));
 
-    if (filming) girl.upd_Enjoyment(ACTION_MOVIECREW, enjoym);
-    girl.upd_Enjoyment(ACTION_WORKCLEANING, enjoyc);
+    if (filming) girl.enjoyment(EActivity::CRAFTING, enjoym);
+    girl.enjoyment(EActivity::SERVICE, enjoyc);
     // Gain Traits
     cGirls::PossiblyGainNewTrait(girl, "Maid", girl.service() / 9, "${name} has cleaned enough that she could work professionally as a Maid anywhere.");
     cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.");

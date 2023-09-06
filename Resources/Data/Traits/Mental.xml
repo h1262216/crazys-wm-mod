@@ -12,8 +12,9 @@
             <Modifier Name="skill:Combat" Value="10" />
             <Modifier Name="stat:Spirit" Value="10" />
             <Modifier Name="stat:Confidence" Value="5" />
-            <Modifier Name="enjoy:COMBAT" Value="10" />
-            <Modifier Name="enjoy:WORKSECURITY" Value="20" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
+            <Modifier Name="enjoy:Physical" Value="5" />
+            <Modifier Name="enjoy:Mental" Value="-10" />
             <Modifier Name="fetish:CuteGirl" Value="-15" />
             <Modifier Name="fetish:Dangerous" Value="20" />
             <Modifier Name="fetish:Lolita" Value="-5" />
@@ -37,6 +38,7 @@
             <Modifier Name="fetish:Dangerous" Value="20" />
             <Modifier Name="fetish:Cool" Value="25" />
             <Modifier Name="fetish:Nerd" Value="-10" />
+            <Modifier Name="enjoy:Service" Value="-10" />
         </Modifiers>
         <Excludes>Meek</Excludes>
         <Excludes>Nervous</Excludes>
@@ -52,8 +54,10 @@
             <Modifier Name="stat:Intelligence" Value="-10" />
             <Modifier Name="skill-cap:Medicine" Value="-10" />
             <Modifier Name="skill-cap:Magic" Value="-3" />
-            <Modifier Name="enjoy:SEX" Value="10" />
-            <Modifier Name="enjoy:WORKTRAINING" Value="-10" />
+            <Modifier Name="enjoy:Fucking" Value="5" />
+            <Modifier Name="enjoy:Stripping" Value="5" />
+            <Modifier Name="enjoy:Social" Value="5" />
+            <Modifier Name="enjoy:Mental" Value="-10" />
             <Modifier Name="fetish:CuteGirl" Value="10" />
             <Modifier Name="fetish:Cool" Value="10" />
             <Modifier Name="fetish:Nerd" Value="-20" />
@@ -94,10 +98,8 @@
             <Modifier Name="stat:Obedience" Value="50" />
             <Modifier Name="skill-cap:Performance" Value="-8" />
             <Modifier Name="skill-cap:Magic" Value="-8" />
-            <Modifier Name="enjoy:COMBAT" Value="-20" />
-            <Modifier Name="enjoy:WORKHALL" Value="-20" />
-            <Modifier Name="enjoy:WORKBAR" Value="-20" />
-            <Modifier Name="enjoy:WORKCLUB" Value="-20" />
+            <Modifier Name="enjoy:Fighting" Value="-20" />
+            <Modifier Name="enjoy:Social" Value="-15" />
             <Modifier Name="fetish:CuteGirl" Value="5" />
             <Modifier Name="fetish:Dangerous" Value="-20" />
             <Modifier Name="fetish:Cool" Value="-5" />
@@ -121,7 +123,8 @@
             <Modifier Name="stat:PCFear" Value="-200" />
             <Modifier Name="stat:Spirit" Value="30" />
             <Modifier Name="skill-cap:Performance" Value="10" />
-            <Modifier Name="enjoy:COMBAT" Value="20" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
+            <Modifier Name="enjoy:Performing" Value="3" />
             <Modifier Name="stat:Sanity" Value="10" />
             <Modifier Name="fetish:Dangerous" Value="20" />
             <Modifier Name="fetish:Cool" Value="15" />
@@ -180,6 +183,7 @@
             <Modifier Name="fetish:SmallBoobs" Value="10" />
             <Modifier Name="fetish:Freak" Value="5" />
             <Modifier Name="fetish:Lolita" Value="-10" />
+            <Modifier Name="enjoy:Stripping" Value="-5" />
         </Modifiers>
     </Trait>
 
@@ -192,7 +196,6 @@
             <Modifier Name="stat:Constitution" Value="50" />
             <Modifier Name="stat:Obedience" Value="30" />
             <Modifier Name="stat:Dignity" Value="-20" />
-            <Modifier Name="enjoy:WORKTORTURER" Value="5" />
             <Modifier Name="fetish:CuteGirl" Value="-10" />
             <Modifier Name="fetish:Dangerous" Value="10" />
             <Modifier Name="fetish:Nerd" Value="-10" />
@@ -213,14 +216,10 @@
             <Modifier Name="stat:Spirit" Value="-20" />
             <Modifier Name="skill-cap:Performance" Value="-10" />
             <Modifier Name="skill-cap:BDSM" Value="-10" />
-            <Modifier Name="enjoy:WORKMATRON" Value="-30" />
-            <Modifier Name="enjoy:COMBAT" Value="-20" />
-            <Modifier Name="enjoy:SEX" Value="-20" />
-            <Modifier Name="enjoy:WORKCUSTSERV" Value="-20" />
-            <Modifier Name="enjoy:WORKBAR" Value="-10" />
-            <Modifier Name="enjoy:WORKCLUB" Value="-10" />
-            <Modifier Name="enjoy:WORKHALL" Value="-10" />
-            <Modifier Name="enjoy:WORKCOUNSELOR" Value="-10" />
+            <Modifier Name="enjoy:Social" Value="-15" />
+            <Modifier Name="enjoy:Fighting" Value="-20" />
+            <Modifier Name="enjoy:Fucking" Value="-10" />
+            <Modifier Name="enjoy:Performing" Value="-10" />
             <Modifier Name="fetish:CuteGirl" Value="15" />
             <Modifier Name="fetish:Dangerous" Value="-30" />
             <Modifier Name="fetish:Cool" Value="-30" />
@@ -241,8 +240,7 @@
         <description>This girl deals higher damage. Likely take out or kill anyone causing harm to her. (will more likely disobey)</description>
         <Modifiers>
             <Modifier Name="skill:Combat" Value="10" />
-            <Modifier Name="enjoy:COMBAT" Value="20" />
-            <Modifier Name="enjoy:WORKTORTURER" Value="10" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
             <Modifier Name="fetish:CuteGirl" Value="-20" />
             <Modifier Name="fetish:Dangerous" Value="20" />
             <Modifier Name="fetish:Nerd" Value="-10" />
@@ -257,10 +255,9 @@
         <Modifiers>
             <Modifier Name="skill-cap:Combat" Value="-20" />
             <Modifier Name="skill-cap:BDSM" Value="-10" />
+            <Modifier Name="skill:BDSM" Value="-10" />
             <Modifier Name="skill:Combat" Value="-10" />
-            <Modifier Name="skill:Combat" Value="-10" />
-            <Modifier Name="enjoy:COMBAT" Value="-20" />
-            <Modifier Name="enjoy:WORKTORTURER" Value="-30" />
+            <Modifier Name="enjoy:Fighting" Value="-20" />
             <Modifier Name="fetish:CuteGirl" Value="10" />
             <Modifier Name="fetish:Dangerous" Value="-10" />
         </Modifiers>
@@ -303,10 +300,9 @@
             <Modifier Name="stat:Confidence" Value="-10" />
             <Modifier Name="skill:Performance" Value="-10" />
             <Modifier Name="skill-cap:Performance" Value="-20" />
-            <Modifier Name="enjoy:WORKCLUB" Value="-10" />
-            <Modifier Name="enjoy:SEX" Value="-20" />
-            <Modifier Name="enjoy:WORKBAR" Value="-5" />
-            <Modifier Name="enjoy:WORKHALL" Value="-5" />
+            <Modifier Name="enjoy:Social" Value="-15" />
+            <Modifier Name="enjoy:Fucking" Value="-10" />
+            <Modifier Name="enjoy:Performing" Value="-10" />
             <Modifier Name="fetish:CuteGirl" Value="10" />
             <Modifier Name="fetish:Nerd" Value="15" />
         </Modifiers>
@@ -321,7 +317,7 @@
     <Trait InheritChance="1" Name="Optimist" RandomChance="20" Type="Mental">
         <description>She is very cheerful and rarely in a bad mood. She enjoys what she does, a lot. (+happiness)</description>
         <Modifiers>
-            <Modifier Name="enjoy:WORKADVERTISING" Value="10" />
+            <Modifier Name="enjoy:Social" Value="10" />
             <Modifier Name="fetish:Elegant" Value="5" />
             <Modifier Name="skill-cap:Performance" Value="3" />
         </Modifiers>
@@ -350,6 +346,7 @@
         <Modifiers>
             <Modifier Name="fetish:Cool" Value="-20" />
             <Modifier Name="fetish:Nerd" Value="30" />
+            <Modifier Name="enjoy:Mental" Value="5" />
         </Modifiers>
         <Excludes>Slow Learner</Excludes>
         <Properties>
@@ -362,7 +359,7 @@
         <description>Enjoys inflicting or watching pain inflicted. (+BDSM)</description>
         <Modifiers>
             <Modifier Name="skill-cap:BDSM" Value="10" />
-            <Modifier Name="enjoy:WORKTORTURER" Value="25" />
+            <Modifier Name="enjoy:Fighting" Value="10" />
             <Modifier Name="fetish:CuteGirl" Value="-20" />
             <Modifier Name="fetish:Dangerous" Value="15" />
             <Modifier Name="fetish:Nerd" Value="-10" />
@@ -380,6 +377,7 @@
             <Modifier Name="fetish:Cool" Value="10" />
             <Modifier Name="fetish:Nerd" Value="-20" />
             <Modifier Name="fetish:CuteGirl" Value="10" />
+            <Modifier Name="enjoy:Mental" Value="-5" />
         </Modifiers>
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="0" />
@@ -444,6 +442,8 @@
             <Modifier Name="fetish:Nerd" Value="-5" />
             <Modifier Name="fetish:Elegant" Value="-20" />
             <Modifier Name="fetish:Freak" Value="10" />
+            <Modifier Name="enjoy:Service" Value="-5" />
+            <Modifier Name="enjoy:Social" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="2" />
@@ -454,7 +454,8 @@
         <description>This girl loves to be in control.</description>
         <Modifiers>
             <Modifier Name="skill:BDSM" Value="10" />
-            <Modifier Name="enjoy:WORKTORTURER" Value="20" />
+            <Modifier Name="enjoy:Fighting" Value="5" />
+            <Modifier Name="enjoy:Service" Value="-5" />
             <Modifier Name="fetish:Dangerous" Value="30" />
             <Modifier Name="fetish:Elegant" Value="5" />
             <Modifier Name="fetish:Freak" Value="40" />
@@ -469,7 +470,7 @@
             <Modifier Name="stat:Charisma" Value="2" />
             <Modifier Name="skill:Service" Value="5" />
             <Modifier Name="skill-cap:OralSex" Value="3" />
-            <Modifier Name="enjoy:SEX" Value="5" />
+            <Modifier Name="enjoy:Fucking" Value="3" />
             <Modifier Name="fetish:Cool" Value="10" />
             <Modifier Name="fetish:Sexy" Value="20" />
         </Modifiers>
@@ -485,7 +486,7 @@
             <Modifier Name="stat:Libido" Value="2" />
             <Modifier Name="stat:Confidence" Value="2" />
             <Modifier Name="stat:Charisma" Value="2" />
-            <Modifier Name="enjoy:SEX" Value="5" />
+            <Modifier Name="enjoy:Fucking" Value="3" />
             <Modifier Name="skill-cap:OralSex" Value="8" />
             <Modifier Name="fetish:Sexy" Value="25" />
         </Modifiers>

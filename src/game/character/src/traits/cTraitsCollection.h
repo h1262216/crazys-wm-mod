@@ -46,6 +46,8 @@ namespace traits {
 
         const std::array<int, NUM_SKILLS>& skill_cap_effects() const override { return m_SkillCapEffect; }
 
+        const std::array<int, NUM_ACTIVITIES>& enjoy_effects() const override { return m_EnjoymentEffect; }
+
         int get_modifier(const char* name) const override;
 
         const id_lookup_t<int>& get_all_modifiers() const override;
@@ -114,6 +116,7 @@ namespace traits {
         std::array<int, NUM_STATS> m_StatEffect;
         std::array<int, NUM_SKILLS> m_SkillEffect;
         std::array<int, NUM_SKILLS> m_SkillCapEffect;
+        std::array<int, NUM_ACTIVITIES> m_EnjoymentEffect;
         id_lookup_t<int> m_Modifiers;
 
         bool _remove_trait_from_list(sTraitID trait, std::vector<PermanentTrait>& tl, bool deactivate);

@@ -41,7 +41,7 @@ function DungeonInteractChoice(girl)
                 wm.UpdateImage(wm.IMG.SEX)
                 Dialog("You both have passionate wild sex, and then bask in each others glow.")
                 PlayerFucksGirlUpdate(girl)
-            elseif girl:obey_check(wm.ACTIONS.SEX) then
+            elseif girl:obey_check(wm.ACTIVITIES.FUCKING) then
                 girl:happiness(2)
                 girl:libido(1)
                 girl:tiredness(2)
@@ -53,7 +53,7 @@ function DungeonInteractChoice(girl)
                 Dialog("She refuses to sleep with you.")
             end
         elseif choice == 1 then
-            if girl:obey_check(wm.ACTIONS.SEX) then
+            if girl:obey_check(wm.ACTIVITIES.FUCKING) then
                 girl:happiness(1)
                 girl:libido(1)
                 girl:tiredness(1)
@@ -63,7 +63,7 @@ function DungeonInteractChoice(girl)
                 Dialog("She refused to have sex with another girl.")
             end
         elseif choice == 2 then
-            if girl:obey_check(wm.ACTIONS.SEX) then
+            if girl:obey_check(wm.ACTIVITIES.FUCKING) then
                 girl:happiness(1)
                 girl:libido(1)
                 girl:tiredness(1)
@@ -73,7 +73,7 @@ function DungeonInteractChoice(girl)
                 Dialog("She refused to have sex with creatures.")
             end
         elseif choice == 3 then
-            if girl:obey_check(wm.ACTIONS.SEX) then
+            if girl:obey_check(wm.ACTIVITIES.FUCKING) then
                 girl:happiness(1)
                 girl:libido(1)
                 girl:tiredness(1)
@@ -87,7 +87,7 @@ function DungeonInteractChoice(girl)
         elseif choice == 4 then
             choice = ChoiceBox("", "Deepthroat", "Regular", "Go Back")
             if choice == 0 then
-                if girl:obey_check(wm.ACTIONS.SEX) then
+                if girl:obey_check(wm.ACTIVITIES.FUCKING) then
                     girl:dignity(-1)
                     wm.UpdateImage(wm.IMG.DEEPTHROAT)
                     Dialog("She lets you shove your cock deep down the back of her throat until you cum into her head.")
@@ -96,7 +96,7 @@ function DungeonInteractChoice(girl)
                     return
                 end
             elseif choice == 1 then
-                if girl:obey_check(wm.ACTIONS.SEX) then
+                if girl:obey_check(wm.ACTIVITIES.FUCKING) then
                     girl:dignity(-1)
                     wm.UpdateImage(wm.IMG.ORAL)
                     Dialog("She sucks your cock until you cum in her mouth.")
@@ -113,7 +113,7 @@ function DungeonInteractChoice(girl)
             girl:spirit(-1)
             girl:anal(1)
         elseif choice == 5 then
-            if girl:obey_check(wm.ACTIONS.SEX) then
+            if girl:obey_check(wm.ACTIVITIES.FUCKING) then
                 girl:happiness(1)
                 girl:libido(1)
                 girl:tiredness(1)
@@ -127,7 +127,7 @@ function DungeonInteractChoice(girl)
             -- THREESOME
             return DungeonInteractChoice(girl)      -- tail call
         elseif choice == 7 then
-            if girl:obey_check(wm.ACTIONS.SEX) then
+            if girl:obey_check(wm.ACTIVITIES.FUCKING) then
                 girl:happiness(1)
                 girl:libido(1)
                 girl:tiredness(1)
@@ -235,7 +235,7 @@ function BrothelInteractChoice(girl)
         return girl:trigger("girl:interact:office")
     elseif choice == 4 then
         Dialog("\"Hello My Dear, I wanted to ask you to come by my private quarters this evening.  Perhaps, we can get to know each other better.\" ")
-        if girl:obey_check(wm.ACTIONS.SEX) then
+        if girl:obey_check(wm.ACTIVITIES.FUCKING) then
             return girl:trigger("girl:interact:private")
         else
             Dialog("She declines your invitation.")

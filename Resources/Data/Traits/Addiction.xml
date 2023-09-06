@@ -24,6 +24,9 @@
             <Modifier Name="skill-cap:Herbalism" Value="-3" />
             <Modifier Name="skill-cap:Brewing" Value="-5" />
             <Modifier Name="skill-cap:AnimalHandling" Value="-3" />
+
+            <Modifier Name="enjoy:Social" Value="5" />
+            <Modifier Name="enjoy:Performing" Value="5" />
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="5" />
@@ -40,7 +43,7 @@
             <Modifier Name="skill-cap:Group" Value="10" />
             <Modifier Name="stat:Obedience" Value="20" />
             <Modifier Name="stat:Spirit" Value="-10" />
-            <Modifier Name="enjoy:SEX" Value="10" />
+            <Modifier Name="enjoy:Fucking" Value="10" />
             <Modifier Name="fetish:Freak" Value="20" />
             <Modifier Name="fetish:Sexy" Value="10" />
             <Modifier Name="fetish:Elegant" Value="-20" />

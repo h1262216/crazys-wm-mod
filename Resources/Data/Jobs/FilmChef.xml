@@ -86,7 +86,7 @@
         </GainTrait>
     </Gains>
 
-    <Config PrimaryAction="ACTRESS" SecondaryAction="COOKING">
+    <Config PrimaryAction="Performing" SecondaryAction="Cooking">
     </Config>
 
     <Messages>

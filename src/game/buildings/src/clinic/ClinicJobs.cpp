@@ -47,7 +47,7 @@ struct DoctorJob : public cSimpleJob {
     void PreShift(sGirl& girl, bool is_night, cRng& rng) const override;
 };
 
-DoctorJob::DoctorJob() : cSimpleJob(JOB_DOCTOR, "Doctor.xml", {ACTION_WORKDOCTOR, 100, EImageBaseType::NURSE}) {
+DoctorJob::DoctorJob() : cSimpleJob(JOB_DOCTOR, "Doctor.xml", {EActivity::MEDICAL, 100, EImageBaseType::NURSE}) {
     m_Info.FullTime = true;
     m_Info.FreeOnly = true;
     m_Info.Provides.emplace_back(DoctorInteractionId);
@@ -117,7 +117,7 @@ void NurseJob::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
 }
 
 IGenericJob::eCheckWorkResult NurseJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.disobey_check(ACTION_WORKNURSE, JOB_NURSE))            // they refuse to work
+    if (girl.disobey_check(EActivity::MEDICAL, JOB_NURSE))            // they refuse to work
     {
         ss << "${name} refused to see any patients during the " << (is_night ? "night" : "day") << " shift.";
         if (girl.tiredness() > 50 && chance(girl.tiredness() - 30))
@@ -131,7 +131,7 @@ IGenericJob::eCheckWorkResult NurseJob::CheckWork(sGirl& girl, bool is_night) {
     return IGenericJob::eCheckWorkResult::ACCEPTS;
 }
 
-NurseJob::NurseJob() : cSimpleJob(JOB_NURSE, "Nurse.xml", {ACTION_WORKNURSE, 0, EImageBaseType::NURSE}) {
+NurseJob::NurseJob() : cSimpleJob(JOB_NURSE, "Nurse.xml", {EActivity::MEDICAL, 0, EImageBaseType::NURSE}) {
     m_Info.FullTime = true;
     m_Info.Provides.emplace_back(CarePointsBasicId);
     m_Info.Provides.emplace_back(CarePointsGoodId);
@@ -269,7 +269,7 @@ bool NurseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         }
         brothel.m_Happiness += 100;
         girl.lust_release_regular();
-        girl.upd_Enjoyment(ACTION_SEX, +3);
+        girl.enjoyment(EActivity::FUCKING, +3);
     }
     else if (hand)
     {
@@ -347,7 +347,7 @@ double InternJob::GetPerformance(const sGirl& girl, bool estimate) const {
 sWorkJobResult InternJob::DoWork(sGirl& girl, bool is_night) {
     auto brothel = girl.m_Building;
 
-    Action_Types actiontype = ACTION_WORKTRAINING;
+    EActivity actiontype = EActivity::MEDICAL;
     ss << get_text("work") << "\n \n";
 
     cGirls::UnequipCombat(girl);    // put that shit away
@@ -476,7 +476,7 @@ sWorkJobResult InternJob::DoWork(sGirl& girl, bool is_night) {
     if (roll_c <= 10)         { enjoy -= uniform(1, 3);    ss << "Some of the patrons abused her during the shift."; }
     else if (roll_c >= 90)    { enjoy += uniform(1, 3);    ss << "She had a pleasant time working."; }
     else                      { enjoy += uniform(0, 1);    ss << "Otherwise, the shift passed uneventfully."; }
-    girl.upd_Enjoyment(actiontype, enjoy);
+    girl.enjoyment(actiontype, enjoy);
 
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
@@ -505,7 +505,7 @@ IGenericJob::eCheckWorkResult InternJob::CheckWork(sGirl& girl, bool is_night) {
         return IGenericJob::eCheckWorkResult::IMPOSSIBLE;
     }
 
-    return SimpleRefusalCheck(girl, ACTION_WORKTRAINING);
+    return SimpleRefusalCheck(girl, EActivity::MEDICAL);
 }
 
 void RegisterClinicJobs(cJobManager& mgr) {

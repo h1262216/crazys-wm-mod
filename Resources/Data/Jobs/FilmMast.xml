@@ -44,7 +44,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config PrimaryAction="PORNSTAR" SecondaryAction="SEX">
+    <Config PrimaryAction="Performing" SecondaryAction="Fucking">
         <!-- Not sure which skill to use here -->
         <LustInfluence Amount="25" SkillMin="20" BaseValue="5" Skill="Lesbian" />
     </Config>

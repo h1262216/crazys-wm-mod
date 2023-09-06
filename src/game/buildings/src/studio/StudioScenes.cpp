@@ -39,7 +39,7 @@ namespace {
 
         void PostFilmCallback(sGirl& girl) override {
             cFilmSceneJob::PostFilmCallback(girl);
-            if (chance(5) && (girl.happiness() > 80) && (girl.get_enjoyment(ACTION_PORNSTAR) > 75))
+            if (chance(5) && (girl.happiness() > 80) && (girl.enjoyment(EActivity::FUCKING) > 75))
                 cGirls::AdjustTraitGroupGagReflex(girl, 1, true);
         }
     };
@@ -75,7 +75,7 @@ namespace {
                 girl.pclove(-1);
             }
 
-            if (chance(5) && (girl.happiness() > 80) && (girl.get_enjoyment(ACTION_PORNSTAR) > 75))
+            if (chance(5) && (girl.happiness() > 80) && (girl.enjoyment(EActivity::FUCKING) > 75))
                 cGirls::AdjustTraitGroupGagReflex(girl, 1, true);
         }
     };

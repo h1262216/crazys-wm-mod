@@ -40,7 +40,7 @@ namespace {
 }
 
 bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    Action_Types actiontype = ACTION_WORKESCORT;
+    EActivity actiontype = EActivity::SOCIAL;
     m_Escort = 0;
     m_Prepare = (girl.agility() + girl.service() / 2);
 
@@ -519,7 +519,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 }
 
 IGenericJob::eCheckWorkResult cEscortJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.disobey_check(ACTION_WORKESCORT, JOB_ESCORT))
+    if (girl.disobey_check(EActivity::SOCIAL, JOB_ESCORT))
     {
         ss << "${name} refused to work during the " << (is_night ? "night" : "day") << " shift.";
         girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
@@ -652,7 +652,7 @@ auto cEscortJob::choose_sex(const std::string& prefix, const sGirl& girl, const 
     return type;
 }
 
-cEscortJob::cEscortJob() : cSimpleJob(JOB_ESCORT, "Escort.xml", {ACTION_WORKESCORT, 0, EImageBaseType::ESCORT}) {
+cEscortJob::cEscortJob() : cSimpleJob(JOB_ESCORT, "Escort.xml", {EActivity::SOCIAL, 0, EImageBaseType::ESCORT}) {
     RegisterVariable("Escort", m_Escort);
     RegisterVariable("Prepare", m_Prepare);
 }

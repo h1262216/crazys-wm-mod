@@ -59,7 +59,7 @@ protected:
     int m_Wages;
     int m_Tips;
 
-    eCheckWorkResult SimpleRefusalCheck(sGirl& girl, Action_Types action);
+    eCheckWorkResult SimpleRefusalCheck(sGirl& girl, EActivity action);
 
 private:
     cJobPerformance m_PerformanceData;

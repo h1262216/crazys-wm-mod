@@ -231,7 +231,7 @@ function PunishGirl(girl)
         girl:pcfear(10)
         girl:add_trait(wm.TRAITS.RECENTLY_PUNISHED, 4)
     elseif choice == 4 then
-        if girl:obey_check(wm.ACTIONS.WORKSTRIP) then
+        if girl:obey_check(wm.ACTIVITIES.STRIPPING) then
             wm.UpdateImage(wm.IMG.NUDE)
             Dialog("However, they don't like when anyone disrespects their employer.  Before they leave her room they tear away her clothing and leave her naked and sobbing.")
         else

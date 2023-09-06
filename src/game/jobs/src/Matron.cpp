@@ -139,28 +139,28 @@ void MatronJob::HandleMatronResult(sGirl& girl, int &conf) {
     int check = d100();
     if (check < 10 && numgirls >(girl.service() + girl.confidence()) * 3)
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, -uniform(5, 10));
+        girl.enjoyment(EActivity::SOCIAL, -uniform(5, 10));
         conf -= 5;
         girl.happiness(-10);
         ss << "was overwhelmed by the number of girls she was required to manage and broke down crying.";
     }
     else if (check < 10)
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, -uniform(1, 4));
+        girl.enjoyment(EActivity::SOCIAL, -uniform(1, 4));
         conf -= -1;
         girl.happiness(-3);
         ss << "had trouble dealing with some of the girls.";
     }
     else if (check > 90)
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, uniform(1, 4));
+        girl.enjoyment(EActivity::SOCIAL, uniform(1, 4));
         conf += 1;
         girl.happiness(3);
         ss << "enjoyed helping the girls with their lives.";
     }
     else
     {
-        girl.upd_Enjoyment(ACTION_WORKMATRON, -uniform(-1, 1));
+        girl.enjoyment(EActivity::SOCIAL, -uniform(-1, 1));
         ss << "went about her day as usual.";
     }
 }
@@ -186,7 +186,7 @@ void MatronJob::ApplyMatronEffect(const sGirl& girl) {
 sWorkJobResult BrothelMatronJob::DoWork(sGirl& girl, bool is_night) {
     auto brothel = girl.m_Building;
 
-    Action_Types actiontype = ACTION_WORKMATRON;
+    EActivity actiontype = EActivity::SOCIAL;
     girl.m_DayJob = girl.m_NightJob = JOB_MATRON;    // it is a full time job
     if (is_night) return {false, 0, 0, 0};    // and is only checked once
 

@@ -72,7 +72,7 @@ bool GenericCraftingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_
     apply_gains(girl, m_Performance);
 
     // Update Enjoyment
-    girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
+    girl.enjoyment(m_Data.Action, m_Enjoyment);
 
     return false;
 }
@@ -126,7 +126,7 @@ struct cBlacksmithJob : GenericCraftingJob {
 
 cBlacksmithJob::cBlacksmithJob() :
         GenericCraftingJob(JOB_BLACKSMITH, "ArenaBlacksmith.xml",
-                           ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
+                           EActivity::CRAFTING, 40, EImageBaseType::CRAFT) {
 
 }
 
@@ -201,7 +201,7 @@ struct cCobblerJob : GenericCraftingJob {
 
 cCobblerJob::cCobblerJob() :
     GenericCraftingJob(JOB_COBBLER, "ArenaCobbler.xml",
-                       ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
+                       EActivity::CRAFTING, 20, EImageBaseType::CRAFT) {
 }
 
 void cCobblerJob::DoWorkEvents(sGirl& girl) {
@@ -263,7 +263,7 @@ struct cMakeItemJob : GenericCraftingJob {
 
 cMakeItemJob::cMakeItemJob() :
         GenericCraftingJob(JOB_MAKEITEM, "MakeItem.xml",
-                           ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
+                           EActivity::CRAFTING, 20, EImageBaseType::CRAFT) {
 }
 
 void cMakeItemJob::DoWorkEvents(sGirl& girl) {
@@ -324,7 +324,7 @@ struct cMakePotionsJob : GenericCraftingJob {
 
 cMakePotionsJob::cMakePotionsJob() :
         GenericCraftingJob(JOB_MAKEPOTIONS, "MakePotions.xml",
-                           ACTION_WORKMAKEPOTIONS, 20, EImageBaseType::CRAFT) {
+                           EActivity::CRAFTING, 20, EImageBaseType::CRAFT) {
 }
 
 void cMakePotionsJob::DoWorkEvents(sGirl& girl) {
@@ -366,7 +366,7 @@ struct cTailorJob : GenericCraftingJob {
 
 cTailorJob::cTailorJob() :
         GenericCraftingJob(JOB_TAILOR, "Tailor.xml",
-                           ACTION_WORKMAKEITEMS, 20, EImageBaseType::CRAFT) {
+                           EActivity::CRAFTING, 20, EImageBaseType::CRAFT) {
 }
 
 void cTailorJob::DoWorkEvents(sGirl& girl) {
@@ -426,7 +426,7 @@ struct cGardenerJob : GenericCraftingJob {
 
 cGardenerJob::cGardenerJob() :
         GenericCraftingJob(JOB_GARDENER, "Gardener.xml",
-                           ACTION_WORKFARM, 20, EImageBaseType::FARM) {
+                           EActivity::FARMING, 20, EImageBaseType::FARM) {
 }
 
 struct cJewelerJob : GenericCraftingJob {
@@ -436,7 +436,7 @@ struct cJewelerJob : GenericCraftingJob {
 
 cJewelerJob::cJewelerJob() :
         GenericCraftingJob(JOB_JEWELER, "ArenaJeweler.xml",
-                           ACTION_WORKMAKEITEMS, 40, EImageBaseType::CRAFT) {
+                           EActivity::CRAFTING, 40, EImageBaseType::CRAFT) {
 }
 
 void cJewelerJob::DoWorkEvents(sGirl& girl) {
@@ -505,11 +505,11 @@ void cJewelerJob::DoWorkEvents(sGirl& girl) {
 
 void RegisterCraftingJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BAKER, "Baker.xml", ACTION_WORKCOOKING, 20, EImageBaseType::BAKE));
+            JOB_BAKER, "Baker.xml", EActivity::COOKING, 20, EImageBaseType::BAKE));
     mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BREWER, "Brewer.xml", ACTION_WORKCOOKING, 20, EImageBaseType::COOK));
+            JOB_BREWER, "Brewer.xml", EActivity::COOKING, 20, EImageBaseType::COOK));
     mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BUTCHER, "Butcher.xml", ACTION_WORKCOOKING, 20, EImageBaseType::COOK));
+            JOB_BUTCHER, "Butcher.xml", EActivity::COOKING, 20, EImageBaseType::COOK));
     mgr.register_job(std::make_unique<cBlacksmithJob>());
     mgr.register_job(std::make_unique<cCobblerJob>());
     mgr.register_job(std::make_unique<cGardenerJob>());

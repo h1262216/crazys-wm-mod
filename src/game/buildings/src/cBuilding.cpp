@@ -645,7 +645,7 @@ bool cBuilding::SetupMatron(bool is_night)
         m_ActiveMatron = matron_candidate;
         return true;
     }
-    else if (matron_candidate->disobey_check(ACTION_WORKMATRON, JOB_MATRON))
+    else if (matron_candidate->disobey_check(EActivity::SOCIAL, JOB_MATRON))
     {
         if(is_night) {
             matron_candidate->m_Refused_To_Work_Night = true;
@@ -974,7 +974,7 @@ void cBuilding::do_daily_items(sGirl& girl)
     if (girl.has_item("Apron") && g_Dice.percent(10))
     {
         ss << "She put on her Apron and cooked a meal for some of the girls.\n \n";
-        girl.upd_Enjoyment(ACTION_WORKCOOKING, 1);
+        girl.enjoyment(EActivity::COOKING, 1);
         girl.happiness(5);
         cook = true;
     }

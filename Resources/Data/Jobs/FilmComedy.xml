@@ -63,7 +63,7 @@
         </GainTrait>
     </Gains>
 
-    <Config PrimaryAction="ACTRESS" SecondaryAction="ACTRESS">
+    <Config PrimaryAction="Performing" SecondaryAction="Social">
     </Config>
 
     <Messages>

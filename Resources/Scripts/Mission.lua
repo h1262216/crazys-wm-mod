@@ -260,7 +260,7 @@ end
 
 function AssassinatePolitician(girl)
     Dialog("I have a new target for you.")
-    if girl:obey_check(wm.ACTIONS.COMBAT) then  -- TODO select action
+    if girl:obey_check(wm.ACTIVITIES.FIGHTING) then  -- TODO select action
         Dialog("\"A particular political figure has been starting a crusade to outlaw brothels within the city limits.\"  *You hand her the dossier*  \"Of course this is just a smoke screen for his true goal of raising the taxes on brothels everywhere.\"")
         Dialog("\"What's worse is he is using evidence gathered about me as his leverage to push this all through.\"  *You give her a hard look* \"I don't want him to wake up tomorrow.\"")
         wm.SetPlayerDisposition(-20)

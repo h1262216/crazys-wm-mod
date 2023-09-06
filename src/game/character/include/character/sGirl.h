@@ -119,11 +119,6 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
     JOBS m_YesterDayJob   = JOB_UNSET;        // id for what job the girl did yesterday
     JOBS m_YesterNightJob = JOB_UNSET;        // id for what job the girl did yesternight
 
-    int m_Enjoyment[NUM_ACTIONTYPES];            // these values determine how much a girl likes an action
-    int m_EnjoymentMods[NUM_ACTIONTYPES];        // `J` added perminant modifiers to stats
-    int m_EnjoymentTemps[NUM_ACTIONTYPES];        // `J` added these go down (or up) by 30% each week until they reach 0
-    // (-100 is hate, +100 is loves)
-
     bool m_UseAntiPreg;                            // if true she will use anit preg measures
 
     unsigned char m_Withdrawals;                // if she is addicted to something this counts how many weeks she has been off
@@ -204,14 +199,17 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
 
     int upd_base_stat(STATS stat_id, int amount, bool usetraits = true) override;
 
-    int upd_temp_Enjoyment(Action_Types stat_id, int amount);
-    int upd_Enjoyment(Action_Types stat_id, int amount);
+
     int upd_Training(int stat_id, int amount, bool usetraits = true);
+
+    // enjoyment functions
+    int enjoyment(EActivity activity) const;
+    void enjoyment(EActivity activity, int delta);
+    void temp_enjoyment(EActivity activity, int delta);
 
     int rebel() const;
     bool FixFreeTimeJobs();
 
-    int get_enjoyment(Action_Types actiontype) const;
     int get_training(int actiontype) const;
 
     /*
@@ -270,6 +268,11 @@ private:
 
     cEvents m_Events;                            // Each girl keeps track of all her events that happened to her in the last turn
 
+    int m_Enjoyment[NUM_ACTIVITIES];            // these values determine how much a girl likes an action
+    int m_EnjoymentMods[NUM_ACTIVITIES];        // `J` added perminant modifiers to stats
+    int m_EnjoymentTemps[NUM_ACTIVITIES];       // temporary enjoyment modifiers
+    // (-100 is hate, +100 is loves)
+
 public:
     // END MOD
 
@@ -283,7 +286,7 @@ public:
     bool unequip(const sInventoryItem* item) override;
     bool can_equip(const sInventoryItem* item) const override;
 
-    bool disobey_check(Action_Types action, JOBS job=NUM_JOBS);
+    bool disobey_check(EActivity action, JOBS job=NUM_JOBS, int offset = 30);
 
     void add_tiredness();
 

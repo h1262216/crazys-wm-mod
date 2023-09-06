@@ -3,7 +3,7 @@ function InteractOffice(girl)
     local choice = ChoiceBox("", "Instruct her to tidy up your office", "Review her performance",
             "Send her on a mission", "Personal instruction", "Inspect her", "Manage Tattoos", "Manage Piercings", "Go Back")
     if choice == 0 then
-        if girl:obey_check(wm.ACTIONS.WORKCLEANING) then
+        if girl:obey_check(wm.ACTIVITIES.SERVICE) then
             wm.UpdateImage(wm.IMG.MAID)
             Dialog("She puts on her maid's attire and sets about tidying up your office.  You always enjoy being around a women in a maid's outfit .")
             girl:clean_building();
@@ -42,7 +42,7 @@ function InteractOffice(girl)
         return girl:trigger("girl:mission")
     elseif choice == 3 then
         Dialog("\"After observing your work these past couple days, I've noticed some things that could use improvement.  I think you will benefit from my personal instruction in these areas\"  *You wink at her slyly*")
-        if girl:obey_check(wm.ACTIONS.SEX) then
+        if girl:obey_check(wm.ACTIVITIES.FUCKING) then
             Dialog("\"Please, join me on my office couch there and we will begin....\"")
             -- TODO: Prefer easily trainable skills (not maxed-out, no
             -- adverse traits).
@@ -77,7 +77,7 @@ function InteractOffice(girl)
 
         Dialog("Remove your clothing.  I want to get a better look my investment.")
 
-        if girl:obey_check(wm.ACTIONS.WORKSTRIP) then
+        if girl:obey_check(wm.ACTIVITIES.STRIPPING) then
             girl:strip(2)
             wm.UpdateImage(wm.IMG.STRIP)
             if girl:has_trait(wm.TRAITS.EXHIBITIONIST, wm.TRAITS.NYMPHOMANIAC) and girl:pclove() > 0 then

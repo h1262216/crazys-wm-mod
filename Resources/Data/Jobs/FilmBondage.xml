@@ -94,7 +94,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config PrimaryAction="PORNSTAR" SecondaryAction="SEX" MinimumHealth="40" RefuseIfPregnant="1" CanBeForced="1">
+    <Config PrimaryAction="Fucking" SecondaryAction="Performing" MinimumHealth="40" RefuseIfPregnant="1" CanBeForced="1">
         <LustInfluence Amount="20" SkillMin="33" BaseValue="30" Skill="BDSM" />
     </Config>
 

@@ -112,7 +112,7 @@
         </GainTrait>
     </Gains>
 
-    <Config PrimaryAction="ACTRESS" SecondaryAction="COMBAT">
+    <Config PrimaryAction="Performing" SecondaryAction="Fighting">
     </Config>
 
     <Messages>

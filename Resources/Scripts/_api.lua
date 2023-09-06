@@ -1,7 +1,7 @@
 ---@class WM
 ---@field IMG table<string, number>
 ---@field IMG_PART table<string, number>
----@field ACTIONS table<string, number>
+---@field ACTIVITIES table<string, number>
 ---@field STATS table<string, number>
 ---@field SKILLS table<string, number>
 ---@field TRAITS table<string, string>
@@ -216,7 +216,7 @@ function g:lactation(change) end
 ---@overload fun(): number
 function g:strength(change) end
 
-g.ACTIONS = {}
+g.ACTIVITIES = {}
 
 wm.Girl = g
 

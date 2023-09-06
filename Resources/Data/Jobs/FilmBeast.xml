@@ -75,7 +75,7 @@
         </LoseTrait>
     </Gains>
 
-    <Config PrimaryAction="PORNSTAR" SecondaryAction="SEX" MinimumHealth="25" CanBeForced="1">
+    <Config PrimaryAction="Fucking" SecondaryAction="Performing" MinimumHealth="25" CanBeForced="1">
         <LustInfluence Amount="20" SkillMin="50" BaseValue="35" Skill="Beastiality" />
     </Config>
 

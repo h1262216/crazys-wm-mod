@@ -75,6 +75,7 @@
             <Modifier Name="fetish:Dangerous" Value="5" />
             <Modifier Name="fetish:Cool" Value="2" />
             <Modifier Name="fetish:Freak" Value="2" />
+            <Modifier Name="enjoy:Performing" Value="-3"/>
         </Modifiers>
 
         <Properties>
@@ -94,6 +95,7 @@
             <Modifier Name="fetish:Dangerous" Value="20" />
             <Modifier Name="fetish:Cool" Value="30" />
             <Modifier Name="fetish:Freak" Value="5" />
+            <Modifier Name="enjoy:Performing" Value="3"/>
         </Modifiers>
 
         <Properties>
@@ -138,10 +140,11 @@
             <Modifier Name="stat:Libido" Value="10" />
             <Modifier Name="stat:Lactation" Value="-10" />
             <Modifier Name="skill:TittySex" Value="10" />
-            <Modifier Name="enjoy:WORKMILK" Value="-10" />
             <Modifier Name="fetish:Elegant" Value="-10" />
             <Modifier Name="fetish:Sexy" Value="20" />
             <Modifier Name="fetish:Freak" Value="15" />
+
+            <Modifier Name="enjoy:Fucking" Value="3"/>
         </Modifiers>
 
         <Properties>
@@ -170,6 +173,9 @@
             <Modifier Name="fetish:CuteGirl" Value="-15" />
             <Modifier Name="fetish:Dangerous" Value="30" />
             <Modifier Name="fetish:Freak" Value="20" />
+
+            <Modifier Name="enjoy:Social" Value="-15"/>
+            <Modifier Name="enjoy:Performing" Value="-10"/>
         </Modifiers>
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="0" />
@@ -181,7 +187,10 @@
         <Modifiers>
             <Modifier Name="stat:Charisma" Value="-5" />
             <Modifier Name="stat:Beauty" Value="-5" />
-            <Modifier Name="enjoy:COMBAT" Value="-5" />
+
+            <Modifier Name="enjoy:Fighting" Value="-25" />
+            <Modifier Name="enjoy:Social" Value="-10"/>
+            <Modifier Name="enjoy:Physical" Value="-25"/>
         </Modifiers>
 
         <Properties>
@@ -197,7 +206,7 @@
         <Modifiers>
             <Modifier Name="stat:Libido" Value="20" />
             <Modifier Name="skill:NormalSex" Value="10" />
-            <Modifier Name="enjoy:SEX" Value="10" />
+            <Modifier Name="enjoy:Fucking" Value="3" />
             <Modifier Name="fetish:Elegant" Value="-5" />
             <Modifier Name="fetish:Sexy" Value="20" />
             <Modifier Name="fetish:Freak" Value="15" />

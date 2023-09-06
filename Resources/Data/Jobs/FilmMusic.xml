@@ -78,7 +78,7 @@
         </GainTrait>
     </Gains>
 
-    <Config PrimaryAction="ACTRESS" SecondaryAction="WORKMUSIC">
+    <Config PrimaryAction="Performing" SecondaryAction="Crafting">
     </Config>
 
     <Messages>

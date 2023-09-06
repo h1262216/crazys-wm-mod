@@ -241,6 +241,7 @@ void cTraitsCollection::update() {
     m_StatEffect.fill(0);
     m_SkillEffect.fill(0);
     m_SkillCapEffect.fill(0);
+    m_EnjoymentEffect.fill(0);
     m_Modifiers.clear();
     for(auto& spec : m_ActiveTraits) {
         for(auto& effect : dynamic_cast<const cTraitSpec*>(spec)->effects()) {
@@ -388,6 +389,7 @@ cTraitsCollection::cTraitsCollection(const ITraitsManager* mgr) : m_TraitsManage
     m_StatEffect.fill(0);
     m_SkillEffect.fill(0);
     m_SkillCapEffect.fill(0);
+    m_EnjoymentEffect.fill(0);
 }
 
 void cTraitsCollection::apply_effect(const TraitEffect& effect) {
@@ -413,6 +415,9 @@ void cTraitsCollection::apply_effect(const TraitEffect& effect) {
             break;
         case TraitEffect::SKILL_CAP:
             m_SkillCapEffect[effect.target] += effect.value;
+            break;
+        case TraitEffect::ENJOYMENT:
+            m_EnjoymentEffect[effect.target] += effect.value;
             break;
         case TraitEffect::MODIFIER:
             m_Modifiers[effect.modifier] += effect.value;

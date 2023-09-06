@@ -50,7 +50,7 @@ cSimpleJob::cSimpleJob(JOBS job, const char* xml, sSimpleJobData data) : cBasicJ
 
 void cSimpleJob::HandleGains(sGirl& girl, int fame) {
     // Update Enjoyment
-    girl.upd_Enjoyment(m_Data.Action, m_Enjoyment);
+    girl.enjoyment(m_Data.Action, m_Enjoyment);
 
     if (girl.fame() < 10 && m_Performance >= 70)     { fame += 1; }
     if (girl.fame() < 20 && m_Performance >= 100)    { fame += 1; }

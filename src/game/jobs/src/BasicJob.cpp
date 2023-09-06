@@ -139,7 +139,7 @@ void cBasicJob::RegisterVariable(std::string name, sImagePreset& value) {
     m_Interface->RegisterVariable(std::move(name), value);
 }
 
-IGenericJob::eCheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, Action_Types action) {
+IGenericJob::eCheckWorkResult cBasicJob::SimpleRefusalCheck(sGirl& girl, EActivity action) {
     if (girl.disobey_check(action, job()))
     {
         add_text("refuse");

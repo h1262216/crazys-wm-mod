@@ -175,6 +175,8 @@ namespace traits {
 
         virtual const std::array<int, NUM_SKILLS>& skill_cap_effects() const = 0;
 
+        virtual const std::array<int, NUM_ACTIVITIES>& enjoy_effects() const = 0;
+
         virtual int get_modifier(const char* name) const = 0;
 
         /// Gets all modifiers.

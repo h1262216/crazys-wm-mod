@@ -15,7 +15,7 @@ namespace traits {
 
     struct TraitEffect {
         enum Type {
-            STAT, SKILL, SKILL_CAP, MODIFIER
+            STAT, SKILL, SKILL_CAP, ENJOYMENT, MODIFIER
         } type;
 
         unsigned target;

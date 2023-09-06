@@ -16,6 +16,7 @@
             <Modifier Name="fetish:NiceFigure" Value="-40" />
             <Modifier Name="fetish:Freak" Value="25" />
             <Modifier Name="fetish:Fat" Value="100" />
+            <Modifier Name="enjoy:Physical" Value="-5" />
         </Modifiers>
 
         <Properties>
@@ -32,6 +33,7 @@
             <Modifier Name="fetish:NiceFigure" Value="-20" />
             <Modifier Name="fetish:Freak" Value="20" />
             <Modifier Name="fetish:Fat" Value="50" />
+            <Modifier Name="enjoy:Physical" Value="-5" />
         </Modifiers>
         <Properties>
             <Setting Name="inherit:chance:from_acquired" Value="15" />
@@ -44,9 +46,8 @@
         <Modifiers>
             <Modifier Name="stat:Charisma" Value="10" />
             <Modifier Name="stat:Beauty" Value="20" />
-            <Modifier Name="enjoy:WORKCLUB" Value="10" />
-            <Modifier Name="enjoy:WORKBAR" Value="10" />
-            <Modifier Name="enjoy:WORKHALL" Value="10" />
+            <Modifier Name="enjoy:Social" Value="10" />
+            <Modifier Name="enjoy:Performing" Value="5" />
             <Modifier Name="fetish:BigBoobs" Value="10" />
             <Modifier Name="fetish:Sexy" Value="10" />
             <Modifier Name="fetish:NiceFigure" Value="60" />
@@ -63,9 +64,8 @@
         <Modifiers>
             <Modifier Name="stat:Charisma" Value="5" />
             <Modifier Name="stat:Beauty" Value="10" />
-            <Modifier Name="enjoy:WORKCLUB" Value="10" />
-            <Modifier Name="enjoy:WORKBAR" Value="10" />
-            <Modifier Name="enjoy:WORKHALL" Value="10" />
+            <Modifier Name="enjoy:Social" Value="10" />
+            <Modifier Name="enjoy:Performing" Value="5" />
             <Modifier Name="fetish:Sexy" Value="25" />
             <Modifier Name="fetish:Lolita" Value="-30" />
             <Modifier Name="fetish:NiceFigure" Value="20" />
@@ -81,7 +81,8 @@
             <Modifier Name="stat:Agility" Value="10" />
             <Modifier Name="stat:Constitution" Value="10" />
             <Modifier Name="stat:Strength" Value="10" />
-            <Modifier Name="enjoy:COMBAT" Value="10" />
+            <Modifier Name="enjoy:Fighting" Value="5" />
+            <Modifier Name="enjoy:Physical" Value="15" />
             <Modifier Name="fetish:Lolita" Value="-30" />
             <Modifier Name="fetish:Sexy" Value="-30" />
             <Modifier Name="fetish:Dangerous" Value="25" />
@@ -147,6 +148,7 @@
             <Modifier Name="fetish:Lolita" Value="10"/>
             <Modifier Name="fetish:Tall"   Value="-75"/>
             <Modifier Name="fetish:Short"  Value="100"/>
+            <Modifier Name="enjoy:Social" Value="-3" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="10" />

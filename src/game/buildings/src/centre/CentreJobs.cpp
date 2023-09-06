@@ -49,7 +49,7 @@ namespace {
     };
 }
 
-CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "CommunityService.xml", {ACTION_WORKCENTRE, 100, EImageBaseType::PROFILE}) {
+CommunityService::CommunityService() : cSimpleJob(JOB_COMUNITYSERVICE, "CommunityService.xml", {EActivity::SOCIAL, 100, EImageBaseType::PROFILE}) {
 
 }
 
@@ -105,7 +105,7 @@ bool CommunityService::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
         }
         brothel.m_Happiness += 100;
         girl.lust_release_regular();
-        girl.upd_Enjoyment(ACTION_SEX, +3);
+        girl.enjoyment(EActivity::FUCKING, +3);
         fame += 1;
         dispo += 6;
     }
@@ -145,7 +145,7 @@ bool CommunityService::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
     return false;
 }
 
-FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {ACTION_WORKCENTRE, 20, EImageBaseType::PROFILE}) {
+FeedPoor::FeedPoor() : cSimpleJob(JOB_FEEDPOOR, "FeedPoor.xml", {EActivity::SOCIAL, 20, EImageBaseType::PROFILE}) {
 
 }
 
@@ -212,7 +212,7 @@ bool FeedPoor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         }
         brothel.m_Happiness += 100;
         girl.lust_release_regular();
-        girl.upd_Enjoyment(ACTION_SEX, +3);
+        girl.enjoyment(EActivity::FUCKING, +3);
         fame += 1;
         dispo += 6;
     }
@@ -246,7 +246,7 @@ bool FeedPoor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     return false;
 }
 
-Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {ACTION_WORKCOUNSELOR, 25}) {
+Counselor::Counselor() : cSimpleJob(JOB_COUNSELOR, "Counselor.xml", {EActivity::SOCIAL, 25}) {
     m_Info.FullTime = true;
     m_Info.FreeOnly = true;
 }

@@ -33,7 +33,7 @@
         <Stat Name="Confidence" Weight="1" Max="50" />
     </Gains>
 
-    <Config PrimaryAction="ACTRESS" SecondaryAction="ACTRESS">
+    <Config PrimaryAction="Performing" SecondaryAction="Stripping">
     </Config>
 
     <Messages>

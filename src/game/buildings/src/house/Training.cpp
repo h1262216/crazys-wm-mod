@@ -79,7 +79,7 @@ sWorkJobResult MistressJob::DoWork(sGirl& girl, bool is_night) {
 }
 
 IGenericJob::eCheckWorkResult MistressJob::CheckWork(sGirl& girl, bool is_night) {
-    return SimpleRefusalCheck(girl, ACTION_WORKMATRON);
+    return SimpleRefusalCheck(girl, EActivity::SOCIAL);
 }
 
 PracticeJob::PracticeJob() : cBasicJob(JOB_TRAINING, "Training.xml") {
@@ -236,7 +236,7 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
 }
 
 IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.disobey_check(ACTION_WORKTRAINING, JOB_TRAINING))            // they refuse to work
+    if (girl.disobey_check(EActivity::FUCKING, JOB_TRAINING))            // they refuse to work
     {
 
         sGirl* mistress = nullptr;
@@ -325,7 +325,7 @@ void TrainingJob::ReceiveTreatment(sGirl& girl, bool is_night) {
 
     HandleTraining(girl, is_night);
 
-    girl.upd_Enjoyment(ACTION_WORKTRAINING, Enjoyment);
+    girl.enjoyment(EActivity::FUCKING, Enjoyment);
     girl.tiredness(Tiredness);
 
     girl.AddMessage(ss.str(), ImageType, TypeOfEvent);
@@ -357,7 +357,7 @@ IGenericJob::eCheckWorkResult TrainingJob::CheckWork(sGirl& girl, bool is_night)
 
 void TrainingJob::CountTheDays(sGirl& girl, bool is_night, int progress)
 {
-    if (girl.disobey_check(ACTION_WORKTRAINING, job())) progress /= 2;    // if she disobeys, half her time is wasted
+    if (girl.disobey_check(EActivity::FUCKING, job())) progress /= 2;    // if she disobeys, half her time is wasted
 
     if (progress <= 0)                                // she lost time so more tired
     {

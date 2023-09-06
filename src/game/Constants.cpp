@@ -164,81 +164,6 @@ STATUS get_status_id(const std::string& name) {
     return get_status_lookup().at(name, "Trying to get invalid STATUS");
 }
 
-const std::array<const char*, NUM_ACTIONTYPES>& get_action_names() {
-    static std::array<const char*, NUM_ACTIONTYPES> names {
-            "COMBAT", "SEX", "WORKESCORT", "WORKCLEANING", "WORKMATRON",
-            "WORKBAR", "WORKHALL", "WORKSHOW", "WORKSECURITY",
-            "WORKADVERTISING", "WORKTORTURER", "WORKCARING", "WORKDOCTOR",
-            "ACTRESS", "PORNSTAR", "MOVIECREW", "WORKCUSTSERV", "WORKCENTRE", "WORKCLUB",
-            "WORKHAREM", "WORKRECRUIT", "WORKNURSE", "WORKMECHANIC",
-            "WORKCOUNSELOR", "WORKMUSIC", "WORKSTRIP", "WORKMILK",
-            "WORKMASSEUSE", "WORKFARM", "WORKTRAINING", "WORKREHAB",
-            "MAKEPOTIONS", "MAKEITEMS", "COOKING", "GETTHERAPY",
-            "WORKHOUSEPET", "GENERAL"
-    };
-    return names;
-}
-
-const std::array<const char*, NUM_ACTIONTYPES>& get_action_descriptions() {
-    static std::array<const char*, NUM_ACTIONTYPES> names {
-            "combat",                            // ACTION_COMBAT
-            "working as a whore",                // ACTION_SEX
-            "working as an Escort",                // ACTION_WORKESCORT
-            "cleaning",                            // ACTION_WORKCLEANING
-            "acting as a matron",                // ACTION_WORKMATRON
-            "working in the bar",                // ACTION_WORKBAR
-            "working in the gambling hall",        // ACTION_WORKHALL
-            "producing movies",                    // ACTION_WORKSHOW
-            "providing security",                // ACTION_WORKSECURITY
-            "doing advertising",                // ACTION_WORKADVERTISING
-            "torturing people",                    // ACTION_WORKTORTURER
-            "caring for beasts",                // ACTION_WORKCARING
-            "working as a doctor",                // ACTION_WORKDOCTOR
-            "being an actress",                    // ACTION_ACTRESS
-            "doing porn",                          // ACTION_PORNSTAR
-            "producing movies",                  // ACTION_MOVIECREW
-            "providing customer service",        // ACTION_WORKCUSTSERV
-            "working in the centre",            // ACTION_WORKCENTRE
-            "working in the club",                // ACTION_WORKCLUB
-            "being in your harem",                // ACTION_WORKHAREM
-            "being a recruiter",                // ACTION_WORKRECRUIT
-            "working as a nurse",                // ACTION_WORKNURSE
-            "fixing things",                    // ACTION_WORKMECHANIC
-            "counseling people",                // ACTION_WORKCOUNSELOR
-            "performing music",                    // ACTION_WORKMUSIC
-            "stripping",                        // ACTION_WORKSTRIP
-            "having her breasts milked",        // ACTION_WORKMILK
-            "working as a masseuse",            // ACTION_WORKMASSEUSE
-            "working on the farm",                // ACTION_WORKFARM
-            "training",                            // ACTION_WORKTRAINING
-            "counseling",                        // ACTION_WORKREHAB
-            "making potions",                    // ACTION_WORKMAKEPOTIONS
-            "making items",                        // ACTION_WORKMAKEITEMS
-            "cooking",                            // ACTION_WORKCOOKING
-            "therapy",                            // ACTION_WORKTHERAPY
-            "puppy training",                    // ACTION_WORKHOUSEPET
-            "doing miscellaneous tasks"            // ACTION_GENERAL
-    };
-    return names;
-}
-
-const char* get_action_name(Action_Types stat) {
-    return get_action_names()[stat];
-}
-
-const char* get_action_descr(Action_Types action) {
-    return get_action_descriptions()[action];
-}
-
-const id_lookup_t<Action_Types >& get_action_lookup() {
-    static auto lookup = create_lookup_table<Action_Types >(get_action_names());
-    return lookup;
-}
-
-Action_Types get_action_id(const std::string& name) {
-    return get_action_lookup().at(name, "Trying to get invalid ACTION");
-}
-
 const std::array<const char*, NUM_FETISH>& get_fetish_names() {
     static std::array<const char*, NUM_FETISH> names {
             "TryAnything", "SpecificGirl", "BigBoobs", "Sexy", "CuteGirl", "NiceFigure", "Lolita", "NiceArse",
@@ -355,4 +280,39 @@ const char* get_building_type_name(BuildingType type) {
             return "MovieStudio";
     }
     assert(false);
+}
+
+const std::array<const char*, NUM_ACTIVITIES>& get_activity_names() {
+    static std::array<const char*, NUM_ACTIVITIES> names {
+        "Fighting", "Fucking", "Stripping", "Crafting", "Farming", "Cooking",
+        "Physical", "Social", "Mental", "Medical", "Performing", "Service",
+        "Submission", "Generic"
+    };
+    return names;
+}
+
+const std::array<const char*, NUM_ACTIVITIES>& get_activity_descriptions() {
+    static std::array<const char*, NUM_ACTIVITIES> names {
+        "fighting", "fucking", "stripping and teasing", "crafting", "working on the farm", "preparing food and drinks",
+        "physical labor", "social interactions", "mental labor", "working in the medical field",
+        "performing", "providing services", "being submissive", "doing something"
+    };
+    return names;
+}
+
+const char* get_activity_name(EActivity activity) {
+    return get_activity_names().at(static_cast<int>(activity));
+}
+
+auto get_activity_lookup() -> const auto& {
+    static auto lookup = create_lookup_table<EActivity>(get_activity_names());
+    return lookup;
+}
+
+EActivity get_activity_id(const std::string& name) {
+    return lookup_with_error(get_activity_lookup(), name, "Unknown activity");
+}
+
+const char* get_activity_descr(EActivity action) {
+    return get_activity_descriptions().at((int)action);
 }

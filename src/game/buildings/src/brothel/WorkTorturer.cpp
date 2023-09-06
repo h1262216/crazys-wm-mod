@@ -27,7 +27,7 @@
 // `J` Job Brothel - General
 sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
 {
-    Action_Types actiontype = ACTION_WORKTORTURER;
+    EActivity actiontype = EActivity::FIGHTING;
     if (Day0Night1) return {false, 0, 0, 0};        // Do this only once a day
     std::stringstream ss;
     if (girl.disobey_check(actiontype, JOB_TORTURER))
@@ -49,7 +49,7 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
     bool forFree = false;
     if (rng.percent(10))
     {
-        girl.upd_Enjoyment(actiontype, -3);
+        girl.enjoyment(actiontype, -3);
         if (girl.any_active_trait({traits::SADISTIC, traits::MERCILESS}) || girl.morality() < 30)
             ss << ("${name} hurt herself while torturing someone.\n");
         else
@@ -92,7 +92,7 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
     }
     else
     {
-        girl.upd_Enjoyment(actiontype, +3);
+        girl.enjoyment(actiontype, +3);
         switch (roll)
         {
         case 0:        ss << ("${name} enjoyed her job working in the dungeon.\n"); break;
@@ -107,7 +107,7 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
         if ((girl.morality() < 20 || girl.has_active_trait(traits::SADISTIC)) && rng.percent(20))
         {
             ss << ("${name} loved this so much she wouldn't accept any money, as long as you promise she can do it again soon.\n");
-            girl.upd_Enjoyment(actiontype, +3);
+            girl.enjoyment(actiontype, +3);
             forFree = true;
         }
         if (rng.percent(20))
@@ -122,7 +122,7 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
             case 1:
                 ss << ("${name} went way too far, creating a hell of a mess. Still it looks like she had fun - she hasn't stopped smiling.\n");
                 girl.happiness(rng % 5);
-                    girl.upd_Enjoyment(actiontype, +1);
+                    girl.enjoyment(actiontype, +1);
                 // TODO so the torturing happens in the brothel where the torturer is, not in the dungeon?
                 girl.m_Building->m_Filthiness += 15;
                 break;

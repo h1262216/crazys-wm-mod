@@ -66,7 +66,7 @@ namespace {
     };
 }
 
-CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {ACTION_WORKSECURITY, 10, EImageBaseType::SECURITY, true}) {
+CityGuard::CityGuard() : cSimpleJob(JOB_CITYGUARD, "ArenaCityGuard.xml", {EActivity::FIGHTING, 10, EImageBaseType::SECURITY, true}) {
     m_Info.FullTime = true;
     RegisterVariable("CatchThief", CatchThief);
 }
@@ -134,15 +134,14 @@ bool CityGuard::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     g_Game->player().suspicion(sus);
 
     // Improve girl
-    girl.upd_Enjoyment(ACTION_WORKSECURITY, enjoy);
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoyc);
+    girl.enjoyment(EActivity::FIGHTING, enjoy + enjoyc);
 
     apply_gains(girl, m_Performance);
 
     return false;
 }
 
-FightBeasts::FightBeasts() : cSimpleJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml", {ACTION_COMBAT, 100, EImageBaseType::COMBAT, true}) {
+FightBeasts::FightBeasts() : cSimpleJob(JOB_FIGHTBEASTS, "ArenaFightBeasts.xml", {EActivity::FIGHTING, 100, EImageBaseType::COMBAT, true}) {
 
 }
 
@@ -286,14 +285,14 @@ bool FightBeasts::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
     ss << "${name} drew in " << m_Performance << " people to watch her and you earned " << earned << " from it.";
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
+    girl.enjoyment(EActivity::FIGHTING, enjoy);
 
     apply_gains(girl, m_Performance);
 
     return false;
 }
 
-FightGirls::FightGirls() : cSimpleJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml", {ACTION_COMBAT, 50, EImageBaseType::COMBAT, true}) {
+FightGirls::FightGirls() : cSimpleJob(JOB_FIGHTARENAGIRLS, "ArenaFightGirls.xml", {EActivity::FIGHTING, 50, EImageBaseType::COMBAT, true}) {
 
 }
 
@@ -396,7 +395,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     // Improve girl
     girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     girl.fame(fame);
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
+    girl.enjoyment(EActivity::FIGHTING, enjoy);
 
     /* `J` this will be a placeholder until a better payment system gets done
     *
@@ -417,7 +416,7 @@ bool FightGirls::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     return false;
 }
 
-FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaFightTrain.xml", {ACTION_COMBAT, 20, EImageBaseType::COMBAT, true}) {
+FightTraining::FightTraining() : cSimpleJob(JOB_FIGHTTRAIN, "ArenaFightTrain.xml", {EActivity::FIGHTING, 20, EImageBaseType::COMBAT, true}) {
 }
 
 double FightTraining::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -667,8 +666,7 @@ bool FightTraining::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night
     /* */if (roll_c <= 10)    { enjoy -= uniform(1, 3);    ss << "\n"; }
     else if (roll_c >= 90)    { enjoy += uniform(1, 3);    ss << "\n"; }
     else /*             */    { enjoy += uniform(0, 1);        ss << "\nOtherwise, the shift passed uneventfully."; }
-    girl.upd_Enjoyment(ACTION_COMBAT, enjoy);
-    girl.upd_Enjoyment(ACTION_WORKTRAINING, enjoy);
+    girl.enjoyment(EActivity::FIGHTING, enjoy);
 
     girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
     brothel.m_Filthiness += 2;    // fighting is dirty

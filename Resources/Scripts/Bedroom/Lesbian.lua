@@ -4,7 +4,7 @@ function LesbianSex(girl)
     wm.UpdateImage(wm.IMG.BED)
     Dialog("She notices that you have not come alone. Following her gaze you speak \"" ..
             "Ah I see you noticed. I'd like you two girls to get to know each other better and... :you wink slyly: I'd like to watch.\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         local what = ChoiceBox("Your suggestions", "Bondage", "Butt Stuff", "Dildo", "Oral", "69")
         local other_girl = RandomGirlName()
         if what == 0 then

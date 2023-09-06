@@ -68,7 +68,7 @@ bool sEffect::set_stat(string s)
 }
 bool sEffect::set_Enjoyment(string s)
 {
-    m_EffectID = get_action_id(s);
+    m_EffectID = (unsigned char)get_activity_id(s);
     return true;
 }
 
@@ -173,7 +173,7 @@ ostream& operator<<(ostream& os, sEffect& eff) {
     if (eff.m_Affects == sEffect::Skill) { os << get_skill_name((SKILLS)eff.m_EffectID); }
     if (eff.m_Affects == sEffect::Trait) { os << "'" << eff.m_Trait << "'"; }
     if (eff.m_Affects == sEffect::GirlStatus) { os << get_status_name((STATUS)eff.m_EffectID); }
-    if (eff.m_Affects == sEffect::Enjoy) { os << get_action_name((Action_Types)eff.m_EffectID); }
+    if (eff.m_Affects == sEffect::Enjoy) { os << get_activity_name((EActivity)eff.m_EffectID); }
     os << (eff.m_Amount > 0 ? " +" : " ") << eff.m_Amount;
     return os << endl;
 }
@@ -621,7 +621,7 @@ void cInventory::Equip(sGirl& girl, const sInventoryItem* item, bool force)
                     break;
 
                 case sEffect::Enjoy:            // affects enjoyment
-                    girl.upd_temp_Enjoyment((Action_Types)eff_id, amount);
+                    girl.temp_enjoyment((EActivity)eff_id, amount);
                     break;
 
                 case sEffect::Trait:            // affects skill
@@ -650,7 +650,7 @@ void cInventory::Equip(sGirl& girl, const sInventoryItem* item, bool force)
             {
                 // `J` food and makeup are single use items, so if permanent, make them affect the base skill
                 if (is_consumed)
-                    girl.upd_Enjoyment((Action_Types)eff_id, amount);
+                    girl.enjoyment((EActivity)eff_id, amount);
                 // `J` all other items can be removed so use skill mod
                 else cGirls::UpdateEnjoymentMod(girl, eff_id, amount);
             }

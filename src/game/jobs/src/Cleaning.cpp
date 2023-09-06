@@ -61,7 +61,7 @@ namespace {
     };
 }
 
-Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml, {ACTION_WORKCLEANING, 0, EImageBaseType::MAID}) {
+Cleaning::Cleaning(JOBS job, const char* xml) : cSimpleJob(job, xml, {EActivity::SERVICE, 0, EImageBaseType::MAID}) {
 }
 
 void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int clean_amount) {
@@ -84,7 +84,7 @@ void Cleaning::CleaningUpdateGirl(sGirl& girl, bool is_night, int enjoy, int cle
 
 
     // Update Enjoyment
-    girl.upd_Enjoyment(ACTION_WORKCLEANING, enjoy);
+    girl.enjoyment(EActivity::SERVICE, enjoy);
     // Gain and Lose Traits
     cGirls::PossiblyGainNewTrait(girl, traits::MAID, girl.service() / 7, "${name} has cleaned enough that she could work professionally as a Maid anywhere.");
     cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, girl.service() / 3, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.");
@@ -150,7 +150,7 @@ void CleanArena::DoneEarly(sGirl& girl) {
     girl.agility(uniform(0, 1));
     girl.constitution(uniform(0, 1));
     girl.confidence(uniform(0, 1));
-    girl.upd_Enjoyment(ACTION_COMBAT, 1);
+    girl.enjoyment(EActivity::FIGHTING, 1);
 }
 
 CleanCentre::CleanCentre() : Cleaning(JOB_CLEANCENTRE, "CleanCentre.xml") {

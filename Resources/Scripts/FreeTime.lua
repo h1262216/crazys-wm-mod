@@ -213,7 +213,7 @@ function FreeTimeCooking(girl, result)
         result:add_text("amazing. She really knows how to cook.")
         girl:health(2)
         girl:happiness(3)
-        girl:enjoyment(wm.ACTIONS.COOKING, 1)
+        girl:enjoyment(wm.ACTIVITIES.COOKING, 1)
     elseif girl:cooking() >= 50 then
         result:add_text("pretty good. She isn't the best but with some work she could be.")
         girl:health(1)
@@ -223,7 +223,7 @@ function FreeTimeCooking(girl, result)
         girl:cooking(1)
     else
         result:add_text("awful. It can't really be called food it was so bad.")
-        girl:enjoyment(wm.ACTIONS.COOKING, -1)
+        girl:enjoyment(wm.ACTIVITIES.COOKING, -1)
         girl:cooking(1)
     end
 

@@ -129,8 +129,8 @@ void cScreenInfoTraits::load_effects(int trait_id) {
             std::vector<FormattedCellData> data = {mk_text("Fetish"), mk_text(get_fetish_name(fetish)), mk_num(mod.second)};
             AddToListBox(m_EffectsList_id, -1, std::move(data));
         } else if(starts_with(mod.first, "enjoy:")) {
-            Action_Types action = get_action_id(mod.first.substr(6));
-            std::vector<FormattedCellData> data = {mk_text("Enjoyment"), mk_text(get_action_name(action)), mk_num(mod.second)};
+            EActivity action = get_activity_id(mod.first.substr(6));
+            std::vector<FormattedCellData> data = {mk_text("Enjoyment"), mk_text(get_activity_name(action)), mk_num(mod.second)};
             AddToListBox(m_EffectsList_id, -1, std::move(data));
         } else if(starts_with(mod.first, "sex:")) {
             std::vector<FormattedCellData> data = {mk_text("Sex"), mk_text(mod.first.substr(4)), mk_num(mod.second)};

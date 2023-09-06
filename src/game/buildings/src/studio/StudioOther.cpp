@@ -30,7 +30,7 @@
 namespace {
     class cJobMovieOther : public cSimpleJob {
     public:
-        cJobMovieOther(JOBS job, const char* xml) : cSimpleJob(job, xml, {ACTION_MOVIECREW}) {}
+        cJobMovieOther(JOBS job, const char* xml) : cSimpleJob(job, xml, {EActivity::CRAFTING}) {}
     };
 
     class cJobMarketResearch : public cJobMovieOther {

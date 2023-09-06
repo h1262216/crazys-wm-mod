@@ -98,7 +98,7 @@ end
 
 ---@param girl wm.Girl
 function NormalSex(girl)
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         HandleNormalSex(girl)
     else
         wm.UpdateImage(wm.IMG.REFUSE)
@@ -158,7 +158,7 @@ end
 ---@param girl wm.Girl
 function BeastSex(girl)
     Dialog("I wonder if you would cheer up my pet Malboro. He's been down lately and could really use a good fucking.")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
 
         girl:experience(6)
         girl:tiredness(5)
@@ -195,7 +195,7 @@ end
 function AnalSex(girl)
     Dialog("As you enter the room, the sight of her luscious ass assails your delighted eyes.  She looks back at you and greets you with a smile.")
     Dialog("A thought pops into your head as you continue to admire the view.  You voice your thought \"I think we should try something a little different tonight?\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         wm.UpdateImage(wm.IMG.ANAL)
         Dialog("She shakes her ass and bends over further; slightly pulling down her panties.  'Well, come and get it.\" she purrs")
         girl:experience(6)
@@ -231,7 +231,7 @@ end
 function BDSMSex(girl)
     Dialog("As you enter her room you 'accidentally' jostle the crate you're carrying. Hearing the clinking and clanging she eyes the crate. \"What do you have got in the crate?\" She asks.")
     Dialog("\"Take a look.\" you say. Her eyes widen at the sight of the whips, chains, and harnesses.")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         wm.UpdateImage(wm.IMG.BDSM)
         girl:experience(6)
         girl:tiredness(5)
@@ -268,7 +268,7 @@ function MasturbateSex(girl)
     Dialog("Her back is toward you as you enter the room. You notice that one of her hands is between her legs.")
     Dialog("You sneak around her side to get a better view. A few moments later she gasps and jumps up as she notices you standing there.")
     Dialog("\"Oh, you don't have to stop on my account.\" you say with a wink.")
-    if girl:obey_check(wm.ACTIONS.WORKSTRIP) then
+    if girl:obey_check(wm.ACTIVITIES.STRIPPING) then
         wm.UpdateImage(wm.IMG.STRIP)
         girl:experience(6)
         girl:tiredness(2)
@@ -319,7 +319,7 @@ function Strip(girl)
         wm.UpdateImage(wm.IMG.ORAL)
         Dialog("She immediately drops to her knees and takes you into her mouth.  Well, It's not exactly what you had in mind, but there's no point to stopping her now.  She swallows every drop as you unload in her mouth.")
     else
-        if girl:obey_check(wm.ACTIONS.SEX) then
+        if girl:obey_check(wm.ACTIVITIES.FUCKING) then
             wm.UpdateImage(wm.IMG.STRIP)
             girl:experience(4)
             girl:tiredness(2)
@@ -359,7 +359,7 @@ end
 ---@param girl wm.Girl
 function Blowjob(girl)
     Dialog("\"Now let's see how well you've learned to suck a cock.\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
 
         girl:experience(6)
         girl:tiredness(2)
@@ -396,7 +396,7 @@ end
 ---@param girl wm.Girl
 function Deepthroat(girl)
     Dialog("\"I want to see how much of this you can fit in your mouth.\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         wm.UpdateImage(wm.IMG.DEEPTHROAT)
         girl:experience(6)
         girl:tiredness(2)
@@ -427,7 +427,7 @@ end
 ---@param girl wm.Girl
 function Tittyfuck(girl)
     Dialog("You sit down on a stool beside her. \"Why don't you use your tits and your mouth this time?\"")
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         wm.UpdateImage(wm.IMG.TITTY)
         -- TODO TRAITS
         girl:experience(6)

@@ -321,7 +321,7 @@ function PleaseHer_NoHornyEvil(girl, kind)
 end
 
 function PleaseHer(girl, action)
-    if girl:obey_check(wm.ACTIONS.SEX) then
+    if girl:obey_check(wm.ACTIVITIES.FUCKING) then
         girl:experience(4)
         girl:tiredness(1)
         wm.UpdateImage(wm.IMG.BED)

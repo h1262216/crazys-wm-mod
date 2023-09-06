@@ -22,6 +22,7 @@
         <description>This nasty disease will cause pain for both her and the customers during urination. (disease)</description>
         <Modifiers>
             <Modifier Name="tag:disease" Value="1" />
+            <Modifier Name="enjoy:Fucking" Value="-25" />
         </Modifiers>
         <Properties>
             <Setting Name="random:chance" Value="2" />
