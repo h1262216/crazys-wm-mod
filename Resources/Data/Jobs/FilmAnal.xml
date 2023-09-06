@@ -62,6 +62,12 @@
 
         <Message Name="work.perfect">
             <Text>${name} did the best you have ever seen! She was worth the money.</Text>
+            <Text>
+                She took great pleasure in pleasing men with her ass, and did everything possible to make sure they were satisfied.
+                Her enthusiasm for the task was evident from how well she performed on screen - no matter how dirty or embarrassing it may have been for both parties involved.
+                In fact, some even claimed that viewing one of her movies caused them to experience spontaneous orgasms due to its effectiveness alone!
+                It's safe to say that no man could ever resist such a seductive creature like ${name}, whose talents will undoubtedly continue to impress us all for years to come...
+            </Text>
         </Message>
         <Message Name="work.great">
             <Text>${name} enjoyed the dick in her ass today.</Text>
@@ -71,12 +77,18 @@
         </Message>
         <Message Name="work.ok">
             <Text>${name} was so-so today.</Text>
+            <Text Condition="stat:age<30">
+                A sweet young thing, she plays the role of the virgin whose first time is documented on camera.
+                Although her tight little ass looks good, there are moments when she seems hesitant or uncomfortable
+                during sex scenes which makes it difficult to fully enjoy watching this movie.
+                With more practice though you imagine that she could become really great at acting out these kinds of roles!
+            </Text>
         </Message>
         <Message Name="work.bad">
             <Text>${name} sucked in filming anal scene.</Text>
         </Message>
         <Message Name="work.worst">
-            <Text>${name} is horrible in doing anal.  She needs more anal dildos to practice with.</Text>
+            <Text>${name} is horrible in doing anal. She needs more anal dildos to practice with.</Text>
         </Message>
 
         <Message Name="disobey.free">

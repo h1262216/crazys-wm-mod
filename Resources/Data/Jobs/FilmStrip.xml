@@ -44,6 +44,29 @@
         <LustInfluence Amount="5" SkillMin="5" BaseValue="5" Skill="Strip" />
     </Config>
 
+    <!--
+    ### Instruction:
+Scene: Striptease
+Tags: Slut
+Quality: Perfect
+
+### Response:
+
+### Instruction:
+Scene: Striptease
+Tags: Big Boobs
+Quality: Worst
+
+### Response:
+${name} worked as an actress filming strip tease scenes.
+Her busty figure made many men drool, but unfortunately it wasn't enough to cover up her lackluster performance.
+No matter how much skin she revealed, there remained something off about her movements - almost robotic in nature.
+Though they were technically following choreographed steps correctly, something just didn't feel right when watching them dance around stage...
+perhaps too mechanical for someone who should be able to exude passion more naturally than machines do?
+No matter how hard they tried or how long they practiced their routine ahead of time - nothing could save this scene from becoming unwatchable due
+to its complete lack of authenticity from start to end. It truly was one scene where everything went wrong despite having so much going right initially.
+-->
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked as an actress filming strip tease scenes.</Text>
@@ -54,15 +77,146 @@
 
         <Message Name="work.perfect">
             <Text>${name} is so in love with her body, she strips erotically making the best Perfect Art.</Text>
+            <Text>
+                She knew exactly what she was doing and took great pleasure in showing off her curves for all to see.
+                Her moves were smooth as silk and hypnotizingly sensual; every move had its own rhythm,
+                each action accompanied by a sultry look into the camera lens that left viewers wanting more.
+                Her confidence shone brightly throughout each performance making it hard not to get lost
+                in the moment while witnessing first hand such an incredibly sexy spectacle!
+                It goes without saying that ${name} proved herself time and again why she'll always remain one of your hottest stars.
+            </Text>
+            <Text>
+                Everything clicked together perfectly when ${name} took off her clothes.
+                From subtle glances towards potential partners off-camera to small gestures of seduction on stage;
+                each move spoke volumes about her character's personality without ever having to utter a word.
+                Everyone could tell that this was going to be an epic showdown between two powerful forces - lust vs innocence -
+                and ${name}'s portrayal left us all wanting more. Her performance was simply stunning!
+            </Text>
+            <Text Condition="stat:Beauty>90">
+                Her slender form and natural grace made everyone want to watch her intently when she took off her clothes on screen.
+                The way she moved her hips while dancing around slowly undressing herself sent shivers down spines everywhere--even straight women couldn't help but feel aroused by this woman's power over them just through her presence alone!
+                Once fully naked, her viewers were left speechless by the sight before their eyes;
+                there was nothing else like it anywhere else on Earth (or beyond).
+                Everything about her seemed perfect--from head to toe--and all anyone could do was sit back and enjoy the show.
+            </Text>
+            <Text Condition="Assassin|Adventurer|Heroine|Brawler|Strong|Aggressive|Merciless|Sadistic|Yandere|Tsundere|Dominatrix">
+                She had a knack for seducing men using only her body and words.
+                As soon as they saw her perform on stage or camera, they couldn't take their eyes off of her.
+                Each move was calculated perfectly, each glance seductive and dangerous at once.
+                Even those who didn’t want to be seduced by her found themselves unable to resist.
+                It was truly amazing what ${name} could do with just a few simple actions.
+                Her talent was undeniable and impossible to ignore;
+                she was sure to leave audiences breathless every time she performed one of these sexy routines.
+            </Text>
+            <Text Condition="Flat Chest|Small Boobs|Petite Breasts">
+                Dressed head to toe in lingerie, she slowly peeled away each article of clothing
+                until only her small breasts were exposed for the camera. As she moved about seductively
+                on stage while doing so, viewers could not help but be mesmerized by her beauty and graceful demeanor.
+                The entire audience was captivated by every move she made - from subtle gestures to dramatic poses that left little doubt
+                in anyone’s mind regarding who was truly deserving of such attention. It was clear that with just one glance
+                at ${name} you would instantly feel overwhelmed with desire and longing –
+                something which makes any man wish they could spend even more time admiring her stunning features!
+            </Text>
+            <Text>
+                ${name}'s voluptuous figure commanded attention everywhere she went; however, none were able to capture her true beauty quite like the camera did in this scene.
+                Viewers will be treated with a sight unlike any other in terms of its eroticism and raw sexual appeal - perfectly capturing the essence of ${name}.
+                Her every movement conveyed confidence and power while still maintaining an air of innocence about it all - something few women can pull off effectively without looking cheap or trashy instead.
+                It's safe to say that this particular striptease performance will become forever embedded deep within many hearts and minds alike - serving as a testament to ${name}‘s undeniable magnetism whenever cameras start rolling
+            </Text>
+            <Text>
+                She was able to captivate viewers' attention from start to finish through her sultry glances and playful gestures,
+                showcasing the perfect blend between sensuality and mystery that kept people guessing until the very end.
+                In addition to being incredibly sexy throughout each scene,
+                viewers also enjoyed seeing just how comfortable ${name} felt within her own skin - making for one hell of an enjoyable watch indeed.
+                With such skilled performances under her belt,
+                it comes as no surprise why so many were left wanting more after witnessing what kind of magic ${name} could create on screen!
+            </Text>
+            <Text>
+                In this particular scene, she appeared wearing nothing but silk robes - leaving viewers hungry
+                for more as they waited eagerly until finally seeing what lay beneath those luxurious fabrics...and boy oh boy did it deliver!
+                The sight of ${name} slowly removing each piece of clothing one by one was absolutely exquisite;
+                each motion graceful and sensual.
+                As if all else wasn't enough already - once fully naked on screen -${name} began gyrating her hips seductively
+                while swaying back forth like some sort of ancient goddess come alive right then and there
+                before our very eyes.
+            </Text>
+            <Text Condition="Flexible|Agile|stat:Agility>80">
+                In this particular scene,
+                she performed a sexy pole dance that showcased both her impressive flexibility and incredible body.
+                The camera captured every sensual moment in slow motion, allowing viewers to appreciate each fluid motion and tight squeeze as if they were right there next to her.
+                Her gorgeous curves moved effortlessly through the air, turning heads wherever she went.
+                Everything combined perfectly, creating an unforgettable experience for all who watched on -
+                one which left no doubt in their mind that ${name} was truly capable of stealing anyone's heart away with just one look!
+            </Text>
         </Message>
         <Message Name="work.great">
             <Text>${name} greatly teased the camera by slowly stripping of her clothes with many kisses.</Text>
+            <Text>
+                ${name} has always been known for having big boobs, and she puts them front center stage in this strip tease scene.
+                As soon as she starts taking off her clothes you can tell that she knows what she's doing. Her hips move sexy while
+                the camera zooms in on her curves. Her hands caress every inch of her body before finally finishing with two perfect breasts!
+                The way she plays with herself makes you wonder if you should join in too...
+            </Text>
+            <Text Condition="stat:beauty<50">
+                Although not classically beautiful nor having a supermodel-like physique,
+                the way in which she moved was sexy.
+                Each slow undulation had been choreographed so gracefully you could tell that hours were spent practicing each move until perfection was reached -
+                leaving little room for mistakes when cameras started rolling.
+                Furthermore, unlike other performers who simply disrobed and called it day – here was someone who knew exactly what she wanted from her audience members:
+                to be aroused and titillated by an erotic display of skillful dance moves combined with artful nudity on stage.
+            </Text>
+            <Text>
+                She was able to captivate viewers' attention from start to finish through her sultry glances and playful gestures,
+                showcasing a blend between sensuality and mystery that kept people guessing until the very end.
+                In addition to being sexy throughout each scene,
+                viewers also enjoyed seeing just how comfortable ${name} felt within her own skin.
+            </Text>
         </Message>
         <Message Name="work.good">
-            <Text>${name} was good with the chosen music to strip with. She even sang with the songs.</Text>
+            <Text Condition="Singer">${name} was good with the chosen music to strip with. She even sang with the songs.</Text>
+            <Text>
+                She ${name} was able to exude sexiness while still appearing shy and innocent at heart,
+                which added an extra layer of intrigue as she slowly peeled away piece by piece until finally revealing herself completely nude.
+                Even though this particular scene may not have been overly risqué by today's standards,
+                it definitely left viewers wanting more
+            </Text>
+            <Text Condition="Shy|Meek">
+                Her timid nature made it difficult for her to express herself fully when performing on stage but despite this challenge,
+                she managed to put on an impressive show every time thanks mainly due to her natural beauty and talent for dancing .
+                Even though some viewers may have wished they saw something wilder from this shy girl - they couldn't deny the fact that what they got exceeded their expectations by far!
+            </Text>
+            <Text Condition="stat:Beauty<50">
+                While her looks may not compare to some of the more famous sex symbols,
+                one thing is certain - she knows how to put on a good show!
+                Every move was choreographed perfectly from start to finish;
+                she moved gracefully across stage and gave viewers exactly what they wanted without ever missing a beat.
+            </Text>
+            <Text>
+                This time around, she was tasked with doing something more than just showing off her body - ${name} had to showcase her pole dancing skills too!
+                Although she looked good doing it, there was still room for improvement since some moves came across as
+                awkward rather than smooth and graceful like they should have been.
+                Apart from these minor shortcomings, she delivered a good performance.
+            </Text>
         </Message>
         <Message Name="work.ok">
             <Text>${name} did ok today. She was distracted by the other actions around her.</Text>
+            <Text>
+                The scene was nothing special, but it got the job done.
+                She wasn't the best at stripping, but she knew what she was doing and managed
+                to keep her clothes off long enough for viewers to get their money's worth.
+                This type of performance isn't exactly award-winning material, but if you need someone who will
+                do their job without too much fuss then ${name} may be just right for your project!
+            </Text>
+            <Text>
+                Although she wasn't bad at stripping, there wasn't anything particularly special about her performance either.
+                She had some basic moves down but lacked any real flair or personality that would make someone want to watch her dance again and again.
+                It was just enough for the job though – nothing more than average quality work from this particular actress.
+            </Text>
+            <Text>
+                The pole dancing routine she performed was impressive but failed to leave a lasting impression.
+                Her moves were basic, lacking any real finesse,
+                and when her clothes finally came off, viewers weren't left with much more than just another naked woman on screen.
+            </Text>
         </Message>
         <Message Name="work.bad">
             <Text>${name} quickly striped off her clothes, acting like this was her times being processed at the jail.</Text>
@@ -73,12 +227,36 @@
                 This time, everything seems to go smoothly, until her heels get entangled in her panties and she falls over.
                 The director sighs, looking at ${name}'s bloody nose. "I guess we need to work with the footage we have now."
             </Text>
+            <Text Condition="Titanic Tits|Abnormally Large Boobs|Massive Melons|Giant Juggs|Big Boobs|Busty Boobs">
+                Her busty figure made many men drool, but unfortunately it wasn't enough to cover up her lackluster performance.
+                No matter how much skin she revealed, there remained something off about her movements - almost robotic in nature.
+                While ${name}'s body certainly had potential for greatness; unfortunately her acting skills couldn't measure up to them -
+                making for yet another forgettable strip tease experience overall.
+            </Text>
+            <Text>
+                She was supposed to take her time removing pieces of clothing,
+                dance seductively for viewers while doing so, and show off her assets along the way.
+                Unfortunately none of these things happened;
+                Instead she quickly stripped off everything in one go - leaving little room for excitement or appreciation from either audience members or critics alike.
+            </Text>
         </Message>
         <Message Name="work.worst">
             <Text>${name} is the worst stripper you have EVER seen. Way to shy to even look up and she blushed the entire remakes.</Text>
             <Text Condition="Chaste|Shy|Nervous">
                 ${name} looks so uncomfortable when the director orders her to take her clothes off that you imagine
                 even blind people would be turned off by this scene.
+            </Text>
+            <Text Condition="Chaste|Shy|Nervous">>
+                She was hired to perform a sexy striptease,
+                but ended up being too timid to even show her full chest let alone anything else.
+                The director became increasingly frustrated when she couldn't get what she wanted out of her lead actress.
+                In fact, it took several takes before finally getting some decent shots where you could barely make out parts of her body through all the clothes that covered it.
+                By then though, everyone involved just wanted to move onto something else
+            </Text>
+            <Text>
+                Unfortunately, her performance failed miserably due to her lack of acting ability and poor facial expressions throughout the entire shoot.
+                The director was left with no choice but to cut out most of her footage entirely in order to save face with
+                audiences who didn't deserve such an atrocity on their screens.
             </Text>
         </Message>
 
