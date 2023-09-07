@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WM_BASICJOB_H
-#define WM_BASICJOB_H
+#ifndef WM_BASICJOB_H_D
+#define WM_BASICJOB_H_D
 
 #include "deprecated/IGenericJob.h"
 #include "deprecated/JobData.h"
@@ -85,4 +85,4 @@ namespace deprecated {
     };
 }
 
-#endif //WM_BASICJOB_H
+#endif //WM_BASICJOB_H_D

@@ -4,6 +4,11 @@
         She will make shoes and leather items.
     </Description>
 
+    <Config DefaultImage="Craft" BaseWages="20" >
+        <Filter>ArenaProducers</Filter>
+        <Enjoyment PrimaryAction="Crafting" />
+    </Config>
+
     <Performance>
         <Factor Skill="Crafting" Weight="3"/>
         <Factor Skill="Service" Weight="1"/>
@@ -30,10 +35,6 @@
         </GainTrait>
     </Gains>
 
-    <Config>
-        <Filter>ArenaProducers</Filter>
-    </Config>
-
     <Messages>
         <Message Name="work">
             <Text>${name} worked making shoes and other leather items at the arena.</Text>
@@ -47,6 +48,8 @@
         <Message Name="produce">
             <Text>${name} made:</Text>
         </Message>
+
         <Include>DefaultPerformanceMessages.xml</Include>
+        <Include>DefaultEnjoyMessages.xml</Include>
     </Messages>
 </Job>

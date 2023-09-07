@@ -4,6 +4,10 @@
         She will make various potions.
     </Description>
 
+    <Config DefaultImage="Craft" BaseWages="20">
+        <Enjoyment PrimaryAction="Crafting" SecondaryAction="Cooking" />
+    </Config>
+
     <Performance>
         <Factor Skill="Brewing" Weight="3"/>
         <Factor Skill="Herbalism" Weight="3"/>

@@ -273,11 +273,18 @@ void cBasicJob::on_post_shift(cGirlShift& shift) const {
         shift.data().EventType = EEventType::EVENT_SUMMARY;
         //brothel->m_Fame += girl.fame();
         auto money_data = job_manager().CalculatePay(shift.data());
-        ss << "${name} made " << money_data.Earnings;
-        if(money_data.Tips != 0) {
-            ss << " and " << money_data.Tips << " in tips. ";
-        } else {
-            ss << " gold. ";
+
+        if(money_data.Earnings > 0 || money_data.Tips > 0) {
+            ss << "${name} made " << money_data.Earnings;
+            if (money_data.Tips != 0) {
+                ss << " and " << money_data.Tips << " in tips. ";
+            } else {
+                ss << " gold. ";
+            }
+        }
+
+        if(shift.data().Cost > 0) {
+            ss << "She spent " << shift.data().Cost << " gold on supplies and ingredients. ";
         }
         if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
         ss << "In total, she got " << money_data.GirlGets << " gold and you ";

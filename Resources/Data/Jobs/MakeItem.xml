@@ -4,6 +4,10 @@
         She will make various items.
     </Description>
 
+    <Config DefaultImage="Craft" BaseWages="20">
+        <Enjoyment PrimaryAction="Crafting" />
+    </Config>
+
     <Performance>
         <Factor Skill="Crafting" Weight="3"/>
         <Factor Skill="Service" Weight="1"/>

@@ -5,7 +5,7 @@ set(JOBS_SRC
         src/IJobManager.cpp
         src/cBasicJob.cpp
         src/Cleaning.cpp
-        src/Crafting.cpp
+        src/cCrafting.cpp
         src/JobData.cpp
         src/Matron.cpp
         src/cSimpleJob.cpp

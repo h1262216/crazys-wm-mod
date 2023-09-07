@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WM_JOBDATA_H
-#define WM_JOBDATA_H
+#ifndef WM_JOBDATA_H_D
+#define WM_JOBDATA_H_D
 
 #include <string>
 #include <vector>
@@ -102,4 +102,4 @@ namespace deprecated {
     };
 }
 
-#endif //WM_JOBDATA_H
+#endif //WM_JOBDATA_H_D

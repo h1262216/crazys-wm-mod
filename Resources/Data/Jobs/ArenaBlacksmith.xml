@@ -4,6 +4,11 @@
         She will make weapons and armor.
     </Description>
 
+    <Config DefaultImage="Craft" BaseWages="40">
+        <Filter>ArenaProducers</Filter>
+        <Enjoyment PrimaryAction="Crafting" SecondaryAction="Physical"/>
+    </Config>
+
     <Performance>
         <Factor Skill="Crafting" Weight="2"/>
         <Factor Stat="Strength" Weight="2"/>
@@ -14,10 +19,6 @@
 
         <Trait Name="Clumsy" Value="-10" />
     </Performance>
-
-    <Config>
-        <Filter>ArenaProducers</Filter>
-    </Config>
 
     <Gains XP="10" Skill="3">
         <Skill Name="Crafting" Weight="2" />
@@ -60,5 +61,6 @@
             <Text>${name} made:</Text>
         </Message>
         <Include>DefaultPerformanceMessages.xml</Include>
+        <Include>DefaultEnjoyMessages.xml</Include>
     </Messages>
 </Job>

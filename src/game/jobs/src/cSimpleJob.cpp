@@ -31,7 +31,6 @@ void cSimpleJob::DoWork(cGirlShift& shift) const
     }
 
     JobProcessing(shift.girl(), shift);
-    apply_gains(shift);
     if(!shift.data().EventMessage.str().empty()) {
         shift.generate_event();
     }

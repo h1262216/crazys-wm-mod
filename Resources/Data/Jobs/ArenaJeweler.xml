@@ -4,6 +4,11 @@
         She will make jewelery.
     </Description>
 
+    <Config DefaultImage="Craft" BaseWages="40">
+        <Filter>ArenaProducers</Filter>
+        <Enjoyment PrimaryAction="Crafting"/>
+    </Config>
+
     <Performance>
         <Factor Skill="Crafting" Weight="4"/>
         <Factor Skill="Magic" Weight="1"/>
@@ -32,10 +37,6 @@
         </GainTrait>
     </Gains>
 
-    <Config>
-        <Filter>ArenaProducers</Filter>
-    </Config>
-
     <Messages>
         <Message Name="work">
             <Text>${name} worked as a Jeweler at the arena.</Text>
@@ -50,5 +51,6 @@
             <Text>${name} crafted:</Text>
         </Message>
         <Include>DefaultPerformanceMessages.xml</Include>
+        <Include>DefaultEnjoyMessages.xml</Include>
     </Messages>
 </Job>

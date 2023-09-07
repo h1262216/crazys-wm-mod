@@ -4,6 +4,11 @@
         She will produce food from animals you own.
     </Description>
 
+
+    <Config DefaultImage="Cook" BaseWages="20">
+        <Enjoyment PrimaryAction="Cooking" SecondaryAction="Fighting" />
+    </Config>
+
     <Performance>
         <Factor Skill="AnimalHandling" Weight="2"/>
         <Factor Stat="Strength" Weight="2"/>

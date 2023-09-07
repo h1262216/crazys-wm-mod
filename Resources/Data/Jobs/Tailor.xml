@@ -4,6 +4,10 @@
         She will make clothes and other items from fabrics.
     </Description>
 
+    <Config DefaultImage="Craft" BaseWages="20">
+        <Enjoyment PrimaryAction="Crafting" />
+    </Config>
+
     <Performance>
         <Factor Weight="3" Skill="Crafting"/>
         <Factor Skill="Service" Weight="1"/>

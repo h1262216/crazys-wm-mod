@@ -1337,7 +1337,7 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
 {
     sPaymentData retval{0, 0, 0, 0, 0};
     // no pay or tips, no need to continue
-    if(shift.Wages == 0 && shift.Tips == 0 && shift.Earnings == 0) return retval;
+    if(shift.Wages == 0 && shift.Tips == 0 && shift.Earnings == 0 && shift.Cost == 0) return retval;
 
     if(shift.girl().is_unpaid()) {
         shift.Wages = 0;
@@ -1360,9 +1360,11 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
         }
     }
 
+    // these cost have already been deducted during job processing, we just need to count them here.
+    retval.PlayerGets -= shift.Cost;
+
     // TODO check where we are handling the money processing for girl's payment
     shift.building().m_Finance.girl_support(shift.Wages);
-
 
     retval.PlayerGets -= shift.Wages;
     shift.girl().m_Money += shift.Wages;    // she gets it all

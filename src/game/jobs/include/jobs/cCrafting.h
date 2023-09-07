@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,29 +20,30 @@
 #ifndef WM_JOBS_CRAFTING_H
 #define WM_JOBS_CRAFTING_H
 
-#include "deprecated/SimpleJob.h"
+#include "cSimpleJob.h"
 #include <sstream>
 #include <vector>
 #include "images/sImageSpec.h"
 
-using namespace deprecated;
 
 class GenericCraftingJob : public cSimpleJob {
 public:
-    explicit GenericCraftingJob(JOBS id, const char* xml, EActivity action, int BaseWages, EImageBaseType image) :
-        cSimpleJob(id, xml, {action, BaseWages, image}) {
+    explicit GenericCraftingJob(JOBS id, const char* xml) :
+        cSimpleJob(id, xml) {
+        m_CraftPointsID = RegisterVariable("CraftingPoints", 0);
     }
 
 protected:
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 
-    // shift processing data
-    int craftpoints;
+    int& craft_points(cGirlShift& shift) const;
 private:
-    virtual void performance_msg();
-    virtual void DoWorkEvents(sGirl& girl);
+    virtual void performance_msg(cGirlShift& shift) const;
+    virtual void DoWorkEvents(sGirl& girl, cGirlShift& shift) const;
 
-    float DoCrafting(sGirl& girl, int craft_points);
+    void DoCrafting(cGirlShift& shift) const;
+
+    int m_CraftPointsID;
 };
 
 #endif //WM_JOBS_CRAFTING_H
