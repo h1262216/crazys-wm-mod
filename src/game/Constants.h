@@ -187,6 +187,7 @@ enum EJobFilter {
 
   JOBFILTER_ARENA,
   JOBFILTER_ARENASTAFF,
+  JOBFILTER_ARENA_PRODUCTION,
   JOBFILTER_COMMUNITYCENTRE,
   JOBFILTER_COUNSELINGCENTRE,
   JOBFILTER_CLINIC,    // teaches can train girls only up to their own skill level
@@ -321,9 +322,8 @@ enum JOBS {
     //JOB_BEASTMASTER    = ;
     //JOB_VENDOR            = ;
     //JOB_BOOKIE            = ;
-    //JOB_GROUNDSKEEPER    = ;
     //JOB_MINER            = ;
-    JOB_CLEANARENA,            //
+    JOB_GROUNDSKEEPER,
 
     // `J` Job Centre - General
     JOB_CENTREMANAGER,        // matron of centre    

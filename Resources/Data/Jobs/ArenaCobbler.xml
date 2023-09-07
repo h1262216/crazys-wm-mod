@@ -30,6 +30,10 @@
         </GainTrait>
     </Gains>
 
+    <Config>
+        <Filter>ArenaProducers</Filter>
+    </Config>
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked making shoes and other leather items at the arena.</Text>

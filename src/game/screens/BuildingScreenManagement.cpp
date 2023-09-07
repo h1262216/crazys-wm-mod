@@ -11,6 +11,7 @@
 #include <sstream>
 #include <CLog.h>
 #include "jobs/cJobManager.h"
+#include "jobs/IGenericJob.h"
 #include "cGirls.h"
 
 namespace settings {
@@ -99,7 +100,7 @@ void IBuildingScreenManagement::RefreshJobList()
             change_msg = "\n** " + change_msg;
         }
 
-        EditTextItem(g_Game->job_manager().get_job_description(sel_job) + change_msg, jobdesc_id);
+        EditTextItem(g_Game->job_manager().get_job_info(sel_job).Description + change_msg, jobdesc_id);
         SetSelectedItemText(joblist_id, sel_job, jobname_with_count((JOBS)sel_job, Day0Night1));
     }
 }
@@ -212,10 +213,10 @@ void IBuildingScreenManagement::on_select_job(int selection)
     if (selection != -1)
     {
         JOBS new_job = static_cast<JOBS>(selection);
-        EditTextItem(job_manager().get_job_description((JOBS)selection), jobdesc_id);        // first handle the descriptions
+        EditTextItem(job_manager().get_job_info((JOBS)selection).Description, jobdesc_id);        // first handle the descriptions
         ForAllSelectedItems(girllist_id, [&](int sel) {
             auto girl = active_building().get_girl(sel);
-            if(job_manager().FullTimeJob(new_job))
+            if(job_manager().is_full_time(new_job))
                 fulltime = true;
 
             if (girl)
@@ -256,7 +257,7 @@ void IBuildingScreenManagement::assign_job(sGirl& girl, JOBS new_job, int girl_s
     // are we changing the job of the active treatment to something different?
     if(!job_change.empty()) {
         ss.str("");
-        ss << job_manager().get_job_description(new_job) << "\n** " << job_change;
+        ss << job_manager().get_job_info(new_job).Description << "\n** " << job_change;
         EditTextItem(job_change, jobdesc_id);
     }
 }
@@ -546,6 +547,7 @@ cScreenArenaManagement::cScreenArenaManagement() :
 {
     add_job_filter(JOBFILTER_ARENASTAFF);
     add_job_filter(JOBFILTER_ARENA);
+    add_job_filter(JOBFILTER_ARENA_PRODUCTION);
 }
 
 // --------------------------------------------------------------------

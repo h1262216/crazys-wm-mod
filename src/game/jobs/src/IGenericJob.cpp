@@ -171,6 +171,17 @@ void IGenericJob::load_job() {
         } else {
             g_LogFile.error("jobs", "<Job> element does not contain <Description>. File: ", m_XMLFile);
         }
+
+        // Configs
+        const auto* config_el = job_data->FirstChildElement("Config");
+        if(config_el) {
+            // Filters
+            for(auto& filter_el : IterateChildElements(*config_el, "Filter")) {
+                std::string filter_name = filter_el.GetText();
+                m_Info.Filters.push_back(m_JobManager->get_filter_id(filter_name));
+            }
+        }
+
         load_from_xml_internal(*job_data, path.str());
     } catch (std::exception& error) {
         g_LogFile.error("job", "Error loading job xml '", m_XMLFile, "': ", error.what());

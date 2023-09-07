@@ -2,7 +2,9 @@
 <!ATTLIST Job ShortName CDATA #REQUIRED>
 
 <!ELEMENT Description (#PCDATA)>
-<!ELEMENT Config ANY>
+
+<!ELEMENT Config (Filter)>
+<!ELEMENT Filter (#PCDATA)>
 
 <!ELEMENT Performance (Factor|Trait|Mod)*>
 <!ATTLIST Performance Modifier CDATA #IMPLIED>
@@ -23,7 +25,6 @@
 <!ATTLIST TraitChangeAmount Value CDATA #REQUIRED Chance CDATA #IMPLIED>
 <!ELEMENT TraitChangeCondition EMPTY>
 <!ATTLIST TraitChangeCondition Value CDATA #IMPLIED Lower CDATA #IMPLIED Upper CDATA #IMPLIED What CDATA #REQUIRED>
-
 
 <!ELEMENT Messages (Message|Include)*)>
 <!ELEMENT Message ((Text|Group)+)>

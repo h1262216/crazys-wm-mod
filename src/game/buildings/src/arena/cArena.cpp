@@ -34,7 +34,7 @@ extern cRng             g_Dice;
 sArena::sArena() : cBuilding(BuildingType::ARENA, "Arena")
 {
     m_FirstJob = JOB_FIGHTBEASTS;
-    m_LastJob = JOB_CLEANARENA;
+    m_LastJob = JOB_GROUNDSKEEPER;
     m_MatronJob = JOB_DOCTORE;
     m_MeetGirlData.Spawn = SpawnReason::ARENA;
     m_MeetGirlData.Event = events::GIRL_MEET_ARENA;
@@ -49,7 +49,7 @@ void sArena::UpdateGirls(bool is_night)    // Start_Building_Process_B
     BeginShift(is_night);
 
     IterateGirls(is_night, {JOB_FIGHTBEASTS, JOB_FIGHTARENAGIRLS, JOB_FIGHTTRAIN, JOB_CITYGUARD,
-                            JOB_BLACKSMITH, JOB_COBBLER, JOB_JEWELER, JOB_CLEANARENA},
+                            JOB_BLACKSMITH, JOB_COBBLER, JOB_JEWELER, JOB_GROUNDSKEEPER},
                  [&](auto& current) {
         g_Game->job_manager().handle_simple_job(current, is_night);
     });
@@ -70,9 +70,9 @@ void sArena::auto_assign_job(sGirl& target, std::stringstream& message, bool is_
         target.m_DayJob = target.m_NightJob = JOB_CITYGUARD;
         ss << "work helping the city guard.";
     }
-    else if (num_girls_on_job(JOB_CLEANARENA, is_night) < 1)
+    else if (num_girls_on_job(JOB_GROUNDSKEEPER, is_night) < 1)
     {
-        target.m_DayJob = target.m_NightJob = JOB_CLEANARENA;
+        target.m_DayJob = target.m_NightJob = JOB_GROUNDSKEEPER;
         ss << "work cleaning the arena.";
     }
     else if (num_girls_on_job(JOB_BLACKSMITH, is_night) < 1)
@@ -97,9 +97,9 @@ void sArena::auto_assign_job(sGirl& target, std::stringstream& message, bool is_
         target.m_DayJob = target.m_NightJob = JOB_CITYGUARD;
         ss << "work helping the city guard.";
     }
-    else if (num_girls_on_job(JOB_CLEANARENA, is_night) < num_girls() / 20)
+    else if (num_girls_on_job(JOB_GROUNDSKEEPER, is_night) < num_girls() / 20)
     {
-        target.m_DayJob = target.m_NightJob = JOB_CLEANARENA;
+        target.m_DayJob = target.m_NightJob = JOB_GROUNDSKEEPER;
         ss << "work cleaning the arena.";
     }
     else if (num_girls_on_job(JOB_BLACKSMITH, is_night) < num_girls() / 20)

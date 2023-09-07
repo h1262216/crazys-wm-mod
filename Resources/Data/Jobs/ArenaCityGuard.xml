@@ -69,6 +69,10 @@
         <Stat Name="Constitution" Weight="1"/>
     </Gains>
 
+    <Config>
+        <Filter>ArenaFight</Filter>
+    </Config>
+
     <Messages>
         <Message Name="work">
             <Text>${name} helps guard the city.</Text>

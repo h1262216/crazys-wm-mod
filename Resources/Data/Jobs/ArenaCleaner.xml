@@ -13,6 +13,10 @@
         <Mod>work.cleaning</Mod>
     </Performance>
 
+    <Config>
+        <Filter>ArenaStaff</Filter>
+    </Config>
+
     <Messages>
         <Message Name="work">
             <Text>${name} worked cleaning the arena.</Text>

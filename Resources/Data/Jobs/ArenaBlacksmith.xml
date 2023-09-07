@@ -15,6 +15,10 @@
         <Trait Name="Clumsy" Value="-10" />
     </Performance>
 
+    <Config>
+        <Filter>ArenaProducers</Filter>
+    </Config>
+
     <Gains XP="10" Skill="3">
         <Skill Name="Crafting" Weight="2" />
         <Stat Name="Strength" Weight="2" />

@@ -83,7 +83,7 @@ void cGame::LoadCommon(const std::function<void(std::string)>& callback) {
 
     // jobs
     g_LogFile.info("prepare", "Setup Jobs");
-    job_manager().Setup();
+    job_manager().setup();
 
     // load skills
     callback("Loading Skills");

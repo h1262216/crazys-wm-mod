@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2019-2022, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,6 +48,7 @@ struct sJobInfo {
 
     std::vector<std::string> Consumes;
     std::vector<std::string> Provides;
+    std::vector<EJobFilter> Filters;
 };
 
 struct sJobValidResult {
@@ -56,6 +57,11 @@ struct sJobValidResult {
     explicit operator bool() const { return IsValid; }
 };
 
+/*!
+ * \brief Base class for all girl jobs.
+ * \details Here, we use the word `job` in a wide sense. Girl jobs include having free time, or receiving treatment or
+ * surgery. Essentially, any activity the girls do during the day and night shifts.
+ */
 class IGenericJob {
 public:
     enum class EJobClass {

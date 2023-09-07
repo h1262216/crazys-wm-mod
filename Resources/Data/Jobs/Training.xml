@@ -4,6 +4,10 @@
         She will train to improve her sexual skills. Training can be made much more effective if it is overseen by a Mistress.
     </Description>
 
+    <Config>
+        <Filter>HouseTraining</Filter>
+    </Config>
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to practice her skills.</Text>

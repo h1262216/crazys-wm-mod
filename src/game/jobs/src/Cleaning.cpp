@@ -140,7 +140,7 @@ bool Cleaning::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night){
     return false;
 }
 
-CleanArena::CleanArena() : Cleaning(JOB_CLEANARENA, "ArenaCleaner.xml") {
+CleanArena::CleanArena() : Cleaning(JOB_GROUNDSKEEPER, "ArenaCleaner.xml") {
 
 }
 

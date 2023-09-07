@@ -172,6 +172,7 @@ void cScreenGirlDetails::init(bool back)
             case BuildingType::ARENA:
                 jobfilters.push_back(JOBFILTER_ARENASTAFF);
                 jobfilters.push_back(JOBFILTER_ARENA);
+                jobfilters.push_back(JOBFILTER_ARENA_PRODUCTION);
                 break;
             case BuildingType::CLINIC:
                 jobfilters.push_back(JOBFILTER_CLINIC);

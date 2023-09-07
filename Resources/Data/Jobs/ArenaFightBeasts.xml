@@ -66,6 +66,10 @@
         </LoseTrait>
     </Gains>
 
+    <Config>
+        <Filter>ArenaFight</Filter>
+    </Config>
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to fight beasts today.</Text>

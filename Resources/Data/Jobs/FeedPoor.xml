@@ -44,6 +44,10 @@
         </LoseTrait>
     </Gains>
 
+    <Config>
+        <Filter>CommunityCentre</Filter>
+    </Config>
+
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>

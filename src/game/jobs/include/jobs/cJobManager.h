@@ -23,6 +23,7 @@
 #include <functional>
 #include "Constants.h"
 #include "cRng.h"
+#include "IJobManager.h"
 
 //I need a better place for this
 struct sGirl;
@@ -48,12 +49,6 @@ struct sFilm
     }
 };
 
-struct sJobFilter {
-    std::string Name;
-    std::string Description;
-    std::vector<JOBS> Contents;
-};
-
 struct sWorkJobResult {
     bool Refused;           // Whether she actually worked
     int Tips = 0;           // how much she received in tips
@@ -70,19 +65,17 @@ struct sPaymentData {
 };
 
 //mainly a list of functions 
-class cJobManager
+class cJobManager : public IJobManager
 {
 public:
     cJobManager();
-    ~cJobManager();
+    ~cJobManager() override;
     sWorkJobResult do_job(sGirl& girl, bool is_night);
     sWorkJobResult do_job(JOBS job, sGirl& girl, bool is_night);
     bool job_filter(int Filter, JOBS jobs) const;
 
-    const IGenericJob* get_job(JOBS job) const;
-    const std::string& get_job_name(JOBS job) const;
-    const std::string& get_job_brief(JOBS job) const;
-    const std::string& get_job_description(JOBS job) const;
+    const IGenericJob* get_job(JOBS job) const override;
+    const sJobFilter& get_filter(EJobFilter filter) const override;
 
     bool is_free_only(JOBS job) const;
 
@@ -98,7 +91,8 @@ public:
     // return a job description along with a count of how many girls are on it
     bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments
 
-    void Setup();
+    EJobFilter get_filter_id(const std::string& name) const;
+    void setup() override;
 
     // - stuff that does processing for jobs
     static bool AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, cBuilding* brothel, bool Day0Night1);
@@ -116,7 +110,6 @@ public:
     static sCustomer GetMiscCustomer(cBuilding& brothel);
 
     bool is_job_Paid_Player(JOBS Job);        //    WD:    Test for all jobs paid by player
-    bool FullTimeJob(JOBS Job);            //    `J`    Test if job is takes both shifts
     sPaymentData CalculatePay(sGirl& girl, sWorkJobResult pay);
 
     static bool is_Surgery_Job(int testjob);
