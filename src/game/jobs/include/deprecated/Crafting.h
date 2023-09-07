@@ -25,24 +25,25 @@
 #include <vector>
 #include "images/sImageSpec.h"
 
-using namespace deprecated;
+namespace deprecated {
+    class GenericCraftingJob : public cSimpleJob {
+    public:
+        explicit GenericCraftingJob(JOBS id, const char* xml, EActivity action, int BaseWages, EImageBaseType image) :
+                cSimpleJob(id, xml, {action, BaseWages, image}) {
+        }
 
-class GenericCraftingJob : public cSimpleJob {
-public:
-    explicit GenericCraftingJob(JOBS id, const char* xml, EActivity action, int BaseWages, EImageBaseType image) :
-        cSimpleJob(id, xml, {action, BaseWages, image}) {
-    }
+    protected:
+        bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
 
-protected:
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+        // shift processing data
+        int craftpoints;
+    private:
+        virtual void performance_msg();
 
-    // shift processing data
-    int craftpoints;
-private:
-    virtual void performance_msg();
-    virtual void DoWorkEvents(sGirl& girl);
+        virtual void DoWorkEvents(sGirl& girl);
 
-    float DoCrafting(sGirl& girl, int craft_points);
-};
+        float DoCrafting(sGirl& girl, int craft_points);
+    };
+}
 
 #endif //WM_JOBS_CRAFTING_H

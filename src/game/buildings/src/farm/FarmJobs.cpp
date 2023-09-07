@@ -1829,14 +1829,14 @@ double cFarmJobResearch::GetPerformance(const sGirl& girl, bool estimate) const 
 }
 
 void RegisterFarmJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<cFarmJobFarmer>());
-    mgr.register_job(std::make_unique<cFarmJobMarketer>());
-    mgr.register_job(std::make_unique<cFarmJobVeterinarian>());
-    mgr.register_job(std::make_unique<cFarmJobShepherd>());
-    mgr.register_job(std::make_unique<cFarmJobRancher>());
-    mgr.register_job(std::make_unique<cFarmJobBeastCapture>());
-    mgr.register_job(std::make_unique<cFarmJobGetMilked>());
-    mgr.register_job(std::make_unique<cFarmJobMilker>());
-    mgr.register_job(std::make_unique<cFarmJobCatacombRancher>());
-    mgr.register_job(std::make_unique<cFarmJobResearch>());
+    mgr.register_job(wrap(std::make_unique<cFarmJobFarmer>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobMarketer>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobVeterinarian>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobShepherd>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobRancher>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobBeastCapture>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobGetMilked>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobMilker>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobCatacombRancher>()));
+    mgr.register_job(wrap(std::make_unique<cFarmJobResearch>()));
 }

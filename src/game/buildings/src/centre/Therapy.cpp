@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "jobs/Treatment.h"
+#include "deprecated/Treatment.h"
 #include "jobs/cJobManager.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
@@ -32,6 +32,8 @@
 #include "xml/getattr.h"
 #include "xml/util.h"
 
+using namespace deprecated;
+
 extern const char* const CounselingInteractionId;
 
 struct sRemoveTrait {
@@ -45,7 +47,7 @@ public:
     }
 
     void ReceiveTreatment(sGirl& girl, bool is_night) final;
-    sJobValidResult is_job_valid(const sGirl& girl) const override;
+    deprecated::sJobValidResult is_job_valid(const sGirl& girl) const override;
 protected:
     // common data
     std::string TreatmentName;     //!< Therapy or Rehab
@@ -200,7 +202,7 @@ double TherapyJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return p;
 }
 
-IGenericJob::eCheckWorkResult TherapyJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult TherapyJob::CheckWork(sGirl& girl, bool is_night) {
     auto brothel = girl.m_Building;
     if (!needs_therapy(girl))
     {
@@ -221,7 +223,7 @@ IGenericJob::eCheckWorkResult TherapyJob::CheckWork(sGirl& girl, bool is_night) 
     return IGenericJob::eCheckWorkResult::ACCEPTS;
 }
 
-sJobValidResult TherapyJob::is_job_valid(const sGirl& girl) const {
+deprecated::sJobValidResult TherapyJob::is_job_valid(const sGirl& girl) const {
     if (!needs_therapy(girl)) {
         return {false, get_text("no-need")};
     }
@@ -292,8 +294,8 @@ void Rehab::OnFinish(sGirl& girl) {
 }
 
 void RegisterTherapyJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<AngerManagement>(JOB_ANGER, "AngerManagement.xml"));
-    mgr.register_job(std::make_unique<TherapyJob>(JOB_EXTHERAPY, "ExtremeTherapy.xml"));
-    mgr.register_job(std::make_unique<TherapyJob>(JOB_THERAPY, "Therapy.xml"));
-    mgr.register_job(std::make_unique<Rehab>(JOB_REHAB, "Rehab.xml"));
+    mgr.register_job(wrap(std::make_unique<AngerManagement>(JOB_ANGER, "AngerManagement.xml")));
+    mgr.register_job(wrap(std::make_unique<TherapyJob>(JOB_EXTHERAPY, "ExtremeTherapy.xml")));
+    mgr.register_job(wrap(std::make_unique<TherapyJob>(JOB_THERAPY, "Therapy.xml")));
+    mgr.register_job(wrap(std::make_unique<Rehab>(JOB_REHAB, "Rehab.xml")));
 }

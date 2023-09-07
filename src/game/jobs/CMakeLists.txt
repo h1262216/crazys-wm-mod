@@ -3,16 +3,22 @@ set(JOBS_SRC
         src/cGenericJob.cpp
         src/cJobManager.cpp
         src/IJobManager.cpp
-        src/BasicJob.cpp
+        src/cBasicJob.cpp
         src/Cleaning.cpp
         src/Crafting.cpp
         src/JobData.cpp
         src/Matron.cpp
-        src/SimpleJob.cpp
+        src/cSimpleJob.cpp
         src/TextInterface.cpp
         src/WorkFreetime.cpp
         src/Treatment.cpp
         src/sAttributeCondition.cpp
+        src-deprecated/IGenericJob.cpp
+        src-deprecated/BasicJob.cpp
+        src-deprecated/TextInterface.cpp
+        src-deprecated/JobData.cpp
+        src-deprecated/SimpleJob.cpp
+        src-deprecated/Wrapper.cpp
         )
 
 add_library(WmJobsInterface INTERFACE)

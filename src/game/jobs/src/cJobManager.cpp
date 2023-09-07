@@ -109,7 +109,7 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
 
     // Studio Crew
     JobFilters[JOBFILTER_STUDIOCREW] = sJobFilter{"StudioCrew", "Studio Crew", "These are jobs for running a movie studio."};
-    //register_filter(JOBFILTER_STUDIOCREW, JOB_EXECUTIVE, JOB_STAGEHAND, {JOB_RESTING});
+    register_filter(JOBFILTER_STUDIOCREW, JOB_EXECUTIVE, JOB_STAGEHAND, {JOB_RESTING});
     //JobData[JOB_SOUNDTRACK] = sJobData("Sound Track", "SndT", WorkSoundTrack, JP_SoundTrack);
     //JobData[JOB_SOUNDTRACK].description = ("She will clean up the audio and add music to the scenes. (not required but helpful)");
 
@@ -136,6 +136,7 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
 
     // - Arena
     JobFilters[JOBFILTER_ARENA] = sJobFilter{"ArenaFight", "Fighters", "These are jobs for the fighters in the arena."};
+    register_filter(JOBFILTER_ARENA, JOB_FIGHTBEASTS, JOB_FIGHTTRAIN, {});
     //- Arena Staff
     JobFilters[JOBFILTER_ARENASTAFF] = sJobFilter{"ArenaStaff", "Staff", "These are jobs that help run an arena."};
     JobFilters[JOBFILTER_ARENASTAFF].Contents.push_back(JOB_DOCTORE);
@@ -156,7 +157,7 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     register_filter(JOBFILTER_CLINIC, JOB_GETHEALING, JOB_FERTILITY, {});
     // Clinic staff
     JobFilters[JOBFILTER_CLINICSTAFF] = sJobFilter{"ClinicStaff", "Clinic Staff", "These are jobs that help run a medical clinic."};
-    //register_filter(JOBFILTER_CLINICSTAFF, JOB_CHAIRMAN, JOB_JANITOR, {JOB_RESTING});
+    register_filter(JOBFILTER_CLINICSTAFF, JOB_CHAIRMAN, JOB_JANITOR, {JOB_RESTING});
 
     // - Farm Staff
     JobFilters[JOBFILTER_FARMSTAFF] = sJobFilter{"FarmStaff", "Farm Staff", "These are jobs for running a farm"};
@@ -178,16 +179,14 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     //JobFunc[JOB_PONYGIRL] = &WorkFarmPonyGirl;
 
     JobFilters[JOBFILTER_HOUSETTRAINING] = sJobFilter{"HouseTraining", "Sex Training", "Training the girl in sexual matters."};
-/*
+
     RegisterCraftingJobs(*this);
     RegisterSurgeryJobs(*this);
     RegisterWrappedJobs(*this);
     RegisterManagerJobs(*this);
-    */
     RegisterFilmingJobs(*this);
     RegisterFilmCrewJobs(*this);
     RegisterOtherStudioJobs(*this);
-    /*
     RegisterTherapyJobs(*this);
     RegisterBarJobs(*this);
     RegisterFarmJobs(*this);
@@ -196,7 +195,7 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     RegisterArenaJobs(*this);
     RegisterCleaningJobs(*this);
     RegisterHouseJobs(*this);
-    RegisterCentreJobs(*this);*/
+    RegisterCentreJobs(*this);
 }
 
 sCustomer cJobManager::GetMiscCustomer(cBuilding& brothel)

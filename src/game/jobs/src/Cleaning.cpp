@@ -17,12 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SimpleJob.h"
+#include "deprecated/SimpleJob.h"
 #include "character/sGirl.h"
 #include "buildings/cBuilding.h"
 #include "cGirls.h"
 #include "character/predicates.h"
 
+using namespace deprecated;
 
 namespace {
     struct Cleaning : public cSimpleJob {
@@ -401,10 +402,10 @@ void CleanBrothel::BJEvent(sGirl& girl) {
 }
 
 void RegisterCleaningJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<CleanArena>());
-    mgr.register_job(std::make_unique<CleanCentre>());
-    mgr.register_job(std::make_unique<CleanHouse>());
-    mgr.register_job(std::make_unique<CleanBrothel>());
-    mgr.register_job(std::make_unique<CleanClinic>());
-    mgr.register_job(std::make_unique<CleanFarm>());
+    mgr.register_job(wrap(std::make_unique<CleanArena>()));
+    mgr.register_job(wrap(std::make_unique<CleanCentre>()));
+    mgr.register_job(wrap(std::make_unique<CleanHouse>()));
+    mgr.register_job(wrap(std::make_unique<CleanBrothel>()));
+    mgr.register_job(wrap(std::make_unique<CleanClinic>()));
+    mgr.register_job(wrap(std::make_unique<CleanFarm>()));
 }

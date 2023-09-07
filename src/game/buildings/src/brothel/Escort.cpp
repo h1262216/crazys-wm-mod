@@ -19,7 +19,7 @@
 
 #include "BrothelJobs.h"
 #include <character/predicates.h>
-#include "jobs/BasicJob.h"
+#include "deprecated/BasicJob.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 
@@ -518,7 +518,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     return false;
 }
 
-IGenericJob::eCheckWorkResult cEscortJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult cEscortJob::CheckWork(sGirl& girl, bool is_night) {
     if (girl.disobey_check(EActivity::SOCIAL, JOB_ESCORT))
     {
         ss << "${name} refused to work during the " << (is_night ? "night" : "day") << " shift.";

@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "jobs/BasicJob.h"
-#include "jobs/SimpleJob.h"
+#include "deprecated/BasicJob.h"
+#include "deprecated/SimpleJob.h"
 #include "character/sGirl.h"
 #include "character/cPlayer.h"
 #include "character/predicates.h"
@@ -32,6 +32,9 @@
 #include "combat/combatant.h"
 #include "buildings/cBuilding.h"
 #include "buildings/cDungeon.h"
+#include "deprecated/Wrapper.h"
+
+using namespace deprecated;
 
 namespace {
     class CityGuard : public cSimpleJob {
@@ -685,8 +688,8 @@ bool FightTraining::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night
 
 
 void RegisterArenaJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<CityGuard>());
-    mgr.register_job(std::make_unique<FightBeasts>());
-    mgr.register_job(std::make_unique<FightGirls>());
-    mgr.register_job(std::make_unique<FightTraining>());
+    mgr.register_job(wrap(std::make_unique<CityGuard>()));
+    mgr.register_job(wrap(std::make_unique<FightBeasts>()));
+    mgr.register_job(wrap(std::make_unique<FightGirls>()));
+    mgr.register_job(wrap(std::make_unique<FightTraining>()));
 }

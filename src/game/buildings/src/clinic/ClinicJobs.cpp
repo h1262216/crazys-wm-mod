@@ -17,13 +17,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "jobs/SimpleJob.h"
+#include "deprecated/SimpleJob.h"
 #include "character/sGirl.h"
 #include "character/cCustomers.h"
 #include "character/predicates.h"
 #include "cGirls.h"
 #include "buildings/cBuilding.h"
 #include "IGame.h"
+
+using namespace deprecated;
 
 extern const char* const CarePointsBasicId;
 extern const char* const CarePointsGoodId;
@@ -116,7 +118,7 @@ void NurseJob::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
     HandleAids(girl);
 }
 
-IGenericJob::eCheckWorkResult NurseJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult NurseJob::CheckWork(sGirl& girl, bool is_night) {
     if (girl.disobey_check(EActivity::MEDICAL, JOB_NURSE))            // they refuse to work
     {
         ss << "${name} refused to see any patients during the " << (is_night ? "night" : "day") << " shift.";
@@ -495,7 +497,7 @@ sWorkJobResult InternJob::DoWork(sGirl& girl, bool is_night) {
     return {false, 0, 0, m_Wages};
 }
 
-IGenericJob::eCheckWorkResult InternJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult InternJob::CheckWork(sGirl& girl, bool is_night) {
     if (girl.medicine() + girl.intelligence() + girl.charisma() >= 300)
     {
         ss << "There is nothing more she can learn here so she is promoted to ";
@@ -509,7 +511,7 @@ IGenericJob::eCheckWorkResult InternJob::CheckWork(sGirl& girl, bool is_night) {
 }
 
 void RegisterClinicJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<DoctorJob>());
-    mgr.register_job(std::make_unique<NurseJob>());
-    mgr.register_job(std::make_unique<InternJob>());
+    mgr.register_job(wrap(std::make_unique<DoctorJob>()));
+    mgr.register_job(wrap(std::make_unique<NurseJob>()));
+    mgr.register_job(wrap(std::make_unique<InternJob>()));
 }

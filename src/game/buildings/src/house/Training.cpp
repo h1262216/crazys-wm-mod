@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "jobs/BasicJob.h"
-#include "jobs/Treatment.h"
+#include "deprecated/BasicJob.h"
+#include "deprecated/Treatment.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 #include "buildings/cBuilding.h"
@@ -27,6 +27,8 @@
 #include "character/predicates.h"
 
 extern const char* const TrainingInteractionId;
+
+using namespace deprecated;
 
 namespace {
     class PracticeJob : public cBasicJob {
@@ -78,7 +80,7 @@ sWorkJobResult MistressJob::DoWork(sGirl& girl, bool is_night) {
     return {false, 0, 0, 100};
 }
 
-IGenericJob::eCheckWorkResult MistressJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult MistressJob::CheckWork(sGirl& girl, bool is_night) {
     return SimpleRefusalCheck(girl, EActivity::SOCIAL);
 }
 
@@ -235,7 +237,7 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
     }
 }
 
-IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, bool is_night) {
     if (girl.disobey_check(EActivity::FUCKING, JOB_TRAINING))            // they refuse to work
     {
 
@@ -336,7 +338,7 @@ double TrainingJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return 250;
 }
 
-IGenericJob::eCheckWorkResult TrainingJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult TrainingJob::CheckWork(sGirl& girl, bool is_night) {
     if (girl.has_active_trait(TargetTrait))
     {
         add_text("is-already");
@@ -654,10 +656,10 @@ void FakeOrg::OnRegularProgress(sGirl& girl, bool is_night) {
 }
 
 void RegisterTrainingJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<SoStraight>());
-    mgr.register_job(std::make_unique<SoLesbian>());
-    mgr.register_job(std::make_unique<SoBi>());
-    mgr.register_job(std::make_unique<FakeOrg>());
-    mgr.register_job(std::make_unique<PracticeJob>());
-    mgr.register_job(std::make_unique<MistressJob>());
+    mgr.register_job(wrap(std::make_unique<SoStraight>()));
+    mgr.register_job(wrap(std::make_unique<SoLesbian>()));
+    mgr.register_job(wrap(std::make_unique<SoBi>()));
+    mgr.register_job(wrap(std::make_unique<FakeOrg>()));
+    mgr.register_job(wrap(std::make_unique<PracticeJob>()));
+    mgr.register_job(wrap(std::make_unique<MistressJob>()));
 }

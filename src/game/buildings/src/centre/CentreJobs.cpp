@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "jobs/SimpleJob.h"
+#include "deprecated/SimpleJob.h"
 #include "character/sGirl.h"
 #include "character/cCustomers.h"
 #include "character/predicates.h"
@@ -28,6 +28,8 @@
 #include "character/lust.h"
 
 extern const char* const CounselingInteractionId;
+
+using namespace deprecated;
 
 namespace {
     class CommunityService: public cSimpleJob {
@@ -273,7 +275,7 @@ bool Counselor::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 }
 
 void RegisterCentreJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<CommunityService>());
-    mgr.register_job(std::make_unique<FeedPoor>());
-    mgr.register_job(std::make_unique<Counselor>());
+    mgr.register_job(wrap(std::make_unique<CommunityService>()));
+    mgr.register_job(wrap(std::make_unique<FeedPoor>()));
+    mgr.register_job(wrap(std::make_unique<Counselor>()));
 }

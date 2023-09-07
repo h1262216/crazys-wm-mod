@@ -20,7 +20,9 @@
 #ifndef WM_FARMJOBS_H
 #define WM_FARMJOBS_H
 
-#include "jobs/SimpleJob.h"
+#include "deprecated/SimpleJob.h"
+
+using namespace deprecated;
 
 class cFarmJob : public cSimpleJob {
 public:

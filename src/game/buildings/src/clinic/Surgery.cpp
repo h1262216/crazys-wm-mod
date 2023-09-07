@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "jobs/IGenericJob.h"
-#include "jobs/Treatment.h"
+#include "deprecated/IGenericJob.h"
+#include "deprecated/Treatment.h"
 #include "jobs/cJobManager.h"
 #include "cGirls.h"
 #include "character/sGirl.h"
@@ -31,6 +31,8 @@
 #include "CLog.h"
 #include "xml/getattr.h"
 #include "xml/util.h"
+
+using namespace deprecated;
 
 extern const char* const CarePointsBasicId;
 extern const char* const CarePointsGoodId;
@@ -75,7 +77,7 @@ public:
     }
 
     void ReceiveTreatment(sGirl& girl, bool is_night) final;
-    sJobValidResult is_job_valid(const sGirl& girl) const override;
+    deprecated::sJobValidResult is_job_valid(const sGirl& girl) const override;
     eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
 protected:
     // common data
@@ -173,7 +175,7 @@ void SurgeryJob::ReceiveTreatment(sGirl& girl, bool is_night) {
     }
 }
 
-IGenericJob::eCheckWorkResult SurgeryJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult SurgeryJob::CheckWork(sGirl& girl, bool is_night) {
     if (!HasInteraction(DoctorInteractionId)) {
         // calling request-interaction because we still want to count how many interactions where requested.
         RequestInteraction(DoctorInteractionId);
@@ -191,7 +193,7 @@ IGenericJob::eCheckWorkResult SurgeryJob::CheckWork(sGirl& girl, bool is_night) 
     return IGenericJob::eCheckWorkResult::ACCEPTS;
 }
 
-sJobValidResult SurgeryJob::is_job_valid(const sGirl& girl) const {
+deprecated::sJobValidResult SurgeryJob::is_job_valid(const sGirl& girl) const {
     for(auto& t : m_SurgeryData.TraitExcludes) {
         if(girl.has_active_trait(t.Trait.c_str())) {
             return {false, t.Message};
@@ -387,7 +389,7 @@ double VaginalRejuvenation::GetPerformance(const sGirl& girl, bool estimate) con
 
 struct FaceLift: public SurgeryJob {
     FaceLift();
-    sJobValidResult is_job_valid(const sGirl& girl) const override;
+    deprecated::sJobValidResult is_job_valid(const sGirl& girl) const override;
     void success(sGirl& girl) override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
@@ -395,7 +397,7 @@ struct FaceLift: public SurgeryJob {
 FaceLift::FaceLift() : SurgeryJob(JOB_FACELIFT, "FaceLift.xml") {
 }
 
-sJobValidResult FaceLift::is_job_valid(const sGirl& girl) const {
+deprecated::sJobValidResult FaceLift::is_job_valid(const sGirl& girl) const {
     if (girl.age() <= 21)
     {
         return {false, "${name} is too young to get a Face Lift."};
@@ -456,7 +458,7 @@ double AssJob::GetPerformance(const sGirl& girl, bool estimate) const {
 
 struct TubesTied : public SurgeryJob {
     TubesTied();
-    sJobValidResult is_job_valid(const sGirl& girl) const override;
+    deprecated::sJobValidResult is_job_valid(const sGirl& girl) const override;
     void success(sGirl& girl) override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
@@ -464,7 +466,7 @@ struct TubesTied : public SurgeryJob {
 TubesTied::TubesTied(): SurgeryJob(JOB_TUBESTIED, "TubesTied.xml") {
 }
 
-sJobValidResult TubesTied::is_job_valid(const sGirl& girl) const {
+deprecated::sJobValidResult TubesTied::is_job_valid(const sGirl& girl) const {
     if (girl.is_pregnant()) {
         return {false, "${name} is pregnant.\nShe must either have her baby or get an abortion before she can get her Tubes Tied."};
     }
@@ -486,7 +488,7 @@ double TubesTied::GetPerformance(const sGirl& girl, bool estimate) const {
 
 struct Fertility: public SurgeryJob {
     Fertility();
-    sJobValidResult is_job_valid(const sGirl& girl) const override;
+    deprecated::sJobValidResult is_job_valid(const sGirl& girl) const override;
     void success(sGirl& girl) override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
@@ -494,7 +496,7 @@ struct Fertility: public SurgeryJob {
 Fertility::Fertility(): SurgeryJob(JOB_FERTILITY, "Fertility.xml") {
 }
 
-sJobValidResult Fertility::is_job_valid(const sGirl& girl) const {
+deprecated::sJobValidResult Fertility::is_job_valid(const sGirl& girl) const {
     if (girl.is_pregnant()) {
         return {false, "${name} is pregnant.\n"
                        "She must either have her baby or get an abortion before she can get receive any more fertility treatments."};
@@ -843,7 +845,7 @@ void Abortion::PreShift(sGirl& girl, bool is_night, cRng& rng) const {
     }
 }
 
-IGenericJob::eCheckWorkResult Abortion::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult Abortion::CheckWork(sGirl& girl, bool is_night) {
     return eCheckWorkResult::ACCEPTS;
 }
 
@@ -868,7 +870,7 @@ double Healing::GetPerformance(const sGirl& girl, bool estimate) const {
     return performance;
 }
 
-IGenericJob::eCheckWorkResult Healing::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult Healing::CheckWork(sGirl& girl, bool is_night) {
     return eCheckWorkResult::ACCEPTS;
 }
 
@@ -922,16 +924,16 @@ void Healing::ReceiveTreatment(sGirl& girl, bool is_night) {
 }
 
 void RegisterSurgeryJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<CosmeticSurgery>());
-    mgr.register_job(std::make_unique<Liposuction>());
-    mgr.register_job(std::make_unique<BreastReduction>());
-    mgr.register_job(std::make_unique<BoobJob>());
-    mgr.register_job(std::make_unique<VaginalRejuvenation>());
-    mgr.register_job(std::make_unique<FaceLift>());
-    mgr.register_job(std::make_unique<AssJob>());
-    mgr.register_job(std::make_unique<TubesTied>());
-    mgr.register_job(std::make_unique<Fertility>());
-    mgr.register_job(std::make_unique<CureDiseases>());
-    mgr.register_job(std::make_unique<Abortion>());
-    mgr.register_job(std::make_unique<Healing>());
+    mgr.register_job(wrap(std::make_unique<CosmeticSurgery>()));
+    mgr.register_job(wrap(std::make_unique<Liposuction>()));
+    mgr.register_job(wrap(std::make_unique<BreastReduction>()));
+    mgr.register_job(wrap(std::make_unique<BoobJob>()));
+    mgr.register_job(wrap(std::make_unique<VaginalRejuvenation>()));
+    mgr.register_job(wrap(std::make_unique<FaceLift>()));
+    mgr.register_job(wrap(std::make_unique<AssJob>()));
+    mgr.register_job(wrap(std::make_unique<TubesTied>()));
+    mgr.register_job(wrap(std::make_unique<Fertility>()));
+    mgr.register_job(wrap(std::make_unique<CureDiseases>()));
+    mgr.register_job(wrap(std::make_unique<Abortion>()));
+    mgr.register_job(wrap(std::make_unique<Healing>()));
 }

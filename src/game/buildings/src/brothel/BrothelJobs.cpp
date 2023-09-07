@@ -41,7 +41,7 @@ namespace settings {
     extern const char* WORLD_CATACOMB_UNIQUE;
 }
 
-IGenericJob::eCheckWorkResult cBarJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult cBarJob::CheckWork(sGirl& girl, bool is_night) {
     if (girl.lust() >= 90 && girl.has_active_trait(traits::NYMPHOMANIAC) && chance(20))
     {
         add_text("event.nympho-nowork");
@@ -3404,28 +3404,28 @@ CatacombJob::CatacombJob() : cSimpleJob(JOB_EXPLORECATACOMBS, "ExploreCatacombs.
 }
 
 void RegisterBarJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<cBarCookJob>());
-    mgr.register_job(std::make_unique<cBarMaidJob>());
-    mgr.register_job(std::make_unique<cBarWaitressJob>());
-    mgr.register_job(std::make_unique<cBarPianoJob>());
-    mgr.register_job(std::make_unique<cBarSingerJob>());
-    mgr.register_job(std::make_unique<cEscortJob>());
-    mgr.register_job(std::make_unique<cDealerJob>());
-    mgr.register_job(std::make_unique<cEntertainerJob>());
-    mgr.register_job(std::make_unique<cXXXEntertainerJob>());
-    mgr.register_job(std::make_unique<cMasseuseJob>());
-    mgr.register_job(std::make_unique<cPeepShowJob>());
-    mgr.register_job(std::make_unique<cBrothelStripper>());
-    mgr.register_job(std::make_unique<ClubBarmaid>());
-    mgr.register_job(std::make_unique<ClubStripper>());
-    mgr.register_job(std::make_unique<ClubWaitress>());
-    mgr.register_job(std::make_unique<AdvertisingJob>());
-    mgr.register_job(std::make_unique<CustServiceJob>());
-    mgr.register_job(std::make_unique<BeastCareJob>());
-    mgr.register_job(std::make_unique<SecurityJob>());
-    mgr.register_job(std::make_unique<CatacombJob>());
-    mgr.register_job(std::make_unique<cWhoreJob>(JOB_WHOREGAMBHALL, "HWhr", "She will give her sexual favors to the customers."));
-    mgr.register_job(std::make_unique<cWhoreJob>(JOB_BARWHORE, "SWhr", "She will provide sex to the customers."));
-    mgr.register_job(std::make_unique<cWhoreJob>(JOB_WHOREBROTHEL, "BWhr", "She will whore herself to customers within the building's walls. This is safer but a little less profitable."));
-    mgr.register_job(std::make_unique<cWhoreJob>(JOB_WHORESTREETS, "StWr", "She will whore herself on the streets. It is more dangerous than whoring inside but more profitable."));
+    mgr.register_job(wrap(std::make_unique<cBarCookJob>()));
+    mgr.register_job(wrap(std::make_unique<cBarMaidJob>()));
+    mgr.register_job(wrap(std::make_unique<cBarWaitressJob>()));
+    mgr.register_job(wrap(std::make_unique<cBarPianoJob>()));
+    mgr.register_job(wrap(std::make_unique<cBarSingerJob>()));
+    mgr.register_job(wrap(std::make_unique<cEscortJob>()));
+    mgr.register_job(wrap(std::make_unique<cDealerJob>()));
+    mgr.register_job(wrap(std::make_unique<cEntertainerJob>()));
+    mgr.register_job(wrap(std::make_unique<cXXXEntertainerJob>()));
+    mgr.register_job(wrap(std::make_unique<cMasseuseJob>()));
+    mgr.register_job(wrap(std::make_unique<cPeepShowJob>()));
+    mgr.register_job(wrap(std::make_unique<cBrothelStripper>()));
+    mgr.register_job(wrap(std::make_unique<ClubBarmaid>()));
+    mgr.register_job(wrap(std::make_unique<ClubStripper>()));
+    mgr.register_job(wrap(std::make_unique<ClubWaitress>()));
+    mgr.register_job(wrap(std::make_unique<AdvertisingJob>()));
+    mgr.register_job(wrap(std::make_unique<CustServiceJob>()));
+    mgr.register_job(wrap(std::make_unique<BeastCareJob>()));
+    mgr.register_job(wrap(std::make_unique<SecurityJob>()));
+    mgr.register_job(wrap(std::make_unique<CatacombJob>()));
+    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_WHOREGAMBHALL, "HWhr", "She will give her sexual favors to the customers.")));
+    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_BARWHORE, "SWhr", "She will provide sex to the customers.")));
+    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_WHOREBROTHEL, "BWhr", "She will whore herself to customers within the building's walls. This is safer but a little less profitable.")));
+    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_WHORESTREETS, "StWr", "She will whore herself on the streets. It is more dangerous than whoring inside but more profitable.")));
 }

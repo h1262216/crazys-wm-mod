@@ -739,7 +739,7 @@ double cWhoreJob::GetPerformance(const sGirl& girl, bool estimate) const {
     return jobperformance;
 }
 
-IGenericJob::eCheckWorkResult cWhoreJob::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult cWhoreJob::CheckWork(sGirl& girl, bool is_night) {
     // whores accept or reject individual customers atm, I think?
     return eCheckWorkResult::ACCEPTS;
 }

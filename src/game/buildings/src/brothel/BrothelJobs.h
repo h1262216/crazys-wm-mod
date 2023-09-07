@@ -20,8 +20,10 @@
 #ifndef WM_BROTHELJOBS_H
 #define WM_BROTHELJOBS_H
 
-#include "jobs/SimpleJob.h"
+#include "deprecated//SimpleJob.h"
 #include "images/sImageSpec.h"
+
+using namespace deprecated;
 
 class cBarJob : public cSimpleJob {
 public:

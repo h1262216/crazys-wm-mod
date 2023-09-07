@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "jobs/SimpleJob.h"
+#include "deprecated/SimpleJob.h"
 #include "character/sGirl.h"
 #include "character/cPlayer.h"
 #include "character/cCustomers.h"
@@ -27,6 +27,8 @@
 #include "buildings/cDungeon.h"
 #include "cGirls.h"
 #include "IGame.h"
+
+using namespace deprecated;
 
 namespace {
     struct HouseCook: public cSimpleJob {
@@ -360,7 +362,7 @@ sWorkJobResult HousePet::DoWork(sGirl& girl, bool is_night) {
     return sWorkJobResult{false, 0, 0, 0};
 }
 
-IGenericJob::eCheckWorkResult HousePet::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult HousePet::CheckWork(sGirl& girl, bool is_night) {
     return IGenericJob::eCheckWorkResult::ACCEPTS;
 }
 
@@ -654,7 +656,7 @@ sWorkJobResult PersonalTraining::DoWork(sGirl& girl, bool is_night) {
     return sWorkJobResult{false, 0, 0, pay};
 }
 
-IGenericJob::eCheckWorkResult PersonalTraining::CheckWork(sGirl& girl, bool is_night) {
+deprecated::IGenericJob::eCheckWorkResult PersonalTraining::CheckWork(sGirl& girl, bool is_night) {
     return SimpleRefusalCheck(girl, EActivity::FUCKING);
 }
 
@@ -799,8 +801,8 @@ bool Recruiter::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 }
 
 void RegisterHouseJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<HouseCook>());
-    mgr.register_job(std::make_unique<HousePet>());
-    mgr.register_job(std::make_unique<PersonalTraining>());
-    mgr.register_job(std::make_unique<Recruiter>());
+    mgr.register_job(wrap(std::make_unique<HouseCook>()));
+    mgr.register_job(wrap(std::make_unique<HousePet>()));
+    mgr.register_job(wrap(std::make_unique<PersonalTraining>()));
+    mgr.register_job(wrap(std::make_unique<Recruiter>()));
 }

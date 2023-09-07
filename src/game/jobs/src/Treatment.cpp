@@ -17,18 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Treatment.h"
+#include "deprecated/Treatment.h"
 #include "character/sGirl.h"
 #include "text/repo.h"
 #include "IGame.h"
 #include "CLog.h"
 #include "cGirls.h"
-#include "TextInterface.h"
+#include "deprecated/TextInterface.h"
 #include "utils/string.hpp"
 #include <tinyxml2.h>
 
+using namespace deprecated;
+
 ITreatmentJob::ITreatmentJob(JOBS job, std::string xml_file) : IGenericJob(job, std::move(xml_file), EJobClass::TREATMENT),
-    m_Interface(std::make_unique<cJobTextInterface>(this)) {
+    m_Interface(std::make_unique<deprecated::cJobTextInterface>(this)) {
     m_Info.FullTime = true;
 }
 

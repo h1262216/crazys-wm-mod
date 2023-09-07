@@ -504,17 +504,17 @@ void cJewelerJob::DoWorkEvents(sGirl& girl) {
 }
 
 void RegisterCraftingJobs(cJobManager& mgr) {
-    mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BAKER, "Baker.xml", EActivity::COOKING, 20, EImageBaseType::BAKE));
-    mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BREWER, "Brewer.xml", EActivity::COOKING, 20, EImageBaseType::COOK));
-    mgr.register_job(std::make_unique<GenericCraftingJob>(
-            JOB_BUTCHER, "Butcher.xml", EActivity::COOKING, 20, EImageBaseType::COOK));
-    mgr.register_job(std::make_unique<cBlacksmithJob>());
-    mgr.register_job(std::make_unique<cCobblerJob>());
-    mgr.register_job(std::make_unique<cGardenerJob>());
-    mgr.register_job(std::make_unique<cJewelerJob>());
-    mgr.register_job(std::make_unique<cMakeItemJob>());
-    mgr.register_job(std::make_unique<cMakePotionsJob>());
-    mgr.register_job(std::make_unique<cTailorJob>());
+    mgr.register_job(wrap(std::make_unique<GenericCraftingJob>(
+            JOB_BAKER, "Baker.xml", EActivity::COOKING, 20, EImageBaseType::BAKE)));
+    mgr.register_job(wrap(std::make_unique<GenericCraftingJob>(
+            JOB_BREWER, "Brewer.xml", EActivity::COOKING, 20, EImageBaseType::COOK)));
+    mgr.register_job(wrap(std::make_unique<GenericCraftingJob>(
+            JOB_BUTCHER, "Butcher.xml", EActivity::COOKING, 20, EImageBaseType::COOK)));
+    mgr.register_job(wrap(std::make_unique<cBlacksmithJob>()));
+    mgr.register_job(wrap(std::make_unique<cCobblerJob>()));
+    mgr.register_job(wrap(std::make_unique<cGardenerJob>()));
+    mgr.register_job(wrap(std::make_unique<cJewelerJob>()));
+    mgr.register_job(wrap(std::make_unique<cMakeItemJob>()));
+    mgr.register_job(wrap(std::make_unique<cMakePotionsJob>()));
+    mgr.register_job(wrap(std::make_unique<cTailorJob>()));
 }
