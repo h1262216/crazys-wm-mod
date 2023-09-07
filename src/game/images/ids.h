@@ -214,6 +214,9 @@ const std::array<const char*, (int)EImagePresets::COUNT>& get_image_preset_names
 EImagePresets get_image_preset_id(const std::string& name);
 const char* get_image_preset_name(EImagePresets image);
 
+class sImagePreset;
+sImagePreset get_image_preset(const std::string& name);
+
 template<class T>
 T convert_from_text(const std::string& name);
 

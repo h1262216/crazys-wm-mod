@@ -19,6 +19,7 @@
 
 #include "ids.h"
 #include "utils/lookup.h"
+#include "sImageSpec.h"
 
 const std::array<const char*, (int)EImageBaseType::NUM_TYPES>& get_imgtype_names() {
     static std::array<const char*, (int)EImageBaseType::NUM_TYPES> names {
@@ -89,6 +90,16 @@ const id_lookup_t<EImagePresets>& get_image_preset_lookup() {
 
 EImagePresets get_image_preset_id(const std::string& name) {
     return get_image_preset_lookup().at(name, "Trying to get invalid EImagePresets");
+}
+
+sImagePreset get_image_preset(const std::string& name) {
+    auto& preset = get_image_preset_lookup();
+    auto preset_candidate = preset.find(name);
+    if(preset_candidate != preset.end()) {
+        return preset_candidate->second;
+    } else {
+        return get_image_id(name);
+    }
 }
 
 const char* get_image_preset_name(EImagePresets preset) {
