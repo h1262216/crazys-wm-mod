@@ -149,6 +149,7 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
 
     void AddMessage(const std::string& message, const sImageSpec& spec, EEventType event);
     void AddMessage(const std::string& message, sImagePreset preset, EEventType event);
+    std::string GetInterpolationFor(const std::string& pattern) const;
     std::string Interpolate(const std::string& pattern);
     sImageSpec MakeImageSpec(sImagePreset preset) const;
     cEvents& GetEvents() { return m_Events; }

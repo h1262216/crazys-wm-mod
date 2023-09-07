@@ -1431,20 +1431,32 @@ void sGirl::AddMessage(const std::string& message, sImagePreset preset, EEventTy
     return AddMessage(message, MakeImageSpec(preset), event);
 }
 
+std::string sGirl::GetInterpolationFor(const std::string& pattern) const {
+    if(pattern == "name") {
+        return this->FullName();
+    } else if(pattern == "surname") {
+        return this->Surname();
+    } else if(pattern == "firstname") {
+        if(this->FirstName().empty()) {
+            return this->FullName();
+        } else {
+            return this->FirstName();
+        };
+    } else if(pattern == "middlename") {
+        return this->MiddleName();
+    } else if(starts_with(pattern, "skill.")) {
+        SKILLS skill = get_skill_id(pattern.substr(6));
+        return std::to_string(get_skill(skill));
+    } else if(starts_with(pattern, "stat.")) {
+        STATS stat = get_stat_id(pattern.substr(5));
+        return std::to_string(get_stat(stat));
+    }
+    throw std::runtime_error("Invalid pattern " + pattern);
+}
+
 std::string sGirl::Interpolate(const std::string& pattern) {
     return interpolate_string(pattern,
-    [this](const std::string& pattern) -> std::string {
-      if(pattern == "name") {
-          return this->FullName();
-      } else if(pattern == "surname") {
-          return this->Surname();
-      } else if(pattern == "firstname") {
-          return this->FirstName();
-      } else if(pattern == "middlename") {
-          return this->MiddleName();
-      }
-      throw std::runtime_error("Invalid pattern " + pattern);
-    }, g_Dice);
+    [this](const std::string& pattern) -> std::string { return GetInterpolationFor(pattern); }, g_Dice);
 }
 
 bool sGirl::is_sex_type_allowed(SKILLS sex_type) const {
