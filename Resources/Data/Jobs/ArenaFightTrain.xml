@@ -4,11 +4,13 @@
         She will practice combat.
     </Description>
 
-    <Performance />
-
-    <Config>
+    <Config DefaultImage="Combat" FightingJob="1" BaseWages="20">
         <Filter>ArenaFight</Filter>
+        <Enjoyment PrimaryAction="Fighting" SecondaryAction="Physical"/>
+        <Obedience Difficulty="10" Fear="25" />
     </Config>
+
+    <Performance />
 
     <Messages>
         <Message Name="refuse">
