@@ -25,6 +25,7 @@
 
 #include <boost/variant.hpp>
 #include "Constants.h"
+#include "sAttributeCondition.h"
 
 namespace tinyxml2 {
     class XMLElement;
@@ -61,12 +62,6 @@ struct sTraitChange {
     bool Gain;
     std::string TraitName;
 
-    struct sAttributeCondition {
-        StatSkill Attribute;
-        int LowerBound;
-        int UpperBound;
-    };
-
     struct sChangeAmount {
         int BaseAmount;
         int PerformanceRequirementMin = -1000;
@@ -93,6 +88,19 @@ private:
     int Skill = 0;                                      //!< Amount of gains for stats/skills
     std::vector<sWeightedStatSkill>  Gains;             //!< List of stat/skill influences
     std::vector<sTraitChange>        TraitChanges;      //!< List of potential Trait gains/losses
+};
+
+struct sJobPleasureData {
+    int Amount = 0;                             // Determines the influence of lust
+    SKILLS Skill = SKILLS::NUM_SKILLS;          // Which sex skill is required
+    int SkillMin = 0;                           // Minimum skill to have so it is pleasurable
+    int BaseValue = 0;                          // Base value if there is no lust at all
+};
+
+struct sObedienceData {
+    int MaxDignity = 1000;     /// will more likely refuse if dignity is above this value
+    int Obedience  = 10;       /// The amount of obedience required for her to do the job, if there were no modifiers.
+    int Fear       = -1;       /// How afraid is she of this job.
 };
 
 #endif //WM_JOBDATA_H

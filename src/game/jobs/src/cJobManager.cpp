@@ -32,7 +32,7 @@
 #include "IGame.h"
 #include "events.h"
 #include "combat/combat.h"
-#include "Crafting.h"
+//#include "Crafting.h"
 #include "Inventory.h"
 #include "cRival.h"
 #include "buildings/cDungeon.h"
@@ -42,6 +42,9 @@
 #include "cGirlGangFight.h"
 #include "cShop.h"
 #include "character/lust.h"
+#include "jobs/cGenericJob.h"
+#include "jobs/sGirlShiftData.h"
+#include "cSimpleJob.h"
 
 extern cRng g_Dice;
 
@@ -71,8 +74,11 @@ namespace settings {
 cJobManager::cJobManager() = default;
 cJobManager::~cJobManager() = default;
 
-void cJobManager::setup()
+static const std::function<void(std::string)>* s_LoadCallback = nullptr;
+
+void cJobManager::setup(const std::function<void(std::string)>& callback)
 {
+    s_LoadCallback = &callback;
     m_OOPJobs.resize(NUM_JOBS);
 
     auto register_filter = [&](EJobFilter filter, JOBS first, JOBS last, std::initializer_list<JOBS> extra) {
@@ -103,7 +109,7 @@ void cJobManager::setup()
 
     // Studio Crew
     JobFilters[JOBFILTER_STUDIOCREW] = sJobFilter{"StudioCrew", "Studio Crew", "These are jobs for running a movie studio."};
-    register_filter(JOBFILTER_STUDIOCREW, JOB_EXECUTIVE, JOB_STAGEHAND, {JOB_RESTING});
+    //register_filter(JOBFILTER_STUDIOCREW, JOB_EXECUTIVE, JOB_STAGEHAND, {JOB_RESTING});
     //JobData[JOB_SOUNDTRACK] = sJobData("Sound Track", "SndT", WorkSoundTrack, JP_SoundTrack);
     //JobData[JOB_SOUNDTRACK].description = ("She will clean up the audio and add music to the scenes. (not required but helpful)");
 
@@ -172,14 +178,16 @@ void cJobManager::setup()
     //JobFunc[JOB_PONYGIRL] = &WorkFarmPonyGirl;
 
     JobFilters[JOBFILTER_HOUSETTRAINING] = sJobFilter{"HouseTraining", "Sex Training", "Training the girl in sexual matters."};
-
+/*
     RegisterCraftingJobs(*this);
     RegisterSurgeryJobs(*this);
     RegisterWrappedJobs(*this);
     RegisterManagerJobs(*this);
+    */
     RegisterFilmingJobs(*this);
     RegisterFilmCrewJobs(*this);
     RegisterOtherStudioJobs(*this);
+    /*
     RegisterTherapyJobs(*this);
     RegisterBarJobs(*this);
     RegisterFarmJobs(*this);
@@ -188,7 +196,7 @@ void cJobManager::setup()
     RegisterArenaJobs(*this);
     RegisterCleaningJobs(*this);
     RegisterHouseJobs(*this);
-    RegisterCentreJobs(*this);
+    RegisterCentreJobs(*this);*/
 }
 
 sCustomer cJobManager::GetMiscCustomer(cBuilding& brothel)
@@ -373,7 +381,7 @@ bool cJobManager::HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool
     bool MadeChanges = true;  // whether a special case applies to specified job or not
 
     assert(m_OOPJobs[JobID] != nullptr);
-    auto check = m_OOPJobs[JobID]->is_job_valid(Girl);
+    auto check = m_OOPJobs[JobID]->IsJobValid(Girl, Day0Night1);
     if(!check) {
         g_Game->push_message(check.Reason, 0);
         return false;
@@ -1326,70 +1334,66 @@ double calc_pilfering(sGirl& girl)
     return factor;    // otherwise, she stays honest (aside from addict factored-in earlier)
 }
 
-sPaymentData cJobManager::CalculatePay(sGirl& girl, sWorkJobResult result)
+sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
 {
     sPaymentData retval{0, 0, 0, 0, 0};
     // no pay or tips, no need to continue
-    if(result.Wages == 0 && result.Tips == 0 && result.Earnings == 0) return retval;
+    if(shift.Wages == 0 && shift.Tips == 0 && shift.Earnings == 0) return retval;
 
-    if(girl.is_unpaid()) {
-        result.Wages = 0;
+    if(shift.girl().is_unpaid()) {
+        shift.Wages = 0;
     }
 
-    retval.Wages = result.Wages;
-    retval.Earnings = result.Earnings;
-    retval.Tips = result.Tips;
+    retval.Wages = shift.Wages;
+    retval.Earnings = shift.Earnings;
+    retval.Tips = shift.Tips;
 
-    if (result.Tips > 0)        // `J` check tips first
+    if (shift.Tips > 0)        // `J` check tips first
     {
-        if (girl.keep_tips())
+        if (shift.girl().keep_tips())
         {
-            girl.m_Money += result.Tips;    // give her the tips directly
-            retval.GirlGets += result.Tips;
+            shift.girl().m_Money += shift.Tips;    // give her the tips directly
+            retval.GirlGets += shift.Tips;
         }
         else    // otherwise add tips into pay
         {
-            result.Earnings += result.Tips;
+            shift.Earnings += shift.Tips;
         }
     }
 
-    // TODO when can this be false? How do we handle that case?
-    if(girl.m_Building) {
-        // TODO check where we are handling the money processing for girl's payment
-        girl.m_Building->m_Finance.girl_support(result.Wages);
-    }
+    // TODO check where we are handling the money processing for girl's payment
+    shift.building().m_Finance.girl_support(shift.Wages);
 
-    retval.PlayerGets -= result.Wages;
-    girl.m_Money += result.Wages;    // she gets it all
-    retval.GirlGets += result.Wages;
+
+    retval.PlayerGets -= shift.Wages;
+    shift.girl().m_Money += shift.Wages;    // she gets it all
+    retval.GirlGets += shift.Wages;
 
 
     // work out how much gold (if any) she steals
-    double steal_factor = calc_pilfering(girl);
-    int stolen = int(steal_factor * result.Earnings);
-    result.Earnings -= stolen;
+    double steal_factor = calc_pilfering(shift.girl());
+    int stolen = int(steal_factor * shift.Earnings);
+    shift.Earnings -= stolen;
     retval.Earnings -= stolen;
-    girl.m_Money += stolen;
+    shift.girl().m_Money += stolen;
 
     // so now we are to the house percent.
-    int house = (girl.house() * result.Earnings) / 100;       // the house takes its cut of whatever's left
+    int house = (shift.girl().house() * shift.Earnings) / 100;       // the house takes its cut of whatever's left
     retval.PlayerGets += house;
 
-    girl.m_Money += result.Earnings - house;               // The girl collects her part of the pay
-    retval.GirlGets += result.Earnings - house;
-    if(girl.m_Building) {
-        // TODO ditto
-        girl.m_Building->m_Finance.brothel_work(house);                         // and add the rest to the brothel finances
-    }
+    shift.girl().m_Money += shift.Earnings - house;               // The girl collects her part of the pay
+    retval.GirlGets += shift.Earnings - house;
+    // TODO ditto
+    shift.building().m_Finance.brothel_work(house);                         // and add the rest to the brothel finances
 
     if (!stolen) return retval;                                    // If she didn't steal anything, we're done
     sGang* gang = g_Game->gang_manager().GetGangOnMission(MISS_SPYGIRLS);    // if no-one is watching for theft, we're done
     if (!gang) return retval;
-    int catch_pc = g_Game->gang_manager().chance_to_catch(girl);            // work out the % chance that the girl gets caught
+    int catch_pc = g_Game->gang_manager().chance_to_catch(shift.girl());            // work out the % chance that the girl gets caught
     if (!g_Dice.percent(catch_pc)) return retval;                    // if they don't catch her, we're done
 
     // OK: she got caught. Tell the player
-    std::stringstream gmess; gmess << "Your Goons spotted " << girl.FullName() << " taking more gold then she reported.";
+    std::stringstream gmess; gmess << "Your Goons spotted " << shift.girl().FullName() << " taking more gold then she reported.";
     gang->AddMessage(gmess.str());
     return retval;
 }
@@ -1404,35 +1408,7 @@ void cJobManager::handle_simple_job(sGirl& girl, bool is_night)
     }
 
     // do their job
-    auto result = do_job(girl, is_night);
-
-    //        Summary Messages
-    if (result.Refused)
-    {
-        brothel->m_Fame -= girl.fame();
-        girl.AddMessage("${name} refused to work so she made no money.", EImageBaseType::PROFILE, EVENT_SUMMARY);
-    }
-    else
-    {
-        brothel->m_Fame += girl.fame();
-        std::stringstream ss;
-        auto money_data = CalculatePay(girl, result);
-        ss << "${name} made " << money_data.Earnings;
-        if(money_data.Tips != 0) {
-            ss << " and " << money_data.Tips << " in tips. ";
-        } else {
-            ss << " gold. ";
-        }
-        if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
-        ss << "In total, she got " << money_data.GirlGets << " gold and you ";
-        if(money_data.PlayerGets > 0) {
-           ss << "got " << money_data.PlayerGets << " gold.";
-        } else {
-            ss << "spent " << -money_data.PlayerGets << " gold.";
-        }
-
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
-    }
+    do_job(girl, is_night);
 }
 
 sWorkJobResult cJobManager::do_job(sGirl& girl, bool is_night)
@@ -1444,7 +1420,17 @@ sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
 {
     auto ctx{g_Game->push_error_context("job: " + get_job_name(job_id))};
     assert(m_OOPJobs[job_id] != nullptr);
-    auto result = m_OOPJobs[job_id]->Work(girl, is_night, g_Dice);
+    sGirlShiftData data{&girl, girl.m_Building, job_id, is_night};
+    m_OOPJobs[job_id]->PreShift(data);
+    if(data.Refused == ECheckWorkResult::ACCEPTS) {
+        m_OOPJobs[job_id]->Work(data);
+        m_OOPJobs[job_id]->PostShift(data);
+    }
+    sWorkJobResult result;
+    result.Wages = data.Wages;
+    result.Earnings = data.Earnings;
+    result.Tips = data.Tips;
+    result.Refused = data.Refused != ECheckWorkResult::ACCEPTS;
     if(is_night) {
         girl.m_Refused_To_Work_Night = result.Refused;
     } else {
@@ -1454,10 +1440,12 @@ sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
 }
 
 void cJobManager::handle_pre_shift(sGirl& girl, bool is_night) {
+    /*
     auto job_id = girl.get_job(is_night);
     auto ctx{g_Game->push_error_context("pre@job: " + get_job_name(job_id))};
     assert(m_OOPJobs[job_id] != nullptr);
     m_OOPJobs[job_id]->PreShift(girl, is_night, g_Dice);
+     */
 }
 
 
@@ -1559,13 +1547,33 @@ void cJobManager::CatchGirl(sGirl& girl, std::stringstream& fuckMessage, const s
     }
 }
 
-void cJobManager::register_job(std::unique_ptr<IGenericJob> job) {
+namespace {
+    class NullJob : public cGenericJob {
+    public:
+        NullJob(JOBS id) : cGenericJob(id) {}
+    private:
+        double GetPerformance(const sGirl& girl, bool estimate) const override { return 0; }
+        void DoWork(cGirlShift& shift) const override {}
+        bool CheckCanWork(cGirlShift& shift) const override { return false; }
+        bool CheckRefuseWork(cGirlShift& shift) const override { return false; }
+    };
+}
+
+void cJobManager::register_job(std::unique_ptr<cGenericJob> job) {
+    m_OOPJobs[0] = std::make_unique<NullJob>((JOBS)0); // TODO special invalid job marker
+    m_OOPJobs[127] = std::make_unique<NullJob>((JOBS)0); // TODO special invalid job marker
     assert(job != nullptr);
-    job->OnRegisterJobManager(*this);
-    for(auto& flt : job->get_info().Filters) {
-        JobFilters[flt].Contents.push_back(job->job());
+    try {
+        job->OnRegisterJobManager(*this);
+        for (auto& flt: job->get_info().Filters) {
+            JobFilters[flt].Contents.push_back(job->job());
+        }
+        m_OOPJobs[job->job()] = std::move(job);
+    } catch (std::exception& ex) {
+        g_LogFile.error("jobmgr", ex.what());
+        (*s_LoadCallback)(ex.what());
+        m_OOPJobs[job->job()] = std::make_unique<NullJob>(job->get_info().JobId); // TODO special invalid job marker
     }
-    m_OOPJobs[job->job()] = std::move(job);
 }
 
 const IGenericJob* cJobManager::get_job(JOBS job) const {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, The Pink Petal Development Team.
+ * Copyright 2022-2023, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
@@ -27,30 +27,22 @@
 
 class IGenericJob;
 class sImagePreset;
+class cGirlShift;
 
 class cJobTextInterface : public IInteractionInterface {
 public:
-    cJobTextInterface() = delete;
-    explicit cJobTextInterface(IGenericJob* job) : m_Job(job) {}
+    explicit cJobTextInterface(const IGenericJob* job, cGirlShift* shift) : m_Job(job), m_Shift(shift) {}
 
     bool LookupBoolean(const std::string& name) const final;
-
     int LookupNumber(const std::string& name) const final;
 
     void TriggerEvent(const std::string& name) const final;
     void SetVariable(const std::string& name, int value) const final;
     void SetVariable(const std::string& name, std::string value) const final;
 
-    void RegisterVariable(std::string name, int& value);
-    void RegisterVariable(std::string name, sImagePreset& value);
 private:
-    struct JobVarPolicy {
-        static constexpr const char* error_channel() { return "jobs"; }
-        static constexpr const char* default_message() { return "Could not find Job Variable"; }
-    };
-    id_lookup_t<int*, JobVarPolicy> m_MappedIntValues;
-    id_lookup_t<std::function<void(std::string)>, JobVarPolicy> m_MappedStringValues;
-    IGenericJob* m_Job;
+    const IGenericJob* m_Job;
+    cGirlShift* m_Shift;
 };
 
 

@@ -1,7 +1,8 @@
 set(JOBS_SRC
         src/IGenericJob.cpp
-        src/IJobManager.cpp
+        src/cGenericJob.cpp
         src/cJobManager.cpp
+        src/IJobManager.cpp
         src/BasicJob.cpp
         src/Cleaning.cpp
         src/Crafting.cpp
@@ -11,6 +12,7 @@ set(JOBS_SRC
         src/TextInterface.cpp
         src/WorkFreetime.cpp
         src/Treatment.cpp
+        src/sAttributeCondition.cpp
         )
 
 add_library(WmJobsInterface INTERFACE)

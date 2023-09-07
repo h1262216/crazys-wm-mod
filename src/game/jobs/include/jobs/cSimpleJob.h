@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, The Pink Petal Development Team.
+ * Copyright 2019-2023, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
@@ -17,27 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "IJobManager.h"
-#include "IGenericJob.h"
-#include <algorithm>
 
-const sJobInfo& IJobManager::get_job_info(JOBS job) const {
-    return get_job(job)->get_info();
-}
+#ifndef WM_CSIMPLEJOB_H
+#define WM_CSIMPLEJOB_H
 
-const std::string& IJobManager::get_job_name(JOBS job) const {
-    return get_job_info(job).Name;
-}
+#include "cBasicJob.h"
+#include "utils/piecewise_linear.h"
+#include "images/sImageSpec.h"
 
-const std::string& IJobManager::get_job_brief(JOBS job) const {
-    return get_job_info(job).ShortName;
-}
 
-bool IJobManager::is_full_time(JOBS job) const {
-    return get_job_info(job).Shift == EJobShift::FULL;
-}
+class cSimpleJob : public cBasicJob {
+public:
+    cSimpleJob(JOBS job, const char* xml);
+    void DoWork(cGirlShift& shift) const override;
+    virtual void JobProcessing(sGirl& girl, cGirlShift& shift) const = 0;
 
-bool IJobManager::is_in_filter(EJobFilter filter, JOBS job) const {
-    auto& filter_contents = get_filter(filter).Contents;
-    return std::count(begin(filter_contents), end(filter_contents), job) > 0;
-}
+protected:
+    void InitWork(cGirlShift& shift) const override;
+
+    void gain_fame(cGirlShift& shift, int fame) const;
+
+    PiecewiseLinearFunction m_PerformanceToEarnings;
+
+    void load_from_xml_callback(const tinyxml2::XMLElement& job_element) override;
+};
+
+
+#endif //WM_CSIMPLEJOB_H

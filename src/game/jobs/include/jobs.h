@@ -23,6 +23,29 @@
 // forward declarations
 class IGenericJob;
 class IJobManager;
+class sGirlShiftData;
 struct sJobInfo;
+
+// enums
+enum class EJobShift {
+    DAY, NIGHT, FULL, ANY
+};
+
+enum class ECheckWorkResult {
+    REFUSES,
+    REFUSE_FEAR,
+    REFUSE_DIGNITY,
+    REFUSE_HATE,
+    REFUSE_HORNY,
+    ACCEPTS,
+    IMPOSSIBLE,
+    INVALID
+};
+
+bool is_refused(ECheckWorkResult);
+bool is_impossible(ECheckWorkResult);
+
+/// TODO figure out where to place this declaration
+int sigmoid(int value, int threshold, int width, int amount);
 
 #endif //WM_JOBS_H

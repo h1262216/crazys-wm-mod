@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, The Pink Petal Development Team.
+ * Copyright 2022-2023, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
@@ -22,49 +22,37 @@
 #include "character/sGirl.h"
 #include "CLog.h"
 #include "utils/lookup.h"
+#include "jobs/cGenericJob.h"
 
 bool cJobTextInterface::LookupBoolean(const std::string& name) const {
-    return m_Job->active_girl().has_active_trait(name.c_str());
+    return m_Shift->girl().has_active_trait(name.c_str());
 }
 
 int cJobTextInterface::LookupNumber(const std::string& name) const {
     auto split_point = name.find(':');
     auto type = name.substr(0, split_point);
     if(type == "stat") {
-        return m_Job->active_girl().get_stat(get_stat_id(name.substr(split_point+1)));
+        return m_Shift->girl().get_stat(get_stat_id(name.substr(split_point+1)));
     } else if(type == "skill") {
-        return m_Job->active_girl().get_skill(get_skill_id(name.substr(split_point+1)));
-    } else if (type.size() == name.size()) {
+        return m_Shift->girl().get_skill(get_skill_id(name.substr(split_point+1)));
+    } /*else if (type.size() == name.size()) {
+        // TODO
         return *m_MappedIntValues.at(name);
-    } else {
+    } */else {
         g_LogFile.error("job", "Unknown value category ", type, " of variable ", name);
         BOOST_THROW_EXCEPTION(std::runtime_error("Unknown value category: " + type));
     }
 }
 
 void cJobTextInterface::SetVariable(const std::string& name, int value) const {
-    int* looked_up = m_MappedIntValues.at(name);
-    *looked_up = value;
+    //int* looked_up = m_MappedIntValues.at(name);
+    //*looked_up = value;
 }
 
 void cJobTextInterface::SetVariable(const std::string& name, std::string value) const {
-    m_MappedStringValues.at(name)(value);
+    //m_MappedStringValues.at(name)(value);
 }
 
 void cJobTextInterface::TriggerEvent(const std::string& name) const {
     throw std::logic_error("Event triggers are not implemented yet");
-}
-
-void cJobTextInterface::RegisterVariable(std::string name, int& value) {
-    m_MappedIntValues[std::move(name)] = &value;
-}
-
-void cJobTextInterface::RegisterVariable(std::string name, sImagePreset& value) {
-    m_MappedStringValues[std::move(name)] = [&value](std::string new_value) {
-        try {
-            value = get_image_id(new_value);
-        } catch (std::out_of_range& ) {
-            value = get_image_preset_id(new_value);
-        }
-    };
 }

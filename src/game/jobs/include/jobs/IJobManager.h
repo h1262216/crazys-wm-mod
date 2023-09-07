@@ -47,7 +47,16 @@ public:
     const std::string& get_job_brief(JOBS job) const;
     bool is_full_time(JOBS job) const;
 
-    virtual void setup() = 0;
+    /// does the pre-shift setup part of the job processing
+    virtual void handle_pre_shift(sGirlShiftData& shift) = 0;
+    virtual void handle_main_shift(sGirlShiftData& shift) = 0;
+    virtual void handle_post_shift(sGirlShiftData& shift) = 0;
+
+    virtual void setup(const std::function<void(std::string)>& callback) = 0;
+
+    /// Checks if the job assignment is valid. If yes, updates `girl`s job and returns true.
+    /// Otherwise, returns false.
+    virtual bool assign_job(sGirl& girl, JOBS job, EJobShift shift) const = 0;
 
     // Job-Filter data
     virtual const sJobFilter& get_filter(EJobFilter filter) const = 0;

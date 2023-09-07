@@ -31,7 +31,9 @@ struct sBrothel;
 struct sGang;
 class sCustomer;
 class cBuilding;
+class cGenericJob;
 class IGenericJob;
+class sGirlShiftData;
 
 struct sFilm
 {
@@ -70,29 +72,42 @@ class cJobManager : public IJobManager
 public:
     cJobManager();
     ~cJobManager() override;
+    ///////////////// TODO LEGACY
     sWorkJobResult do_job(sGirl& girl, bool is_night);
     sWorkJobResult do_job(JOBS job, sGirl& girl, bool is_night);
-    bool job_filter(int Filter, JOBS jobs) const;
-
-    const IGenericJob* get_job(JOBS job) const override;
-    const sJobFilter& get_filter(EJobFilter filter) const override;
-
-    bool is_free_only(JOBS job) const;
-
-    /// does the pre-shift setup part of the job processing
-    void handle_pre_shift(sGirl& girl, bool is_night);
-
     // does the whole package of job processing: Runs the job, in case of refusal creates an event, and processes
     // pay for the building.
     void handle_simple_job(sGirl& girl, bool is_night);
 
-    std::array<sJobFilter, NUMJOBTYPES> JobFilters;
-
     // return a job description along with a count of how many girls are on it
     bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments
 
+    /// does the pre-shift setup part of the job processing
+    void handle_pre_shift(sGirl& girl, bool is_night);
+    /////////////////
+
+    bool job_filter(int Filter, JOBS jobs) const;
+
+    const IGenericJob* get_job(JOBS job) const override;
+
+    bool is_free_only(JOBS job) const;
+
+    /// does the pre-shift setup part of the job processing
+    void handle_pre_shift(sGirlShiftData& shift) override {};
+
+    void handle_main_shift(sGirlShiftData& shift) override {};
+
+    void handle_post_shift(sGirlShiftData& shift) override {};
+
+    const sJobFilter& get_filter(EJobFilter filter) const override;
+
+    bool assign_job(sGirl& girl, JOBS job, EJobShift shift) const override {};
+
+    std::array<sJobFilter, NUMJOBTYPES> JobFilters;
+
     EJobFilter get_filter_id(const std::string& name) const;
-    void setup() override;
+
+    void setup(const std::function<void(std::string)>& callback) override;
 
     // - stuff that does processing for jobs
     static bool AddictBuysDrugs(std::string Addiction, std::string Drug, sGirl& girl, cBuilding* brothel, bool Day0Night1);
@@ -110,7 +125,7 @@ public:
     static sCustomer GetMiscCustomer(cBuilding& brothel);
 
     bool is_job_Paid_Player(JOBS Job);        //    WD:    Test for all jobs paid by player
-    sPaymentData CalculatePay(sGirl& girl, sWorkJobResult pay);
+    sPaymentData CalculatePay(sGirlShiftData& shift) const;
 
     static bool is_Surgery_Job(int testjob);
 
@@ -118,5 +133,5 @@ public:
 
     std::vector<std::unique_ptr<IGenericJob>> m_OOPJobs;
 
-    void register_job(std::unique_ptr<IGenericJob> job);
+    void register_job(std::unique_ptr<cGenericJob> job);
 };

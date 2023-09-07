@@ -28,6 +28,7 @@
 #include "traits/ITraitsManager.h"
 #include "traits/ITraitSpec.h"
 #include "traits/ITraitsCollection.h"
+#include "jobs.h"
 
 extern cRng g_Dice;
 
@@ -139,7 +140,7 @@ namespace {
         if(value < lower)
             return 0;
         if(value < upper) {
-            return std::min(10, (100 * (value - lower)) / (upper - lower));
+            return std::max(10, (100 * (value - lower)) / (upper - lower));
         }
         return 100;
     }
@@ -162,8 +163,9 @@ void cJobGains::gain_traits(sGirl& girl, int performance) const {
             int factor = lin_factor(performance, change.PerformanceRequirementMin, change.PerformanceRequirementMax);
 
             for(auto& cond : change.Conditions) {
-                int value = girl.get_attribute(cond.Attribute);
-                int new_factor = lin_factor(value, cond.LowerBound, cond.UpperBound);
+                int new_factor = check_condition_fraction(cond, girl);
+                if(new_factor > 0 && new_factor < 10)
+                    new_factor = 10;
                 factor = std::min(factor, new_factor);
             }
 
@@ -206,7 +208,7 @@ namespace {
                 amount.PerformanceRequirementMin = lower;
                 amount.PerformanceRequirementMax = upper;
             } else {
-                amount.Conditions.push_back(sTraitChange::sAttributeCondition{get_stat_skill_id(what), lower, upper});
+                amount.Conditions.push_back(sAttributeCondition{get_stat_skill_id(what), lower, upper, sAttributeCondition::AT_LEAST});
             }
         }
         return amount;
@@ -259,5 +261,28 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
         float max = stat_skill.FloatAttribute("Max", -100);
         auto skill = get_stat_id(GetStringAttribute(stat_skill, "Name"));
         Gains.push_back({skill, weight, min, max});
+    }
+}
+
+bool is_refused(ECheckWorkResult result) {
+    switch (result) {
+        case ECheckWorkResult::REFUSE_HATE:
+        case ECheckWorkResult::REFUSE_DIGNITY:
+        case ECheckWorkResult::REFUSE_FEAR:
+        case ECheckWorkResult::REFUSE_HORNY:
+        case ECheckWorkResult::REFUSES:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool is_impossible(ECheckWorkResult result) {
+    switch (result) {
+        case ECheckWorkResult::IMPOSSIBLE:
+        case ECheckWorkResult::INVALID:
+            return true;
+        default:
+            return false;
     }
 }

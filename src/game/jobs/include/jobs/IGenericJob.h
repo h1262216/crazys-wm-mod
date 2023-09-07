@@ -20,22 +20,17 @@
 #ifndef WM_IGENERICJOB_H
 #define WM_IGENERICJOB_H
 
-#include <vector>
-#include <memory>
-#include <sstream>
-#include "cJobManager.h"
 #include "Constants.h"
-#include <boost/variant.hpp>
-
-namespace tinyxml2 {
-    class XMLElement;
-}
-
-
-using StatSkill = boost::variant<STATS, SKILLS>;
+#include "images/sImageSpec.h"
+#include <vector>
+#include "jobs.h"
+#include "sAttributeCondition.h"
 
 class sGirl;
+class IBuildingShift;
 class cRng;
+struct sGirlShiftData;
+class cGirlShift;
 
 struct sJobInfo {
     JOBS        JobId;
@@ -43,12 +38,28 @@ struct sJobInfo {
     std::string ShortName;
     std::string Description;
 
-    bool FullTime = false;
+    EJobShift Shift = EJobShift::ANY;
     bool FreeOnly = false;
+    bool Singleton = false;
+    bool IsFightingJob = false;
+
+    int BaseWages = 0;
+
+    /// The primary action whose enjoyment value determines if she likes the job
+    EActivity PrimaryAction = EActivity::GENERIC;
+    /// The secondary action whose enjoyment value determines if she likes the job
+    EActivity SecondaryAction = EActivity::GENERIC;
+    /// An offset added to the enjoyment calculation
+    int BaseEnjoyment = 0;
+    /// A trait modifier for the enjoyment of this job
+    std::string EnjoymentTraitModifier;
+
+    sImagePreset DefaultImage = EImageBaseType::PROFILE;
 
     std::vector<std::string> Consumes;
     std::vector<std::string> Provides;
     std::vector<EJobFilter> Filters;
+    std::vector<vGirlCondition> Conditions;
 };
 
 struct sJobValidResult {
@@ -60,102 +71,42 @@ struct sJobValidResult {
 /*!
  * \brief Base class for all girl jobs.
  * \details Here, we use the word `job` in a wide sense. Girl jobs include having free time, or receiving treatment or
- * surgery. Essentially, any activity the girls do during the day and night shifts.
+ * surgery. Essentially, any activity the girls do during the day and night shifts. The `IGenericJob` interface
+ * defines the interface to be used for anything that interacts with a given job.
+ * Implementations of jobs should derive from `cGenericJob`, which also provides a variety of protected methods that
+ * are useful for job implementations, and contains the data that is required of all job objects.
  */
 class IGenericJob {
 public:
-    enum class EJobClass {
-        REGULAR_JOB, TREATMENT
-    };
-    explicit IGenericJob(JOBS j, std::string xml_file = {}, EJobClass job_class = EJobClass::REGULAR_JOB);
     virtual ~IGenericJob() noexcept = default;
 
     // queries
-    const sJobInfo& get_info() const { return m_Info; }
-    JOBS job() const { return m_Info.JobId; }
+    virtual const sJobInfo& get_info() const = 0;
+    JOBS job() const { return get_info().JobId; }
 
     /// Gets an estimate or actual value of how well the girl performs at this job
     virtual double GetPerformance(const sGirl& girl, bool estimate) const = 0;
 
     /// Checks whether the given girl can do this job.
-    virtual sJobValidResult is_job_valid(const sGirl& girl) const;
+    virtual sJobValidResult IsJobValid(const sGirl& girl, bool night_shift) const = 0;
 
     /// Handles simple pre-shift setup, before any actual jobs are run.
     /// Note: This function cannot handle any
     /// stateful job processing. Multiple `PreShift` calls for different
     /// girls might happen before the corresponding `Work` calls.
-    virtual void PreShift(sGirl& girl, bool is_night, cRng& rng) const {};
+    virtual void PreShift(sGirlShiftData& shift) = 0;
 
     /// Lets the girl do the job
-    sWorkJobResult Work(sGirl& girl, bool is_night, cRng& rng);
+    virtual void Work(sGirlShiftData& shift) = 0;
 
-    /// called by the job manager when the job gets registered.
-    void OnRegisterJobManager(const cJobManager& manager);
-protected:
-    std::stringstream ss;
+    /// Handles stuff after the actual work is done, e.g. generating a summary message
+    virtual void PostShift(sGirlShiftData& shift) = 0;
 
-    // random functions
-    cRng& rng() { return *m_Rng; }
-    int d100() const;
-    bool chance(float percent) const;
-    int uniform(int min, int max) const;
+    virtual void HandleCustomer(sGirl& girl, IBuildingShift& building, bool is_night, cRng& rng) const {};
+    virtual void HandleInteraction(sGirlShiftData& interactor, sGirlShiftData& target) const {};
 
-    enum class eCheckWorkResult {
-        REFUSES,
-        ACCEPTS,
-        IMPOSSIBLE
-    };
-
-    sGirl& active_girl() const;
-    bool is_night_shift() const;
-
-    // resources
-    //  bulk resources
-    /// Consumes up to `amount` points of the given resource. If less is available,
-    /// that amount will we consumed. Returns the amount of actual consumption.
-    int ConsumeResource(const std::string& name, int amount);
-
-    /// Provides `amount` points of the given resource.
-    void ProvideResource(const std::string& name, int amount);
-
-    /// Tries to consume `amount` of the given resource. If not enough is available,
-    /// no resource is consumed and false is returned.
-    bool TryConsumeResource(const std::string& name, int amount);
-
-    //  one-on-one interactions
-    void ProvideInteraction(const std::string& name, int amount) const;
-    sGirl* RequestInteraction(const std::string& name);
-
-    bool HasInteraction(const std::string& name) const;
-
-private:
-    virtual void InitWork() {}
-    virtual sWorkJobResult DoWork(sGirl& girl, bool is_night) = 0;
-
-    /*! Checks whether the girl will work. There are two reasons why she might not:
-        She could refuse, or the job could not be possible because of external
-        circumstances. This function should report which reason applies.
-    */
-    virtual eCheckWorkResult CheckWork(sGirl& girl, bool is_night) = 0;
-
-    cRng* m_Rng;
-    sGirl* m_ActiveGirl;
-    bool m_CurrentShift;
-
-    const cJobManager* m_JobManager = nullptr;
-
-    /// If the job has specified an xml file, this function will load the job data from there. If no file is
-    /// specified, nothing happens.
-    /// Note: Since this may call virtual functions, we cannot do this in the constructor.
-    /// Therefore, this is called when the job is registered to the JobManager
-    void load_job();
-    virtual void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) { };
-    std::string m_XMLFile;
-    EJobClass m_JobClass;
-protected:
-    sJobInfo m_Info;
-
-    friend class cJobTextInterface;
+    virtual bool has_text(const std::string& prompt) const = 0;
+    virtual const std::string& get_text(const std::string& prompt, cGirlShift& shift) const = 0;
 };
 
 #endif //WM_IGENERICJOB_H
