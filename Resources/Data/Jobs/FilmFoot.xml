@@ -4,6 +4,12 @@
         She will perform in a foot job scene.
     </Description>
 
+    <Config DefaultImage="Foot">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="20" Dignity="25" />
+        <Pleasure Amount="10" SkillMin="20" BaseValue="5" Skill="Footjob" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -36,10 +42,6 @@
             <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing">
-        <LustInfluence Amount="10" SkillMin="20" BaseValue="5" Skill="Footjob" />
-    </Config>
 
     <Messages>
         <Message Name="work">

@@ -3,6 +3,12 @@
     <Description>
         She will be filmed preparing food. And talking slowly. Sensuously. In sexy outfits. Because no reason.
     </Description>
+
+    <Config DefaultImage="Cook">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" SecondaryAction="Cooking" />
+        <Obedience Difficulty="10" />
+    </Config>
+
     <Performance Modifier=".performance">
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -85,9 +91,6 @@
             <Text>${name} has become an Idol, adored by her fans and followers.</Text>
         </GainTrait>
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Cooking">
-    </Config>
 
     <Messages>
         <Message Name="work">

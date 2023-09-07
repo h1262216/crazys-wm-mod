@@ -4,6 +4,11 @@
         She will clean up the filmed scenes. One Purifier can process at most 3 scenes per week.
     </Description>
 
+    <Config DefaultImage="CrystalPurifier" BaseWages="50">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Crafting" SecondaryAction="Mental" />
+        <Filter>StudioCrew</Filter>
+    </Config>
+
     <Performance>
         <Factor Stat="Confidence" Weight="1"/>
         <Factor Stat="Refinement" Weight="1"/>

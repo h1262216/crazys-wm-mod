@@ -4,6 +4,12 @@
         She will film a normal sex scene.
     </Description>
 
+    <Config DefaultImage="Sex" CanBeForced="1">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="25" Dignity="30" />
+        <Pleasure Amount="20" SkillMin="25" BaseValue="15" Skill="NormalSex" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="1"/>
         <Factor Stat="Beauty" Weight="2"/>
@@ -50,10 +56,6 @@
             <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing" CanBeForced="1">
-        <LustInfluence Amount="20" SkillMin="25" BaseValue="15" Skill="NormalSex" />
-    </Config>
 
     <Messages>
         <Message Name="work">

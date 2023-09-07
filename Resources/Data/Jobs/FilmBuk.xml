@@ -4,6 +4,12 @@
         A large group of men will cum on, over and inside her.
     </Description>
 
+    <Config DefaultImage="Bukkake" CanBeForced="1">
+        <Enjoyment BaseEnjoyment="-20" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="30" Dignity="35" />
+        <Pleasure Amount="10" SkillMin="0" BaseValue="20" Skill="Group" />
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="2"/>
         <Factor Stat="Charisma" Weight="1"/>
@@ -78,10 +84,6 @@
         </LoseTrait>
 
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing" CanBeForced="1">
-        <LustInfluence Amount="10" SkillMin="0" BaseValue="20" Skill="Group" />
-    </Config>
 
     <Messages>
         <Message Name="work">

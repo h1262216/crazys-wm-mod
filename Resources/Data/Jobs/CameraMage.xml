@@ -4,6 +4,11 @@
         She will film the scenes. One CameraMage can film at most 3 scenes per week.
     </Description>
 
+    <Config DefaultImage="CameraMage" BaseWages="50">
+        <Enjoyment BaseEnjoyment="10" PrimaryAction="Crafting" SecondaryAction="Mental" />
+        <Filter>StudioCrew</Filter>
+    </Config>
+
     <Performance>
         <Factor Stat="Spirit" Weight="1"/>
         <Factor Stat="Confidence" Weight="1"/>

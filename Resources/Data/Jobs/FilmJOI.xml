@@ -3,6 +3,12 @@
     <Description>
         She will give jerk-off instructions to her viewers.
     </Description>
+
+    <Config DefaultImage="Ecchi">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" SecondaryAction="Stripping" />
+        <Obedience Difficulty="10" Dignity="10" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Beauty" Weight="2"/>
@@ -32,9 +38,6 @@
         <Stat Name="Charisma" Weight="1" Max="50"/>
         <Stat Name="Confidence" Weight="1" Max="50" />
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Stripping">
-    </Config>
 
     <Messages>
         <Message Name="work">

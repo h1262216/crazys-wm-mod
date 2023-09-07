@@ -1,21 +1,22 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2009-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 #include <sstream>
 #include <buildings/studio/cMovieStudio.h>
@@ -34,124 +35,113 @@ extern const char* const StageHandPtsId;
 class cJobCameraMage : public cCrewJob {
 public:
     cJobCameraMage();
-    void HandleUpdate(sGirl& girl, float performance) override {
-        ProvideInteraction(CamMageInteractionId, 3);
+    void HandleUpdate(cGirlShift& shift) const override {
+        shift.provide_interaction(CamMageInteractionId, 3);
     }
 };
 
 class cJobCrystalPurifier : public cCrewJob {
 public:
     cJobCrystalPurifier();
-    void HandleUpdate(sGirl& girl, float performance) override {
-        ProvideInteraction(CrystalPurifierInteractionId, 3);
+    void HandleUpdate(cGirlShift& shift) const override {
+        shift.provide_interaction(CrystalPurifierInteractionId, 3);
     }
 };
 
 class cJobFluffer : public cCrewJob {
 public:
     cJobFluffer();
-    void HandleUpdate(sGirl& girl, float performance) override;
+    void HandleUpdate(cGirlShift& shift) const override;
 
 };
 
 class cJobDirector : public cCrewJob {
 public:
     cJobDirector();
-    void HandleUpdate(sGirl& girl, float performance) override {
-        ProvideInteraction(DirectorInteractionId, 3);
+    void HandleUpdate(cGirlShift& shift) const override {
+        shift.provide_interaction(DirectorInteractionId, 3);
     };
 
 };
 
-bool cCrewJob::CheckCanWork(sGirl& girl, bool is_night) {
-    auto brothel = girl.m_Building;
-    if (brothel->num_girls_on_job(JOB_CAMERAMAGE, SHIFT_NIGHT) == 0 || brothel->num_girls_on_job(JOB_CRYSTALPURIFIER, SHIFT_NIGHT) == 0)
+bool cCrewJob::CheckCanWork(cGirlShift& shift) const {
+    if (shift.building().num_girls_on_job(JOB_CAMERAMAGE, SHIFT_NIGHT) == 0 || shift.building().num_girls_on_job(JOB_CRYSTALPURIFIER, SHIFT_NIGHT) == 0)
     {
-        add_text("no-crew");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
-        return false;    // not refusing
+        shift.add_text("no-crew");
+        return false;
     }
-    else if (GetNumberActresses(*brothel) < 1)
+    else if (GetNumberActresses(shift.building()) < 1)
     {
-        add_text("no-actress");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
-        return false;    // not refusing
+        shift.add_text("no-actress");
+        return false;
     }
     return true;
 }
 
-bool cCrewJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    m_Wages = 50;
-
+void cCrewJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     // slave girls not being paid for a job that normally you would pay directly for do less work
+    int performance = shift.performance();
     if (girl.is_unpaid())
     {
-        m_Performance *= 0.9;
+        performance *= 0.9;
     }
     else    // work out the pay between the house and the girl
     {
         // `J` zzzzzz - need to change pay so it better reflects how well she filmed the films
-        int roll_max = m_Performance;
+        int roll_max = performance;
         roll_max /= 4;
-        m_Wages += uniform(10, 10 + roll_max);
+        shift.data().Wages += shift.uniform(10, 10 + roll_max);
     }
 
-    if (m_Performance >= 166)
+    if (performance >= 166)
     {
-        add_text("work.perfect");
+        shift.add_text("work.perfect");
     }
-    else if (m_Performance >= 133)
+    else if (performance >= 133)
     {
-        add_text("work.great");
+        shift.add_text("work.great");
     }
-    else if (m_Performance >= 100)
+    else if (performance >= 100)
     {
-        add_text("work.good");
+        shift.add_text("work.good");
     }
-    else if (m_Performance >= 66)
+    else if (performance >= 66)
     {
-        add_text("work.ok");
+        shift.add_text("work.ok");
     }
-    else if (m_Performance >= 33)
+    else if (performance >= 33)
     {
-        add_text("work.bad");
+        shift.add_text("work.bad");
     }
     else
     {
-        add_text("work.worst");
+        shift.add_text("work.worst");
     }
 
-    girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    HandleUpdate(girl, m_Performance);
-
-    // Improve stats
-    apply_gains(girl, m_Performance);
-
-    return false;
+    HandleUpdate(shift);
 }
 
 
-cJobCameraMage::cJobCameraMage() : cCrewJob(JOB_CAMERAMAGE, "CameraMage.xml", {EActivity::CRAFTING, 50, EImageBaseType::CAMERA_MAGE}) {
+cJobCameraMage::cJobCameraMage() : cCrewJob(JOB_CAMERAMAGE, "CameraMage.xml") {
     m_Info.Provides.emplace_back(CamMageInteractionId);
 }
 
-cJobCrystalPurifier::cJobCrystalPurifier() : cCrewJob(JOB_CRYSTALPURIFIER, "CrystalPurifier.xml", {EActivity::CRAFTING, 50, EImageBaseType::PURIFIER}) {
+cJobCrystalPurifier::cJobCrystalPurifier() : cCrewJob(JOB_CRYSTALPURIFIER, "CrystalPurifier.xml") {
     m_Info.Provides.emplace_back(CrystalPurifierInteractionId);
 }
 
-cJobFluffer::cJobFluffer() : cCrewJob(JOB_FLUFFER, "Fluffer.xml", {EActivity::FUCKING, 50, EImagePresets::BLOWJOB}) {
+cJobFluffer::cJobFluffer() : cCrewJob(JOB_FLUFFER, "Fluffer.xml") {
     m_Info.Provides.emplace_back(FluffPointsId);
 }
 
-void cJobFluffer::HandleUpdate(sGirl& girl, float performance) {
-    ProvideResource(FluffPointsId, (int)performance);
+void cJobFluffer::HandleUpdate(cGirlShift& shift) const {
+    shift.provide_resource(FluffPointsId, shift.performance());
 }
 
-cJobDirector::cJobDirector() : cCrewJob(JOB_DIRECTOR, "Director.xml", {EActivity::CRAFTING, 50, EImageBaseType::DIRECTOR}) {
+cJobDirector::cJobDirector() : cCrewJob(JOB_DIRECTOR, "Director.xml") {
     m_Info.Provides.emplace_back(DirectorInteractionId);
 }
-
+/*
 class cJobStageHand : public cBasicJob {
 public:
     cJobStageHand() : cBasicJob(JOB_STAGEHAND) {
@@ -308,11 +298,11 @@ double cJobStageHand::GetPerformance(const sGirl& girl, bool estimate) const {
     return jobperformance;
 }
 
-
+*/
 void RegisterFilmCrewJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<cJobCameraMage>());
     mgr.register_job(std::make_unique<cJobFluffer>());
     mgr.register_job(std::make_unique<cJobCrystalPurifier>());
     mgr.register_job(std::make_unique<cJobDirector>());
-    mgr.register_job(std::make_unique<cJobStageHand>());
+    //mgr.register_job(std::make_unique<cJobStageHand>());
 }

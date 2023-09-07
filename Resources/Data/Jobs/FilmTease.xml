@@ -4,6 +4,13 @@
         She will flirt and remove her clothes and tease seductively, but won't show all. If you freeze-frame you might just catch a nipple.
     </Description>
 
+    <Config DefaultImage="Ecchi">
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" SecondaryAction="Stripping" />
+        <Obedience Difficulty="10" Dignity="5" />
+        <Pleasure Amount="5" SkillMin="5" BaseValue="5" Skill="Strip" />
+    </Config>
+
+
     <Performance>
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -87,10 +94,6 @@
             <Text>Flirting with the camera has helped ${name} overcome her Chasteness.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Stripping">
-        <LustInfluence Amount="5" SkillMin="5" BaseValue="5" Skill="Strip" />
-    </Config>
 
     <Messages>
         <Message Name="work">

@@ -4,6 +4,14 @@
         She will be used in gag and face-fuck scenes.
     </Description>
 
+    <Config DefaultImage="DeepThroat" MinimumHealth="25" CanBeForced="1">
+        <Enjoyment BaseEnjoyment="10" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="35" />
+        <Pleasure Amount="15" SkillMin="50" BaseValue="30" Skill="OralSex" />
+    </Config>
+
+
+
     <Performance>
         <Factor Stat="Beauty" Weight="2"/>
         <Factor Stat="Charisma" Weight="1"/>
@@ -76,10 +84,6 @@
                 ${name} has lost her Iron Will.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing" MinimumHealth="25" CanBeForced="1">
-        <LustInfluence Amount="15" SkillMin="50" BaseValue="30" Skill="OralSex" />
-    </Config>
 
     <Messages>
         <Message Name="work">

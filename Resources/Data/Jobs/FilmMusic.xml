@@ -3,6 +3,12 @@
     <Description>
         She will make a music video.
     </Description>
+
+    <Config DefaultImage="Sing">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" />
+        <Obedience Difficulty="10" />
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="1"/>
         <Factor Stat="Charisma" Weight="2"/>
@@ -77,9 +83,6 @@
             <Text>Performing in a music video makes ${name} a really Cool Person.</Text>
         </GainTrait>
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Crafting">
-    </Config>
 
     <Messages>
         <Message Name="work">

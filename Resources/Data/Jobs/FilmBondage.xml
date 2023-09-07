@@ -4,6 +4,12 @@
         She will perform in a bondage scene.
     </Description>
 
+    <Config DefaultImage="BDSM" MinimumHealth="40" RefuseIfPregnant="1" CanBeForced="1">
+        <Enjoyment BaseEnjoyment="-20" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="35" Dignity="50" Fear="33" />
+        <Pleasure Amount="20" SkillMin="33" BaseValue="30" Skill="BDSM" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="1"/>
         <Factor Stat="Beauty" Weight="2"/>
@@ -93,10 +99,6 @@
             <Text>Being repeatedly fucked and abused in bondage seems to have broken ${name}'s Iron Will.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing" MinimumHealth="40" RefuseIfPregnant="1" CanBeForced="1">
-        <LustInfluence Amount="20" SkillMin="33" BaseValue="30" Skill="BDSM" />
-    </Config>
 
     <Messages>
         <Message Name="work">

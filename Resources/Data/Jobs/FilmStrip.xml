@@ -4,6 +4,12 @@
         She will perform in a strip tease scene.
     </Description>
 
+    <Config DefaultImage="Strip">
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Stripping" SecondaryAction="Performing" />
+        <Obedience Difficulty="10" Dignity="15" />
+        <Pleasure Amount="5" SkillMin="5" BaseValue="5" Skill="Strip" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="1"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -40,9 +46,6 @@
         </LoseTrait>
     </Gains>
 
-    <Config PrimaryAction="Stripping" SecondaryAction="Performing">
-        <LustInfluence Amount="5" SkillMin="5" BaseValue="5" Skill="Strip" />
-    </Config>
 
     <!--
     ### Instruction:

@@ -3,6 +3,12 @@
     <Description>
         She will star in a comedy movie.
     </Description>
+
+    <Config  DefaultImage="Profile">
+        <Enjoyment BaseEnjoyment="10" PrimaryAction="Performing" SecondaryAction="Social" />
+        <Obedience Difficulty="10" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -62,9 +68,6 @@
             <Text>Performing in a comedy movie makes ${name} a really Cool Person.</Text>
         </GainTrait>
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Social">
-    </Config>
 
     <Messages>
         <Message Name="work">

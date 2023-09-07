@@ -33,32 +33,21 @@ extern const char* const CrystalPurifierInteractionId;
 extern const char* const FluffPointsId;
 extern const char* const StageHandPtsId;
 
-auto cFilmSceneJob::CheckWork(sGirl& girl, bool is_night) -> eCheckWorkResult {
-    if(!CheckCanWork(girl)) {
-        return IGenericJob::eCheckWorkResult::IMPOSSIBLE;
-    }
-
-    if(CheckRefuseWork(girl)) {
-        return IGenericJob::eCheckWorkResult::REFUSES;
-    }
-
-    return IGenericJob::eCheckWorkResult::ACCEPTS;
-}
-
-bool cFilmSceneJob::CheckCanWork(sGirl& girl) {
-    auto* brothel = dynamic_cast<sMovieStudio*>(girl.m_Building);
+bool cFilmSceneJob::CheckCanWork(cGirlShift& shift) const {
+    auto& girl = shift.girl();
+    auto brothel = dynamic_cast<sMovieStudio*>(&shift.building());
     if(!brothel) {
-        g_LogFile.error("jobs", girl.FullName(), " was not at the movie studio when doing movie job.");
+        g_LogFile.error("jobs", shift.girl().FullName(), " was not at the movie studio when doing movie job.");
         return false;
     }
 
-    // No film crew.. then go home
-    if (!HasInteraction(DirectorInteractionId) ||
-        !HasInteraction(CamMageInteractionId)  ||
-        !HasInteraction(CrystalPurifierInteractionId) )
+    // No film crew... then go home
+    if (!shift.has_interaction(DirectorInteractionId) ||
+        !shift.has_interaction(CamMageInteractionId)  ||
+        !shift.has_interaction(CrystalPurifierInteractionId) )
     {
         if(brothel->NumInteractors(DirectorInteractionId) != 0 && brothel->NumInteractors(CamMageInteractionId) != 0 &&
-        brothel->NumInteractors(CrystalPurifierInteractionId) != 0) {
+           brothel->NumInteractors(CrystalPurifierInteractionId) != 0) {
             girl.AddMessage("There were more scenes scheduled for filming today than you crew could handle. ${name} took the day off.",
                             EImageBaseType::PROFILE, EVENT_NOWORK);
         } else {
@@ -67,29 +56,27 @@ bool cFilmSceneJob::CheckCanWork(sGirl& girl) {
         }
         // still, we notify the building that we wanted these interactions.
         // TODO maybe have a separate function for this.
-        RequestInteraction(DirectorInteractionId);
-        RequestInteraction(CamMageInteractionId);
-        RequestInteraction(CrystalPurifierInteractionId);
+        shift.request_interaction(DirectorInteractionId);
+        shift.request_interaction(CamMageInteractionId);
+        shift.request_interaction(CrystalPurifierInteractionId);
         return false;
     }
 
     // other conditions in which she cannot work:
     if (girl.health() < m_MinimumHealth)
     {
-        add_text("crew.refuse.health");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
+        shift.add_text("crew.refuse.health");
         return false;
     }
 
     if(m_RefuseIfPregnant && girl.is_pregnant()) {
-        add_text("crew.refuse.pregnant");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
+        shift.add_text("crew.refuse.pregnant");
         return false;
     }
 
     // check sex type
-    if(m_PleasureFactor.Skill != NUM_SKILLS) {
-        if(!girl.is_sex_type_allowed(m_PleasureFactor.Skill)) {
+    if(m_Pleasure.Skill != NUM_SKILLS) {
+        if(!girl.is_sex_type_allowed(m_Pleasure.Skill)) {
             girl.AddMessage("A scene of this type cannot be filmed, because you have forbidden the corresponding sex type.",
                             EImageBaseType::PROFILE, EVENT_NOWORK);
             return false;
@@ -119,123 +106,69 @@ namespace {
     }
 }
 
+bool cFilmSceneJob::CheckRefuseWork(cGirlShift& shift) const {
 
-sFilmObedienceData cFilmSceneJob::CalcChanceToObey(const sGirl& girl) const {
-    int base_chance = 100 - cGirls::GetRebelValue(girl, job());
-    base_chance /= 2;      // get a conventional percentage value
-
-    int lust = lust_influence(m_PleasureFactor, girl);
-    int enjoy = (2 * girl.enjoyment(m_PrimaryAction) + girl.enjoyment(m_SecondaryAction)) / 3;
-    int love_fear = (girl.pclove() + girl.pcfear()) / 10;
-
-    if(get_category(m_SceneType) == SceneCategory::TEASE) {
-        base_chance += 10;
-    } else if(get_category(m_SceneType) == SceneCategory::EXTREME) {
-        base_chance -= 10;
-    }
-
-    return {base_chance, lust, enjoy, love_fear};
-}
-
-bool cFilmSceneJob::CheckRefuseWork(sGirl& girl) {
-    // since a scene job combines multiple actions, we cannot use the normal disobey_check code
-    auto obey = CalcChanceToObey(girl);
-
-    m_Dbg_Msg << "Obedience:\n  Basic Value " << obey.Base << "\n";
-    m_Dbg_Msg << "  Lust " << obey.Lust << "\n";
-    m_Dbg_Msg << "  Enjoy " << obey.Enjoy << "\n";
-    m_Dbg_Msg << "  Love/Hate " << obey.LoveHate << "\n";
-
-    int chance_to_obey = obey.total();
-
-
-    // TODO add trait based values
-
-    int roll = g_Dice.d100();                                // let's get a percentage roll
-    m_Dbg_Msg << "           Total " << chance_to_obey << " " << roll << "\n";
-    int diff = chance_to_obey - roll;
-    bool girl_obeys = (diff >= 0);
-    if (girl_obeys)                                            // there's a price to be paid for relying on love or fear
-    {
-        if (diff < (girl.pclove() / 10)) girl.pclove(-1);    // if the only reason she obeys is love it wears away that love
-        if (diff < (girl.pcfear() / 10)) girl.pclove(-1);    // just a little bit. And if she's only doing it out of fear, she will hate you more
-    }
-
-    // if she doesn't want to do it, but still works, her enjoyment decreases
-    m_Dbg_Msg << "Enjoyment: \n  Init " << m_Enjoyment << "\n";
-    m_Dbg_Msg << "  Libido " << lust_influence(m_PleasureFactor, girl) << "\n";
-    m_Dbg_Msg << "  Base " << (2*(2 * girl.enjoyment(m_PrimaryAction) + girl.enjoyment(m_SecondaryAction)) / 3) / 3 << "\n";
-    m_Enjoyment += lust_influence(m_PleasureFactor, girl);
-    m_Enjoyment += (2*(2 * girl.enjoyment(m_PrimaryAction) + girl.enjoyment(m_SecondaryAction)) / 3) / 3;
-    if(chance_to_obey < 60) {
-        m_Enjoyment += (chance_to_obey - 60) / 10;
-        m_Dbg_Msg << "  Obey " << (chance_to_obey - 60) / 10 << "\n";
-    }
-
-    if (!girl_obeys)
-    {
+    disobey_check(shift);
+    if(shift.data().Refused != ECheckWorkResult::ACCEPTS) {
         if(m_CanBeForced) {
-            return RefusedTieUp(girl);
-        } else {
-            add_text("refuse");
-            girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
-            produce_debug_message(girl);
+            return RefusedTieUp(shift);
+        } else  {
+            shift.add_text("refuse");
+            return true;
         }
-        return true;
-    } else {
-        add_text("work");
-        return false;
     }
+    return shift.data().Refused != ECheckWorkResult::ACCEPTS;
 }
 
-bool cFilmSceneJob::RefusedTieUp(sGirl& girl) {
+bool cFilmSceneJob::RefusedTieUp(cGirlShift& shift) const {
+    auto& girl = shift.girl();
+    bool is_forced = false;
     if (girl.is_slave())
     {
         if (g_Game->player().disposition() > 30)  // nice
         {
-            add_text("disobey.slave.nice");
+            shift.add_text("disobey.slave.nice");
             girl.pclove(1);
             girl.pcfear(-1);
             girl.pclove(1);
             girl.obedience(-1);
-            girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
             return true;
         }
         else if (g_Game->player().disposition() > -30) //pragmatic
         {
-            add_text("disobey.slave.neutral") << "\n \n";
+            shift.add_text("disobey.slave.neutral");
             girl.pclove(-1);
             girl.pclove(-2);
             girl.pcfear(1);
             g_Game->player().disposition(-1);
-            m_Enjoyment -= 5;
-            m_IsForced = true;
+            shift.data().Enjoyment -= 5;
+            is_forced = true;
         }
         else
         {
-            add_text("disobey.slave.evil")<< "\n \n";
+            shift.add_text("disobey.slave.evil");
             girl.pclove(-4);
             girl.pclove(-5);
             girl.pcfear(+5);
             girl.spirit(-1);
             g_Game->player().disposition(-2);
-            m_Enjoyment -= 10;
-            m_IsForced = true;
+            shift.data().Enjoyment -= 10;
+            is_forced = true;
         }
     }
     else // not a slave
     {
-        add_text("disobey.free");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
+        shift.add_text("disobey.free");
         return true;
     }
 
-    if(m_IsForced) {
+    if(is_forced) {
+        shift.set_variable(m_IsForced_id, 1);
         girl.upd_temp_skill(SKILLS::SKILL_PERFORMANCE, -100);
         girl.upd_temp_stat(STATS::STAT_CHARISMA, -100);
-        m_Dbg_Msg << "Girl is tied. Job performance reduced from " << m_Performance << " to ";
-        m_Performance = GetPerformance(girl, false) - 10;
-        m_Dbg_Msg << m_Performance << "\n";
+        shift.data().DebugMessage << "Girl is tied. Job performance reduced from " << shift.performance() << " to ";
+        shift.data().Performance = GetPerformance(girl, false) - 10;
+        shift.data().DebugMessage << shift.performance() << "\n";
         girl.upd_temp_skill(SKILLS::SKILL_PERFORMANCE, 100);
         girl.upd_temp_stat(STATS::STAT_CHARISMA, 100);
     }
@@ -243,53 +176,58 @@ bool cFilmSceneJob::RefusedTieUp(sGirl& girl) {
     return false;
 }
 
-sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
-    auto brothel = dynamic_cast<sMovieStudio*>(girl.m_Building);
+bool cFilmSceneJob::check_is_forced(const cGirlShift& shift) const {
+    return std::get<int>(shift.get_variable(m_IsForced_id));
+}
+
+void cFilmSceneJob::DoWork(cGirlShift& shift) const {
+    auto brothel = dynamic_cast<sMovieStudio*>(&shift.building());
+    auto& girl = shift.girl();
     assert(brothel);
 
     // pre-work processing
-    PreFilmCallback(girl);
+    PreFilmCallback(shift);
 
-    int roll = d100();
-    if (roll <= 10) { m_Enjoyment -= uniform(1, 4);    }
-    else if (roll >= 90) { m_Enjoyment += uniform(1, 4); }
-    else { m_Enjoyment += uniform(0, 2); }
+    int roll = shift.d100();
+    if (roll <= 10) { shift.data().Enjoyment -= shift.uniform(1, 4);    }
+    else if (roll >= 90) { shift.data().Enjoyment += shift.uniform(1, 4); }
+    else { shift.data().Enjoyment += shift.uniform(0, 2); }
 
     int bonus_enjoy = 0;
-    if (m_Performance >= 200)
+    if (shift.performance() >= 200)
     {
-        bonus_enjoy = uniform(9, 14);
+        bonus_enjoy = shift.uniform(9, 14);
     }
-    else if (m_Performance >= 100)
+    else if (shift.performance() >= 100)
     {
-        int offset = (m_Performance - 100) / 10;
-        bonus_enjoy = uniform(offset / 2, 2 + offset);
+        int offset = (shift.performance() - 100) / 10;
+        bonus_enjoy = shift.uniform(offset / 2, 2 + offset);
     }
     else
     {
-        bonus_enjoy = -uniform(3, 6);
+        bonus_enjoy = -shift.uniform(3, 6);
     }
-    m_Enjoyment += bonus_enjoy;
-    m_Dbg_Msg << "  Perf base Enjoy: " << bonus_enjoy << "\n";
+    shift.data().Enjoyment += bonus_enjoy;
+    shift.data().DebugMessage << "  Perf base Enjoy: " << bonus_enjoy << "\n";
 
-    ss << "\n ";
+    shift.add_literal("\n");
 
     cGirls::UnequipCombat(girl);
 
-    Narrate(girl);
+    Narrate(shift);
 
-    m_Dbg_Msg << "Performance: " << m_Performance << "\n";
+    shift.data().DebugMessage << "Performance: " << shift.performance() << "\n";
 
-    int quality = m_Performance * 85 / 300;
+    int quality = shift.performance() * 85 / 300;
     quality += girl.get_trait_modifier(traits::modifiers::MOVIE_QUALITY);
 
     // post-work text
-    PostFilmCallback(girl);
+    PostFilmCallback(shift);
 
 
     if(m_SexAction != SexAction::NONE) {
         if(girl.lose_trait(traits::VIRGIN)) {
-            ss << "She is no longer a virgin.\n";
+            shift.add_literal("She is no longer a virgin.\n");
             quality += 10;
         }
 
@@ -306,10 +244,11 @@ sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
         }
     }
 
-    ss << "\n";
+    shift.add_literal("\n");
 
     // consequences of forcing are loss of iron will and potential gain of Mind Fucked
-    if (m_IsForced) {
+    bool is_forced = check_is_forced(shift);
+    if (is_forced) {
         cGirls::PossiblyLoseExistingTrait(girl, traits::IRON_WILL, 15, "${name}'s unwilling degradation has shattered her Iron Will.", EImageBaseType::TORTURE);
         cGirls::PossiblyLoseExistingTrait(girl, traits::MIND_FUCKED, 15, "${name}'s has become Mind Fucked from the forced degradation.", EImageBaseType::TORTURE, EVENT_WARNING);
     }
@@ -324,120 +263,78 @@ sWorkJobResult cFilmSceneJob::DoWork(sGirl& girl, bool is_night) {
     }
 
     try {
-        auto& scene = film_scene(g_Game->movie_manager(), girl, quality, m_SceneType, m_IsForced);
+        auto& scene = film_scene(g_Game->movie_manager(), girl, quality, m_SceneType, is_forced);
     } catch (std::runtime_error& error)  {
         g_Game->error(error.what());
     }
 
-    sImageSpec spec = girl.MakeImageSpec(m_EventImage);
-    if(m_IsForced)  spec.IsTied = ETriValue::Yes;
-    girl.AddMessage(ss.str(), spec, EVENT_DAYSHIFT);
-
-    // Improve stats and gain traits
-    apply_gains(girl, m_Performance);
-    update_enjoyment(girl);
-
-    produce_debug_message(girl);
-
-    return {false, 0};
+    // sImageSpec spec = girl.MakeImageSpec(m_EventImage);
+    // if(is_forced)  spec.IsTied = ETriValue::Yes;
+    // TODO handle image spec
+    // girl.AddMessage(ss.str(), spec, EVENT_DAYSHIFT);
+    shift.generate_event();
 }
 
-void cFilmSceneJob::produce_debug_message(sGirl& girl) const {
-//    girl.AddMessage(m_Dbg_Msg.str(), EBaseImage::PROFILE, EVENT_DEBUG);
-}
-
-void cFilmSceneJob::update_enjoyment(sGirl& girl) const {
-    m_Dbg_Msg << "Enjoyment: " << m_Enjoyment << " [" << girl.enjoyment(m_PrimaryAction) << "]\n";
-    int old_enjoyment = girl.enjoyment(m_PrimaryAction);
-    if (m_Enjoyment > old_enjoyment + 2) {
-        int delta = m_Enjoyment - old_enjoyment;
-        if(chance(25 + 5 * delta)) {
-            girl.enjoyment(m_PrimaryAction, uniform(1, delta));
-            std::stringstream enjoy_message;
-            enjoy_message << "${name} had fun working today (" << m_Enjoyment
-                          << "), and now enjoys this job a little more (" << old_enjoyment << " -> " << girl.enjoyment(m_PrimaryAction) << ").";
-            girl.AddMessage(enjoy_message.str(), EImageBaseType::PROFILE, EVENT_GOODNEWS);
-        }
-    } else if (m_Enjoyment < old_enjoyment - 6) {
-        int delta = old_enjoyment - 4 - m_Enjoyment;
-        if(chance(25 + 5 * delta)) {
-            girl.enjoyment(m_PrimaryAction, -uniform(1, 1 + delta));
-            std::stringstream enjoy_message;
-            enjoy_message << "${name} disliked working today (" << m_Enjoyment
-                          << "), and now enjoys this job a little less (" << old_enjoyment << " -> " << girl.enjoyment(m_PrimaryAction) << ").";
-            girl.AddMessage(enjoy_message.str(), EImageBaseType::PROFILE, EVENT_WARNING);
-        }
-    }
-}
-
-void cFilmSceneJob::PrintPerfSceneEval() {
-    if (m_Performance >= 300)
+void cFilmSceneJob::PrintPerfSceneEval(cGirlShift& shift) const {
+    if (shift.performance() >= 300)
     {
-        add_text("work.perfect");
-        ss << "\n\nIt was an excellent scene.";
+        shift.add_text("work.perfect");
+        shift.add_literal("\n\nIt was an excellent scene.");
     }
-    else if (m_Performance >= 220)
+    else if (shift.performance() >= 220)
     {
-        add_text("work.great");
-        ss << "\n\nIt was a great scene.";
+        shift.add_text("work.great");
+        shift.add_literal("\n\nIt was a great scene.");
     }
-    else if (m_Performance >= 175)
+    else if (shift.performance() >= 175)
     {
-        add_text("work.good");
-        ss << "\n\nIt was a good scene.";
+        shift.add_text("work.good");
+        shift.add_literal("\n\nIt was a good scene.");
     }
-    else if (m_Performance >= 135)
+    else if (shift.performance() >= 135)
     {
-        add_text("work.ok");
-        ss << "\n\nIt was an OK scene.";
+        shift.add_text("work.ok");
+        shift.add_literal("\n\nIt was an OK scene.");
         // <Text>Overall, it was an solid scene.</Text>
         // <Text>Overall, it wasn't a bad scene.</Text>
     }
-    else if (m_Performance >= 90)
+    else if (shift.performance() >= 90)
     {
-        add_text("work.bad");
-        ss << "\n\nIt was a bad scene.";
+        shift.add_text("work.bad");
+        shift.add_literal("\n\nIt was a bad scene.");
         // <Text>It wasn't a great scene.</Text>
     }
     else
     {
-        add_text("work.worst");
-        ss << "\n\nIt was an abysmal scene.";
+        shift.add_text("work.worst");
+        shift.add_literal("\n\nIt was an abysmal scene.");
         // <Text>It was a poor scene.</Text>
         //  Terrible scene.
     }
 
-    ss << "\n";
+    shift.add_literal("\n");
 }
 
-void cFilmSceneJob::PrintForcedSceneEval() {
-    add_text("forced-filming");
+void cFilmSceneJob::PrintForcedSceneEval(cGirlShift& shift) const {
+    shift.add_text("forced-filming");
 }
 
-cFilmSceneJob::cFilmSceneJob(JOBS job, const char* xml, sImagePreset event_image, SceneType scene, SexAction sex) :
-    cBasicJob(job, xml), m_EventImage(event_image), m_SceneType(scene), m_SexAction(sex) {
+cFilmSceneJob::cFilmSceneJob(JOBS job, const char* xml, SceneType scene, SexAction sex) :
+    cBasicJob(job, xml), m_SceneType(scene), m_SexAction(sex) {
 
     m_Info.Consumes.emplace_back(DirectorInteractionId);
     m_Info.Consumes.emplace_back(CamMageInteractionId);
     m_Info.Consumes.emplace_back(CrystalPurifierInteractionId);
     m_Info.Consumes.emplace_back(FluffPointsId);
     m_Info.Consumes.emplace_back(StageHandPtsId);
+
+    m_IsForced_id = RegisterVariable("IsForced", 0);
 }
 
 void cFilmSceneJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element) {
-    m_PrimaryAction = get_activity_id( GetStringAttribute(job_element, "PrimaryAction") );
-    m_SecondaryAction = get_activity_id( GetStringAttribute(job_element, "SecondaryAction") );
     m_MinimumHealth = job_element.IntAttribute("MinimumHealth", -100);
     m_RefuseIfPregnant = job_element.IntAttribute("RefuseIfPregnant", 0);
     m_CanBeForced = job_element.IntAttribute("CanBeForced", 0);
-
-    auto li_el = job_element.FirstChildElement("LustInfluence");
-    if(li_el) {
-        m_PleasureFactor.Factor = GetIntAttribute(*li_el, "Amount");
-        m_PleasureFactor.SkillMin = li_el->IntAttribute("SkillMin", 0);
-        m_PleasureFactor.BaseValue = GetIntAttribute(*li_el, "BaseValue");
-        m_PleasureFactor.Skill = get_skill_id(GetStringAttribute(*li_el, "Skill"));
-    }
 
     // check that we have the corresponding text elements
     if(m_CanBeForced) {
@@ -448,35 +345,27 @@ void cFilmSceneJob::load_from_xml_callback(const tinyxml2::XMLElement& job_eleme
     }
 }
 
-void cFilmSceneJob::PostFilmCallback(sGirl& girl) {
+void cFilmSceneJob::PostFilmCallback(cGirlShift& shift) const {
     if(has_text("post-work-event")) {
-        add_text("post-work-event");
+        shift.add_text("post-work-event");
     }
 }
 
-void cFilmSceneJob::PreFilmCallback(sGirl& girl) {
+void cFilmSceneJob::PreFilmCallback(cGirlShift& shift) const {
     if(has_text("pre-work-event")) {
-        add_text("pre-work-event");
+        shift.add_text("pre-work-event");
     }
 }
 
-void cFilmSceneJob::Narrate(sGirl& girl) {
-    if(m_IsForced) {
-        PrintForcedSceneEval();
+void cFilmSceneJob::Narrate(cGirlShift& shift) const {
+    if(check_is_forced(shift)) {
+        PrintForcedSceneEval(shift);
     } else {
-        PrintPerfSceneEval();
+        PrintPerfSceneEval(shift);
     }
-}
-
-void cFilmSceneJob::InitWork() {
-    cBasicJob::InitWork();
-    RegisterVariable("Enjoy", m_Enjoyment);
-    m_IsForced = false;
-    m_Enjoyment = 0;
-    m_Dbg_Msg.str("");
 }
 
 SKILLS cFilmSceneJob::GetSexType() const {
-    return m_PleasureFactor.Skill;
+    return m_Pleasure.Skill;
 }
 

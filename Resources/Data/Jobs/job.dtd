@@ -1,10 +1,25 @@
-<!ELEMENT Job (Description, Performance, Modifiers?, Gains, Config?, Treatment?, Messages?)>
+<!ELEMENT Job (Description, Performance, Modifiers?, Gains, Requirements?, Config?, Treatment?, Messages?)>
 <!ATTLIST Job ShortName CDATA #REQUIRED>
 
 <!ELEMENT Description (#PCDATA)>
 
-<!ELEMENT Config (Filter)>
+<!ELEMENT Requirements (Condition*)>
+<!ATTLIST Requirements FreeOnly (0|1)>
+
+<!ELEMENT Condition EMPTY>
+<!ATTLIST Condition Lower CDATA #IMPLIED Upper CDATA #IMPLIED Attribute CDATA #IMPLIED RequiredTrait CDATA #IMPLIED ForbiddenTrait CDATA #IMPLIED>
+
+<!ELEMENT Config (Filter, Enjoyment, Obedience, Pleasure)>
+<!ATTLIST Config Shift (both|day-only|night-only|full) DefaultImage CDATA #IMPLIED
+        Phase (prepare|produce|main|late) #IMPLIED FightingJob (0|1) #IMPLIED BaseWages CDATA #IMPLIED>
 <!ELEMENT Filter (#PCDATA)>
+<!ELEMENT Enjoyment EMPTY>
+<!ATTLIST Enjoyment PrimaryAction CDATA #IMPLIED SecondaryAction CDATA #IMPLIED BaseEnjoyment CDATA #IMPLIED>
+<!ELEMENT Obedience EMPTY>
+<!ATTLIST Obedience Fear CDATA #IMPLIED Dignity CDATA #IMPLIED Difficulty CDATA #IMPLIED>
+<!ELEMENT Pleasure EMPTY>
+<!ATTLIST Pleasure Amount CDATA SkillMin CDATA BaseValue CDATA Skill CDATA>
+
 
 <!ELEMENT Performance (Factor|Trait|Mod)*>
 <!ATTLIST Performance Modifier CDATA #IMPLIED>

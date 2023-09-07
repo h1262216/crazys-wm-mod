@@ -3,6 +3,13 @@
     <Description>
         She will perform in an oral sex scene.
     </Description>
+
+    <Config DefaultImage="Blowjob">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="20" Dignity="20" />
+        <Pleasure Amount="15" SkillMin="25" BaseValue="10" Skill="OralSex" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -61,10 +68,6 @@
             <Text>${name} no longer is Chaste after having been showered in cum.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing">
-        <LustInfluence Amount="15" SkillMin="25" BaseValue="10" Skill="OralSex" />
-    </Config>
 
     <Messages>
         <Message Name="work">

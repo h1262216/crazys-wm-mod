@@ -4,6 +4,10 @@
         She will gather information about the different target groups of your movie studio.
     </Description>
 
+    <Config DefaultImage="Profile"  BaseWages="50">
+        <Enjoyment PrimaryAction="Social" SecondaryAction="Mental" BaseEnjoyment="0" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Intelligence" Weight="1" Max="50"/>

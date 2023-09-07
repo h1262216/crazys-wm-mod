@@ -4,6 +4,11 @@
         She will be the scantily clad heroine in fighting/magical action scenes.
     </Description>
 
+    <Config DefaultImage="Combat">
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" SecondaryAction="Fighting" />
+        <Obedience Difficulty="10" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="2"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -111,9 +116,6 @@
             <Text>${name} has been having to be sexy for so long she now reeks Sexiness.</Text>
         </GainTrait>
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Fighting">
-    </Config>
 
     <Messages>
         <Message Name="work">

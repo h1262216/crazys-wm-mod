@@ -4,6 +4,12 @@
         She will do a lesbian scene.
     </Description>
 
+    <Config DefaultImage="Lesbian" CanBeForced="1">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="15" Dignity="20" />
+        <Pleasure Amount="25" SkillMin="20" BaseValue="5" Skill="Lesbian" />
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="1"/>
         <Factor Stat="Charisma" Weight="2"/>
@@ -60,10 +66,6 @@
                 ${name} realizes that she is not just turned on by men.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing" CanBeForced="1">
-        <LustInfluence Amount="25" SkillMin="20" BaseValue="5" Skill="Lesbian" />
-    </Config>
 
     <Messages>
         <Message Name="work">

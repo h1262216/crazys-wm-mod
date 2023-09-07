@@ -3,6 +3,12 @@
     <Description>
         She will star in a horror movie.
     </Description>
+
+    <Config DefaultImage="Death">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" />
+        <Obedience Difficulty="10" Dignity="5" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="1"/>
         <Factor Stat="Beauty" Weight="1"/>
@@ -55,9 +61,6 @@
             <Text>Performing in a horror flick makes ${name} a really Cool Person.</Text>
         </GainTrait>
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Fighting">
-    </Config>
 
     <Messages>
         <Message Name="work">

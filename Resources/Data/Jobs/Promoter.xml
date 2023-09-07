@@ -4,6 +4,10 @@
         She advertises the movies.
     </Description>
 
+    <Config DefaultImage="Profile"  BaseWages="50">
+        <Enjoyment PrimaryAction="Social" SecondaryAction="Mental" BaseEnjoyment="0" />
+    </Config>
+
     <Performance>
         <Factor Stat="Charisma" Weight="4"/>
         <Factor Stat="Beauty" Weight="1"/>

@@ -4,6 +4,12 @@
         She will be tied up in a public place, where she will be stripped, whipped, tortured and fully-used. On film.
     </Description>
 
+    <Config DefaultImage="Group_BDSM" MinimumHealth="40" RefuseIfPregnant="1" CanBeForced="1">
+        <Enjoyment BaseEnjoyment="-20" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="45" Dignity="60" Fear="50" />
+        <Pleasure Amount="10" SkillMin="66" BaseValue="50" Skill="BDSM" />
+    </Config>
+
     <Performance>
         <Factor Stat="Constitution" Weight="1"/>
         <Factor Stat="Beauty" Weight="2"/>
@@ -92,10 +98,6 @@
             <Text>Being repeatedly fucked and abused in bondage seems to have broken ${name}'s Iron Will.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing" CanBeForced="1">
-        <LustInfluence Amount="10" SkillMin="66" BaseValue="50" Skill="BDSM" />
-    </Config>
     
     <Messages>
         <Message Name="work">

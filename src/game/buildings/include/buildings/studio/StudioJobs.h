@@ -1,26 +1,26 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2019-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef WM_STUDIOJOBS_H
 #define WM_STUDIOJOBS_H
 
-#include "jobs/SimpleJob.h"
+#include "jobs/cSimpleJob.h"
 #include "data.h"
 #include "images/sImageSpec.h"
 
@@ -31,18 +31,6 @@ struct sFilmPleasureData {
     int BaseValue = 0;                          // Base value if there is no libido at all
 };
 
-struct sFilmObedienceData {
-    int total() const {
-        return Base + Lust + Enjoy + LoveHate;
-    }
-
-    int Base;
-    int Lust;
-    int Enjoy;
-    int LoveHate;
-
-};
-
 class cFilmSceneJob : public cBasicJob {
 public:
     enum class SexAction {
@@ -50,21 +38,18 @@ public:
         HUMAN,
         MONSTER
     };
-    cFilmSceneJob(JOBS job, const char* xml, sImagePreset event_image, SceneType scene, SexAction sex = SexAction::NONE);
+    cFilmSceneJob(JOBS job, const char* xml, SceneType scene, SexAction sex = SexAction::NONE);
 
     SKILLS GetSexType() const;
-    sFilmObedienceData CalcChanceToObey(const sGirl& girl) const;
 
 private:
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
-    void InitWork() override;
-    sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
+    void DoWork(cGirlShift& shift) const override;
 
     void load_from_xml_callback(const tinyxml2::XMLElement& job_element) override;
 
     // Helper function that is called if the girl refuses to film the scene,
     // but it is a scene that can be filmed with her tied up against her will.
-    bool RefusedTieUp(sGirl& girl);
+    bool RefusedTieUp(cGirlShift& shift) const;
 
     // scene properties
     int m_MinimumHealth = -100;
@@ -72,46 +57,33 @@ private:
     bool m_CanBeForced = false;
 
     SexAction m_SexAction = SexAction::NONE;
-
-    sImagePreset m_EventImage;
     SceneType m_SceneType;
-
-    // enjoyment
-    sFilmPleasureData m_PleasureFactor;         // Determines the influence of libido
-    EActivity m_PrimaryAction;               // Actress or Pornstar
-    EActivity m_SecondaryAction = EActivity::GENERIC;
 
 protected:
     // Processing Data
-    int m_Enjoyment;
-    bool m_IsForced;
+    int m_IsForced_id;
 
+    bool check_is_forced(const cGirlShift& shift) const;
 
-    virtual void PreFilmCallback(sGirl& girl);
-    virtual void PostFilmCallback(sGirl& girl);
+    virtual void PreFilmCallback(cGirlShift& shift) const;
+    virtual void PostFilmCallback(cGirlShift& shift) const;
 
-    virtual void Narrate(sGirl& girl);
-    void PrintPerfSceneEval();
-    void PrintForcedSceneEval();
+    virtual void Narrate(cGirlShift& shift) const;
+    void PrintPerfSceneEval(cGirlShift& shift) const;
+    void PrintForcedSceneEval(cGirlShift& shift) const;
 
-    virtual bool CheckRefuseWork(sGirl& girl);
-    virtual bool CheckCanWork(sGirl& girl);
-
-    mutable std::stringstream m_Dbg_Msg;
-
-    void update_enjoyment(sGirl& girl) const;
-
-    void produce_debug_message(sGirl& girl) const;
+    bool CheckRefuseWork(cGirlShift& shift) const override;
+    bool CheckCanWork(cGirlShift& shift) const override;
 };
 
 class cCrewJob : public cSimpleJob {
 public:
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
     using cSimpleJob::cSimpleJob;
 protected:
-    bool CheckCanWork(sGirl& girl, bool is_night) override;
+    bool CheckCanWork(cGirlShift& shift) const override;
 private:
-    virtual void HandleUpdate(sGirl& girl, float performance) = 0;
+    virtual void HandleUpdate(cGirlShift& shift) const = 0;
 };
 
 #endif //WM_STUDIOJOBS_H

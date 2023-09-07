@@ -4,6 +4,12 @@
         She will film a bestiality scene.
     </Description>
 
+    <Config DefaultImage="Beast" MinimumHealth="25" CanBeForced="1">
+        <Enjoyment BaseEnjoyment="-20" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="35" Dignity="60" Fear="33" />
+        <Pleasure Amount="20" SkillMin="50" BaseValue="35" Skill="Beastiality" />
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="2"/>
         <Factor Stat="Charisma" Weight="1"/>
@@ -74,10 +80,6 @@
             <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Fucking" SecondaryAction="Performing" MinimumHealth="25" CanBeForced="1">
-        <LustInfluence Amount="20" SkillMin="50" BaseValue="35" Skill="Beastiality" />
-    </Config>
 
     <Messages>
         <Message Name="work">

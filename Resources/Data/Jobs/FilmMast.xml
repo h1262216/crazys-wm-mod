@@ -4,6 +4,13 @@
         She will perform in a masturbation scene.
     </Description>
 
+    <Config DefaultImage="Masturbate">
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" SecondaryAction="Fucking" />
+        <Obedience Difficulty="10" Dignity="15" />
+        <!-- Not sure which skill to use here -->
+        <Pleasure Amount="25" SkillMin="20" BaseValue="5" Skill="Lesbian" />
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="1"/>
         <Factor Stat="Charisma" Weight="2"/>
@@ -43,11 +50,6 @@
             <Text>She has been filmed having sex so often that she is no longer Chaste.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config PrimaryAction="Performing" SecondaryAction="Fucking">
-        <!-- Not sure which skill to use here -->
-        <LustInfluence Amount="25" SkillMin="20" BaseValue="5" Skill="Lesbian" />
-    </Config>
 
     <Messages>
         <Message Name="work">
