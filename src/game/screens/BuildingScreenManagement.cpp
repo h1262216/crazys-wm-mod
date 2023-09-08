@@ -83,12 +83,22 @@ void IBuildingScreenManagement::RefreshJobList()
     ClearListBox(joblist_id);
     int job_filter = GetSelectedItemFromList(jobtypelist_id);
     if (job_filter == -1) return;
+
     // populate Jobs listbox with jobs in the selected category
-    for (auto i : g_Game->job_manager().JobFilters.at(job_filter).Contents)
+    for (auto i : g_Game->job_manager().get_filter((EJobFilter)job_filter).Contents)
     {
         if (g_Game->job_manager().get_job_name(i).empty()) continue;
-        AddToListBox(joblist_id, i, jobname_with_count((JOBS)i, Day0Night1));
+        if (g_Game->job_manager().get_job(i)->get_info().Shift == EJobShift::DAY && Day0Night1 ||
+            g_Game->job_manager().get_job(i)->get_info().Shift == EJobShift::NIGHT && !Day0Night1) {
+            continue;
+        }
+        int color = COLOR_NEUTRAL;
+        if(selected_girl && !g_Game->job_manager().get_job(i)->IsJobValid(*selected_girl, Day0Night1)) {
+            color = COLOR_NEUTRAL2;
+        }
+        AddToListBox(joblist_id, i, jobname_with_count((JOBS)i, Day0Night1), color);
     }
+
     if (selected_girl)
     {
         JOBS sel_job = selected_girl->get_job(Day0Night1);
@@ -193,7 +203,7 @@ void IBuildingScreenManagement::set_ids() {
         else
         {
             RefreshJobList();    // populate Jobs listbox with jobs in the selected category
-            EditTextItem(get_job_description(selection), jobtypedesc_id);
+            EditTextItem(get_job_description((EJobFilter)selection), jobtypedesc_id);
         }
     });
     SetListBoxHotKeys(jobtypelist_id, SDLK_w, SDLK_s);
@@ -232,15 +242,17 @@ void IBuildingScreenManagement::assign_job(sGirl& girl, JOBS new_job, int girl_s
 {
     // handle special job requirements and assign
     JOBS old_job = girl.get_job(Day0Night1);
-    
-    // if HandleSpecialJobs returns true, the job assignment was modified or cancelled
-    if (job_manager().HandleSpecialJobs(girl, new_job, old_job, Day0Night1, fulltime))
-    {
-        // TODO WHAT HAPPENS HERE?
-        //new_job = Day0Night1 ? night_job : day_job;
-        SetSelectedItemInList(joblist_id, new_job, false);
+
+    EJobShift shift = Day0Night1 ? EJobShift::NIGHT : EJobShift::DAY;
+    if(fulltime)
+        shift = EJobShift::FULL;
+
+    // if assign_job returns false, the job assignment was cancelled
+    if (!job_manager().assign_job(girl, new_job, shift)) {
+        return;
     }
 
+    SetSelectedItemInList(joblist_id, new_job, false);
     JOBS day_job   = girl.get_job(false);
     JOBS night_job = girl.get_job(true);
     std::stringstream ss;
@@ -331,7 +343,7 @@ void IBuildingScreenManagement::init(bool back)
 
     // add the job filters
     for(auto filter : m_JobFilters) {
-        AddToListBox(jobtypelist_id, filter, g_Game->job_manager().JobFilters[filter].Name);
+        AddToListBox(jobtypelist_id, filter, g_Game->job_manager().get_filter(filter).Display);
     }
     SetSelectedItemInList(jobtypelist_id, m_JobFilters.front());
 
@@ -364,7 +376,7 @@ void IBuildingScreenManagement::RefreshSelectedJobType()
     selected_girl = active_building().get_girl(selection);
     int job = selected_girl->get_job(Day0Night1);
     for(auto& filter : m_JobFilters) {
-        if(job_manager().job_filter(filter, (JOBS)job)) {
+        if(job_manager().is_in_filter(filter, (JOBS)job)) {
             SetSelectedItemInList(jobtypelist_id, filter);
             return;
         }
@@ -397,9 +409,9 @@ void IBuildingScreenManagement::SetShift(int shift)
     RefreshSelectedJobType();
 }
 
-std::string IBuildingScreenManagement::get_job_description(int selection)
+std::string IBuildingScreenManagement::get_job_description(EJobFilter selection)
 {
-    return job_manager().JobFilters[selection].Description;
+    return job_manager().get_filter(selection).Description;
 }
 
 void IBuildingScreenManagement::free_girls() {
@@ -575,9 +587,9 @@ cScreenCentreManagement::cScreenCentreManagement() :
     add_job_filter(JOBFILTER_COUNSELINGCENTRE);
 }
 
-std::string cScreenCentreManagement::get_job_description(int selection)
+std::string cScreenCentreManagement::get_job_description(EJobFilter selection)
 {
-    std::stringstream jdmessage; jdmessage << job_manager().JobFilters[selection].Description;
+    std::stringstream jdmessage; jdmessage << job_manager().get_filter(selection).Description;
     auto& centre = active_building();
     if ((centre.num_girls_on_job(JOB_COUNSELOR, 0) < 1 && Num_Patients(centre, false) > 0) ||
          (centre.num_girls_on_job(JOB_COUNSELOR, 1) < 1 && Num_Patients(centre, true) > 0))
@@ -596,9 +608,9 @@ cScreenClinicManagement::cScreenClinicManagement() :
     add_job_filter(JOBFILTER_CLINIC);
 }
 
-std::string cScreenClinicManagement::get_job_description(int selection)
+std::string cScreenClinicManagement::get_job_description(EJobFilter selection)
 {
-    std::stringstream jdmessage; jdmessage << job_manager().JobFilters[selection].Description;
+    std::stringstream jdmessage; jdmessage << job_manager().get_filter(selection).Description;
     if (DoctorNeeded(active_building()))
         jdmessage << "\n*** A Doctor is required to perform any surgeries. ";
     return jdmessage.str();
@@ -639,9 +651,9 @@ void cScreenStudioManagement::set_ids()
     SetButtonHotKey(createmovie_id, SDLK_c);
 }
 
-std::string cScreenStudioManagement::get_job_description(int selection)
+std::string cScreenStudioManagement::get_job_description(EJobFilter selection)
 {
-    std::stringstream jdmessage;        jdmessage << job_manager().JobFilters[selection].Description;
+    std::stringstream jdmessage;        jdmessage << job_manager().get_filter(selection).Description;
     if (CrewNeeded(active_building()))    jdmessage << "\n** At least one Camera Mage and one Crystal Purifier are required to film a scene. ";
     return jdmessage.str();
 }

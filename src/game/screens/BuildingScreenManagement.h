@@ -71,7 +71,7 @@ private:
     int sellslave_id;        // Sell Slave button
     int viewdetails_id;        // View Details button
 
-    virtual std::string get_job_description(int selection);
+    virtual std::string get_job_description(EJobFilter selection);
 
     void SetShift(int shift);
 
@@ -122,7 +122,7 @@ public:
 class cScreenCentreManagement : public IBuildingScreenManagement
 {
 private:
-    std::string get_job_description(int selection) override;
+    std::string get_job_description(EJobFilter selection) override;
 public:
     cScreenCentreManagement();
 };
@@ -130,7 +130,7 @@ public:
 class cScreenClinicManagement : public IBuildingScreenManagement
 {
 private:
-    std::string get_job_description(int selection) override;
+    std::string get_job_description(EJobFilter selection) override;
 public:
     cScreenClinicManagement();
 };
@@ -151,7 +151,7 @@ class cScreenStudioManagement : public IBuildingScreenManagement
 {
 private:
     void set_ids() override;
-    std::string get_job_description(int selection) override;
+    std::string get_job_description(EJobFilter selection) override;
 public:
     cScreenStudioManagement();
 };

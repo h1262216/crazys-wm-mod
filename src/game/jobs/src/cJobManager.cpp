@@ -136,14 +136,12 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
 
     // - Arena
     JobFilters[JOBFILTER_ARENA] = sJobFilter{"ArenaFight", "Fighters", "These are jobs for the fighters in the arena."};
-    register_filter(JOBFILTER_ARENA, JOB_FIGHTBEASTS, JOB_FIGHTTRAIN, {});
     //- Arena Staff
     JobFilters[JOBFILTER_ARENASTAFF] = sJobFilter{"ArenaStaff", "Staff", "These are jobs that help run an arena."};
     JobFilters[JOBFILTER_ARENASTAFF].Contents.push_back(JOB_DOCTORE);
     JobFilters[JOBFILTER_ARENASTAFF].Contents.push_back(JOB_RESTING);
     //- Arena Production
     JobFilters[JOBFILTER_ARENA_PRODUCTION] = sJobFilter{"ArenaProducers", "Production", "These are jobs that produce things."};
-    register_filter(JOBFILTER_ARENA_PRODUCTION, JOB_BLACKSMITH, JOB_JEWELER, {});
 
     // - Community Centre Jobs
     JobFilters[JOBFILTER_COMMUNITYCENTRE] = sJobFilter{"CommunityCentre", "Community Centre", "These are jobs for running a community centre."};
