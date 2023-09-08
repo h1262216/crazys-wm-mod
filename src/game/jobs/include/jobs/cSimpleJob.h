@@ -33,8 +33,6 @@ public:
     virtual void JobProcessing(sGirl& girl, cGirlShift& shift) const = 0;
 
 protected:
-    void InitWork(cGirlShift& shift) const override;
-
     void gain_fame(cGirlShift& shift, int fame) const;
 
     PiecewiseLinearFunction m_PerformanceToEarnings;

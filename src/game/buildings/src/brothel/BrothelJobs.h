@@ -20,28 +20,18 @@
 #ifndef WM_BROTHELJOBS_H
 #define WM_BROTHELJOBS_H
 
-#include "deprecated//SimpleJob.h"
+#include "jobs/cSimpleJob.h"
 #include "images/sImageSpec.h"
-
-using namespace deprecated;
-
-class cBarJob : public cSimpleJob {
-public:
-    using cSimpleJob::cSimpleJob;
-protected:
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
-};
 
 class cEscortJob : public cSimpleJob {
 public:
     cEscortJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 protected:
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
-
+    bool CheckCanWork(cGirlShift& shift) const override;
 private:
-    int m_Escort;
-    int m_Prepare;
+    int m_Escort_id;
+    int m_Prepare_id;
 
     enum class SexType {
         NONE, ANY, SEX, ANAL, ORAL, HAND, TITTY
@@ -53,23 +43,22 @@ private:
         SexType SexOffer = SexType::NONE;
     };
 
-    SexType choose_sex(const std::string& prefix, const sGirl& girl, const sClientData& client);
-    sImagePreset handle_sex(const std::string& prefix, int& fame, sGirl& girl, SexType type);
+    int get_escort(const cGirlShift& shift) const;
+    void adjust_escort(cGirlShift& shift, int amount) const;
+
+    SexType choose_sex(const std::string& prefix, cGirlShift& shift, const sClientData& client) const;
+    sImagePreset handle_sex(const std::string& prefix, int& fame, cGirlShift& shift, SexType type) const;
 };
 
 class cWhoreJob : public cSimpleJob {
 public:
     cWhoreJob(JOBS job, const char* short_name, const char* description);
 
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
 private:
     void load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) override;
-    void HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night);
-    int m_NumSleptWith = 0;
-    int m_OralCount = 0;
-    std::stringstream m_FuckMessage;
+    void HandleCustomer(cGirlShift& shift, sGirl& girl, cBuilding& brothel, int& num_slept_with, int& oral_score) const;
 
     /// TODO get rid of this ugly workaround
     std::string m_CacheShortName;

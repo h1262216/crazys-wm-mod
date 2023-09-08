@@ -4,6 +4,11 @@
         She will go around town and help out where she can.
     </Description>
 
+    <Config BaseWages="80">
+        <Enjoyment PrimaryAction="Social" SecondaryAction="Service" />
+        <Filter>CommunityCentre</Filter>
+    </Config>
+
     <Performance>
         <Factor Stat="Intelligence" Weight="1" />
         <Factor Skill="Cooking" Weight="1" />
@@ -32,10 +37,6 @@
         </GainTrait>
     </Gains>
 
-    <Config>
-        <Filter>CommunityCentre</Filter>
-    </Config>
-
     <Messages>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>
@@ -62,6 +63,13 @@
         </Message>
         <Message Name="work.worst">
             <Text>She was nervous and constantly making mistakes. She really isn't very good at this job.</Text>
+        </Message>
+
+        <Message Name="event.sex">
+            <Text>Her Lust got the better of her today and she decided the best way to serve her community was on her back!</Text>
+        </Message>
+        <Message Name="event.blowjob">
+            <Text>An elderly fellow managed to convince ${name} that the best way to serve her community was on her knees. She ended up giving him a blow job!</Text>
         </Message>
     </Messages>
 </Job>

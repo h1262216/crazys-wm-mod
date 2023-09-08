@@ -141,39 +141,22 @@ void cJobFluffer::HandleUpdate(cGirlShift& shift) const {
 cJobDirector::cJobDirector() : cCrewJob(JOB_DIRECTOR, "Director.xml") {
     m_Info.Provides.emplace_back(DirectorInteractionId);
 }
-/*
-class cJobStageHand : public cBasicJob {
+
+class cJobStageHand : public cSimpleJob {
 public:
-    cJobStageHand() : cBasicJob(JOB_STAGEHAND) {
+    cJobStageHand() : cSimpleJob(JOB_STAGEHAND, "StageHand.xml") {
         m_Info.Provides.emplace_back(StageHandPtsId);
     };
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
-    sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
 
-IGenericJob::eCheckWorkResult cJobStageHand::CheckWork(sGirl& girl, bool is_night) {
-    int roll_a = d100();
-    if (roll_a <= 50 && (girl.disobey_check(EActivity::CRAFTING, JOB_STAGEHAND) || girl.disobey_check(EActivity::SERVICE, JOB_STAGEHAND)))
-    {
-        ss << "${name} refused to work as a stagehand today.";
-        girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
-        return eCheckWorkResult::REFUSES;
-    }
-    return eCheckWorkResult::ACCEPTS;
-}
-
-sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
+void cJobStageHand::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     auto brothel = dynamic_cast<sMovieStudio*>(girl.m_Building);
-    int roll_a = d100();
-    ss << "${name} worked as a stagehand.\n \n";
-
-    cGirls::UnequipCombat(girl);    // not for studio crew
     int enjoyc = 0, enjoym = 0;
-    m_Wages = 50;
-    EImageBaseType imagetype = EImageBaseType::STAGEHAND;
     bool filming = true;
-
+    int roll_a = shift.d100();
+    auto& ss = shift.data().EventMessage;
 
     // `J` - jobperformance and CleanAmt need to be worked out specially for this job.
     double jobperformance = 0;
@@ -187,24 +170,24 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     {
         ss << "There were no scenes being filmed, so she just cleaned the set.\n \n";
         filming = false;
-        imagetype = EImageBaseType::MAID;
+        shift.set_image(EImageBaseType::MAID);
     }
 
     if (roll_a <= 10)
     {
-        enjoyc -= uniform(1, 3); if (filming) enjoym -= uniform(1, 3);
+        enjoyc -= shift.uniform(1, 3); if (filming) enjoym -= shift.uniform(1, 3);
         CleanAmt *= 0.8;
         ss << "She did not like working in the studio today.";
     }
     else if (roll_a >= 90)
     {
-        enjoyc += uniform(1, 3); if (filming) enjoym += uniform(1, 3);
+        enjoyc += shift.uniform(1, 3); if (filming) enjoym += shift.uniform(1, 3);
         CleanAmt *= 1.1;
         ss << "She had a great time working today.";
     }
     else
     {
-        enjoyc += std::max(0, uniform(-1, 2)); if (filming) enjoym += std::max(0, uniform(-1, 2));
+        enjoyc += std::max(0, shift.uniform(-1, 2)); if (filming) enjoym += std::max(0, shift.uniform(-1, 2));
         ss << "Otherwise, the shift passed uneventfully.";
     }
     jobperformance += enjoyc + enjoym;
@@ -216,7 +199,7 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     {
         jobperformance += (girl.crafting() / 5) + (girl.constitution() / 10) + (girl.service() / 10);
         jobperformance += girl.level();
-        jobperformance += uniform(-1, 3);    // should add a -1 to +3 random element --PP
+        jobperformance += shift.uniform(-1, 3);    // should add a -1 to +3 random element --PP
 
         // Cleaning reduces the points remaining for actual stage hand work
         jobperformance -= CleanAmt / 2;
@@ -234,45 +217,31 @@ sWorkJobResult cJobStageHand::DoWork(sGirl& girl, bool is_night) {
     if (girl.is_unpaid())
     {
         CleanAmt *= 0.9;
-        m_Wages = 0;
+        shift.data().Wages = 0;
     }
     else if (filming)
     {
-        m_Wages += int(CleanAmt + jobperformance);
+        shift.data().Wages += int(CleanAmt + jobperformance);
     }
     else
     {
-        m_Wages += int(CleanAmt);
+        shift.data().Wages += int(CleanAmt);
     }
 
     if (!filming && brothel->m_Filthiness < CleanAmt / 2) // `J` needs more variation
     {
         ss << "\n \n${name} finished her cleaning early so she hung out around the Studio a bit.";
-        girl.happiness(uniform(1, 3));
+        girl.happiness(shift.uniform(1, 3));
     }
 
-
-    girl.AddMessage(ss.str(), imagetype, EVENT_NIGHTSHIFT);
-
-    ProvideResource(StageHandPtsId, int(jobperformance));
+    shift.provide_resource(StageHandPtsId, int(jobperformance));
     brothel->m_Filthiness = std::max(0, brothel->m_Filthiness - int(CleanAmt));
-
-    // Improve girl
-    int xp = filming ? 15 : 10, skill = 3;
-    if (enjoyc + enjoym > 2)                            { xp += 1; skill += 1; }
-    if (girl.has_active_trait(traits::QUICK_LEARNER))        { skill += 1; xp += 3; }
-    else if (girl.has_active_trait(traits::SLOW_LEARNER))    { skill -= 1; xp -= 3; }
-
-    girl.exp(xp);
-    girl.service(uniform(2, skill+1));
 
     if (filming) girl.enjoyment(EActivity::CRAFTING, enjoym);
     girl.enjoyment(EActivity::SERVICE, enjoyc);
     // Gain Traits
     cGirls::PossiblyGainNewTrait(girl, "Maid", girl.service() / 9, "${name} has cleaned enough that she could work professionally as a Maid anywhere.");
     cGirls::PossiblyLoseExistingTrait(girl, traits::CLUMSY, 30, "It took her spilling hundreds of buckets, and just as many reprimands, but ${name} has finally stopped being so Clumsy.");
-
-    return {false, 0, 0, m_Wages};
 }
 
 double cJobStageHand::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -298,11 +267,11 @@ double cJobStageHand::GetPerformance(const sGirl& girl, bool estimate) const {
     return jobperformance;
 }
 
-*/
+
 void RegisterFilmCrewJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<cJobCameraMage>());
     mgr.register_job(std::make_unique<cJobFluffer>());
     mgr.register_job(std::make_unique<cJobCrystalPurifier>());
     mgr.register_job(std::make_unique<cJobDirector>());
-    //mgr.register_job(std::make_unique<cJobStageHand>());
+    mgr.register_job(std::make_unique<cJobStageHand>());
 }

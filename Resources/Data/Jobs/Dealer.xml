@@ -4,6 +4,19 @@
         She will manage a game in the gambling hall.
     </Description>
 
+    <Config DefaultImage="Card">
+        <Enjoyment PrimaryAction="Social" />
+        <WageFunction>
+            <Point Performance="245" Wages="155" />
+            <Point Performance="185" Wages="95" />
+            <Point Performance="145" Wages="55" />
+            <Point Performance="100" Wages="15" />
+            <Point Performance="70" Wages="-5" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
+
     <Performance>
         <!-- intel and agility for smarts and speed to cheat; cust service, performance to bluff/cheat, and a bit of magic for 'luck'-->
         <Factor Stat="Agility" Weight="3"/>
@@ -20,17 +33,6 @@
         <Stat Name="Charisma" Weight="1" Max="50"/>
         <Stat Name="Confidence" Weight="1" Min="20" />
     </Gains>
-
-    <Config>
-        <WageFunction>
-            <Point Performance="245" Wages="155" />
-            <Point Performance="185" Wages="95" />
-            <Point Performance="145" Wages="55" />
-            <Point Performance="100" Wages="15" />
-            <Point Performance="70" Wages="-5" />
-            <Point Performance="0" Wages="-15" />
-        </WageFunction>
-    </Config>
 
     <Messages>
         <Message Name="refuse">

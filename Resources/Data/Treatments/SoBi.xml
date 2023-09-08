@@ -1,14 +1,23 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="SOBi">
+<Treatment Name="SO Bisexual" ShortName="SOBi">
     <Description>
         You will make sure she likes having sex with both men and women.
     </Description>
+
+    <Config DefaultImage="Lesbian" Shift="full">
+        <Filter>HouseTraining</Filter>
+    </Config>
+
+    <SexTraining TargetName="Bisexual" />
+    <Outcomes>
+        <GainTrait Trait="Bisexual"/>
+    </Outcomes>
 
     <Messages>
         <Message Name="training">
             <Text>You proceed to change ${name}'s sexual orientation to Bisexual.</Text>
         </Message>
-        <Message Name="is-already">
+        <Message Name="no-effect-possible">
             <Text>${name} is already Bisexual.</Text>
         </Message>
         <Message Name="no-mistress">
@@ -17,8 +26,11 @@
         <Message Name="no-progress">
             <Text>She resisted all attempts to make her Bisexual.</Text>
         </Message>
-        <Message Name="progress">
-            <Text>Her Sexual Orientation conversion to Bisexual is</Text>
+        <Message Name="in-progress">
+            <Text>Her Sexual Orientation conversion to Bisexual is in progress (${progress}).</Text>
+        </Message>
+        <Message Name="almost-done">
+            <Text>Her Sexual Orientation conversion to Bisexual is almost complete.</Text>
         </Message>
         <Message Name="complete">
             <Text>Her Sexual Orientation conversion is complete. She is now Bisexual.</Text>

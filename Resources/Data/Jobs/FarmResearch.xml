@@ -4,6 +4,10 @@
         She will research how to improve various things.
     </Description>
 
+    <Config BaseWages="40" DefaultImage="Teacher">
+        <Enjoyment PrimaryAction="Mental" SecondaryAction="Farming"/>
+    </Config>
+
     <Performance>
     </Performance>
 
@@ -36,6 +40,15 @@
         </Message>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>
+        </Message>
+        <Message Name="shift.good">
+            <Text>She had a pleasant time training and researching.</Text>
+        </Message>
+        <Message Name="shift.bad">
+            <Text>She did not enjoy her time training.</Text>
+        </Message>
+        <Message Name="shift.neutral">
+            <Text>Otherwise, the shift passed uneventfully.</Text>
         </Message>
     </Messages>
 </Job>

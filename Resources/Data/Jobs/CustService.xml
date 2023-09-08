@@ -4,6 +4,10 @@
         She will look after customer needs.
     </Description>
 
+    <Config BaseWages="50">
+        <Enjoyment PrimaryAction="Social" SecondaryAction="Service"/>
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="2"/>
         <Factor Stat="Confidence" Weight="2"/>

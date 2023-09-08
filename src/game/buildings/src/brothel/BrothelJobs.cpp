@@ -17,7 +17,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "xml/util.h"
 #include "BrothelJobs.h"
 #include "cGirls.h"
 #include "IGame.h"
@@ -29,6 +28,7 @@
 #include "cInventory.h"
 #include "character/cCustomers.h"
 #include "character/cPlayer.h"
+#include "jobs/cJobManager.h"
 // all of these are for catacombs, so maybe we should move that to a separate file
 #include "cGirlGangFight.h"
 #include "cObjectiveManager.hpp"
@@ -41,1194 +41,441 @@ namespace settings {
     extern const char* WORLD_CATACOMB_UNIQUE;
 }
 
-deprecated::IGenericJob::eCheckWorkResult cBarJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.lust() >= 90 && girl.has_active_trait(traits::NYMPHOMANIAC) && chance(20))
-    {
-        add_text("event.nympho-nowork");
-        girl.lust_release_regular();
-        girl.AddMessage(ss.str(), EImagePresets::MASTURBATE, EVENT_NOWORK);
-        return eCheckWorkResult::REFUSES;
-    } else {
-        return SimpleRefusalCheck(girl, m_Data.Action);
-    }
-    /*else if (brothel.m_TotalCustomers < 1)
-    {
-        ss << "There were no customers in the bar on the " << (is_night ? "night" : "day") << " shift so ${name} just cleaned up a bit.";
-        brothel.m_Filthiness -= 20 + girl.service() * 2;
-        girl.AddMessage(ss.str(), EBaseImage::PROFILE, EVENT_NOWORK);
-        return eCheckWorkResult::IMPOSSIBLE;
-    }*/
-    return eCheckWorkResult::ACCEPTS;
-}
-
-struct cBarCookJob : public cBarJob {
-    cBarCookJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
-};
-
-cBarCookJob::cBarCookJob() : cBarJob(JOB_BARCOOK, "BarCook.xml", {EActivity::COOKING}) {
-}
-
-bool cBarCookJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
-{
-    int fame = 0;
-    m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
-
-    EImageBaseType imagetype = EImageBaseType::COOK;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
-
-    //a little pre-game randomness
-    add_text("pre-work-text");
-    add_performance_text();
-    add_text("post-work-text");
-
-    // enjoyed the work or not
-    shift_enjoyment();
-
-    girl.AddMessage(ss.str(), imagetype, msgtype);
-
-    int roll_max = (girl.beauty() + girl.charisma()) / 4;
-    m_Earnings += uniform(10, 10 + roll_max);
-
-    // Improve stats
-    HandleGains(girl, fame);
-    return false;
-}
-
-
-
-struct cBarMaidJob : public cBarJob {
-    cBarMaidJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
-};
-
-cBarMaidJob::cBarMaidJob() : cBarJob(JOB_BARMAID, "BarMaid.xml", {EActivity::SOCIAL}) {
-}
-
-bool cBarMaidJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    //    Job setup                //
-    EActivity actiontype = EActivity::SOCIAL;
-    int roll_jp = d100(), roll_e = d100(), roll_c = d100();
-
-    m_Earnings = 15 + (int)m_PerformanceToEarnings(float(m_Performance));
-    int fame = 0;                // girl
-    int Bhappy = 0, Bfame = 0, Bfilth = 0;    // brothel
-    EImageBaseType imagetype = EImageBaseType::WAIT;
-    int msgtype = is_night;
-
-    //    Job Performance            //
-
-    int numbarmaid = brothel.num_girls_on_job(JOB_BARMAID, is_night);
-    int numbarwait = brothel.num_girls_on_job(JOB_WAITRESS, is_night);
-    int numbargirls = numbarmaid + numbarwait;
-    int numallcust = brothel.m_TotalCustomers;
-    int numhercust = (numallcust / numbargirls)
-                     + uniform(0, (girl.charisma() / 10) - 3)
-                     + uniform(0, (girl.beauty() / 10) - 1);
-    if (numhercust < 0) numhercust = 1;
-    if (numhercust > numallcust) numhercust = numallcust;
-
-    double drinkssold = 0;                                            // how many drinks she can sell in a shift
-    for (int i = 0; i < numhercust; i++)
-    {
-        drinkssold += 1 + uniform(0, m_Performance / 30);    // 200jp can serve up to 7 drinks per customer
-    }
-    double drinkswasted = 0;                                        // for when she messes up an order
-
-    if (chance(20))
-    {
-        // FIXME: We *know* that `actiontype == ACTION_WORKBAR ==
-        // 5`. Figure out a condition here that makes sense and isn't
-        // too swingy.
-        if (girl.enjoyment(actiontype) >= 75)
-        {
-            ss << "Excited to get to work ${name} brings her 'A' game " << (is_night ? "tonight." : "today.");
-            m_Performance += 40;
-        }
-        else if (girl.enjoyment(actiontype) <= 25)
-        {
-            ss << "The thought of working " << (is_night ? "tonight." : "today.") << " made ${name} feel uninspired so she didn't really try.";
-            m_Performance -= 40;
-        }
-    }
-
-    //what is she wearing?
-
-    if (girl.has_item("Bourgeoise Gown") && chance(60))
-    {
-        int bg = rng().bell(-1, 1);
-        roll_e += bg;                    // enjoy adj
-        /* */if (bg < 0)    ss << "A few customers did not really like ${name}'s Bourgeoise Gown.";
-        else if (bg > 0)    ss << "A few customers complimented ${name}'s Bourgeoise Gown.";
-        else/*        */    ss << "${name}'s Bourgeoise Gown didn't really help or hurt her tips.";
-        ss << "\n \n";
-    }
-    else if (girl.has_item("Maid Uniform"))
-    {
-        int bg = rng().bell(-1, 1);
-        roll_e += bg;                    // enjoy adj
-        /* */if (bg < 0)    ss << "A few customers teased ${name} for wearing a Maid's Uniform in a bar.";
-        else if (bg > 0)    ss << "${name}'s Maid Uniform didn't do much for most of the patrons, but a few of them seemed to really like it.";
-        else/*        */    ss << "${name}'s Maid Uniform didn't do much to help her.";
-        ss << "\n \n";
-    }
-
-    //a little pre-game randomness
-    if (girl.has_active_trait(traits::ALCOHOLIC))
-    {
-        if (chance(10))
-        {
-            ss << "${name}'s alcoholic nature caused her to drink several bottles of booze becoming drunk and her serving suffered cause of it.";
-            m_Performance -= 50;
-            drinkswasted += uniform(10, 20);
-        }
-        ss << "\n \n";
-    }
-
-    add_performance_text();
-    double drink_factors[] = {0.8, 0.9, 1.0, 1.1, 1.3, 1.6};
-    drinkssold *= drink_factors[get_performance_class(m_Performance)];
-    if (m_Performance >= 245)
-    {
-        roll_e += 10;        // enjoy adj
-    }
-    else if (m_Performance >= 185)
-    {
-        roll_e += 7;        // enjoy adj
-    }
-    else if (m_Performance >= 145)
-    {
-        roll_e += 3;        // enjoy adj
-    }
-    else if (m_Performance >= 100)
-    {
-        roll_e += 0;        // enjoy adj
-    }
-    else if (m_Performance >= 70)
-    {
-        roll_e -= 3;        // enjoy adj
-    }
-    else
-    {
-        roll_e -= 7;        // enjoy adj
-    }
-
-    //    Tips and Adjustments        //
-
-    m_Tips += (drinkssold - drinkswasted) * ((double)roll_e / 100.0);    //base tips
-
-    add_text("post-work-text");
-
-    // `J` slightly lower percent compared to sleazy barmaid, I would think regular barmaid's uniform is less revealing
-    if ((chance(3) && girl.has_active_trait(traits::BUSTY_BOOBS)) ||
-        (chance(6) && girl.has_active_trait(traits::BIG_BOOBS)) ||
-        (chance(9) && girl.has_active_trait(traits::GIANT_JUGGS)) ||
-        (chance(12) && girl.has_active_trait(traits::MASSIVE_MELONS)) ||
-        (chance(16) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS)) ||
-        (chance(20) && girl.has_active_trait(traits::TITANIC_TITS)))
-    {
-        ss << "A patron was obviously staring at her large breasts. ";
-        if (m_Performance < 150)
-        {
-            ss << "But she had no idea how to take advantage of it.\n";
-        }
-        else
-        {
-            ss << "So she over-charged them for drinks while they were too busy drooling to notice the price.\n";
-            m_Earnings += 15;
-        }
-    }
-
-    if (girl.dignity() <= -20 && chance(20) && girl.breast_size() >= BreastSize::BIG_BOOBS)
-    {
-        m_Tips += 25;
-        ss << "${name} got an odd request from a client to carry a small drink he ordered between her tits to his table. "
-              "After pouring the drink in a thin glass, ${name} handled the task with minimal difficulty and earned a bigger tip.\n";
-    }
-
-    if (girl.morality() <= -20 && chance(10))
-    {
-        ss << "A patron came up to her and said he wanted to order some milk but that he wanted it straight from the source. ";
-        if (girl.lactation() >= 20)
-        {
-            ss << "With a smile she said she was willing to do it for an extra charge. The patron quickly agreed and ${name} proceed to take out one of her tits and let the patron suck out some milk.\n";
-            girl.lactation(-20);
-            m_Tips += 40;
-        }
-        else
-        {
-            ss << "She was willing to do it but didn't have enough milk production.";
-        }
-    }
-
-    if (girl.is_pregnant() && chance(10))
-    {
-        ss << "A customer tried to buy ${name} a drink, but she refused for the sake of her unborn child.";
-    }
-
-    if (girl.any_active_trait({traits::DEEP_THROAT, traits::NO_GAG_REFLEX}) && chance(5))
-    {
-        ss << "Some customers were having a speed drinking contest and challenged ${name} to take part.\n";
-        if (girl.is_pregnant()) ss << "She refused for the sake of her unborn child.";
-        else
-        {
-            ss << "Her talent at getting things down her throat meant she could pour the drink straight down. She won easily, earning quite a bit of gold.";
-            m_Tips += 30;
-        }
-    }
-
-    if (girl.has_item("Golden Pendant") && chance(10))//zzzzz FIXME need more CRAZY
-    {
-        ss << "A patron complimented her gold necklace, you're not sure if it was an actual compliment or ";
-        if (girl.breast_size() >= BreastSize::BIG_BOOBS)
-        {
-            ss << "an excuse to stare at her ample cleavage.";
-        }
-        else
-        {
-            ss << "an attempt to get a discount on their bill.";
-        }
-        girl.happiness(5);//girls like compliments
-    }
-
-    //    Money                    //
-    shift_enjoyment();
-    if (girl.is_unpaid())
-        drinkssold *= 0.9;
-
-    // drinks are sold for 3gp each, if there are not enough in stock they cost 1gp.
-    int ds = std::max(0, (int)drinkssold);
-    int dw = std::max(0, (int)drinkswasted);
-    int d1 = ds + dw;                                                    // all drinks needed
-    int d2 = g_Game->storage().drinks() >= d1 ? d1 : g_Game->storage().drinks();        // Drinks taken from stock
-    int d3 = g_Game->storage().drinks() >= d1 ? 0 : d1 - g_Game->storage().drinks();    // Drinks needed to be bought
-    int profit = (ds * 3) - (d3 * 1);
-    g_Game->storage().add_to_drinks(-d2);
-    if (profit < 0) profit = profit;
-    else/*       */ profit = profit;
-    if ((int)d1 > 0)
-    {
-        ss << "\n${name}";
-        /* */if ((int)drinkssold <= 0)    ss << " didn't sell any drinks.";
-        else if ((int)drinkssold == 1)    ss << " only sold one drink.";
-        else/*                      */    ss << " sold " << ds << " drinks.";
-        /* */if ((int)dw > 0)    ss << "\n" << dw << " were not paid for or were spilled.";
-        /* */if (d2 > 0)/*           */ ss << "\n" << d2 << " drinks were taken from the bar's stock.";
-        /* */if (d3 > 0)/*           */ ss << "\n" << d3 << " drinks had to be restocked durring the week at a cost of 1 gold each.";
-        ss << "\n \n${name}";
-        /* */if (profit > 0)/*       */    ss << " made you a profit of " << profit << " gold.";
-        else if (profit < 0)/*       */    ss << " cost you " << profit << " gold.";
-        else if (d1 > 0)/*           */ ss << " broke even for the week.";
-        else/*                       */ ss << " made no money.";
-    }
-
-    if (girl.is_unpaid())
-    {
-        /* */if ((int)m_Earnings > 0)    ss << "\n${name} turned in an extra " << (int)m_Earnings << " gold from other sources.";
-        else if ((int)m_Earnings < 0)    ss << "\nShe cost you " << (int)m_Earnings << " gold from other sources.";
-        m_Earnings += profit;
-    }
-    else
-    {
-        if (profit >= 10)    // base pay is 10 unless she makes less
-        {
-            ss << "\n \n"<< "${name} made the bar a profit so she gets paid 10 gold for the shift.";
-            m_Earnings -= 10;
-            m_Wages += 10;
-        }
-        if (profit > 0)
-        {
-            int b = profit / 50;
-            if (b > 0) ss << "\nShe gets 2% of the profit from her drink sales as a bonus totaling " << b << " gold.";
-            m_Wages += b;                    // 2% of profit from drinks sold
-            m_Earnings -= b;
-            girl.happiness(b / 5);
-        }
-        if (dw > 0)
-        {
-            girl.happiness(-(dw / 5));
-
-            int c = std::min(dw, (int)m_Wages);
-            int d = std::min(dw - c, (int)m_Tips);
-            int e = std::min(0, dw - d);
-            bool left = false;
-            if (dw < (int)m_Wages)                    // she pays for all wasted drinks out of wages
-            {
-                ss << "\nYou take 1 gold out of her pay for each drink she wasted.";
-                m_Wages -= c;
-                profit += c;
-                left = true;
-            }
-            else if (dw < (int)m_Wages + (int)m_Tips)    // she pays for all wasted drinks out of wages and tips
-            {
-                ss << "\nYou take 1 gold from her wages and tips for each drink she wasted.";
-                m_Wages -= c;
-                m_Tips -= d;
-                m_Earnings += c + d;
-                left = true;
-            }
-            else                                    // no pay plus she has to pay from her pocket
-            {
-                m_Wages -= c;
-                m_Tips -= d;
-                m_Earnings += c + d;
-                if (girl.m_Money < 1)                // she can't pay so you scold her
-                {
-                    girl.pcfear(rng().bell(-1,5));
-                    ss << "\nYou take all her wages and tips and then scold her for wasting so many drinks.";
-                }
-                else if (girl.m_Money >= e)        // she has enough to pay it back
-                {
-                    girl.pcfear(rng().bell(-1, 2));
-                    girl.pclove(-rng().bell(-1, 2));
-                    ss << "\nYou take all her wages and tips and then make her pay for the rest out of her own money.";
-                    girl.m_Money -= e;
-                    m_Earnings += e;
-                }
-                else                                // she does not have all but can pay some
-                {
-                    girl.pcfear(rng().bell(-1, 4));
-                    girl.pclove(-rng().bell(-1, 2));
-                    ss << "\nYou take all her wages and tips and then make her pay for what she can of the rest out of her own money.";
-                    e = girl.m_Money;
-                    girl.m_Money -= e;
-                    m_Earnings += e;
-                }
-            }
-        }
-    }
-
-    // tiredness
-    int t0 = d1;
-    int easydrinks = (girl.constitution() + girl.service()) / 4;
-    int t1 = easydrinks;                    // 1 tired per 20 drinks
-    int t2 = std::max(0, t0 - t1);                // 1 tired per 10 drinks
-    int t3 = std::max(0, t0 - (t1+t2));            // 1 tired per 2 drinks
-    int tired = std::max(0,(t1/20))+std::max(0,(t2/10))+std::max(0,(t3/2));
-
-    g_Game->gold().bar_income(profit);
-
-    //    Finish the shift            //
-
-    brothel.m_Happiness += Bhappy;
-    brothel.m_Fame += Bfame;
-    brothel.m_Filthiness += Bfilth;
-
-    girl.AddMessage(ss.str(), imagetype, msgtype ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    // Improve stats
-    HandleGains(girl, fame);
-
-    return false;
-}
-
-struct cBarWaitressJob : public cBarJob {
-    cBarWaitressJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
-};
-
-cBarWaitressJob::cBarWaitressJob() : cBarJob(JOB_WAITRESS, "BarWaitress.xml",{EActivity::SOCIAL}) {
-}
-
-bool cBarWaitressJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    int roll_a = d100(), roll_c = d100();
-
-    const sGirl* barmaidonduty = random_girl_on_job(*girl.m_Building, JOB_BARMAID, is_night);
-    std::string barmaidname = (barmaidonduty ? "Barmaid " + barmaidonduty->FullName() : "the Barmaid");
-
-    const sGirl* cookonduty = random_girl_on_job(*girl.m_Building, JOB_BARCOOK, is_night);
-    std::string cookname = (cookonduty ? "Cook " + cookonduty->FullName() : "the cook");
-
-    int fame = 0;
-
-    m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
-
-    sImagePreset imagetype = EImageBaseType::WAIT;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
-    int HateLove = girl.pclove();
-
-    //    Job Performance            //
-
-    //a little pre-game randomness
-    add_text("pre-work-text");
-    add_performance_text();
-    add_text("post-work-text");
-
-    //base tips, aprox 10-20% of base wages
-    m_Tips += (int)(((10 + m_Performance / 22) * m_Earnings) / 100);
-
-    //try and add randomness here
-    if (check_public_sex(girl, ESexParticipants::ANY, SKILL_STRIP, sPercent(50), true))
-    {
-        ss << "During her shift, ${name} couldn't help but instinctively and excessively rub her ass against the crotches of the clients whenever she got the chance. Her slutty behavior earned her some extra tips, as a couple of patrons noticed her intentional butt grinding.\n";
-        m_Tips += 30;
-    }
-
-    if (brothel.num_girls_on_job( JOB_BARMAID, false) >= 1 && chance(25))
-    {
-        if (m_Performance < 125)
-        {
-            ss << "${name} wasn't good enough at her job to use " << barmaidname << " to her advantage.\n";
-        }
-        else
-        {
-            ss << "${name} used " << barmaidname << " to great effect speeding up her work and increasing her tips.\n";
-            m_Tips += 25;
-        }
-    }
-
-    //BIRTHDAY /**/
-    if (girl.m_BDay >= 51)
-    {
-        if (girl.is_slave())
-        {
-        }
-        else
-        {
-            if (HateLove >= 80)
-            {
-                SKILLS target_action;
-                if(roll_c >= 80) {
-                    target_action = SKILL_ANAL;
-                } else if (roll_c >= 50) {
-                    target_action = SKILL_NORMALSEX;
-                } else {
-                    target_action = SKILL_ORALSEX;
-                }
-                if (g_Dice.percent(chance_horny_private(girl, ESexParticipants::HETERO, target_action, true)))
-                {
-                    ss << "${name} has barely finished her shift before she is changed into her sexiest dress and standing before you. \"I have a little birthday wish,\" she whispers, drawing closer to you. \"I thought maybe, as your gift to me, you would allow me to serve you alone tonight. I asked " << cookname << " to cook all your favorite dishes, and I've prepared the upper dining area so it will just be the two of us.\" She leads you upstairs and seats you before disappearing for a moment and returning with the first course. ${name} feeds you with her own hands, giggling with every few bites. \"We have a cake, of course,\" she smiles as you finish everything, \"but that isn't the only dessert.\"\n";
-                    if (roll_c >= 80)//ANAL
-                    {
-                        ss << "${name} lifts up her skirt so you can see that she is not wearing underwear. \"I was hoping that you might put your birthday present in my ass,\" she whispers into your ear, deftly opening your pants and lowering herself onto your suddenly and ragingly erect cock. She whimpers briefly as your dick penetrates her, then she spits on her hand and rubs the lubricant onto your tip before impaling herself again. \"You have no idea how often I fantasize about this when dealing with those stodgy customers all day,\" she pants, reveling as you ream her ass. \"Use me like a dirty backstreet whore,\" she continues, wrapping her asshole around you and bouncing up and down. It does not take long to cum for both of you. ${name} smiles";
-                        ss << " with fulfillment as she lifts herself off your cock, semen leaking onto the table. \"I guess I'll need to clean that up,\" she comments, before turning back to you. \"Happy birthday to me,\" she grins. \"Let's do it again sometime.\"";
-                        imagetype = EImageBaseType::ANAL;
-                        girl.anal(1);
-                    }
-                    else if (roll_c >= 50)//SEX
-                    {
-                        ss << "${name} lies flat on her back on the cleared table, hiking up her dress so you have direct access to her wet pussy and placing the cake on her stomach. \"If you want dessert, I think you should come and get it,\" she purrs. You insert your hard-on into her and slowly fuck her as she moans, stopping only for a moment to take a piece of cake. You eat a bite and then feed her the rest as you pump with increasing speed, and as she takes the last bite, you spurt deep inside her. \"Happy birthday to me,\" she smiles.";
-                        imagetype = EImageBaseType::VAGINAL;
-                        girl.normalsex(1);
-                    }
-                    else//ORAL
-                    {
-                        if (girl.oralsex() >= 50 && girl.has_active_trait(traits::DEEP_THROAT))
-                        {
-                            ss << "${name} does not even wait for a reply before she moves her hand to your cock, deftly opening your pants and working you to a raging hard-on. She smiles mischievously at you and then dives down, swallowing your whole cock with one quick motion. She stays there, locked with her tongue on your balls and your shaft buried in her throat, massaging your cock with swallowing motions while staring with watering eyes into yours, until she begins to lose oxygen. You cum buckets straight down her throat as she begins to choke herself on you, and when she has secured every drop in her stomach, she pulls back, takes a deep breath, and smiles. \"Happy birthday to me,\" she says.";
-                        }
-                        else if (girl.oralsex() >= 50)
-                        {
-                            ss << "${name} kisses you once on the lips, and then once on the chest, and then slowly works her way down to your pants. She gently pulls out your cock and surrounds it with her velvety mouth, sucking gently. The blowjob is excellent, and you relish every moment, taking an occasional bite of cake as she latches onto your dick.";
-                        }
-                        else
-                        {
-                            ss << "${name} kisses you once on the lips, and then once on the chest, and then slowly works her way down to your pants. She gently pulls out your cock and surrounds it with her velvety mouth, sucking gently. The blowjob is not amazing, but it is delivered with such tenderness and love that you find yourself very satisfied regardless.";
-                        }
-                        imagetype = EImagePresets::BLOWJOB;
-                        girl.oralsex(1);
-                    }
-                }
-                else
-                {
-                    ss << "${name} finished her work and came to you with a shy grin. \"Did you know that it's my birthday?\" she asks, brushing against you gently and continuing without waiting for a response. \"I asked " << cookname << " to make a little something special, and I thought maybe we could share it together.\" The two of you enjoy a delicious light dinner, followed by an adorable little cake, as she giggles appreciably at your jokes and flirts with you. \"Maybe we should do this again without waiting a whole year,\" she suggests at the end of the evening, eyes flashing with unspoken promises. \"I'd love to thank you more fully for everything you have done for me.\"\n";
-                }
-            }
-            else
-            {
-                ss << "${name} finished her work as a waitress and returned home for a private birthday celebration with her friends.\n";
-            }
-        }
-    }
-
-    //    Finish the shift            //
-
-    //enjoyed the work or not
-    shift_enjoyment();
-
-    girl.AddMessage(ss.str(), imagetype, msgtype);
-
-    int roll_max = (girl.beauty() + girl.charisma());
-    roll_max /= 4;
-    m_Earnings += uniform(10, 10+roll_max);
-
-    // Improve stats
-    HandleGains(girl, fame);
-
-    return false;
-}
-
-struct cBarPianoJob : public cBarJob {
-    cBarPianoJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
-};
-
-cBarPianoJob::cBarPianoJob() : cBarJob(JOB_PIANO, "BarPiano.xml", {EActivity::PERFORMANCE}) {
-}
-
-bool cBarPianoJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    int roll_a = d100(), roll_b = d100();
-
-    const sGirl* singeronduty = random_girl_on_job(brothel, JOB_SINGER, is_night);
-    std::string singername = (singeronduty ? "Singer " + singeronduty->FullName() + "" : "the Singer");
-
-    m_Earnings = 20;
-    int fame = 0;
-    EImageBaseType imagetype = EImageBaseType::PIANO;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
-
-    //    Job Performance            //
-
-    m_Tips = (int)((m_Performance / 8.0) * ((rng() % (girl.beauty() + girl.charisma()) / 20.0) + (girl.performance() / 5.0)));
-
-    add_performance_text();
-
-    //SIN - bit of randomness.
-    if (chance(brothel.m_Filthiness / 50))
-    {
-        ss << "Soon after she started her set, some rats jumped out of the piano and fled the building. Patrons could be heard laughing.";
-        brothel.m_Fame -= uniform(0, 1);            // 0 to -1
-    }
-    ss << "\n \n";
-
-    add_text("post-work-text");
-
-    if (brothel.num_girls_on_job(JOB_SINGER, false) >= 1 && chance(25))
-    {
-        if (m_Performance < 125)
-        {
-            ss << "${name} played poorly with " << singername << " making people leave.\n";
-            m_Tips = int(m_Tips * 0.8);
-        }
-        else
-        {
-            ss << "${name} played well with " << singername << " increasing tips.\n";
-            m_Tips = int(m_Tips * 1.1);
-        }
-    }
-
-
-    //    Enjoyment                //
-
-    //enjoyed the work or not
-    if (roll_b <= 10)
-    {
-        ss << "Some of the patrons abused her during the shift.";
-        m_Enjoyment -= uniform(1, 3);
-        m_Tips = int(m_Tips * 0.9);
-    }
-    else if (roll_b >= 90)
-    {
-        ss << "She had a pleasant time working.";
-        m_Enjoyment += uniform(1, 3);
-        m_Tips = int(m_Tips * 1.1);
-    }
-    else
-    {
-        ss << "Otherwise, the shift passed uneventfully.";
-        m_Enjoyment += uniform(0, 1);
-    }
-
-
-    //    Money                    //
-
-    // slave girls not being paid for a job that normally you would pay directly for do less work
-    if (girl.is_unpaid())
-    {
-        m_Earnings = 0;
-        m_Tips = int(m_Tips * 0.9);
-    }
-    else
-    {
-    }
-
-    //    Finish the shift            //
-
-    // Base Improvement and trait modifiers
-    HandleGains(girl, fame);
-
-    // Push out the turn report
-    girl.AddMessage(ss.str(), imagetype, msgtype);
-    return false;
-}
-
-
-struct cBarSingerJob : public cBarJob {
-    cBarSingerJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
-};
-
-cBarSingerJob::cBarSingerJob() : cBarJob(JOB_SINGER, "BarSinger.xml",{EActivity::PERFORMANCE}) {
-}
-
-bool cBarSingerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
-{
-    int roll_a = d100(), roll_b = d100();
-
-    int happy = 0, fame = 0;
-    EImageBaseType imagetype = EImageBaseType::SINGING;
-    EEventType msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
-
-    m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
-
-    const sGirl* pianoonduty = random_girl_on_job(*girl.m_Building, JOB_PIANO, is_night);
-    std::string pianoname = (pianoonduty ? "Pianist " + pianoonduty->FullName() + "" : "the Pianist");
-
-    add_text("song-choice");
-    ss << " ";
-    add_text("song-quality");
-    ss << "\n";
-
-    add_performance_text();
-
-    //base tips, aprox 5-30% of base wages
-    m_Tips += (int)(((5 + m_Performance / 8) * m_Earnings) / 100);
-
-    //try and add randomness here
-    add_text("post-work-text");
-
-    if (brothel.num_girls_on_job(JOB_PIANO, is_night) >= 1 && chance(25))
-    {
-        if (m_Performance < 125)
-        {
-            ss << "${name}'s singing was out of tune with " << pianoname << " causing customers to leave with their fingers in their ears.\n"; m_Tips -= 10;
-        }
-        else
-        {
-            ss << pianoname << " took her singing to the next level causing the tips to flood in.\n"; m_Tips += 40;
-        }
-    }
-
-    shift_enjoyment();
-
-    brothel.m_Fame += fame;
-    brothel.m_Happiness += happy;
-    
-    girl.AddMessage(ss.str(), imagetype, msgtype);
-    int roll_max = (girl.beauty() + girl.charisma()) / 4;
-    m_Earnings += uniform(10, 10 + roll_max);
-
-    // Improve stats
-    HandleGains(girl, fame);
-    return false;
-}
-
-
 class cDealerJob : public cSimpleJob {
 public:
     cDealerJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
 // TODO rename this, I would expect 'Dealer' to refer to a different job
-cDealerJob::cDealerJob() : cSimpleJob(JOB_DEALER, "Dealer.xml", {EActivity::SOCIAL}) {
+cDealerJob::cDealerJob() : cSimpleJob(JOB_DEALER, "Dealer.xml") {
 }
 
-bool cDealerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    int roll_a = d100();
+void cDealerJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    int roll_a = shift.d100();
+    auto& ss = shift.data().EventMessage;
 
-    m_Earnings = 25;
+    shift.data().Earnings = 25;
     int fame = 0;
-    EImageBaseType imagetype = EImageBaseType::CARD;
 
     //    Job Performance            //
 
-    const sGirl* enteronduty = random_girl_on_job(*girl.m_Building, JOB_ENTERTAINMENT, is_night);
+    const sGirl* enteronduty = random_girl_on_job(*girl.m_Building, JOB_ENTERTAINMENT, shift.is_night_shift());
     std::string entername = (enteronduty ? "Entertainer " + enteronduty->FullName() + "" : "the Entertainer");
-    const sGirl* xxxenteronduty = random_girl_on_job(*girl.m_Building, JOB_XXXENTERTAINMENT, is_night);
-    std::string xxxentername = (xxxenteronduty ? "Entertainer " + xxxenteronduty->FullName() + "" : "the Sexual Entertainer");
+    const sGirl* xxxenteronduty = random_girl_on_job(*girl.m_Building, JOB_XXXENTERTAINMENT, shift.is_night_shift());
+    std::string xxxentername = (xxxenteronduty ? "Entertainer " + xxxenteronduty->FullName() + ""
+                                               : "the Sexual Entertainer");
 
 
     //a little pre-game randomness
-    if (chance(10))
-    {
-        if (girl.has_active_trait(traits::STRANGE_EYES))
-        {
+    if (shift.chance(10)) {
+        if (girl.has_active_trait(traits::STRANGE_EYES)) {
             ss << " ${name}'s strange eyes were somehow hypnotic, giving her some advantage.";
-            m_Performance += 15;
+            shift.data().Performance += 15;
         }
-        if (girl.has_active_trait(traits::NYMPHOMANIAC) && girl.lust() > 75)
-        {
+        if (girl.has_active_trait(traits::NYMPHOMANIAC) && girl.lust() > 75) {
             ss << " ${name} had very high libido, making it hard for her to concentrate.";
-            m_Performance -= 10;
+            shift.data().Performance -= 10;
         }
-        if (girl.footjob() > 50)
-        {
+        if (girl.footjob() > 50) {
             ss << " ${name} skillfully used her feet under the table to break customers' concentration.";
-            m_Performance += 5;
+            shift.data().Performance += 5;
         }
     }
-    if (is_addict(girl, true) && chance(20))
-    {
-        ss << "\nNoticing her addiction, a customer offered her drugs. She accepted, and had an awful day at the card table.\n";
-        if (girl.has_active_trait(traits::SHROUD_ADDICT))
-        {
+    if (is_addict(girl, true) && shift.chance(20)) {
+        ss
+                << "\nNoticing her addiction, a customer offered her drugs. She accepted, and had an awful day at the card table.\n";
+        if (girl.has_active_trait(traits::SHROUD_ADDICT)) {
             girl.add_item(g_Game->inventory_manager().GetItem("Shroud Mushroom"));
         }
-        if (girl.has_active_trait(traits::FAIRY_DUST_ADDICT))
-        {
+        if (girl.has_active_trait(traits::FAIRY_DUST_ADDICT)) {
             girl.add_item(g_Game->inventory_manager().GetItem("Fairy Dust"));
         }
-        if (girl.has_active_trait(traits::VIRAS_BLOOD_ADDICT))
-        {
+        if (girl.has_active_trait(traits::VIRAS_BLOOD_ADDICT)) {
             girl.add_item(g_Game->inventory_manager().GetItem("Vira Blood"));
         }
-        m_Performance -= 50;
+        shift.data().Performance -= 50;
     }
 
-    add_performance_text();
-    m_Earnings += (int)m_PerformanceToEarnings((float)m_Performance);
+    add_performance_text(shift);
+    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.performance());
     //I'm not aware of tipping card dealers being a common practice, so no base tips
 
     // try and add randomness here
-    add_text("after-work") << "\n";
+    shift.add_line("after-work");
 
-    if (brothel.num_girls_on_job(JOB_ENTERTAINMENT, false) >= 1 && chance(25))
-    {
-        if (m_Performance < 125)
-        {
-            ss << "${name} wasn't good enough at her job to use " << entername << "'s distraction to make more money.\n";
-        }
-        else
-        {
-            ss << "${name} used " << entername << "'s distraction to make you some extra money.\n"; m_Earnings += 25;
+    if (shift.building().num_girls_on_job(JOB_ENTERTAINMENT, false) >= 1 && shift.chance(25)) {
+        if (shift.performance() < 125) {
+            ss << "${name} wasn't good enough at her job to use " << entername
+               << "'s distraction to make more money.\n";
+        } else {
+            ss << "${name} used " << entername << "'s distraction to make you some extra money.\n";
+            shift.data().Earnings += 25;
         }
     }
 
     //SIN: a bit more randomness
-    if (chance(20) && m_Earnings < 20 && girl.charisma() > 60)
-    {
+    if (shift.chance(20) && shift.data().Earnings < 20 && girl.charisma() > 60) {
         ss << "${name} did so badly, a customer felt sorry for her and left her a few coins from his winnings.\n";
-        m_Earnings += uniform(3, 20);
+        shift.data().Earnings += shift.uniform(3, 20);
     }
-    if (chance(5) && girl.normalsex() > 50 && girl.fame() > 30)
-    {
+    if (shift.chance(5) && girl.normalsex() > 50 && girl.fame() > 30) {
         ss << "A customer taunted ${name}, saying the best use for a dumb whore like her is bent over the gambling table.";
         bool spirited = (girl.spirit() + girl.spirit() > 80);
-        if (spirited)
-        {
+        if (spirited) {
             ss << "\n\"But this way\"${name} smiled, \"I can take your money, without having to try and find your penis.\"";
-        }
-        else
-        {
+        } else {
             ss << "She didn't acknowledge it in any way, but inwardly determined to beat him.";
         }
-        if (m_Performance >= 145)
-        {
+        if (shift.performance() >= 145) {
             ss << "\nShe cleaned him out, deliberately humiliating him and taunting him into gambling more than he could afford. ";
             ss << "He ended up losing every penny and all his clothes to this 'dumb whore'. He was finally kicked out, naked into the streets.\n \n";
             ss << "${name} enjoyed this. A lot.";
             girl.enjoyment(EActivity::SOCIAL, 3);
             girl.happiness(5);
-            m_Earnings += 100;
-        }
-        else if (m_Performance >= 99)
-        {
+            shift.data().Earnings += 100;
+        } else if (shift.performance() >= 99) {
             ss << "\nShe managed to hold her own, and in the end was just happy not to lose to a guy like this.";
-        }
-        else
-        {
-            ss << "\nSadly her card skills let her down and he beat her in almost every hand. He finally stood up pointing at the table:";
+        } else {
+            ss
+                    << "\nSadly her card skills let her down and he beat her in almost every hand. He finally stood up pointing at the table:";
             ss << "\n\"If you wanna make your money back, whore, you know what to do.\"";
-            if (spirited)
-            {
+            if (spirited) {
                 ss << "\"Bend over it then,\" she scowled. \"I'll show you where you can shove those gold coins.\"\nHe left laughing.";
-            }
-            else
-            {
+            } else {
                 ss << "\"I'm not doing that today, sir,\" she mumbled. \"But there are other girls.\"\nHe left for the brothel.";
             }
             ss << "\n \nShe really hated losing at this stupid card game.";
             girl.enjoyment(EActivity::SOCIAL, -3);
             girl.happiness(-5);
-            m_Earnings -= 50;
+            shift.data().Earnings -= 50;
         }
     }
 
-    if (brothel.num_girls_on_job(JOB_XXXENTERTAINMENT, false) >= 1)
-    {
-        if (m_Performance < 125)
-        {
-            if (likes_women(girl))
-            {
-                if (girl.lust() > 90)
-                {
-                    ss << "${name} found herself looking at " << xxxentername << "'s performance often, losing more times than usual.\n";
-                    m_Earnings = int(m_Earnings * 0.9);
+    if (shift.building().num_girls_on_job(JOB_XXXENTERTAINMENT, false) >= 1) {
+        if (shift.performance() < 125) {
+            if (likes_women(girl)) {
+                if (girl.lust() > 90) {
+                    ss << "${name} found herself looking at " << xxxentername
+                       << "'s performance often, losing more times than usual.\n";
+                    shift.data().Earnings = int(shift.data().Earnings * 0.9);
+                } else {
+                    ss << "${name} wasn't good enough at her job to use " << xxxentername
+                       << "'s distraction to make more money.\n";
                 }
-                else
-                {
-                    ss << "${name} wasn't good enough at her job to use " << xxxentername << "'s distraction to make more money.\n";
-                }
+            } else {
+                ss << "${name} wasn't good enough at her job to use " << xxxentername
+                   << "'s distraction to make more money.\n";
             }
-            else
-            {
-                ss << "${name} wasn't good enough at her job to use " << xxxentername << "'s distraction to make more money.\n";
-            }
-        }
-        else
-        {
-            ss << "${name} took advantage of " << xxxentername << "'s show to win more hands and make some extra money.\n";
-            m_Earnings = int(m_Earnings * 1.2);
+        } else {
+            ss << "${name} took advantage of " << xxxentername
+               << "'s show to win more hands and make some extra money.\n";
+            shift.data().Earnings = int(shift.data().Earnings * 1.2);
         }
     }
-
-    if (m_Earnings < 0) m_Earnings = 0;
-
     //    Finish the shift            //
-    shift_enjoyment();
-
-    girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    shift_enjoyment(shift);
 
     // work out the pay between the house and the girl
-    m_Earnings += uniform(10, (girl.beauty() + girl.charisma()) / 4 + 10);
+    shift.data().Earnings += shift.uniform(10, (girl.beauty() + girl.charisma()) / 4 + 10);
 
     // Improve girl
-    if (likes_women(girl))    { make_horny(girl, std::min(3, brothel.num_girls_on_job(JOB_XXXENTERTAINMENT, false))); }
-    HandleGains(girl, fame);
-
-    return false;
+    if (likes_women(girl)) { make_horny(girl, std::min(3, shift.building().num_girls_on_job(JOB_XXXENTERTAINMENT, false))); }
 }
 
 class cEntertainerJob : public cSimpleJob {
 public:
     cEntertainerJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-cEntertainerJob::cEntertainerJob() : cSimpleJob(JOB_ENTERTAINMENT, "Entertainer.xml", {EActivity::SOCIAL}) {
+cEntertainerJob::cEntertainerJob() : cSimpleJob(JOB_ENTERTAINMENT, "Entertainer.xml") {
 }
 
 
-bool cEntertainerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-#pragma region //    Job setup                //
-
-    const sGirl* dealeronduty = random_girl_on_job(*girl.m_Building, JOB_DEALER, is_night);
+void cEntertainerJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    const sGirl* dealeronduty = random_girl_on_job(*girl.m_Building, JOB_DEALER, shift.is_night_shift());
     std::string dealername = (dealeronduty ? "Dealer " + dealeronduty->FullName() + "" : "the Dealer");
 
-    m_Earnings = 25;
+    shift.data().Earnings = 25;
     int fame = 0;
-    EImageBaseType imagetype = EImageBaseType::BUNNY;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
-
-#pragma endregion
-#pragma region //    Job Performance            //
 
     //SIN: A little pre-randomness
-    if (chance(50))
-    {
-        if (girl.tiredness() > 75)
-        {
+    if (shift.chance(50)) {
+        if (girl.tiredness() > 75) {
             ss << "She was very tired, negatively affecting her performance.\n";
-            m_Performance -= 10;
-        }
-        else if (girl.happiness() > 90)
-        {
+            shift.data().Performance -= 10;
+        } else if (girl.happiness() > 90) {
             ss << "Her cheeriness improved her performance.\n";
-            m_Performance += 5;
+            shift.data().Performance += 5;
         }
-        if (chance(10))
-        {
-            if (girl.strip() > 60)
-            {
+        if (shift.chance(10)) {
+            if (girl.strip() > 60) {
                 ss << "A born stripper, ${name} wears her clothes just short of showing flesh, just the way the customers like it.\n";
-                m_Performance += 15;
+                shift.data().Performance += 15;
             }
-            if (-girl.pclove() > girl.pcfear())
-            {
+            if (-girl.pclove() > girl.pcfear()) {
                 ss << " ${name} opened with some rather rude jokes about you. While this annoys you a little, ";
-                if (girl.has_active_trait(traits::YOUR_DAUGHTER))
-                {
+                if (girl.has_active_trait(traits::YOUR_DAUGHTER)) {
                     ss << "she is your daughter, and ";
                 }
                 ss << "it seems to get the audience on her side.\n";
-                m_Performance += 15;
+                shift.data().Performance += 15;
             }
         }
     }
 
-    add_performance_text();
-    m_Earnings += (int)m_PerformanceToEarnings((float)m_Performance);
+    add_performance_text(shift);
+    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.performance());
 
 
     //base tips, aprox 5-30% of base wages
-    m_Tips += (int)(((5 + m_Performance / 8) * m_Earnings) / 100);
+    shift.data().Tips += (int) (((5 + shift.performance() / 8) * shift.data().Earnings) / 100);
 
     // try and add randomness here
-    add_text("after-work") << "\n";
+    shift.add_line("after-work");
 
-    if (brothel.num_girls_on_job(JOB_DEALER, false) >= 1 && chance(25))
-    {
-        if (m_Performance < 125)
-        {
-            ss << "${name} tried to distract the patrons but due to her lack of skills she distracted " << dealername << " causing you to lose some money.\n";
-            m_Earnings -= 10;
-        }
-        else
-        {
-            ss << "${name} was able to perfectly distract some patrons while the " << dealername << " cheated to make some more money.\n";
-            m_Earnings += 25;
+    if (shift.building().num_girls_on_job(JOB_DEALER, false) >= 1 && shift.chance(25)) {
+        if (shift.performance() < 125) {
+            ss << "${name} tried to distract the patrons but due to her lack of skills she distracted "
+               << dealername << " causing you to lose some money.\n";
+            shift.data().Earnings -= 10;
+        } else {
+            ss << "${name} was able to perfectly distract some patrons while the " << dealername
+               << " cheated to make some more money.\n";
+            shift.data().Earnings += 25;
         }
     }
 
     //    Finish the shift            //
-    shift_enjoyment();
+    shift_enjoyment(shift);
 
-    HandleGains(girl, fame);
-    girl.AddMessage(ss.str(), imagetype, msgtype);
-
-    m_Earnings += uniform(10, 10 + (girl.beauty() + girl.charisma()) / 4);
-
-    return false;
+    shift.data().Earnings += shift.uniform(10, 10 + (girl.beauty() + girl.charisma()) / 4);
 }
 
 class cXXXEntertainerJob : public cSimpleJob {
 public:
     cXXXEntertainerJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
 
-cXXXEntertainerJob::cXXXEntertainerJob() : cSimpleJob(JOB_XXXENTERTAINMENT, "XXXEntertainer.xml", {EActivity::STRIPPING}) {
+cXXXEntertainerJob::cXXXEntertainerJob() : cSimpleJob(JOB_XXXENTERTAINMENT, "XXXEntertainer.xml") {
 }
 
-bool cXXXEntertainerJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    m_Earnings = 25;
+void cXXXEntertainerJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    shift.data().Earnings = 25;
     int fame = 0;
-    sImagePreset imagetype = EImageBaseType::BUNNY;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
-     //    Job Performance            //
+    //    Job Performance            //
 
     // SIN: A little pre-show randomness - temporary stats that may affect show
-    if (chance(20))
-    {
-        if (girl.tiredness() > 75)
-        {
+    if (shift.chance(20)) {
+        if (girl.tiredness() > 75) {
             ss << "${name} was very tired. This affected her performance. ";
-            m_Performance -= 10;
-        }
-        else if (girl.lust() > 40)
-        {
+            shift.data().Performance -= 10;
+        } else if (girl.lust() > 40) {
             ss << "${name}'s horniness improved her performance. ";
-            m_Performance += 10;
+            shift.data().Performance += 10;
         }
 
         if (girl.any_active_trait({traits::DEMON, traits::SHAPE_SHIFTER, traits::CONSTRUCT,
-                                   traits::CAT_GIRL, traits::SUCCUBUS, traits::REPTILIAN}))
-        {
+                                   traits::CAT_GIRL, traits::SUCCUBUS, traits::REPTILIAN})) {
             ss << "Customers are surprised to see such an unusual girl giving sexual entertainment. ";
             ss << "Some are disgusted, some are turned on, but many can't help watching.\n";
             ss << "The dealers at the tables make a small fortune from distracted guests. ";
-            m_Earnings += 30;
+            shift.data().Earnings += 30;
             fame += 1;
-        }
-        else if (girl.age() > 30 && chance(std::min(90, std::max((girl.age() - 30) * 3, 1))) && girl.beauty() < 30)
-        {    //"Too old!" - chance of heckle: age<30y= 0%, then 4%/year (32y - 6%, 40y - 30%...) max 90%... (but only a 20% chance this bit even runs)
+        } else if (girl.age() > 30 && shift.chance(std::min(90, std::max((girl.age() - 30) * 3, 1))) && girl.beauty() <
+                                                                                                  30) {    //"Too old!" - shift.chance of heckle: age<30y= 0%, then 4%/year (32y - 6%, 40y - 30%...) max 90%... (but only a 20% shift.chance this bit even runs)
             // note: demons are exempt as they age differently
             ss << "Some customers heckle ${name} over her age.";
             ss << "\n\"Gross!\" \"Grandma is that you!?\"\n";
             ss << "This makes it harder for her to work this shift. ";
-            m_Performance -= 20;
-        }
-        else if (girl.has_active_trait(traits::EXOTIC))
-        {
+            shift.data().Performance -= 20;
+        } else if (girl.has_active_trait(traits::EXOTIC)) {
             ss << "The customers were pleasantly surprised to see such an exotic girl giving sexual entertainment.";
-            m_Earnings += 15;
+            shift.data().Earnings += 15;
             fame += 1;
         }
         if ((girl.any_active_trait({traits::SYPHILIS, traits::HERPES}))
-            && chance(100 - girl.health()))
-        {
+            && shift.chance(100 - girl.health())) {
             ss << "She's unwell. A man in the audience recognises ${name}'s symptoms and heckles her about her ";
-            if (girl.has_active_trait(traits::SYPHILIS) && girl.has_active_trait(traits::HERPES))
-            {
+            if (girl.has_active_trait(traits::SYPHILIS) && girl.has_active_trait(traits::HERPES)) {
                 ss << "diseases";
-            }
-            else if (girl.has_active_trait(traits::HERPES))
-            {
+            } else if (girl.has_active_trait(traits::HERPES)) {
                 ss << "Herpes";
-            }
-            else if (girl.has_active_trait(traits::SYPHILIS))
-            {
+            } else if (girl.has_active_trait(traits::SYPHILIS)) {
                 ss << "Syphilis";
-            }
-            else
-            {
+            } else {
                 ss << "diseases";
             }
             ss << ". This digusts some in the audience and results in further heckling which disrupts ";
             ss << "her performance and makes her very uncomfortable. ";
-            m_Performance -= 60;
+            shift.data().Performance -= 60;
             girl.happiness(-10);
             fame -= 3;
         }
         ss << "\n";
     }
 
-    add_performance_text();
-    m_Earnings += m_PerformanceToEarnings((float)m_Performance);
+    add_performance_text(shift);
+    shift.data().Earnings += m_PerformanceToEarnings((float) shift.performance());
 
 
     //base tips, aprox 5-30% of base wages
-    m_Tips += (int)(((5 + m_Performance / 6) * m_Earnings) / 100);
+    shift.data().Tips += (int) (((5 + shift.performance() / 6) * shift.data().Earnings) / 100);
 
     // try and add randomness here
-    add_text("after-work") << "\n";
+    shift.add_line("after-work");
 
     //try and add randomness here
 
-    if (girl.has_active_trait(traits::YOUR_DAUGHTER) && chance(20))
-    {
-        ss << "Word got around that ${name} is your daughter, so more customers than normal came to watch her perform.\n";
-        m_Earnings += (m_Earnings / 5);
-        if (g_Game->player().disposition() > 0)
-        {
+    if (girl.has_active_trait(traits::YOUR_DAUGHTER) && shift.chance(20)) {
+        ss
+                << "Word got around that ${name} is your daughter, so more customers than normal came to watch her perform.\n";
+        shift.data().Earnings += (shift.data().Earnings / 5);
+        if (g_Game->player().disposition() > 0) {
             ss << "This is about the nicest job you can give her. She's safe here and the customers can only look - ";
-        }
-        else
-        {
+        } else {
             ss << "At the end of the day, she's another whore to manage, it's a job that needs doing and ";
         }
-        if (m_Performance >= 120)
-        {
+        if (shift.performance() >= 120) {
             ss << " she shows obvious talent at this.\n";
             fame += 5;
-        }
-        else
-        {
+        } else {
             ss << " it's just a damn shame she sucks at it.\n";
         }
     }
 
-    if (girl.lust() > 90)
-    {
-        if (girl.has_active_trait(traits::FUTANARI))
-        {
+    if (girl.lust() > 90) {
+        if (girl.has_active_trait(traits::FUTANARI)) {
             //Addiction bypasses confidence check
-            if (girl.has_active_trait(traits::CUM_ADDICT))
-            {
+            if (girl.has_active_trait(traits::CUM_ADDICT)) {
                 //Autofellatio, belly gets in the way if pregnant, requires extra flexibility
-                if (girl.has_active_trait(traits::FLEXIBLE) && !girl.is_pregnant() && chance(50))
-                {
+                if (girl.has_active_trait(traits::FLEXIBLE) && !girl.is_pregnant() && shift.chance(50)) {
                     ss << "During her shift ${name} couldn't resist the temptation of taking a load of hot, delicious cum in her mouth and began to suck her own cock. The customers enjoyed a lot such an unusual show.";
                     girl.oralsex(1);
                     girl.happiness(1);
                     fame += 1;
-                    m_Tips += 30;
-                }
-                else
-                {
+                    shift.data().Tips += 30;
+                } else {
                     //default Cum Addict
-                    ss << "${name} won't miss a chance to taste some yummy cum. She came up on the stage with a goblet, cummed in it and then drank the content to entertain the customers.";
+                    ss << "${name} won't miss a shift.chance to taste some yummy cum. She came up on the stage with a goblet, cummed in it and then drank the content to entertain the customers.";
                     girl.happiness(1);
-                    m_Tips += 10;
+                    shift.data().Tips += 10;
                 }
-                cJobManager::GetMiscCustomer(brothel);
-                brothel.m_Happiness += 100;
+                cJobManager::GetMiscCustomer(shift.building());
+                shift.building().m_Happiness += 100;
                 girl.lust_release_spent();
                 // work out the pay between the house and the girl
-                m_Earnings += girl.askprice() + 60;
+                shift.data().Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = EImagePresets::MASTURBATE;
+                shift.set_image(EImagePresets::MASTURBATE);
             }
                 //Let's see if she has what it takes to do it: Confidence > 65 or Exhibitionist trait, maybe shy girls should be excluded
-            else if (!girl.has_active_trait(traits::CUM_ADDICT) && girl.has_active_trait(traits::EXHIBITIONIST) || !girl.has_active_trait(
-                    traits::CUM_ADDICT) && girl.confidence() > 65)
-            {
+            else if (!girl.has_active_trait(traits::CUM_ADDICT) && girl.has_active_trait(traits::EXHIBITIONIST) ||
+                     !girl.has_active_trait(
+                             traits::CUM_ADDICT) && girl.confidence() > 65) {
                 //Some variety
                 //Autopaizuri, requires very big breasts
-                if (chance(25) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS) || chance(25) && (girl.has_active_trait(
-                        traits::TITANIC_TITS)))
-                {
+                if (shift.chance(25) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS) ||
+                    shift.chance(25) && (girl.has_active_trait(
+                            traits::TITANIC_TITS))) {
                     ss << "${name} was horny and decided to deliver a good show. She put her cock between her huge breasts and began to slowly massage it. The crowd went wild when she finally came on her massive tits.";
                     girl.tittysex(1);
                     fame += 1;
-                    m_Tips += 30;
+                    shift.data().Tips += 30;
                 }
                     //cums over self
-                else if (girl.dignity() < -40 && chance(25))
-                {
+                else if (girl.dignity() < -40 && shift.chance(25)) {
                     ss << "The customers were really impressed when ${name} finished her show by cumming all over herself";
-                    m_Tips += 10;
+                    shift.data().Tips += 10;
                 }
                     //Regular futa masturbation
-                else
-                {
+                else {
                     ss << "${name}'s cock was hard all the time and she ended up cumming on stage. The customers enjoyed it but the cleaning crew won't be happy.";
-                    brothel.m_Filthiness += 1;
+                    shift.building().m_Filthiness += 1;
                 }
-                cJobManager::GetMiscCustomer(brothel);
-                brothel.m_Happiness += 100;
+                cJobManager::GetMiscCustomer(shift.building());
+                shift.building().m_Happiness += 100;
                 girl.lust_release_spent();
                 // work out the pay between the house and the girl
-                m_Earnings += girl.askprice() + 60;
+                shift.data().Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = EImagePresets::MASTURBATE;
-            }
-            else
-            {
-                ss << "There was a noticeable bulge in ${name}'s panties but she didn't have enough confidence to masturbate in public.";
+                shift.set_image(EImagePresets::MASTURBATE);
+            } else {
+                ss
+                        << "There was a noticeable bulge in ${name}'s panties but she didn't have enough confidence to masturbate in public.";
             }
         }
             //regular masturbation code by Crazy tweaked to exclude futas
-        else if (!girl.has_active_trait(traits::FUTANARI) && will_masturbate_public(girl, sPercent(50)))
-        {
+        else if (!girl.has_active_trait(traits::FUTANARI) && will_masturbate_public(girl, sPercent(50))) {
             ss << "She was horny and ended up masturbating for the customers making them very happy.";
-            cJobManager::GetMiscCustomer(brothel);
-            brothel.m_Happiness += 100;
+            cJobManager::GetMiscCustomer(shift.building());
+            shift.building().m_Happiness += 100;
             girl.lust_release_regular();
             // work out the pay between the house and the girl
-            m_Earnings += girl.askprice() + 60;
+            shift.data().Earnings += girl.askprice() + 60;
             fame += 1;
-            imagetype = EImagePresets::MASTURBATE;
+            shift.set_image(EImagePresets::MASTURBATE);
         }
     }
 
     //    Finish the shift            //
 
-    shift_enjoyment();
-    HandleGains(girl, fame);
-
-    girl.AddMessage(ss.str(), imagetype, msgtype);
-
-
-    m_Earnings += uniform(10, 10 + (girl.beauty() + girl.charisma()) / 4);
-    return false;
+    shift_enjoyment(shift);
+    shift.data().Earnings += shift.uniform(10, 10 + (girl.beauty() + girl.charisma()) / 4);
 }
 
 class cMasseuseJob : public cSimpleJob {
 public:
     cMasseuseJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml", {EActivity::STRIPPING, 0, EImageBaseType::MASSAGE}) {
+cMasseuseJob::cMasseuseJob() : cSimpleJob(JOB_MASSEUSE, "Masseuse.xml") {
 }
 
-bool cMasseuseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    m_Earnings = girl.askprice() + 40;
+void cMasseuseJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    shift.data().Earnings = girl.askprice() + 40;
     int fame = 0;
 
-    add_performance_text();
-    m_Earnings += m_PerformanceToEarnings((float)m_Performance);
+    add_performance_text(shift);
+    shift.data().Earnings += m_PerformanceToEarnings((float) shift.performance());
 
     //base tips, aprox 5-30% of base wages
-    m_Tips += (int)(((5 + m_Performance / 8) * m_Earnings) / 100);
+    shift.data().Tips += (int) (((5 + shift.performance() / 8) * shift.data().Earnings) / 100);
 
     // check for potential sex
     SKILLS target_sex = SKILL_NORMALSEX;
     ESexParticipants target_part = ESexParticipants::HETERO;
-    switch (uniform(0, 10))
-    {
-        case 0: target_sex = SKILL_ORALSEX;  break;
-        case 1: target_sex = SKILL_TITTYSEX; break;
-        case 2: target_sex = SKILL_HANDJOB;  break;
-        case 3: target_sex = SKILL_ANAL;     break;
-        case 4: target_sex = SKILL_FOOTJOB;  break;
+    switch (shift.uniform(0, 10)) {
+        case 0:
+            target_sex = SKILL_ORALSEX;
+            break;
+        case 1:
+            target_sex = SKILL_TITTYSEX;
+            break;
+        case 2:
+            target_sex = SKILL_HANDJOB;
+            break;
+        case 3:
+            target_sex = SKILL_ANAL;
+            break;
+        case 4:
+            target_sex = SKILL_FOOTJOB;
+            break;
     }
 
-    sCustomer Cust = g_Game->GetCustomer(brothel);
+    sCustomer Cust = g_Game->GetCustomer(shift.building());
     if (Cust.m_IsWoman && girl.is_sex_type_allowed(SKILL_LESBIAN)) {
         target_sex = SKILL_LESBIAN;
         target_part = ESexParticipants::LESBIAN;
@@ -1238,245 +485,207 @@ bool cMasseuseJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
     if (g_Dice.percent(chance_horny_public(girl, target_part, target_sex, true)))
         //ANON: TODO: sanity check: not gonna give 'perks' to the cust she just banned for wanting perks!
     {
-        brothel.m_Happiness += 100;
+        shift.building().m_Happiness += 100;
         switch (target_sex) {
             case SKILL_LESBIAN:
-                add_text("horny.les");
+                shift.add_text("horny.les");
                 break;
             case SKILL_ORALSEX:
-                add_text("horny.oral");
+                shift.add_text("horny.oral");
                 break;
             case SKILL_TITTYSEX:
-                add_text("horny.titty");
+                shift.add_text("horny.titty");
                 break;
             case SKILL_HANDJOB:
-                add_text("horny.handjob");
+                shift.add_text("horny.handjob");
                 break;
             case SKILL_FOOTJOB:
-                add_text("horny.footjob");
+                shift.add_text("horny.footjob");
                 break;
             case SKILL_ANAL:
-                add_text("horny.anal");
+                shift.add_text("horny.anal");
                 break;
             case SKILL_NORMALSEX:
-                add_text("horny.vaginal");
+                shift.add_text("horny.vaginal");
                 break;
             default:
                 break;
         }
         ss << "\n";
-        if (target_sex == SKILL_NORMALSEX)
-        {
-            if (girl.lose_trait(traits::VIRGIN))
-            {
+        if (target_sex == SKILL_NORMALSEX) {
+            if (girl.lose_trait(traits::VIRGIN)) {
                 ss << "\nShe is no longer a virgin.\n";
             }
-            if (!girl.calc_pregnancy(Cust, 1.0))
-            {
+            if (!girl.calc_pregnancy(Cust, 1.0)) {
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
             }
         }
         girl.upd_skill(target_sex, 2);
         girl.lust_release_regular();
-        m_Earnings += 225;
-        m_Tips += 30 + girl.get_skill(target_sex) / 5;
+        shift.data().Earnings += 225;
+        shift.data().Tips += 30 + girl.get_skill(target_sex) / 5;
         girl.enjoyment(EActivity::FUCKING, +1);
         fame += 1;
         girl.m_NumCusts++;
-        //girl.m_Events.AddMessage(ss.str(), imageType, Day0Night1);
     } //SIN - bit more spice
-    else if (girl.has_active_trait(traits::DOCTOR) && chance(5))
-    {
+    else if (girl.has_active_trait(traits::DOCTOR) && shift.chance(5)) {
         ss << "Due to ${name}'s training as a Doctor, she was able to discover an undetected medical condition in her client during the massage. ";
-        if (girl.charisma() < 50)
-        {
+        if (girl.charisma() < 50) {
             ss << "The customer was devastated to get such news from a massage and numbly accepted the referral for treatment.\n";
-        }
-        else
-        {
+        } else {
             ss << "The customer was shocked to get such news, but was calmed by ${name}'s kind explanations, and happily accepted the referral for treatment.\n";
-            brothel.m_Happiness += 20;
+            shift.building().m_Happiness += 20;
         }
-    }
-    else
-    {
-        brothel.m_Happiness += uniform(30, 100);
-        brothel.m_MiscCustomers++;
-        //girl.m_Events.AddMessage(ss.str(), imageType, Day0Night1);
+    } else {
+        shift.building().m_Happiness += shift.uniform(30, 100);
+        shift.building().m_MiscCustomers++;
+
     }
 
-    shift_enjoyment();
-    HandleGains(girl, fame);
-
-    girl.AddMessage(ss.str(), m_ImageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-    return false;
+    shift_enjoyment(shift);
 }
 
 class cPeepShowJob : public cSimpleJob {
 public:
     cPeepShowJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-cPeepShowJob::cPeepShowJob() : cSimpleJob(JOB_PEEP, "PeepShow.xml", {EActivity::STRIPPING}) {
+cPeepShowJob::cPeepShowJob() : cSimpleJob(JOB_PEEP, "PeepShow.xml") {
 }
 
-bool cPeepShowJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    int roll_c = d100();
-    m_Earnings = girl.askprice() + uniform(0, 50);
-    m_Tips = std::max(uniform(-10, 40), 0);
+void cPeepShowJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    int roll_c = shift.d100();
+    shift.data().Earnings = girl.askprice() + shift.uniform(0, 50);
+    shift.data().Tips = std::max(shift.uniform(-10, 40), 0);
     int fame = 0;
     SKILLS sextype = SKILL_STRIP;
-    sImagePreset imagetype = EImageBaseType::STRIP;
 
     //    Job Performance            //
-
-    double mods[] = {0.8, 0.9, 1.0, 1.5, 2.0, 3.0};
-    double mod = mods[get_performance_class(m_Performance)];
-    add_performance_text();
+    double mod = performance_based_lookup(shift, 0.8, 0.9, 1.0, 1.5, 2.0, 3.0);
+    add_performance_text(shift);
 
     //try and add randomness here
-    if (girl.lust() > 80)
-    {
-        if(is_sex_crazy(girl)) {
-            if (likes_women(girl) && (!likes_men(girl) || roll_c < 50))
-            {
+    if (girl.lust() > 80) {
+        if (is_sex_crazy(girl)) {
+            if (likes_women(girl) && (!likes_men(girl) || roll_c < 50)) {
                 ss << "\nShe was horny and she loves sex so she brought in another girl and had sex with her while the customers watched.\n";
                 sextype = SKILL_LESBIAN;
-            }
-            else
-            {
+            } else {
                 ss << "\nShe was horny and she loves sex so she brought in one of the customers and had sex with him while the others watched.";
                 sextype = SKILL_NORMALSEX;
             }
         }
-        // new stuff
-        else if (girl.has_active_trait(traits::FUTANARI))
-        {
+            // new stuff
+        else if (girl.has_active_trait(traits::FUTANARI)) {
             //Addiction bypasses confidence check
-            if (girl.has_active_trait(traits::CUM_ADDICT))
-            {
+            if (girl.has_active_trait(traits::CUM_ADDICT)) {
                 //Autofellatio, belly gets in the way if pregnant, requires extra flexibility
-                if (girl.has_active_trait(traits::FLEXIBLE) && !(girl.is_pregnant()) && chance(50))
-                {
+                if (girl.has_active_trait(traits::FLEXIBLE) && !(girl.is_pregnant()) && shift.chance(50)) {
                     ss << "\nDuring her shift ${name} couldn't resist the temptation of taking a load of hot, delicious cum in her mouth and began to suck her own cock. The customers enjoyed a lot such an unusual show.";
                     girl.oralsex(1);
                     girl.happiness(1);
                     fame += 1;
-                    m_Tips += 30;
-                }
-                else
-                {
+                    shift.data().Tips += 30;
+                } else {
                     //default Cum Addict
-                    ss << "\n${name} won't miss a chance to taste some yummy cum. She came up on the stage with a goblet, cummed in it and then drank the content to entertain the customers.";
+                    ss << "\n${name} won't miss a shift.chance to taste some yummy cum. She came up on the stage with a goblet, cummed in it and then drank the content to entertain the customers.";
                     girl.happiness(1);
-                    m_Tips += 10;
+                    shift.data().Tips += 10;
                 }
-                cJobManager::GetMiscCustomer(brothel);
-                brothel.m_Happiness += 100;
+                cJobManager::GetMiscCustomer(shift.building());
+                shift.building().m_Happiness += 100;
                 girl.lust_release_spent();
                 // work out the pay between the house and the girl
-                m_Earnings += girl.askprice() + 60;
+                shift.data().Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = EImagePresets::MASTURBATE;
+                shift.set_image(EImagePresets::MASTURBATE);
             }
                 //Let's see if she has what it takes to do it: Confidence > 65 or Exhibitionist trait, maybe shy girls should be excluded
-            else if (!girl.has_active_trait(traits::CUM_ADDICT) && girl.has_active_trait(traits::EXHIBITIONIST) || !girl.has_active_trait(
-                    traits::CUM_ADDICT) && girl.confidence() > 65)
-            {
+            else if (!girl.has_active_trait(traits::CUM_ADDICT) && girl.has_active_trait(traits::EXHIBITIONIST) ||
+                     !girl.has_active_trait(
+                             traits::CUM_ADDICT) && girl.confidence() > 65) {
                 //Some variety
                 //Autopaizuri, requires very big breasts
-                if (chance(25) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS) || chance(25) && (girl.has_active_trait(
-                        traits::TITANIC_TITS)))
-                {
+                if (shift.chance(25) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS) ||
+                    shift.chance(25) && (girl.has_active_trait(
+                            traits::TITANIC_TITS))) {
                     ss << "\n${name} was horny and decided to deliver a good show. She put her cock between her huge breasts and began to slowly massage it. The crowd went wild when she finally came on her massive tits.";
                     girl.tittysex(1);
                     fame += 1;
-                    m_Tips += 30;
+                    shift.data().Tips += 30;
                 }
                     //cums over self
-                else if (girl.dignity() < -40 && chance(25))
-                {
+                else if (girl.dignity() < -40 && shift.chance(25)) {
                     ss << "\nThe customers were really impressed when ${name} finished her show by cumming all over herself";
-                    m_Tips += 10;
+                    shift.data().Tips += 10;
                 }
                     //Regular futa masturbation
-                else
-                {
+                else {
                     ss << "\n${name}'s cock was hard all the time and she ended up cumming on stage. The customers enjoyed it but the cleaning crew won't be happy.";
-                    brothel.m_Filthiness += 1;
+                    shift.building().m_Filthiness += 1;
                 }
-                cJobManager::GetMiscCustomer(brothel);
-                brothel.m_Happiness += 100;
+                cJobManager::GetMiscCustomer(shift.building());
+                shift.building().m_Happiness += 100;
                 girl.lust_release_spent();
                 // work out the pay between the house and the girl
-                m_Earnings += girl.askprice() + 60;
+                shift.data().Earnings += girl.askprice() + 60;
                 fame += 1;
-                imagetype = EImagePresets::MASTURBATE;
-            }
-            else
-            {
+                shift.set_image(EImagePresets::MASTURBATE);
+            } else {
                 ss << "\nThere was a noticeable bulge in ${name}'s panties but she didn't have enough confidence to masturbate in public.";
             }
-        }
-        else
-        {
+        } else {
             //GirlFucks handles all the stuff for the other events but it isn't used here so everything has to be added manually
             //It's is the same text as the XXX entertainer masturbation event, so I'll just copy the rest
             ss << "\nShe was horny and ended up masturbating for the customers, making them very happy.";
-            cJobManager::GetMiscCustomer(brothel);
-            brothel.m_Happiness += 100;
+            cJobManager::GetMiscCustomer(shift.building());
+            shift.building().m_Happiness += 100;
             girl.lust_release_regular();
             // work out the pay between the house and the girl
-            m_Earnings += girl.askprice() + 60;
+            shift.data().Earnings += girl.askprice() + 60;
             fame += 1;
-            imagetype = EImagePresets::MASTURBATE;
+            shift.set_image(EImagePresets::MASTURBATE);
         }
-    }
-    else if (chance(5))  //glory hole event
+    } else if (shift.chance(5))  //glory hole event
     {
         ss << "A man managed to cut a hole out from his booth and made himself a glory hole. ${name} saw his cock sticking out and ";
         {
 
-            if (girl.any_active_trait({traits::MEEK, traits::SHY}))
-            {
-                m_Enjoyment -= 5;
+            if (girl.any_active_trait({traits::MEEK, traits::SHY})) {
+                shift.data().Enjoyment -= 5;
                 ss << "meekly ran away from it.\n";
-            }
-            else if (!likes_men(girl))
-            {
-                m_Enjoyment -= 2;
+            } else if (!likes_men(girl)) {
+                shift.data().Enjoyment -= 2;
                 girl.lust_turn_off(5);
                 ss << "she doesn't understand the appeal of them, which turned her off.\n";
-            }
-            else if (!is_virgin(girl) && check_public_sex(girl, ESexParticipants::HETERO, SKILL_NORMALSEX, sPercent(90), false)) //sex
+            } else if (!is_virgin(girl) &&
+                       check_public_sex(girl, ESexParticipants::HETERO, SKILL_NORMALSEX, sPercent(90), false)) //sex
             {
                 sextype = SKILL_NORMALSEX;
                 ss << "decided she needed to use it for her own entertainment.\n";
-            }
-            else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_ORALSEX, sPercent(90), false)) //oral
+            } else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_ORALSEX, sPercent(90), false)) //oral
             {
                 sextype = SKILL_ORALSEX;
                 ss << "decided she needed to taste it.\n";
-            }
-            else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_FOOTJOB, sPercent(90), false)) //foot
+            } else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_FOOTJOB, sPercent(90), false)) //foot
             {
                 sextype = SKILL_FOOTJOB;
-                imagetype = EImageBaseType::FOOT;
+                shift.set_image(EImageBaseType::FOOT);
                 ss << "decided she would give him a foot job for being so brave.\n";
-            }
-            else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_HANDJOB, sPercent(90), false))    //hand job
+            } else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_HANDJOB, sPercent(90),
+                                        false))    //hand job
             {
                 sextype = SKILL_HANDJOB;
                 ss << "decided she would give him a hand job for being so brave.\n";
-            }
-            else
-            {
+            } else {
                 ss << "pointed and laughed.\n";
             }
 
             /* `J` suggest adding bad stuff,
-            else if (girl.has_trait( traits::MERCILESS) && girl.has_item("Dagger") != -1 && chance(10))
+            else if (girl.has_trait( traits::MERCILESS) && girl.has_item("Dagger") != -1 && shift.chance(10))
             {
             imagetype = EBaseImage::COMBAT;
             ss << "decided she would teach this guy a lesson and cut his dick off.\n";
@@ -1490,243 +699,197 @@ bool cPeepShowJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
     }
 
     // `J` calculate base pay and tips with mod before special pay and tips are added
-    m_Tips = std::max(0, int(m_Tips * mod));
-    m_Earnings = std::max(0, int(m_Earnings * mod));
+    shift.data().Tips = std::max(0, int(shift.data().Tips * mod));
+    shift.data().Earnings = std::max(0, int(shift.data().Earnings * mod));
 
-    if (girl.beauty() > 85 && chance(20))
-    {
+    if (girl.beauty() > 85 && shift.chance(20)) {
         ss << "Stunned by her beauty, a customer left her a great tip.\n \n";
-        m_Tips += uniform(10, 60);
+        shift.data().Tips += shift.uniform(10, 60);
     }
 
-    if (sextype != SKILL_STRIP)
-    {
+    if (sextype != SKILL_STRIP) {
         // `J` get the customer and configure them to what is already known about them
-        sCustomer Cust = cJobManager::GetMiscCustomer(brothel);
+        sCustomer Cust = cJobManager::GetMiscCustomer(shift.building());
         Cust.m_Amount = 1;                                        // always only 1
         Cust.m_SexPref = sextype;                                // they don't get a say in this
         if (sextype == SKILL_LESBIAN) Cust.m_IsWoman = true;    // make sure it is a lesbian
 
         std::string message = ss.str();
-        cGirls::GirlFucks(&girl, is_night, &Cust, false, message, sextype, true);
-        ss.str(""); ss << message;
-        brothel.m_Happiness += Cust.happiness();
+        cGirls::GirlFucks(&girl, shift.is_night_shift(), &Cust, false, message, sextype, true);
+        ss.str("");
+        ss << message;
+        shift.building().m_Happiness += Cust.happiness();
 
-        int sexwages = std::min(uniform(0, Cust.m_Money / 4) + girl.askprice(), int(Cust.m_Money));
+        int sexwages = std::min(shift.uniform(0, Cust.m_Money / 4) + girl.askprice(), int(Cust.m_Money));
         Cust.m_Money -= sexwages;
-        int sextips = std::max(0, int(uniform(0, Cust.m_Money) - (Cust.m_Money / 2)));
+        int sextips = std::max(0, int(shift.uniform(0, Cust.m_Money) - (Cust.m_Money / 2)));
         Cust.m_Money -= sextips;
-        m_Earnings += sexwages;
-        m_Tips += sextips;
+        shift.data().Earnings += sexwages;
+        shift.data().Tips += sextips;
 
         ss << "The customer she had sex with gave her " << sexwages << " gold for her services";
         if (sextips > 0) ss << " and slipped her another " << sextips << " under the table.\n \n";
         else ss << ".\n \n";
 
-        if (imagetype == EImageBaseType::STRIP)
-        {
-            /* */if (sextype == SKILL_ANAL)            imagetype = EImageBaseType::ANAL;
-            else if (sextype == SKILL_BDSM)            imagetype = EImageBaseType::BDSM;
-            else if (sextype == SKILL_NORMALSEX)    imagetype = EImageBaseType::VAGINAL;
-            else if (sextype == SKILL_BEASTIALITY)    imagetype = EImageBaseType::BEAST;
-            else if (sextype == SKILL_GROUP)        imagetype = EImagePresets::GROUP;
-            else if (sextype == SKILL_LESBIAN)        imagetype = EImagePresets::LESBIAN;
-            else if (sextype == SKILL_ORALSEX)        imagetype = EImagePresets::BLOWJOB;
-            else if (sextype == SKILL_TITTYSEX)        imagetype = EImageBaseType::TITTY;
-            else if (sextype == SKILL_HANDJOB)        imagetype = EImageBaseType::HAND;
-            else if (sextype == SKILL_FOOTJOB)        imagetype = EImageBaseType::FOOT;
+        if (shift.data().EventImage == EImageBaseType::STRIP) {
+            /* */if (sextype == SKILL_ANAL) shift.set_image(EImageBaseType::ANAL);
+            else if (sextype == SKILL_BDSM) shift.set_image(EImageBaseType::BDSM);
+            else if (sextype == SKILL_NORMALSEX) shift.set_image(EImageBaseType::VAGINAL);
+            else if (sextype == SKILL_BEASTIALITY) shift.set_image(EImageBaseType::BEAST);
+            else if (sextype == SKILL_GROUP) shift.set_image(EImagePresets::GROUP);
+            else if (sextype == SKILL_LESBIAN) shift.set_image(EImagePresets::LESBIAN);
+            else if (sextype == SKILL_ORALSEX) shift.set_image(EImagePresets::BLOWJOB);
+            else if (sextype == SKILL_TITTYSEX) shift.set_image(EImageBaseType::TITTY);
+            else if (sextype == SKILL_HANDJOB) shift.set_image(EImageBaseType::HAND);
+            else if (sextype == SKILL_FOOTJOB) shift.set_image(EImageBaseType::FOOT);
         }
     }
 
     //    Finish the shift            //
-    shift_enjoyment();
-
-    // work out the pay between the house and the girl
-    girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    // Improve stats
-    HandleGains(girl, fame);
+    shift_enjoyment(shift);
 
     //gain traits
-    if (sextype != SKILL_STRIP && girl.dignity() < 0)
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
+    // TODO should be in post shift code!
+    if (sextype != SKILL_STRIP && girl.dignity() < 0) {
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.",
+                                     EImageBaseType::ECCHI, EVENT_WARNING);
     }
-
-    return false;
 }
 
 class cBrothelStripper : public cSimpleJob {
 public:
     cBrothelStripper();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-cBrothelStripper::cBrothelStripper() : cSimpleJob(JOB_BROTHELSTRIPPER, "BrothelStripper.xml", {EActivity::STRIPPING}) {
+cBrothelStripper::cBrothelStripper() : cSimpleJob(JOB_BROTHELSTRIPPER, "BrothelStripper.xml") {
 }
 
-bool cBrothelStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+void cBrothelStripper::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
     int fame = 0;
-    sImagePreset imagetype = EImageBaseType::STRIP;
-    m_Earnings = 45;
+    shift.data().Earnings = 45;
 
     //    Job Performance            //
 
-    int lapdance = (girl.intelligence() / 2 +
-                    girl.performance() / 2 +
-                    girl.strip()) / 2;
+    int lapdance = (girl.intelligence() / 2 + girl.performance() / 2 + girl.strip()) / 2;
     bool mast = false, sex = false;
 
-    if (girl.beauty() > 90)
-    {
+    if (girl.beauty() > 90) {
         ss << "\nShe is so hot, customers were waving money to attract her to dance for them.";
-        m_Tips += 20;
+        shift.data().Tips += 20;
     }
-    if (girl.intelligence() > 75)
-    {
+    if (girl.intelligence() > 75) {
         ss << "\nShe was smart enough to boost her pay by playing two customers against one another.";
-        m_Tips += 25;
+        shift.data().Tips += 25;
     }
-    if (girl.beauty() <= 90 && girl.intelligence() <= 75)
-    {
+    if (girl.beauty() <= 90 && girl.intelligence() <= 75) {
         ss << "\nShe stripped for a customer.";
     }
     ss << "\n \n";
 
 
     //Adding cust here for use in scripts...
-    sCustomer Cust = g_Game->GetCustomer(brothel);
+    sCustomer Cust = g_Game->GetCustomer(shift.building());
 
     //A little more randomness
-    if (Cust.m_IsWoman && (likes_women(girl) || girl.lesbian() > 60))
-    {
+    if (Cust.m_IsWoman && (likes_women(girl) || girl.lesbian() > 60)) {
         ss << "${name} was overjoyed to perform for a woman, and gave a much more sensual, personal performance.\n";
-        m_Performance += 25;
+        shift.data().Performance += 25;
     }
 
-    if (girl.tiredness() > 70)
-    {
+    if (girl.tiredness() > 70) {
         ss << "${name} was too exhausted to give her best tonight";
-        if (m_Performance >= 120)
-        {
+        if (shift.performance() >= 120) {
             ss << ", but she did a fairly good job of hiding her exhaustion.\n";
-            m_Performance -= 10;
-        }
-        else
-        {
+            shift.data().Performance -= 10;
+        } else {
             ss << ". Unable to even mask her tiredness, she moved clumsily and openly yawned around customers.\n";
-            m_Performance -= 30;
+            shift.data().Performance -= 30;
         }
     }
 
-    add_performance_text();
-    m_Earnings += (int)m_PerformanceToEarnings((float)m_Performance);
+    add_performance_text(shift);
+    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.data().Performance);
 
     //base tips, aprox 5-40% of base wages
-    m_Tips += (int)(((5 + m_Performance / 6) * m_Earnings) / 100);
+    shift.data().Tips += (int) (((5 + shift.data().Performance / 6) * shift.data().Earnings) / 100);
 
     // lap dance code.. just test stuff for now
-    int roll_b = d100();
-    if (lapdance >= 90)
-    {
+    int roll_b = shift.d100();
+    if (lapdance >= 90) {
         ss << "${name} doesn't have to try to sell private dances the patrons beg her to buy one off her.\n";
-        if (roll_b < 5)
-        {
+        if (roll_b < 5) {
             ss << "She sold a champagne dance.";
-            m_Tips += 250;
-        }
-        else if (roll_b < 20)
-        {
+            shift.data().Tips += 250;
+        } else if (roll_b < 20) {
             ss << "She sold a shower dance.\n";
-            m_Tips += 125;
-            if (will_masturbate_public(girl, sPercent(50)))
-            {
+            shift.data().Tips += 125;
+            if (will_masturbate_public(girl, sPercent(50))) {
                 ss << "She was in the mood so she put on quite a show, taking herself to orgasm right in front of the customer.";
                 girl.lust_release_regular();
-                m_Earnings += 50;
+                shift.data().Earnings += 50;
                 mast = true;
             }
-        }
-        else if (roll_b < 40)
-        {
+        } else if (roll_b < 40) {
             ss << "She was able to sell a few VIP dances.\n";
-            m_Tips += 160;
-            if (chance(20)) sex = true;
-        }
-        else if (roll_b < 60)
-        {
+            shift.data().Tips += 160;
+            if (shift.chance(20)) sex = true;
+        } else if (roll_b < 60) {
             ss << "She sold a VIP dance.\n";
-            m_Tips += 75;
-            if (chance(15)) sex = true;
-        }
-        else
-        {
+            shift.data().Tips += 75;
+            if (shift.chance(15)) sex = true;
+        } else {
             ss << "She sold several lap dances.";
-            m_Tips += 85;
+            shift.data().Tips += 85;
         }
-    }
-    else if (lapdance >= 65)
-    {
+    } else if (lapdance >= 65) {
         ss << "${name}'s skill at selling private dances is impressive.\n";
-        if (roll_b < 10)
-        {
+        if (roll_b < 10) {
             ss << "She convinced a patron to buy a shower dance.\n";
-            m_Tips += 75;
-            if (will_masturbate_public(girl, sPercent(50)))
-            {
+            shift.data().Tips += 75;
+            if (will_masturbate_public(girl, sPercent(50))) {
                 ss << "She was in the mood so she put on quite a show, taking herself to orgasm right in front of the customer.";
                 girl.lust_release_regular();
-                m_Tips += 50;
+                shift.data().Tips += 50;
                 mast = true;
             }
         }
-        if (roll_b < 40)
-        {
+        if (roll_b < 40) {
             ss << "Sold a VIP dance to a patron.\n";
-            m_Tips += 75;
-            if (chance(20))
-            {
+            shift.data().Tips += 75;
+            if (shift.chance(20)) {
                 sex = true;
             }
-        }
-        else
-        {
+        } else {
             ss << "Sold a few lap dances.";
-            m_Tips += 65;
+            shift.data().Tips += 65;
         }
-    }
-    else if (lapdance >= 40)
-    {
+    } else if (lapdance >= 40) {
         ss << "${name} tried to sell private dances and ";
-        if (roll_b < 5)
-        {
+        if (roll_b < 5) {
             ss << "was able to sell a VIP dance against all odds.\n";
-            m_Tips += 75;
-            if (chance(10))
-            {
+            shift.data().Tips += 75;
+            if (shift.chance(10)) {
                 sex = true;
             }
         }
-        if (roll_b < 20)
-        {
+        if (roll_b < 20) {
             ss << "was able to sell a lap dance.";
-            m_Tips += 25;
-        }
-        else
-        {
+            shift.data().Tips += 25;
+        } else {
             ss << "wasn't able to sell any.";
         }
-    }
-    else
-    {
+    } else {
         ss << "${name} doesn't seem to understand the real money in stripping is selling private dances.\n";
     }
 
 
     //try and add randomness here
-    add_text("event.post");
+    shift.add_text("event.post");
 
-    //if (chance(10))//ruffe event
+    //if (shift.chance(10))//ruffe event
     //{
     //    ss << "A patron keep buying her drinks \n";
     //    if (girl.herbalism > 35)
@@ -1739,55 +902,68 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
     //    }
     //}
 
-    if (is_addict(girl, true) && !sex && !mast && chance(60)) // not going to get money or drugs any other way
+    if (is_addict(girl, true) && !sex && !mast && shift.chance(60)) // not going to get money or drugs any other way
     {
         const char* warning = "Noticing her addiction, a customer offered her drugs for a blowjob. She accepted, taking him out of sight of security and sucking him off for no money.\n";
         ss << "\n" << warning << "\n";
-        if (girl.has_active_trait(traits::SHROUD_ADDICT))         girl.add_item(g_Game->inventory_manager().GetItem("Shroud Mushroom"));
-        if (girl.has_active_trait(traits::FAIRY_DUST_ADDICT))     girl.add_item(g_Game->inventory_manager().GetItem("Fairy Dust"));
-        if (girl.has_active_trait(traits::VIRAS_BLOOD_ADDICT))    girl.add_item(g_Game->inventory_manager().GetItem("Vira Blood"));
+        if (girl.has_active_trait(traits::SHROUD_ADDICT))
+            girl.add_item(g_Game->inventory_manager().GetItem("Shroud Mushroom"));
+        if (girl.has_active_trait(traits::FAIRY_DUST_ADDICT))
+            girl.add_item(g_Game->inventory_manager().GetItem("Fairy Dust"));
+        if (girl.has_active_trait(traits::VIRAS_BLOOD_ADDICT))
+            girl.add_item(g_Game->inventory_manager().GetItem("Vira Blood"));
         girl.AddMessage(warning, EImagePresets::BLOWJOB, EVENT_WARNING);
     }
 
-    if (sex)
-    {
+    if (sex) {
         int n;
         ss << "In one of the private shows, she ended up ";
-        brothel.m_Happiness += 100;
+        shift.building().m_Happiness += 100;
         //int imageType = EBaseImage::SEX;
-        if (Cust.m_IsWoman && girl.is_sex_type_allowed(SKILL_LESBIAN))
-        {
+        if (Cust.m_IsWoman && girl.is_sex_type_allowed(SKILL_LESBIAN)) {
             n = SKILL_LESBIAN;
             ss << "licking the customer's clit until she screamed out in pleasure, making her very happy.";
-        }
-        else
-        {
-            switch (uniform(0, 10))
-            {
-                case 0:        n = SKILL_ORALSEX;   ss << "sucking the customer off";                    break;
-                case 1:        n = SKILL_TITTYSEX;  ss << "using her tits to get the customer off";        break;
-                case 2:        n = SKILL_HANDJOB;   ss << "using her hand to get the customer off";     break;
-                case 3:        n = SKILL_ANAL;      ss << "letting the customer use her ass";            break;
-                case 4:        n = SKILL_FOOTJOB;   ss << "using her feet to get the customer off";     break;
-                default:       n = SKILL_NORMALSEX; ss << "fucking the customer as well";                break;
+        } else {
+            switch (shift.uniform(0, 10)) {
+                case 0:
+                    n = SKILL_ORALSEX;
+                    ss << "sucking the customer off";
+                    break;
+                case 1:
+                    n = SKILL_TITTYSEX;
+                    ss << "using her tits to get the customer off";
+                    break;
+                case 2:
+                    n = SKILL_HANDJOB;
+                    ss << "using her hand to get the customer off";
+                    break;
+                case 3:
+                    n = SKILL_ANAL;
+                    ss << "letting the customer use her ass";
+                    break;
+                case 4:
+                    n = SKILL_FOOTJOB;
+                    ss << "using her feet to get the customer off";
+                    break;
+                default:
+                    n = SKILL_NORMALSEX;
+                    ss << "fucking the customer as well";
+                    break;
             }
             ss << ", making him very happy.\n";
         }
-        /* */if (n == SKILL_LESBIAN)    imagetype = EImagePresets::LESBIAN;
-        else if (n == SKILL_ORALSEX)    imagetype = EImagePresets::BLOWJOB;
-        else if (n == SKILL_TITTYSEX)    imagetype = EImageBaseType::TITTY;
-        else if (n == SKILL_HANDJOB)    imagetype = EImageBaseType::HAND;
-        else if (n == SKILL_FOOTJOB)    imagetype = EImageBaseType::FOOT;
-        else if (n == SKILL_ANAL)        imagetype = EImageBaseType::ANAL;
-        else if (n == SKILL_NORMALSEX)    imagetype = EImageBaseType::VAGINAL;
-        if (n == SKILL_NORMALSEX)
-        {
-            if (girl.lose_trait(traits::VIRGIN))
-            {
+        /* */if (n == SKILL_LESBIAN) shift.set_image(EImagePresets::LESBIAN);
+        else if (n == SKILL_ORALSEX) shift.set_image(EImagePresets::BLOWJOB);
+        else if (n == SKILL_TITTYSEX) shift.set_image(EImageBaseType::TITTY);
+        else if (n == SKILL_HANDJOB) shift.set_image(EImageBaseType::HAND);
+        else if (n == SKILL_FOOTJOB) shift.set_image(EImageBaseType::FOOT);
+        else if (n == SKILL_ANAL) shift.set_image(EImageBaseType::ANAL);
+        else if (n == SKILL_NORMALSEX) shift.set_image(EImageBaseType::VAGINAL);
+        if (n == SKILL_NORMALSEX) {
+            if (girl.lose_trait(traits::VIRGIN)) {
                 ss << "\nShe is no longer a virgin.\n";
             }
-            if (!girl.calc_pregnancy(Cust, 1.0))
-            {
+            if (!girl.calc_pregnancy(Cust, 1.0)) {
                 g_Game->push_message(girl.FullName() + " has gotten pregnant", 0);
             }
         }
@@ -1795,178 +971,159 @@ bool cBrothelStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_ni
         girl.lust_release_regular();
         girl.enjoyment(EActivity::FUCKING, +1);
         // work out the pay between the house and the girl
-        m_Earnings += girl.askprice();
+        shift.data().Earnings += girl.askprice();
         int roll_max = (girl.beauty() + girl.charisma());
         roll_max /= 4;
-        m_Earnings += uniform(0, roll_max) + 50;
+        shift.data().Earnings += shift.uniform(0, roll_max) + 50;
         fame += 1;
         girl.m_NumCusts++;
         //girl.m_Events.AddMessage(ss.str(), imageType, Day0Night1);
-    }
-    else if (mast)
-    {
-        brothel.m_Happiness += uniform(60, 130);
+    } else if (mast) {
+        shift.building().m_Happiness += shift.uniform(60, 130);
         // work out the pay between the house and the girl
         int roll_max = (girl.beauty() + girl.charisma());
         roll_max /= 4;
-        m_Earnings += 50 + uniform(0, roll_max);
+        shift.data().Earnings += 50 + shift.uniform(0, roll_max);
         fame += 1;
-        imagetype = EImagePresets::MASTURBATE;
+        shift.set_image(EImagePresets::MASTURBATE);
         //girl.m_Events.AddMessage(ss.str(), EBaseImage::MAST, Day0Night1);
-    }
-    else
-    {
-        brothel.m_Happiness += uniform(30, 100);
+    } else {
+        shift.building().m_Happiness += shift.uniform(30, 100);
         // work out the pay between the house and the girl
         int roll_max = (girl.beauty() + girl.charisma());
         roll_max /= 4;
-        m_Earnings += 10 + uniform(0, roll_max);
+        shift.data().Earnings += 10 + shift.uniform(0, roll_max);
         //girl.m_Events.AddMessage(ss.str(), EBaseImage::STRIP, Day0Night1);
     }
 
-    if (girl.is_pregnant())
-    {
-        if (girl.strength() >= 60)
-        {
+    if (girl.is_pregnant()) {
+        if (girl.strength() >= 60) {
             ss << "\nPole dancing proved to be quite exhausting for a pregnant girl, even for one as strong as ${name} .\n";
-        }
-        else
-        {
+        } else {
             ss << "\nPole dancing proved to be quite exhausting for a pregnant girl like ${name} .\n";
 
         }
-        girl.tiredness(10 - girl.strength() / 20 );
+        girl.tiredness(10 - girl.strength() / 20);
     }
 
     //    Finish the shift            //
 
-    if (girl.has_active_trait(traits::EXHIBITIONIST))
-    {
-        m_Enjoyment += 1;
+    if (girl.has_active_trait(traits::EXHIBITIONIST)) {
+        shift.data().Enjoyment += 1;
     }
-    shift_enjoyment();
-    girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    // Improve stats
-    HandleGains(girl, fame);
+    shift_enjoyment(shift);
 
     //gained
-    if (sex && girl.dignity() < 0)
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
+    // TODO should be in post shift
+    if (sex && girl.dignity() < 0) {
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.",
+                                     EImageBaseType::ECCHI, EVENT_WARNING);
     }
-    return false;
 }
 
 class ClubBarmaid : public cSimpleJob {
 public:
     ClubBarmaid();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
 
-ClubBarmaid::ClubBarmaid() : cSimpleJob(JOB_SLEAZYBARMAID, "StripBarMaid.xml", {EActivity::SOCIAL}) {
+ClubBarmaid::ClubBarmaid() : cSimpleJob(JOB_SLEAZYBARMAID, "StripBarMaid.xml") {
 
 }
 
-bool ClubBarmaid::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+void ClubBarmaid::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
     int fame = 0;
-    sImagePreset imagetype = EImageBaseType::ECCHI;
 
-    add_performance_text();
-    m_Earnings = 15 + (int)m_PerformanceToEarnings((float)m_Performance);
+    add_performance_text(shift);
+    shift.data().Earnings = 15 + (int) m_PerformanceToEarnings((float) shift.performance());
 
-    //base tips, aprox 10-20% of base m_Earnings
-    m_Tips += (int)(((10 + m_Performance / 22) * m_Earnings) / 100);
+    //base tips, aprox 10-20% of base shift.data().Earnings
+    shift.data().Tips += (int) (((10 + shift.performance() / 22) * shift.data().Earnings) / 100);
 
     //try and add randomness here
-    add_text("event.post");
+    shift.add_text("event.post");
 
-    if (girl.has_active_trait(traits::CLUMSY) && chance(15))
-    {
-        ss << "Her clumsy nature caused her to spill a drink on a customer resulting in them storming off without paying.\n"; m_Earnings -= 15;
+    if (girl.has_active_trait(traits::CLUMSY) && shift.chance(15)) {
+        ss << "Her clumsy nature caused her to spill a drink on a customer resulting in them storming off without paying.\n";
+        shift.data().Earnings -= 15;
     }
 
-    // `J` slightly higher percent compared to regular barmaid, I would think sleazy barmaid's uniform is more revealing
-    if ((chance(5) && girl.has_active_trait(traits::BUSTY_BOOBS)) ||
-        (chance(10) && girl.has_active_trait(traits::BIG_BOOBS)) ||
-        (chance(15) && girl.has_active_trait(traits::GIANT_JUGGS)) ||
-        (chance(20) && girl.has_active_trait(traits::MASSIVE_MELONS)) ||
-        (chance(25) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS)) ||
-        (chance(30) && girl.has_active_trait(traits::TITANIC_TITS)))
-    {
-        if (m_Performance < 150)
-        {
+    // `J` slightly higher percent compared to regular barmaid, I would think sleazy barmaid's shift.uniform is more revealing
+    if ((shift.chance(5) && girl.has_active_trait(traits::BUSTY_BOOBS)) ||
+        (shift.chance(10) && girl.has_active_trait(traits::BIG_BOOBS)) ||
+        (shift.chance(15) && girl.has_active_trait(traits::GIANT_JUGGS)) ||
+        (shift.chance(20) && girl.has_active_trait(traits::MASSIVE_MELONS)) ||
+        (shift.chance(25) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS)) ||
+        (shift.chance(30) && girl.has_active_trait(traits::TITANIC_TITS))) {
+        if (shift.performance() < 150) {
             ss << "A patron was staring obviously at her large breasts. But she had no idea how to take advantage of it.\n";
-        }
-        else
-        {
-            ss << "A patron was staring obviously at her large breasts. So she over charged them for drinks while they drooled not paying any mind to the price.\n"; m_Earnings += 15;
+        } else {
+            ss << "A patron was staring obviously at her large breasts. So she over charged them for drinks while they drooled not paying any mind to the price.\n";
+            shift.data().Earnings += 15;
         }
     }
 
-    if (girl.has_active_trait(traits::MEEK) && chance(5) && m_Performance < 125)
-    {
+    if (girl.has_active_trait(traits::MEEK) && shift.chance(5) && shift.performance() < 125) {
         ss << "${name} spilled a drink all over a man's lap. He told her she had to lick it up and forced her to clean him up which she Meekly accepted and went about licking his cock clean.\n";
-        imagetype = EImagePresets::BLOWJOB;
-        m_Enjoyment -= 3;
+        shift.set_image(EImagePresets::BLOWJOB);
+        shift.data().Enjoyment -= 3;
     }
 
-    if (chance(5)) //may get moved to waitress
+    if (shift.chance(5)) //may get moved to waitress
     {
-        add_text("event.grab-boob");
+        shift.add_text("event.grab-boob");
     }
 
-    if ((girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS})) && girl.lust() > 80 && chance(20) &&
-    !is_virgin(girl) && likes_men(girl))
-    {
-        add_text("event.nympho");
-        imagetype = EImageBaseType::VAGINAL;
+    if ((girl.any_active_trait({traits::NYMPHOMANIAC, traits::SUCCUBUS})) && girl.lust() > 80 && shift.chance(20) &&
+        !is_virgin(girl) && likes_men(girl)) {
+        shift.add_text("event.nympho");
+        shift.set_image(EImageBaseType::VAGINAL);
         girl.lust_release_regular();
         girl.normalsex(1);
         sCustomer Cust = g_Game->GetCustomer(*girl.m_Building);
         Cust.m_Amount = 1;
-        if (!girl.calc_pregnancy(Cust, 1.0))
-        {
+        if (!girl.calc_pregnancy(Cust, 1.0)) {
             g_Game->push_message(girl.FullName() + " has gotten pregnant.", 0);
         }
         girl.m_NumCusts++;
     }
 
     //enjoyed the work or not
-    shift_enjoyment();
-    girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    shift_enjoyment(shift);
 
     int roll_max = (girl.beauty() + girl.charisma()) / 4;
-    m_Earnings += 10 + uniform(0, roll_max);
-
-    // Improve stats
-    HandleGains(girl, fame);
+    shift.data().Earnings += 10 + shift.uniform(0, roll_max);
 
     //gained
-    if (m_Performance < 100 && chance(2)) { cGirls::PossiblyGainNewTrait(girl, traits::ASSASSIN, 100, "${name}'s lack of skill at mixing drinks has been killing people left and right making her into quite the Assassin."); }
-    if (chance(25) && girl.dignity() < 0 && (imagetype == EImageBaseType::VAGINAL || imagetype == EImagePresets::BLOWJOB))
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 80, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
+    if (shift.performance() < 100 && shift.chance(2)) {
+        cGirls::PossiblyGainNewTrait(girl, traits::ASSASSIN, 100,
+                                     "${name}'s lack of skill at mixing drinks has been killing people left and right making her into quite the Assassin.");
     }
-    return false;
+    if (shift.chance(25) && girl.dignity() < 0 &&
+        (shift.data().EventImage == EImageBaseType::VAGINAL || shift.data().EventImage == EImagePresets::BLOWJOB)) {
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 80, "${name} has turned into quite a Slut.",
+                                     EImageBaseType::ECCHI, EVENT_WARNING);
+    }
 }
 
 class ClubStripper : public cSimpleJob {
 public:
     ClubStripper();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-ClubStripper::ClubStripper() : cSimpleJob(JOB_BARSTRIPPER, "StripStripper.xml", {EActivity::STRIPPING}) {
+ClubStripper::ClubStripper() : cSimpleJob(JOB_BARSTRIPPER, "StripStripper.xml") {
 }
 
-bool ClubStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    int roll_c = d100();
+void ClubStripper::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    int roll_c = shift.d100();
 
-    m_Earnings = 30;
-    EImageBaseType imagetype = EImageBaseType::STRIP;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    shift.data().Earnings = 30;
 
     int lapdance = (girl.intelligence() / 2 +
                     girl.performance() / 2 +
@@ -1974,238 +1131,195 @@ bool ClubStripper::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
 
 
     //what is she wearing?
-    if (girl.has_item("Rainbow Underwear"))
-    {
+    if (girl.has_item("Rainbow Underwear")) {
         ss << "${name} stripped down to reveal her Rainbow Underwear to the approval of the patrons watching her.\n \n";
-        brothel.m_Happiness += 5; m_Performance += 5; m_Tips += 10;
-    }
-    else if (girl.has_item("Black Leather Underwear"))
-    {
+        shift.building().m_Happiness += 5;
+        shift.data().Performance += 5;
+        shift.data().Tips += 10;
+    } else if (girl.has_item("Black Leather Underwear")) {
         ss << "${name} stripped down to reveal her Black Leather Underwear ";
-        if (girl.has_active_trait(traits::SADISTIC))
-        {
+        if (girl.has_active_trait(traits::SADISTIC)) {
             ss << "and broke out a whip asking who wanted to join her on stage for a spanking.\n \n";
         }
-        if (girl.has_active_trait(traits::MASOCHIST))
-        {
+        if (girl.has_active_trait(traits::MASOCHIST)) {
             ss << "and asked a patron to come on stage and give her a spanking.\n \n";
-        }
-        else
-        {
+        } else {
             ss << "which the patrons seemed to enjoy.\n \n";
         }
-    }
-    else if (girl.has_item("Adorable Underwear"))
-    {
+    } else if (girl.has_item("Adorable Underwear")) {
         ss << "${name} stripped down to reveal her Adorable Underwear which slightly help her out on tips.\n \n";
-        m_Tips += 5;
-    }
-    else if (girl.has_item("Classy Underwear"))
-    {
+        shift.data().Tips += 5;
+    } else if (girl.has_item("Classy Underwear")) {
         ss << "${name} stripped down to reveal her Classy Underwear which some people seemed to like ";
-        if (roll_c <= 50)
-        {
+        if (roll_c <= 50) {
             ss << "but others didn't seem to care for.\n \n";
+        } else {
+            ss << "and it helped her tips.\n \n";
+            shift.data().Tips += 20;
         }
-        else
-        {
-            ss << "and it helped her tips.\n \n"; m_Tips += 20;
-        }
-    }
-    else if (girl.has_item("Comfortable Underwear"))
-    {
+    } else if (girl.has_item("Comfortable Underwear")) {
         ss << "${name}'s Comfortable Underwear help her move better while on stage.\n \n";
-        m_Performance += 5;
-    }
-    else if (girl.has_item("Plain Underwear"))
-    {
+        shift.data().Performance += 5;
+    } else if (girl.has_item("Plain Underwear")) {
         ss << "${name} stripped down to reveal her Plain Underwear which didn't help her performance as the patrons found them boring.\n \n";
-        m_Performance -= 5;
-    }
-    else if (girl.has_item("Sexy Underwear"))
-    {
+        shift.data().Performance -= 5;
+    } else if (girl.has_item("Sexy Underwear")) {
         ss << "${name} stripped down to reveal her Sexy Underwear which brought many people to the stage to watch her.\n \n";
-        m_Performance += 5; m_Tips += 15;
+        shift.data().Performance += 5;
+        shift.data().Tips += 15;
     }
 
-    m_Earnings += (int)m_PerformanceToEarnings((float)m_Performance);
-    add_performance_text();
-    if (m_Performance >= 245)
-    {
-        brothel.m_Fame += 5;
-        m_Tips += 15;
-    }
-    else if (m_Performance >= 185)
-    {
-        m_Tips += 10;
-    }
-    else if (m_Performance >= 145)
-    {
-        m_Tips += 5;
-    }
-    else if (m_Performance < 70)
-    {
-        brothel.m_Happiness -= 5;
-        brothel.m_Fame -= 5;
+    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.data().Performance);
+    add_performance_text(shift);
+    if (shift.data().Performance >= 245) {
+        shift.building().m_Fame += 5;
+        shift.data().Tips += 15;
+    } else if (shift.data().Performance >= 185) {
+        shift.data().Tips += 10;
+    } else if (shift.data().Performance >= 145) {
+        shift.data().Tips += 5;
+    } else if (shift.data().Performance < 70) {
+        shift.building().m_Happiness -= 5;
+        shift.building().m_Fame -= 5;
     }
 
-    //base tips, aprox 5-40% of base m_Earnings
-    m_Tips += (int)(((5 + m_Performance / 6) * m_Earnings) / 100);
+    //base tips, aprox 5-40% of base shift.data().Earnings
+    shift.data().Tips += (int) (((5 + shift.data().Performance / 6) * shift.data().Earnings) / 100);
 
-    add_text("event.post");
+    shift.add_text("event.post");
 
     // lap dance code.. just test stuff for now
-    if (lapdance >= 90)
-    {
-        add_text("lapdance.great");
-    }
-    else if (lapdance >= 65)
-    {
-        add_text("lapdance.good");
-    }
-    else if (lapdance >= 40)
-    {
-        add_text("lapdance.ok");
-    }
-    else
-    {
-        add_text("lapdance.bad");
+    if (lapdance >= 90) {
+        shift.add_text("lapdance.great");
+    } else if (lapdance >= 65) {
+        shift.add_text("lapdance.good");
+    } else if (lapdance >= 40) {
+        shift.add_text("lapdance.ok");
+    } else {
+        shift.add_text("lapdance.bad");
     }
 
-    if (m_Earnings < 0)
-        m_Earnings = 0;
+    if (shift.data().Earnings < 0)
+        shift.data().Earnings = 0;
 
-    if (is_addict(girl, true) && chance(20))
-    {
+    if (is_addict(girl, true) && shift.chance(20)) {
         const char* warning = "Noticing her addiction, a customer offered her drugs for a blowjob. She accepted, taking him out of sight of security and sucking him off for no money.\n";
         ss << "\n" << warning << "\n";
-        if (girl.has_active_trait(traits::SHROUD_ADDICT))            girl.add_item(g_Game->inventory_manager().GetItem("Shroud Mushroom"));
-        if (girl.has_active_trait(traits::FAIRY_DUST_ADDICT))        girl.add_item(g_Game->inventory_manager().GetItem("Fairy Dust"));
-        if (girl.has_active_trait(traits::VIRAS_BLOOD_ADDICT))       girl.add_item(g_Game->inventory_manager().GetItem("Vira Blood"));
+        if (girl.has_active_trait(traits::SHROUD_ADDICT))
+            girl.add_item(g_Game->inventory_manager().GetItem("Shroud Mushroom"));
+        if (girl.has_active_trait(traits::FAIRY_DUST_ADDICT))
+            girl.add_item(g_Game->inventory_manager().GetItem("Fairy Dust"));
+        if (girl.has_active_trait(traits::VIRAS_BLOOD_ADDICT))
+            girl.add_item(g_Game->inventory_manager().GetItem("Vira Blood"));
         girl.AddMessage(warning, EImagePresets::BLOWJOB, EVENT_WARNING);
     }
 
-    if (girl.is_pregnant())
-    {
-        if (girl.strength() >= 60)
-        {
-            ss << "\nPole dancing proved to be quite exhausting for a pregnant girl, even for one as strong as ${name} .\n";
-        }
-        else
-        {
+    if (girl.is_pregnant()) {
+        if (girl.strength() >= 60) {
+            ss  << "\nPole dancing proved to be quite exhausting for a pregnant girl, even for one as strong as ${name} .\n";
+        } else {
             ss << "\nPole dancing proved to be quite exhausting for a pregnant girl like ${name} .\n";
         }
         girl.tiredness(10 - girl.strength() / 20);
     }
 
-    if (girl.has_active_trait(traits::EXHIBITIONIST))
-    {
-        m_Enjoyment += 1;
+    if (girl.has_active_trait(traits::EXHIBITIONIST)) {
+        shift.data().Enjoyment += 1;
     }
-    shift_enjoyment();
-
-    girl.AddMessage(ss.str(), imagetype, msgtype);
+    shift_enjoyment(shift);
 
     int roll_max = (girl.beauty() + girl.charisma()) / 4;
-    m_Earnings += uniform(10, 10+roll_max);
-
-    HandleGains(girl, 0);
+    shift.data().Earnings += shift.uniform(10, 10 + roll_max);
 
     //lose
-    if (m_Performance > 150 && girl.confidence() > 65)
-    {
-        cGirls::PossiblyLoseExistingTrait(girl, traits::SHY, 15, "${name} has been stripping for so long now that her confidence is super high and she is no longer Shy.");
+    if (shift.data().Performance > 150 && girl.confidence() > 65) {
+        cGirls::PossiblyLoseExistingTrait(girl, traits::SHY, 15,
+                                          "${name} has been stripping for so long now that her confidence is super high and she is no longer Shy.");
     }
-
-    return false;
 }
 
 class ClubWaitress : public cSimpleJob {
 public:
     ClubWaitress();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-ClubWaitress::ClubWaitress() : cSimpleJob(JOB_SLEAZYWAITRESS, "StripWaitress.xml", {EActivity::SOCIAL}) {
+ClubWaitress::ClubWaitress() : cSimpleJob(JOB_SLEAZYWAITRESS, "StripWaitress.xml") {
 
 }
 
-bool ClubWaitress::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    m_Earnings = 25;
+void ClubWaitress::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    shift.data().Earnings = 25;
     int anal = 0, oral = 0, hand = 0, fame = 0;
-    sImagePreset imagetype = EImageBaseType::ECCHI;
 
     //    Job Performance            //
 
-    auto undignified = [&](){
-        switch (uniform(0, 10))
-        {
-            case 1:        girl.sanity(-uniform(0, 5));        if (chance(50)) break;
-            case 2:        girl.confidence(-uniform(0, 5));    if (chance(50)) break;
-            case 3:        girl.dignity(-uniform(0, 5));        if (chance(50)) break;
-            default:       m_Enjoyment -= uniform(0, 5);    break;
+    auto undignified = [&]() {
+        switch (shift.uniform(0, 10)) {
+            case 1:
+                girl.sanity(-shift.uniform(0, 5));
+                if (shift.chance(50)) break;
+            case 2:
+                girl.confidence(-shift.uniform(0, 5));
+                if (shift.chance(50)) break;
+            case 3:
+                girl.dignity(-shift.uniform(0, 5));
+                if (shift.chance(50)) break;
+            default:
+                shift.data().Enjoyment -= shift.uniform(0, 5);
+                break;
         }
     };
 
     //a little pre-game randomness
-    if (girl.has_active_trait(traits::CUM_ADDICT) && chance(30))
-    {
-        ss << "${name} is addicted to cum, and she cannot serve her shift without taking advantage of a room full of cocks. Since most of your patrons are already sexually primed with all this nubile flesh walking around in skimpy uniforms, she does not need to be very persuasive to convince various men to satisfy her addiction. You see her feet sticking out from under the tables from time to time as a satisfied customer smiles at the ceiling. Her service with the other tables suffers, but her tips are still quite high.\n";
-        m_Performance -= 10;
-        m_Tips += 40;
-        imagetype = EImagePresets::BLOWJOB;
-    }
-    else if ((girl.any_active_trait({traits::SHY, traits::NERVOUS})) && chance(20))
-    {
+    if (girl.has_active_trait(traits::CUM_ADDICT) && shift.chance(30)) {
+        ss << "${name} is addicted to cum, and she cannot serve her shift without taking advantage of a room full of cocks. Since most of your patrons are already sexually primed with all this nubile flesh walking around in skimpy shift.uniforms, she does not need to be very persuasive to convince various men to satisfy her addiction. You see her feet sticking out from under the tables from time to time as a satisfied customer smiles at the ceiling. Her service with the other tables suffers, but her tips are still quite high.\n";
+        shift.data().Performance -= 10;
+        shift.data().Tips += 40;
+        shift.set_image(EImagePresets::BLOWJOB);
+    } else if ((girl.any_active_trait({traits::SHY, traits::NERVOUS})) && shift.chance(20)) {
         ss << "${name} has serious difficulty being around all these new people, and the fact that they are all so forward about her body does nothing to help. She spends a lot of time hiding in the kitchen, petrified of going back out and talking to all those people.";
-        m_Performance -= 20;
+        shift.data().Performance -= 20;
     }
 
-    add_performance_text();
-    m_Earnings += (int)m_PerformanceToEarnings((float)m_Performance);
-    if (m_Performance >= 245)
-    {
-        brothel.m_Fame += 5;
-        m_Tips += 15;
-    }
-    else if (m_Performance >= 185)
-    {
-        m_Tips += 10;
-    }
-    else if (m_Performance >= 145)
-    {
-        m_Tips += 5;
-    }
-    else if (m_Performance < 70)
-    {
-        brothel.m_Happiness -= 5;
-        brothel.m_Fame -= 5;
+    add_performance_text(shift);
+    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.data().Performance);
+    if (shift.data().Performance >= 245) {
+        shift.building().m_Fame += 5;
+        shift.data().Tips += 15;
+    } else if (shift.data().Performance >= 185) {
+        shift.data().Tips += 10;
+    } else if (shift.data().Performance >= 145) {
+        shift.data().Tips += 5;
+    } else if (shift.data().Performance < 70) {
+        shift.building().m_Happiness -= 5;
+        shift.building().m_Fame -= 5;
     }
 
 
     //base tips, aprox 10-20% of base wages
-    m_Tips += (((10.0 + m_Performance / 22.0) * (double)m_Earnings) / 100.0);
+    shift.data().Tips += (((10.0 + shift.data().Performance / 22.0) * (double) shift.data().Earnings) / 100.0);
 
     //try and add randomness here
-    add_text("event.post");
+    shift.add_text("event.post");
 
-    if (girl.has_active_trait(traits::GREAT_ARSE) && chance(15))
-    {
-        if (m_Performance >= 185) //great
+    if (girl.has_active_trait(traits::GREAT_ARSE) && shift.chance(15)) {
+        if (shift.data().Performance >= 185) //great
         {
             ss << "A patron reached out to grab her ass. But she skillfully avoided it";
-            if (girl.lust() > 70 && likes_men(girl))
-            {
-                int roll_c = d100();
+            if (girl.lust() > 70 && likes_men(girl)) {
+                int roll_c = shift.d100();
                 std::string dick_type_text = "normal sized";
-                if (roll_c <= 10)    { dick_type_text = "huge"; }
-                else if (roll_c >= 90)    { dick_type_text = "small"; }
+                if (roll_c <= 10) { dick_type_text = "huge"; }
+                else if (roll_c >= 90) { dick_type_text = "small"; }
 
                 ss << " and said that's only on the menu if your willing to pay up. "
-                      "He jumped at the chance to get to try her ass out and bent "
+                      "He jumped at the shift.chance to get to try her ass out and bent "
                       "her over the table and whipping out his " << dick_type_text << " dick.";
-                m_Earnings += girl.askprice() + 50;
-                imagetype = EImageBaseType::ANAL;
+                shift.data().Earnings += girl.askprice() + 50;
+                shift.set_image(EImageBaseType::ANAL);
                 girl.lust_release_regular();
                 bool fast_orgasm = girl.has_active_trait(traits::FAST_ORGASMS);
                 bool slow_orgasm = girl.has_active_trait(traits::SLOW_ORGASMS);
@@ -2218,174 +1332,166 @@ bool ClubWaitress::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
 
                 if (roll_c >= 90)//small
                 {
-                    if (girl.anal() >= 70)
-                    {
-                        ss << " It slid right in her well trained ass with no problems."; anal += 1;
-                        OrgasmSelectText(" Thankfully she is fast to orgasms or she wouldn't have got much out of this.\n",
-                                         " She got nothing out of this as his dick was to small and its hard to get her off anyway.\n",
-                                         " She slightly enjoyed herself.\n");
+                    if (girl.anal() >= 70) {
+                        ss << " It slid right in her well trained ass with no problems.";
+                        anal += 1;
+                        OrgasmSelectText(
+                                " Thankfully she is fast to orgasms or she wouldn't have got much out of this.\n",
+                                " She got nothing out of this as his dick was to small and its hard to get her off anyway.\n",
+                                " She slightly enjoyed herself.\n");
+                    } else if (girl.anal() >= 40) {
+                        ss << " It slide into her ass with little trouble as she is slight trained in the anal arts.";
+                        anal += 2;
+                        OrgasmSelectText(
+                                " She was able to get off on his small cock a few times thanks to her fast orgasm ability.\n",
+                                " Didn't get much out of his small cock as she is so slow to orgasm.\n",
+                                " Enjoyed his small cock even if she didn't get off.\n");
+                    } else {
+                        ss << " Despite the fact that it was small it was still a tight fit in her inexperienced ass.";
+                        anal += 3;
+                        OrgasmSelectText(
+                                " Her lack of skill at anal and the fact that she is fast to orgasm she had a great time even with the small cock.\n",
+                                " Her tight ass help her get off on the small cock even though it is hard for her to get off.\n",
+                                " Her tight ass help her get off on his small cock.\n");
                     }
-                    else if (girl.anal() >= 40)
-                    {
-                        ss << " It slide into her ass with little trouble as she is slight trained in the anal arts."; anal += 2;
-                        OrgasmSelectText(" She was able to get off on his small cock a few times thanks to her fast orgasm ability.\n",
-                                         " Didn't get much out of his small cock as she is so slow to orgasm.\n",
-                                         " Enjoyed his small cock even if she didn't get off.\n");
-                    }
-                    else
-                    {
-                        ss << " Despite the fact that it was small it was still a tight fit in her inexperienced ass."; anal += 3;
-                        OrgasmSelectText(" Her lack of skill at anal and the fact that she is fast to orgasm she had a great time even with the small cock.\n",
-                                         " Her tight ass help her get off on the small cock even though it is hard for her to get off.\n",
-                                         " Her tight ass help her get off on his small cock.\n");
-                    }
-                }
-                else if (roll_c <= 10)//huge
+                } else if (roll_c <= 10)//huge
                 {
-                    if (girl.anal() >= 70)
-                    {
-                        ss << " Her well trained ass was able to take the huge dick with little trouble."; anal += 3;
-                        OrgasmSelectText(" She orgasmed over and over on his huge cock and when he finally finished she was left a gasping for air in a state of ecstasy.\n",
-                                         " Despite the fact that she is slow to orgasm his huge cock still got her off many times before he was finished with her.\n",
-                                         " She orgasmed many times and loved every inch of his huge dick.\n");
-                    }
-                    else if (girl.anal() >= 40)
-                    {
-                        if ((girl.has_item("Booty Lube") || girl.has_item("Deluxe Booty Lube")) && girl.intelligence() >= 60)
-                        {
-                            ss << " Upon seeing his huge dick she grabbed her Booty Lube and lubed up so that it could fit in easier."; anal += 3;
-                            OrgasmSelectText(" With the help of her Booty Lube she was able to enjoy every inch of his huge dick and orgasmed many times. When he was done she was left shacking with pleasure.\n",
-                                             " With the help of her Booty Lube and despite the fact that she is slow to orgasm his huge cock still got her off many times before he was finished with her.\n",
-                                             " With the help of her Booty Lube she was able to orgasm many times and loved every inch of his huge dick.\n");
+                    if (girl.anal() >= 70) {
+                        ss << " Her well trained ass was able to take the huge dick with little trouble.";
+                        anal += 3;
+                        OrgasmSelectText(
+                                " She orgasmed over and over on his huge cock and when he finally finished she was left a gasping for air in a state of ecstasy.\n",
+                                " Despite the fact that she is slow to orgasm his huge cock still got her off many times before he was finished with her.\n",
+                                " She orgasmed many times and loved every inch of his huge dick.\n");
+                    } else if (girl.anal() >= 40) {
+                        if ((girl.has_item("Booty Lube") || girl.has_item("Deluxe Booty Lube")) &&
+                            girl.intelligence() >= 60) {
+                            ss << " Upon seeing his huge dick she grabbed her Booty Lube and lubed up so that it could fit in easier.";
+                            anal += 3;
+                            OrgasmSelectText(
+                                    " With the help of her Booty Lube she was able to enjoy every inch of his huge dick and orgasmed many times. When he was done she was left shacking with pleasure.\n",
+                                    " With the help of her Booty Lube and despite the fact that she is slow to orgasm his huge cock still got her off many times before he was finished with her.\n",
+                                    " With the help of her Booty Lube she was able to orgasm many times and loved every inch of his huge dick.\n");
+                        } else {
+                            ss << " Her slighted trained ass was able to take the huge dick with only a little pain at the start.";
+                            anal += 2;
+                            OrgasmSelectText(
+                                    " After a few minutes of letting her ass get used to his big cock she was finally able to enjoy it and orgasmed many times screaming in pleasure.\n",
+                                    " After a few minutes of letting her ass get used to his big cock she was able to orgasm.\n",
+                                    " After a few minutes of letting her ass get used to his big cock she was able to take the whole thing and orgasmed a few times.\n");
                         }
-                        else
-                        {
-                            ss << " Her slighted trained ass was able to take the huge dick with only a little pain at the start."; anal += 2;
-                            OrgasmSelectText(" After a few minutes of letting her ass get used to his big cock she was finally able to enjoy it and orgasmed many times screaming in pleasure.\n",
-                                             " After a few minutes of letting her ass get used to his big cock she was able to orgasm.\n",
-                                             " After a few minutes of letting her ass get used to his big cock she was able to take the whole thing and orgasmed a few times.\n");
-                        }
-                    }
-                    else
-                    {
-                        if ((girl.has_item("Booty Lube") || girl.has_item("Deluxe Booty Lube")) && girl.intelligence() >= 60)
-                        {
-                            ss << " Upon seeing his huge dick she grabbed her Booty Lube and lubed up so that it could fit in her tight ass easier."; anal += 3;
-                            OrgasmSelectText(" Luck for her she had her Booty Lube and was able to enjoy his big dick and orgasmed many times.\n",
-                                             " Luck for her she had her Booty Lube and was able to enjoy his big dick and orgasmed one time.\n",
-                                             " Luck for her she had her Booty Lube and was able to enjoy his big dick and orgasmed a few times.\n");
-                        }
-                        else
-                        {
-                            ss << " She screamed in pain as he stuffed his huge dick in her tight ass.\n"; anal += 1;
-                            OrgasmSelectText(" She was able to get some joy out of it in the end as she is fast to orgasm.\n",
-                                             " It was nothing but a painful experience for her. He finished up and left her crying his huge dick was just to much for her tight ass.\n",
-                                             " It was nothing but a painful experience for her. He finished up and left her crying his huge dick was just to much for her tight ass.\n");
+                    } else {
+                        if ((girl.has_item("Booty Lube") || girl.has_item("Deluxe Booty Lube")) &&
+                            girl.intelligence() >= 60) {
+                            ss << " Upon seeing his huge dick she grabbed her Booty Lube and lubed up so that it could fit in her tight ass easier.";
+                            anal += 3;
+                            OrgasmSelectText(
+                                    " Luck for her she had her Booty Lube and was able to enjoy his big dick and orgasmed many times.\n",
+                                    " Luck for her she had her Booty Lube and was able to enjoy his big dick and orgasmed one time.\n",
+                                    " Luck for her she had her Booty Lube and was able to enjoy his big dick and orgasmed a few times.\n");
+                        } else {
+                            ss << " She screamed in pain as he stuffed his huge dick in her tight ass.\n";
+                            anal += 1;
+                            OrgasmSelectText(
+                                    " She was able to get some joy out of it in the end as she is fast to orgasm.\n",
+                                    " It was nothing but a painful experience for her. He finished up and left her crying his huge dick was just to much for her tight ass.\n",
+                                    " It was nothing but a painful experience for her. He finished up and left her crying his huge dick was just to much for her tight ass.\n");
 
                         }
                     }
-                }
-                else// normal
+                } else// normal
                 {
-                    if (girl.anal() >= 70)
-                    {
-                        ss << " It slide right in her well trained ass."; anal += 2;
+                    if (girl.anal() >= 70) {
+                        ss << " It slide right in her well trained ass.";
+                        anal += 2;
                         OrgasmSelectText(" She was able to get off a few times as she is fast to orgasm.\n",
                                          " She was getting close to done when he pulled out and shot his wade all over her back. Its to bad she is slow to orgasm.\n",
                                          " She was able to get off by the end.\n");
-                    }
-                    else if (girl.anal() >= 40)
-                    {
-                        ss << " It was a good fit for her slightly trained ass."; anal += 3;
-                        OrgasmSelectText(" His cock being a good fit for her ass she was able to orgasm many times and was screaming in pleasure before to long.\n",
-                                         " His cock being a good fit for her ass he was able to bring her to orgasm if a bit slowly.\n",
-                                         " His cock being a good fit for her ass she orgasmed a few times. When he was done she was left with a smile on her face.\n");
-                    }
-                    else
-                    {
-                        if ((girl.has_item("Booty Lube") || girl.has_item("Deluxe Booty Lube")) && girl.intelligence() >= 60)
-                        {
-                            ss << " Upon seeing his dick she grabbed her Booty Lube and lubed up so that it could fit in her tight ass easier."; anal += 3;
-                            OrgasmSelectText(" Thanks to her lube she was able to enjoy it much faster and reached orgasm a few times.\n",
-                                             " Thanks to her lube she was able to enjoy it much faster and was able to orgasm.\n",
-                                             " Thanks to her lube she was able to enjoy it much faster and reached orgasm a few times.\n");
-                        }
-                        else
-                        {
-                            ss << " Despite the fact that it was normal sized it was still a very tight fit in her inexperienced ass."; anal += 2;
-                            OrgasmSelectText(" It was slightly painful at first but after a few minutes it wasn't a problem and she was able to orgasm.\n",
-                                             " It was slightly painful at first but after a few minutes it wasn't a problem. But she wasn't able to orgasm in the end.\n",
-                                             " It was slightly painful at first but after a few minutes it wasn't a problem she enjoyed it in the end.\n");
+                    } else if (girl.anal() >= 40) {
+                        ss << " It was a good fit for her slightly trained ass.";
+                        anal += 3;
+                        OrgasmSelectText(
+                                " His cock being a good fit for her ass she was able to orgasm many times and was screaming in pleasure before to long.\n",
+                                " His cock being a good fit for her ass he was able to bring her to orgasm if a bit slowly.\n",
+                                " His cock being a good fit for her ass she orgasmed a few times. When he was done she was left with a smile on her face.\n");
+                    } else {
+                        if ((girl.has_item("Booty Lube") || girl.has_item("Deluxe Booty Lube")) &&
+                            girl.intelligence() >= 60) {
+                            ss << " Upon seeing his dick she grabbed her Booty Lube and lubed up so that it could fit in her tight ass easier.";
+                            anal += 3;
+                            OrgasmSelectText(
+                                    " Thanks to her lube she was able to enjoy it much faster and reached orgasm a few times.\n",
+                                    " Thanks to her lube she was able to enjoy it much faster and was able to orgasm.\n",
+                                    " Thanks to her lube she was able to enjoy it much faster and reached orgasm a few times.\n");
+                        } else {
+                            ss << " Despite the fact that it was normal sized it was still a very tight fit in her inexperienced ass.";
+                            anal += 2;
+                            OrgasmSelectText(
+                                    " It was slightly painful at first but after a few minutes it wasn't a problem and she was able to orgasm.\n",
+                                    " It was slightly painful at first but after a few minutes it wasn't a problem. But she wasn't able to orgasm in the end.\n",
+                                    " It was slightly painful at first but after a few minutes it wasn't a problem she enjoyed it in the end.\n");
                         }
                     }
                 }
+            } else {
+                ss << " and with a laugh and told him that her ass wasn't on the menu. He laughed so hard he increased her tip!\n";
+                shift.data().Tips += 25;
             }
-            else
-            {
-                ss << " and with a laugh and told him that her ass wasn't on the menu. He laughed so hard he increased her tip!\n"; m_Tips += 25;
-            }
-        }
-        else if (m_Performance >= 135) //decent or good
+        } else if (shift.data().Performance >= 135) //decent or good
         {
             ss << "A patron reached out and grabbed her ass. She's use to this and skilled enough so she didn't drop anything.\n";
-        }
-        else if (m_Performance >= 85) //bad
+        } else if (shift.data().Performance >= 85) //bad
         {
-            ss << "A patron reached out and grabbed her ass. She was startled and ended up dropping half an order.\n"; m_Earnings -= 10;
-        }
-        else  //very bad
+            ss << "A patron reached out and grabbed her ass. She was startled and ended up dropping half an order.\n";
+            shift.data().Earnings -= 10;
+        } else  //very bad
         {
-            ss << "A patron reached out and grabbed her ass. She was startled and ended up dropping a whole order\n"; m_Earnings -= 15;
+            ss << "A patron reached out and grabbed her ass. She was startled and ended up dropping a whole order\n";
+            shift.data().Earnings -= 15;
         }
     }
 
-    if (girl.any_active_trait({traits::MEEK, traits::SHY}) && chance(5))
-    {
+    if (girl.any_active_trait({traits::MEEK, traits::SHY}) && shift.chance(5)) {
         ss << "${name} was taking an order from a rather rude patron when he decide to grope her. She isn't the kind of girl to resist this and had a bad day at work because of this.\n";
-        m_Enjoyment -= 5;
+        shift.data().Enjoyment -= 5;
     }
 
-    if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_ORALSEX, sPercent(25), true) && girl.oralsex() > 80)
-    {
+    if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_ORALSEX, sPercent(25), true) &&
+        girl.oralsex() > 80) {
         ss << "${name} thought she deserved a short break and disappeared under one of the tables when nobody was looking, in order to give one of the clients a blowjob. Kneeling under the table, she devoured his cock with ease and deepthroated him as he came to make sure she didn't make a mess. The client himself was wasted out of his mind and didn't catch as much as a glimpse of her, but he left the locale with a big tip on the table.\n";
-        m_Tips += 50;
-        imagetype = EImagePresets::BLOWJOB;
+        shift.data().Tips += 50;
+        shift.set_image(EImagePresets::BLOWJOB);
         oral += 2;
-    } else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_HANDJOB, sPercent(25), true) && girl.handjob() > 50)
-    {
+    } else if (check_public_sex(girl, ESexParticipants::HETERO, SKILL_HANDJOB, sPercent(25), true) &&
+               girl.handjob() > 50) {
         ss << "During her shift, ${name} unnoticeably dove under the table belonging to a lonely-looking fellow, quickly unzipped his pants and started jacking him off enthusiastically. She skillfully wiped herself when he came all over her face. The whole event took no longer than two minutes, but was well worth the time spent on it, since the patron left with a heavy tip.\n";
-        m_Tips += 50;
-        imagetype = EImageBaseType::HAND;
+        shift.data().Tips += 50;
+        shift.set_image(EImageBaseType::HAND);
         hand += 2;
     }
 
 
-    if (girl.dignity() <= -20 && chance(20) && girl.breast_size() > 5) //updated for the new breast traits
+    if (girl.dignity() <= -20 && shift.chance(20) && girl.breast_size() > 5) //updated for the new breast traits
     {
-        ss << "A drunk patron \"accidentally\" fell onto ${name} and buried his face between her breasts. To his joy and surprise, ${name} flirtatiously encouraged him to motorboat them for awhile, which he gladly did, before slipping some cash between the titties and staggering out on his way.\n"; m_Tips += 40;
+        ss << "A drunk patron \"accidentally\" fell onto ${name} and buried his face between her breasts. To his joy and surprise, ${name} flirtatiously encouraged him to motorboat them for awhile, which he gladly did, before slipping some cash between the titties and staggering out on his way.\n";
+        shift.data().Tips += 40;
     }
 
-    if (girl.has_active_trait(traits::FUTANARI) && girl.lust() > 80 && chance(5))
-    {
-        if (get_sex_openness(girl) > 66)
-        {
+    if (girl.has_active_trait(traits::FUTANARI) && girl.lust() > 80 && shift.chance(5)) {
+        if (get_sex_openness(girl) > 66) {
             ss << "Noticing the bulge under her skirt one of the customers asked for a very special service: He wanted some \"cream\" in his drink. ${name} took her already hard cock out and sprinkled the drink with some of her jizz. The customer thanked her and slipped a good tip under her panties.\n";
             girl.upd_skill(SKILL_SERVICE, 2);
             girl.lust_release_regular();
-            m_Tips += 30 + (int)(girl.service() * 0.2); // not sure if this will work fine
-            imagetype = EImagePresets::MASTURBATE;
-        }
-        else
-        {
-            ss << "Noticing the bulge under her skirt one of the customers asked ${name} to spill some of her \"cream\" in his drink, but she refused, blushing.\n";
+            shift.data().Tips += 30 + (int) (girl.service() * 0.2); // not sure if this will work fine
+            shift.set_image(EImagePresets::MASTURBATE);
+        } else {
+            ss  << "Noticing the bulge under her skirt one of the customers asked ${name} to spill some of her \"cream\" in his drink, but she refused, blushing.\n";
             undignified();
         }
     }
 
-    if (chance(5 * girl.breast_size() - 25))
-    {
-        if (chance(30) && (girl.any_active_trait({traits::EXHIBITIONIST, traits::BIMBO})))
-        {
+    if (shift.chance(5 * girl.breast_size() - 25)) {
+        if (shift.chance(30) && (girl.any_active_trait({traits::EXHIBITIONIST, traits::BIMBO}))) {
             ss << "A patron was staring obviously at her large breasts, so she took off her top to show him her tits, which earned her a ";
             double t = 10.0;
             if (girl.has_active_trait(traits::BIG_BOOBS)) { t *= 1.5; }
@@ -2398,271 +1504,219 @@ bool ClubWaitress::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
             if (girl.has_active_trait(traits::PUFFY_NIPPLES)) { t += 1; }
             if (girl.has_active_trait(traits::PERKY_NIPPLES)) { t += 1; }
             if (girl.has_active_trait(traits::PIERCED_NIPPLES)) { t += 2; }
-            if (girl.dignity() > 60)
-            {
+            if (girl.dignity() > 60) {
                 girl.dignity(-1);
             }
-            m_Tips += t;
-            /* */if (t < 10)     ss << "small";
-            else if (t < 20)     ss << "good";
-            else if (t < 35)     ss << "great";
-            else  ss << "gigantic";
+            shift.data().Tips += t;
+            /* */if (t < 10) ss << "small";
+            else if (t < 20) ss << "good";
+            else if (t < 35) ss << "great";
+            else ss << "gigantic";
             ss << " tip.\n";
-        }
-        else if (chance(20) && likes_women(girl) && (is_sex_crazy(girl) || girl.lust() > 60))
-        {
+        } else if (shift.chance(20) && likes_women(girl) && (is_sex_crazy(girl) || girl.lust() > 60)) {
             ss << "A female patron was staring obviously at her large breasts, so she grabbed her hand, slipped it under her clothes and let her play with her boobs. ";
-            if (girl.has_active_trait(traits::PIERCED_NIPPLES))
-            {
-                m_Tips += 3;
+            if (girl.has_active_trait(traits::PIERCED_NIPPLES)) {
+                shift.data().Tips += 3;
                 make_horny(girl, 2);
                 ss << "Her nipple piercings were a pleasant surprise to her, and she \n";
-            }
-            else ss << "She";
+            } else ss << "She";
             ss << "slipped a small tip between her tits afterwards.\n";
             make_horny(girl, 3);
-            m_Tips += 15;
-            if (girl.dignity() > 30)
-            {
+            shift.data().Tips += 15;
+            if (girl.dignity() > 30) {
                 girl.dignity(-1);
             }
-        }
-        else if (likes_men(girl) && is_sex_crazy(girl))
-        {
+        } else if (likes_men(girl) && is_sex_crazy(girl)) {
             ss << "A patron was staring obviously at her large breasts, so she grabbed his hand, slipped it under her clothes and let him play with her boobs. ";
-            if (girl.has_active_trait(traits::PIERCED_NIPPLES))
-            {
-                m_Tips += 3;
+            if (girl.has_active_trait(traits::PIERCED_NIPPLES)) {
+                shift.data().Tips += 3;
                 make_horny(girl, 2);
                 ss << "Her nipple piercings were a pleasant surprise to him, and he \n";
-            }
-            else ss << "He";
+            } else ss << "He";
             ss << "slipped a small tip between her tits afterwards.\n";
             make_horny(girl, 3);
-            m_Tips += 15;
-            if (girl.dignity() > 30)
-            {
+            shift.data().Tips += 15;
+            if (girl.dignity() > 30) {
                 girl.dignity(-1);
             }
         }
     }
 
-    if (girl.is_pregnant() && chance(15))
-    {
-        if (girl.lactation() > 50 && get_sex_openness(girl) > 66)
-        {
+    if (girl.is_pregnant() && shift.chance(15)) {
+        if (girl.lactation() > 50 && get_sex_openness(girl) > 66) {
             ss << "Noticing her pregnant belly, one of the customers asked for some breast milk in his coffee. ${name} took one of her breasts out and put some of her milk in the drink. The customer thanked her and slipped a good tip under her skirt.\n";
             girl.service(2);
             girl.lactation(-30);
-            m_Tips += 30 + (int)(girl.service() *0.2);
-        }
-        else if (girl.lactation() < 50)
-        {
+            shift.data().Tips += 30 + (int) (girl.service() * 0.2);
+        } else if (girl.lactation() < 50) {
             ss << "Noticing her pregnant belly, one of the customers asked for some breast milk in his drink, but ${name} said that she didn't have enough.\n";
-        }
-        else
-        {
+        } else {
             ss << "Noticing her pregnant belly, one of the customers asked for some breast milk in his drink, but she refused, blushing.\n";
             undignified();
         }
     }
 
-    if (girl.has_active_trait(traits::ALCOHOLIC) && chance(10) && girl.health() > 5)
-    {
+    if (girl.has_active_trait(traits::ALCOHOLIC) && shift.chance(10) && girl.health() > 5) {
         ss << "${name} couldn't resist the offer of some patrons who invited her for a drink. And another one. And another one... When she came back to her senses she was lying on the floor half naked and covered in cum...\n";
-        m_Tips -= 10;
-        m_Wages -= 50;
+        shift.data().Tips -= 10;
+        shift.data().Wages -= 50;
         girl.lust_release_spent();
-        girl.anal(uniform(1, 4));
-        girl.bdsm(uniform(0, 3));
-        girl.normalsex(uniform(1, 4));
-        girl.group(uniform(2, 5));
-        girl.oralsex(uniform(0, 3));
-        girl.tittysex(uniform(0, 3));
-        girl.handjob(uniform(0, 3));
-        girl.footjob(uniform(0, 3));
+        girl.anal(shift.uniform(1, 4));
+        girl.bdsm(shift.uniform(0, 3));
+        girl.normalsex(shift.uniform(1, 4));
+        girl.group(shift.uniform(2, 5));
+        girl.oralsex(shift.uniform(0, 3));
+        girl.tittysex(shift.uniform(0, 3));
+        girl.handjob(shift.uniform(0, 3));
+        girl.footjob(shift.uniform(0, 3));
         girl.happiness(-5);
         girl.health(-1);
         girl.enjoyment(EActivity::FUCKING, -2);
         girl.spirit(-2);
         // TODO what is this doing?
-        imagetype = EImagePresets::GROUP;
+        shift.set_image(EImagePresets::GROUP);
         girl.AddMessage(ss.str(), EImagePresets::GANGBANG, EVENT_DANGER);
-        if (girl.lose_trait(traits::VIRGIN))
-        {
+        if (girl.lose_trait(traits::VIRGIN)) {
             ss << "\nShe is no longer a virgin.\n";
             girl.happiness(-10);
             girl.enjoyment(EActivity::FUCKING, -2);
             girl.health(-1);
             girl.spirit(-1);
         }
-        sCustomer Cust = g_Game->GetCustomer(brothel);
-        Cust.m_Amount = uniform(1, 10);
-        if (!girl.calc_group_pregnancy(Cust, 1.0))
-        {
+        sCustomer Cust = g_Game->GetCustomer(shift.building());
+        Cust.m_Amount = shift.uniform(1, 10);
+        if (!girl.calc_group_pregnancy(Cust, 1.0)) {
             g_Game->push_message(girl.FullName() + " has gotten pregnant.", 0);
         }
     }
 
-    if (girl.has_active_trait(traits::FLEET_OF_FOOT) && chance(30))
-    {
+    if (girl.has_active_trait(traits::FLEET_OF_FOOT) && shift.chance(30)) {
         ss << "${name} is fast on her feet, and makes great time navigating from table to table. She is able to serve almost twice as many customers in her shift.\n";
-        m_Tips += 50;
+        shift.data().Tips += 50;
     }
 
-    if (girl.any_active_trait({traits::LONG_LEGS, traits::GREAT_FIGURE, traits::HOURGLASS_FIGURE}) && chance(30))
-    {
+    if (girl.any_active_trait({traits::LONG_LEGS, traits::GREAT_FIGURE, traits::HOURGLASS_FIGURE}) && shift.chance(30)) {
         ss << "${name}'s body is incredible, and the customers fixate on her immediately. Her tips reflect their attention.";
-        m_Tips += 20;
+        shift.data().Tips += 20;
     }
 
-    if (girl.has_active_trait(traits::DOJIKKO) && chance(35))
-    {
+    if (girl.has_active_trait(traits::DOJIKKO) && shift.chance(35)) {
         ss << "${name}  is clumsy in the most adorable way, and when she trips and falls face-first into a patron's lap, spilling a tray all over the floor, he just laughs and asks if there is anything he can do to help.\n";
-        if (girl.dignity() >= 50 || girl.lust() <= 50)
-        {
+        if (girl.dignity() >= 50 || girl.lust() <= 50) {
             ss << "${name} gives him a nervous smile as she gets back up and dusts herself off. \"I'm so sorry, sir,\" she mutters, and he waves the whole thing away as if nothing happened. \"I'm happy to wait for another drink, for you, cutie,\" he says.\n";
-        }
-        else
-        {
+        } else {
             ss << "\"There might be something I can do for you while I'm here,\" replies ${name}. She places her mouth over the bulge in his pants and starts sucking the pants until he unzips himself and pulls out his dick for her. \"I hope this makes up for me spilling that drink,\" she says before she locks her mouth around his dick.\n";
-            if (girl.oralsex() >= 50)
-            {
+            if (girl.oralsex() >= 50) {
                 ss << "\"It certainly does,\" responds the customer. \"You're very good at this, you clumsy little minx.\" ${name} murmurs appreciably around his cock but does not stop until she has milked out his cum and swallowed it. She stands back up, dusts herself off, and starts picking up the dropped tray and the glasses. \"Allow me to get you another drink, sir,\" she states as she saunters away.\n";
-                m_Tips += 35;
-                brothel.m_Happiness += 5;
-            }
-            else
-            {
+                shift.data().Tips += 35;
+                shift.building().m_Happiness += 5;
+            } else {
                 ss << "The customer initially thinks that this is way better than having his drink, but then realizes that ${name} is a bit inexperienced with her efforts around his shaft. \"Looks like you're clumsy in just about everything you do,\" he comments, \"but somehow, that's still super adorable. Keep going, and I'll finish in a few minutes.\" She takes a little longer than she should to bring him to orgasm, and then stands, wipes the cum off her lips, and picks up the dropped tray. \"I'll get you another drink immediately,\" she announces as she walks back to the kitchen.\n";
-                m_Tips += 15;
+                shift.data().Tips += 15;
             }
             girl.oralsex(2);
-            imagetype = EImagePresets::BLOWJOB;
+            shift.set_image(EImagePresets::BLOWJOB);
         }
     }
 
-    if (girl.has_active_trait(traits::SEXY_AIR) && chance(35))
-    {
+    if (girl.has_active_trait(traits::SEXY_AIR) && shift.chance(35)) {
         ss << "Customers enjoy watching ${name} work. Her sexy body and her indefinably attractive way of carrying herself draw attention, whether she likes it or not. It is uncanny how many drinks the customers accidentally spill on their laps, and they would all like her help drying themselves off.\n";
-        if (girl.dignity() <= 0 || girl.lust() >= 60)
-        {
+        if (girl.dignity() <= 0 || girl.lust() >= 60) {
             ss << "\"What a terrible spill,\" she cries in mock indignation as she kneels down beside one of them. \"Maybe I can deal with all of this.. wetness..\" she continues, quickly working her hand down his pants, stroking vigorously and using the spilled drink as lubrication.\n";
-            if (girl.handjob() >= 50)
-            {
+            if (girl.handjob() >= 50) {
                 ss << "The customer sighs with satisfaction and then erupts with an ecstatic cry as she finishes him with her skilled fingers. ${name} stands back up and smiles as she asks him if that solves the problem. He assures her that it did and thanks her by placing a handful of coins on the table.\n";
-                m_Tips += 35;
-                brothel.m_Happiness += 5;
-            }
-            else
-            {
+                shift.data().Tips += 35;
+                shift.building().m_Happiness += 5;
+            } else {
                 ss << "The customer is thrilled until he realizes that ${name} is not very good at handjobs. Still, she is so sexy that he does not have to make a lot of effort to cum on her palm. \"Thank you,\" he smiles. \"I think it's all dry now.\"\n";
-                brothel.m_Happiness += 5;
+                shift.building().m_Happiness += 5;
             }
             girl.handjob(2);
-            imagetype = EImageBaseType::HAND;
+            shift.set_image(EImageBaseType::HAND);
         }
     }
 
-    if (girl.has_active_trait(traits::EXHIBITIONIST) && chance(50))
-    {
-        ss << "${name} is a rampant exhibitionist, and this job gives her a lot of opportunities to flash her goods at select customers. She has cut her uniform top to be even shorter than usual, and her nipples constantly appear when she flashes her underboobs. ${name} does a great job of increasing the atmosphere of sexual tension in your restaurant.";
-        brothel.m_Happiness += 15;
+    if (girl.has_active_trait(traits::EXHIBITIONIST) && shift.chance(50)) {
+        ss << "${name} is a rampant exhibitionist, and this job gives her a lot of opportunities to flash her goods at select customers. She has cut her shift.uniform top to be even shorter than usual, and her nipples constantly appear when she flashes her underboobs. ${name} does a great job of increasing the atmosphere of sexual tension in your restaurant.";
+        shift.building().m_Happiness += 15;
     }
 
-    if (chance(35) && (girl.breast_size() >= 5 || girl.has_active_trait(traits::SEXY_AIR)))
-    {
-        if (girl.dignity() >= 50)
-        {
+    if (shift.chance(35) && (girl.breast_size() >= 5 || girl.has_active_trait(traits::SEXY_AIR))) {
+        if (girl.dignity() >= 50) {
             ss << "${name} draws a lot of attention when she walks and bends towards patrons, and everybody strains their necks for a look down her shirt at her heavy swinging breasts. They openly make lewd comments about the things they would do to her tits, and ${name} shies away and tries to cover them more fully with a menu. She swerves to avoid the many groping hands that \"accidentally\" find themselves brushing against her mammaries. The customers think this is just great fun and catcall after her whenever she tries to retreat.\n";
-            brothel.m_Happiness += 15;
-        }
-        else if (girl.dignity() <= 0)
-        {
+            shift.building().m_Happiness += 15;
+        } else if (girl.dignity() <= 0) {
             ss << "${name} has been blessed with great tits and the wisdom to know it. She leans deep over the tables to give customers a good view down her cleavage as she takes their orders. When a customer \"accidentally\" grabs her left tit instead of his glass, she pushes the tit deeper into his hands, stares into his eyes, and smiles. \"These aren�t on the menu,\" she purrs.\n";
-            if (girl.lust() >= 60)
-            {
+            if (girl.lust() >= 60) {
                 ss << "\"But they could be the daily special,\" she continues, grinding the breast against his hand. The customer grins and places a handful of coins on the table. \"That looks about right,\" ${name} says as she gets down on the floor and crawls under the table. He is laughing and high-fiving his buddies in no time as she wraps his dick around her tits and starts mashing them together for his pleasure.\n";
-                if (girl.tittysex() >= 50)
-                {
+                if (girl.tittysex() >= 50) {
                     ss << "He enjoys it immensely, and adds a few more coins to the table as ${name} crawls back from under the table and sexily wipes the cum from her face.\n";
-                    m_Tips += 35;
-                }
-                else
-                {
+                    shift.data().Tips += 35;
+                } else {
                     ss << "The titfuck is not the best, but he's hardly one to complain. \"I don't know if I'll order the special regularly,\" he says to her when she crawls back up and finishes wiping off the cum, \"but it was certainly a bonus for today!\"\n";
                 }
                 girl.tittysex(2);
-                imagetype = EImageBaseType::TITTY;
+                shift.set_image(EImageBaseType::TITTY);
             }
-            m_Tips += 15;
+            shift.data().Tips += 15;
         }
     }
 
-    if (brothel.num_girls_on_job(JOB_SLEAZYBARMAID, false) >= 1 && chance(25))
-    {
-        if (m_Performance > 100)
-        {
-            ss << "\nWith help from the Barmaid, ${name} provided better service to the customers, increasing her tips.\n";
-            m_Tips *= 1.2;
+    if (shift.building().num_girls_on_job(JOB_SLEAZYBARMAID, false) >= 1 && shift.chance(25)) {
+        if (shift.data().Performance > 100) {
+            ss
+                    << "\nWith help from the Barmaid, ${name} provided better service to the customers, increasing her tips.\n";
+            shift.data().Tips *= 1.2;
         }
-    }
-    else if (brothel.num_girls_on_job(JOB_SLEAZYBARMAID, false) == 0 && m_Performance <= 100)
-    {
+    } else if (shift.building().num_girls_on_job(JOB_SLEAZYBARMAID, false) == 0 && shift.data().Performance <= 100) {
         ss << "\n${name} had a hard time attending all the customers without the help of a barmaid.\n";
-        m_Tips *= 0.9;
+        shift.data().Tips *= 0.9;
     }
 
     //    Finish the shift            //
 
-    shift_enjoyment();
+    shift_enjoyment(shift);
 
     int roll_max = (girl.beauty() + girl.charisma()) / 4;
-    m_Earnings += uniform(10, 10 + roll_max);
+    shift.data().Earnings += shift.uniform(10, 10 + roll_max);
 
     girl.oralsex(oral);
     girl.handjob(hand);
     girl.anal(anal);
-    girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
-    // Improve stats
-    HandleGains(girl, fame);
-
-    if (likes_women(girl))    {
-        make_horny(girl, std::min(3, brothel.num_girls_on_job(JOB_BARSTRIPPER, false)));
+    if (likes_women(girl)) {
+        make_horny(girl, std::min(3, shift.building().num_girls_on_job(JOB_BARSTRIPPER, false)));
     }
 
     //gained traits
-    if (girl.dignity() < 0 && (anal > 0 || oral > 0 || hand > 0))
-    {
-        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.", EImageBaseType::ECCHI, EVENT_WARNING);
+    if (girl.dignity() < 0 && (anal > 0 || oral > 0 || hand > 0)) {
+        cGirls::PossiblyGainNewTrait(girl, traits::SLUT, 10, "${name} has turned into quite a Slut.",
+                                     EImageBaseType::ECCHI, EVENT_WARNING);
     }
-
-    return false;
 }
 
 class AdvertisingJob : public cSimpleJob {
 public:
     AdvertisingJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-AdvertisingJob::AdvertisingJob() : cSimpleJob(JOB_ADVERTISING, "Advertising.xml", {EActivity::SOCIAL}) {
+AdvertisingJob::AdvertisingJob() : cSimpleJob(JOB_ADVERTISING, "Advertising.xml") {
 
 }
 
-bool AdvertisingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+void AdvertisingJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     //    Job setup                //
     int fame = 0;
-    EImageBaseType imagetype = EImageBaseType::ADVERTISE;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    auto& ss = shift.data().EventMessage;
 
     //    Job Performance            //
 
-    if(girl.is_unpaid())
-        m_Performance = m_Performance * 90 / 100;    // unpaid slaves don't seem to want to advertise as much.
+    if (girl.is_unpaid())
+        shift.data().Performance = shift.data().Performance * 90 / 100;    // unpaid slaves don't seem to want to advertise as much.
     if (girl.is_free())
-        m_Performance = m_Performance * 110 / 100;    // paid free girls seem to attract more business
+        shift.data().Performance = shift.data().Performance * 110 / 100;    // paid free girls seem to attract more business
 
     // add some more randomness
 #if 0 // work in progress
@@ -2691,30 +1745,24 @@ bool AdvertisingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_nigh
     //    Enjoyment and Tiredness        //
 
     // Complications
-    int roll_a = d100();
-    if (roll_a <= 10)
-    {
-        m_Enjoyment -= uniform(1, 3);
+    int roll_a = shift.d100();
+    if (roll_a <= 10) {
+        shift.data().Enjoyment -= shift.uniform(1, 3);
         ss << "She was harassed and made fun of while advertising.\n";
-        if (girl.happiness() < 50)
-        {
-            m_Enjoyment -= 1;
+        if (girl.happiness() < 50) {
+            shift.data().Enjoyment -= 1;
             ss << "Other then that she mostly just spent her time trying to not breakdown and cry.\n";
-            fame -= uniform(0, 1);
+            fame -= shift.uniform(0, 1);
         }
-        m_Performance = m_Performance * 80 / 100;
-        fame -= uniform(0, 1);
-    }
-    else if (roll_a >= 90)
-    {
-        m_Enjoyment += uniform(1, 3);
+        shift.data().Performance = shift.data().Performance * 80 / 100;
+        fame -= shift.uniform(0, 1);
+    } else if (roll_a >= 90) {
+        shift.data().Enjoyment += shift.uniform(1, 3);
         ss << "She made sure many people were interested in the buildings facilities.\n";
-        m_Performance = m_Performance * 100 / 100;
-        fame += uniform(0, 2);
-    }
-    else
-    {
-        m_Enjoyment += uniform(0, 1);
+        shift.data().Performance = shift.data().Performance * 100 / 100;
+        fame += shift.uniform(0, 2);
+    } else {
+        shift.data().Enjoyment += shift.uniform(0, 1);
         ss << "She had an uneventful day advertising.\n";
     }
 
@@ -2725,82 +1773,69 @@ bool AdvertisingJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_nigh
     if (girl.enjoyment(EActivity::SOCIAL) < -10)                         // if she does not like the job
     {
         int enjoyamount = girl.enjoyment(EActivity::SOCIAL);
-        int saysomething = uniform(0, girl.confidence()) - enjoyamount;    // the more she does not like the job the more likely she is to say something about it
+        int saysomething = shift.uniform(0, girl.confidence()) -
+                           enjoyamount;    // the more she does not like the job the more likely she is to say something about it
         saysomething -= girl.pcfear() / (girl.is_free() ? 2 : 1);    // reduce by fear (half if free)
 
-        if (saysomething > 50)
-        {
-            girl.AddMessage("${name} comes up to you and asks you to change her job, She does not like advertizing.\n",
-                            EImageBaseType::PROFILE, EVENT_WARNING);
-        }
-        else if (saysomething > 25)
-        {
+        if (saysomething > 50) {
+            girl.AddMessage(
+                    "${name} comes up to you and asks you to change her job, She does not like advertizing.\n",
+                    EImageBaseType::PROFILE, EVENT_WARNING);
+        } else if (saysomething > 25) {
             ss << "She looks at you like she has something to say but then turns around and walks away.\n";
         }
     }
 
     //    Money                    //
 
-    ss << "She managed to stretch the effectiveness of your advertising budget by about " << int(m_Performance) << "%.";
+    ss << "She managed to stretch the effectiveness of your advertising budget by about " << int(shift.data().Performance)
+       << "%.";
     // if you pay slave girls out of pocket  or if she is a free girl  pay them
-    if (!girl.is_unpaid())
-    {
-        m_Wages += 70;
+    if (!girl.is_unpaid()) {
+        shift.data().Wages += 70;
         g_Game->gold().advertising_costs(70);
         ss << " You paid her 70 gold for her advertising efforts.";
-    }
-    else
-    {
+    } else {
         ss << " You do not pay your slave for her advertising efforts.";
     }
 
     //    Finish the shift            //
 
-    girl.AddMessage(ss.str(), imagetype, msgtype);
-
     // now to boost the brothel's advertising level accordingly
-    brothel.m_AdvertisingLevel += (m_Performance / 100);
-
-    HandleGains(girl, fame);
-
-    return false;
+    shift.building().m_AdvertisingLevel += (shift.data().Performance / 100);
 }
 
 
 class CustServiceJob : public cSimpleJob {
 public:
     CustServiceJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-CustServiceJob::CustServiceJob() : cSimpleJob(JOB_CUSTOMERSERVICE, "CustService.xml", {EActivity::SERVICE}) {
+CustServiceJob::CustServiceJob() : cSimpleJob(JOB_CUSTOMERSERVICE, "CustService.xml") {
 
 }
 
-bool CustServiceJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    EActivity actiontype = EActivity::SERVICE;
+void CustServiceJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
     // Note: Customer service needs to be done last, after all the whores have worked.
 
     int numCusts = 0; // The number of customers she can handle
     int serviced = 0;
 
     // Complications
-    int roll = d100();
-    if (roll <= 5)
-    {
+    int roll = shift.d100();
+    if (roll <= 5) {
         ss << "Some of the patrons abused her during the shift.";
-        m_Enjoyment -= 1;
-    } else if (roll <= 15)
-    {
+        shift.data().Enjoyment -= 1;
+    } else if (roll <= 15) {
         ss << "A customer mistook her for a whore and was abusive when she wouldn't provide THAT service.";
-        m_Enjoyment -= 1;
-    }
-    else if (roll >= 75) {
+        shift.data().Enjoyment -= 1;
+    } else if (roll >= 75) {
         ss << "She had a pleasant time working.";
-        m_Enjoyment += 3;
-    }
-    else
-    {
+        shift.data().Enjoyment += 3;
+    } else {
         ss << "The shift passed uneventfully.";
     }
     // Decide how many customers the girl can handle
@@ -2831,36 +1866,31 @@ bool CustServiceJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_nigh
     // beauty, performance and service.
 
     // Let's make customers angry if the girl sucks at customer service.
-    if (bonus < 5)
-    {
+    if (bonus < 5) {
         bonus = -20;
         ss << "\n \nHer efforts only made the customers angrier.";
         //And she's REALLY not going to like this job if she's failing at it, so...
-        m_Enjoyment -= 5;
+        shift.data().Enjoyment -= 5;
     }
 
     // Now let's take care of our neglected customers.
-    for (int i=0; i<numCusts; i++)
-    {
-        if (g_Game->GetNumCustomers() > 0)
-        {
-            sCustomer Cust = g_Game->GetCustomer(brothel);
+    for (int i = 0; i < numCusts; i++) {
+        if (g_Game->GetNumCustomers() > 0) {
+            sCustomer Cust = g_Game->GetCustomer(shift.building());
             // Let's find out how much happiness they started with.
             // They're not going to start out very happy. They're seeing customer service, after all.
-            Cust.set_stat(STAT_HAPPINESS, 22 + uniform(0, 9) + uniform(0, 9)); // average 31 range 22 to 40
+            Cust.set_stat(STAT_HAPPINESS, 22 + shift.uniform(0, 9) + shift.uniform(0, 9)); // average 31 range 22 to 40
             // Now apply her happiness bonus.
             Cust.happiness(bonus);
             // update how happy the customers are on average
-            brothel.m_Happiness += Cust.happiness();
+            shift.building().m_Happiness += Cust.happiness();
             // And decrement the number of customers to be taken care of
             g_Game->customers().AdjustNumCustomers(-1);
             serviced++;
-        }
-        else
-        {
+        } else {
             //If there aren't enough customers to take care of, time to quit.
             girl.AddMessage(girl.FullName() + " ran out of customers to take care of.", EImageBaseType::PROFILE,
-                            is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+                            shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
             break;
         }
     }
@@ -2874,46 +1904,39 @@ bool CustServiceJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_nigh
      * than nothing. */
 
     // Bad customer service reps will leave the customer with 2-20 happiness. Bad customer service is at least better than no customer service.
-    // Now pay the girl.
-    girl.AddMessage(ss.str(), EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
-    // Raise skills
-    HandleGains(girl, 1);
     // additional XP bonus for many customers
     girl.exp(serviced / 5);
-
-    m_Wages = 50;
-    return false;
 }
 
 
 class BeastCareJob : public cSimpleJob {
 public:
     BeastCareJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-BeastCareJob::BeastCareJob() : cSimpleJob(JOB_BEASTCARER, "BeastCarer.xml", {EActivity::FARMING, 20}) {
+BeastCareJob::BeastCareJob() : cSimpleJob(JOB_BEASTCARER, "BeastCarer.xml") {
 }
 
-bool BeastCareJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+void BeastCareJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
     if (g_Game->storage().beasts() < 1) {
-        add_text("no-beasts") << "\n\n";
+        shift.add_line("no-beasts");
     }
-    EImageBaseType imagetype = EImageBaseType::FARM;
-    auto msgtype = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
     //    Job Performance            //
 
-    int numhandle = girl.animalhandling() * 2;    // `J` first we assume a girl can take care of 2 beasts per point of animalhandling
+    int numhandle = girl.animalhandling() *
+                    2;    // `J` first we assume a girl can take care of 2 beasts per point of animalhandling
     int addbeasts = -1;
 
     // `J` if she has time to spare after taking care of the current beasts, she may try to get some new ones.
-    if (numhandle / 2 > g_Game->storage().beasts() && chance(50))    // `J` these need more options
+    if (numhandle / 2 > g_Game->storage().beasts() && shift.chance(50))    // `J` these need more options
     {
-        if (girl.magic() > 70 && girl.mana() >= 30)
-        {
-            addbeasts = uniform(1, girl.mana() / 30);
+        if (girl.magic() > 70 && girl.mana() >= 30) {
+            addbeasts = shift.uniform(1, girl.mana() / 30);
             ss << "${name}";
             ss << (addbeasts > 0 ? " used" : " tried to use") << " her magic to summon ";
             if (addbeasts < 2) ss << "a beast";
@@ -2921,32 +1944,23 @@ bool BeastCareJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
             ss << " for the brothel" << (addbeasts > 0 ? "." : " but failed.");
             girl.magic(addbeasts);
             girl.mana(-30 * std::max(1, addbeasts));
-        }
-        else if (girl.animalhandling() > 50 && girl.charisma() > 50)
-        {
-            addbeasts =
-                    chance(girl.combat()) +
-                    chance(girl.charisma()) +
-                    chance(girl.animalhandling());
-            if (addbeasts <= 0)
-            {
+        } else if (girl.animalhandling() > 50 && girl.charisma() > 50) {
+            addbeasts = shift.chance(girl.combat()) + shift.chance(girl.charisma()) + shift.chance(girl.animalhandling());
+            if (addbeasts <= 0) {
                 addbeasts = 0;
                 ss << "${name} tried to lure in some beasts for the brothel but failed.";
-            }
-            else
-            {
+            } else {
                 ss << "${name} lured in ";
                 if (addbeasts == 1) ss << "a stray beast";
                 else ss << addbeasts << " stray beasts";
                 ss << " for the brothel.";
                 girl.confidence(addbeasts);
             }
-        }
-        else if (girl.combat() > 50 && (girl.has_active_trait(traits::ADVENTURER) || girl.confidence() > 70))
-        {
-            addbeasts = uniform(0, 1);
-            ss << "${name} stood near the entrance to the catacombs, trying to lure out a beast by making noises of an injured animal.\n";
-            if (addbeasts > 0) ss << "After some time, a beast came out of the catacombs. ${name} threw a net over it and wrestled it into submission.\n";
+        } else if (girl.combat() > 50 && (girl.has_active_trait(traits::ADVENTURER) || girl.confidence() > 70)) {
+            addbeasts = shift.uniform(0, 1);
+            ss<< "${name} stood near the entrance to the catacombs, trying to lure out a beast by making noises of an injured animal.\n";
+            if (addbeasts > 0)
+                ss << "After some time, a beast came out of the catacombs. ${name} threw a net over it and wrestled it into submission.\n";
             else ss << "After a few hours, she gave up.";
             girl.combat(addbeasts);
         }
@@ -2954,142 +1968,114 @@ bool BeastCareJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night)
     if (addbeasts >= 0) ss << "\n \n";
 
     //    Enjoyment and Tiredness        //
-    int roll_a = d100();
-    if (roll_a <= 10)
-    {
-        m_Enjoyment -= uniform(1, 3);
+    int roll_a = shift.d100();
+    if (roll_a <= 10) {
+        shift.data().Enjoyment -= shift.uniform(1, 3);
         addbeasts--;
         ss << "The animals were restless and disobedient.";
-    }
-    else if (roll_a >= 90)
-    {
-        m_Enjoyment += uniform(1, 3);
+    } else if (roll_a >= 90) {
+        shift.data().Enjoyment += shift.uniform(1, 3);
         addbeasts++;
         ss << "She enjoyed her time working with the animals today.";
-    }
-    else
-    {
-        m_Enjoyment += uniform(0, 1);
-        ss << (addbeasts>=0 ? "Otherwise, the" : "The") << " shift passed uneventfully.\n \n";
+    } else {
+        shift.data().Enjoyment += shift.uniform(0, 1);
+        ss << (addbeasts >= 0 ? "Otherwise, the" : "The") << " shift passed uneventfully.\n \n";
     }
 
     //    Money                    //
 
-    if (addbeasts < 0)    addbeasts = 0;
-    // slave girls not being paid for a job that normally you would pay directly for do less work
-    if (girl.is_unpaid())
-    {
-        m_Wages = 0;
-    }
-    else
-    {
-        m_Wages += g_Game->storage().beasts()/5;
-        m_Tips += addbeasts * 5;                // a little bonus for getting new beasts
-    }
+    if (addbeasts < 0) addbeasts = 0;
+    shift.data().Wages += g_Game->storage().beasts() / 5;
+    shift.data().Tips += addbeasts * 5;                // a little bonus for getting new beasts
 
     //    Finish the shift            //
-
     g_Game->storage().add_to_beasts(addbeasts);
-    girl.AddMessage(ss.str(), imagetype, msgtype);
 
-    // Improve girl
-    HandleGains(girl, 0);
-    girl.exp( std::min(3, g_Game->storage().beasts() / 10));
-    return false;
+    girl.exp(std::min(3, g_Game->storage().beasts() / 10));
 }
 
 class SecurityJob : public cSimpleJob {
 public:
     SecurityJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
+
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
 
-SecurityJob::SecurityJob() : cSimpleJob(JOB_SECURITY, "Security.xml", {EActivity::FIGHTING}) {
+SecurityJob::SecurityJob() : cSimpleJob(JOB_SECURITY, "Security.xml") {
 
 }
 
-bool SecurityJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    int roll_a = d100();
-    sImagePreset imagetype = EImageBaseType::SECURITY;
+void SecurityJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    int roll_a = shift.d100();
 
     cGirls::EquipCombat(girl);    // ready armor and weapons!
 
-    const sGirl* stripperonduty = random_girl_on_job(brothel, JOB_BARSTRIPPER, is_night);
+    const sGirl* stripperonduty = random_girl_on_job(shift.building(), JOB_BARSTRIPPER, shift.is_night_shift());
     std::string strippername = (stripperonduty ? "Stripper " + stripperonduty->FullName() + "" : "the Stripper");
 
-    const sGirl* whoreonduty = random_girl_on_job(brothel, JOB_WHOREBROTHEL, is_night);
+    const sGirl* whoreonduty = random_girl_on_job(shift.building(), JOB_WHOREBROTHEL, shift.is_night_shift());
     std::string whorename = (whoreonduty ? "Whore " + whoreonduty->FullName() + "" : "the Whore");
 
 
-    double SecLev = m_Performance;
-    
+    double SecLev = shift.data().Performance;
+
     // Complications
-    if (roll_a <= 25)
-    {
-        switch(uniform(0, 4))
-        {
+    if (roll_a <= 25) {
+        switch (shift.uniform(0, 4)) {
             case 2: //'Mute' Unrulely Customers rape her
             {
-                m_Enjoyment -= uniform(1, 3);
-                SecLev-=SecLev/10;
-                ss<< "She tried to Fight off some unruly patrons, but they turned on her and raped her.";
-                int custCount= uniform(1, 4);
+                shift.data().Enjoyment -= shift.uniform(1, 3);
+                SecLev -= SecLev / 10;
+                ss << "She tried to Fight off some unruly patrons, but they turned on her and raped her.";
+                int custCount = shift.uniform(1, 4);
                 cJobManager::customer_rape(girl, custCount);
                 break;
             }
-            case 3:
-            {
-                m_Enjoyment -= uniform(1, 3);
+            case 3: {
+                shift.data().Enjoyment -= shift.uniform(1, 3);
                 double secLvlMod = SecLev / 10.0;
                 ss << "She stumbled across some patrons trying to rape a female customer.\n";
                 int combatMod = (girl.combat() + girl.magic() + girl.agility()) / 3;
-                if (chance(combatMod))
-                {
-                    ss << "She succeeded in saving the girl from being raped."; //'Mute" TODO add posiblity of adding female customers to dungeon
+                if (shift.chance(combatMod)) {
+                    ss
+                            << "She succeeded in saving the girl from being raped."; //'Mute" TODO add posiblity of adding female customers to dungeon
                     SecLev += secLvlMod;
-                }
-                else
-                {
+                } else {
                     SecLev -= secLvlMod;
-                    int rapers = uniform(1, 4);
+                    int rapers = shift.uniform(1, 4);
                     ss << "She failed in saving her. They where both raped by " << rapers << " men.\n";
                     cJobManager::customer_rape(girl, rapers);
                 }
                 break;
             }
-            default:
-            {
-                m_Enjoyment -=uniform(1, 3);
+            default: {
+                shift.data().Enjoyment -= shift.uniform(1, 3);
                 SecLev -= SecLev / 10;
                 ss << "She had to deal with some very unruly patrons that gave her a hard time.";
                 break;
             }
         }
 
-    }
-    else if (roll_a >= 75)
-    {
-        m_Enjoyment +=uniform(1, 3);
+    } else if (roll_a >= 75) {
+        shift.data().Enjoyment += shift.uniform(1, 3);
         SecLev += SecLev / 10;
         ss << "She successfully handled unruly patrons.";
-    }
-    else
-    {
-        m_Enjoyment += uniform(0, 1);
+    } else {
+        shift.data().Enjoyment += shift.uniform(0, 1);
         ss << "She had an uneventful day watching over the brothel.";
     }
     ss << "\n \n";
 
-    if (girl.lust() >= 70 && chance(20))
-    {
-        int choice = uniform(0, 1);
+    if (girl.lust() >= 70 && shift.chance(20)) {
+        int choice = shift.uniform(0, 1);
         ss << "Her libido caused her to get distracted while watching ";
         /*might could do more with this FIXME CRAZY*/
         if (likes_women(girl) && !likes_men(girl)) choice = 0;
         if (likes_men(girl) && !likes_women(girl)) choice = 1;
-        switch (choice)
-        {
+        switch (choice) {
             case 0:
                 ss << (stripperonduty ? strippername : "one of the strippers") << " dance.\n";
                 break;
@@ -3103,31 +2089,49 @@ bool SecurityJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
 
     }
 
-    if ((girl.lust() > 50 && chance(girl.lust() / 5)) || (girl.has_active_trait(traits::NYMPHOMANIAC) && chance(20)))
-    {
-        ss <<"\nGave some bonus service to the well behaved patrons, ";
+    if ((girl.lust() > 50 && shift.chance(girl.lust() / 5)) ||
+        (girl.has_active_trait(traits::NYMPHOMANIAC) && shift.chance(20))) {
+        ss << "\nGave some bonus service to the well behaved patrons, ";
         int l = 0;
-        switch (uniform(0, 4))        // `J` just roll for the 4 sex options and flash only if sex is restricted
+        switch (shift.uniform(0, 4))        // `J` just roll for the 4 sex options and flash only if sex is restricted
         {
-            case 1:    if (girl.is_sex_type_allowed(SKILL_ORALSEX))    { imagetype = EImagePresets::BLOWJOB;    ss << "She sucked them off";    break; }
-            case 2:    if (girl.is_sex_type_allowed(SKILL_TITTYSEX))    { imagetype = EImageBaseType::TITTY;    ss << "She used her tits to get them off";    break; }
-            case 3:    if (girl.is_sex_type_allowed(SKILL_HANDJOB))    { imagetype = EImageBaseType::HAND;    ss << "She jerked them off";    break; }
-            case 4:    if (girl.is_sex_type_allowed(SKILL_FOOTJOB))    { imagetype = EImageBaseType::FOOT;    ss << "She used her feet to get them off";    break; }
-            default:/*                         */    { imagetype = EImageBaseType::STRIP;    ss << "She flashed them";    break; }
+            case 1:
+                if (girl.is_sex_type_allowed(SKILL_ORALSEX)) {
+                    shift.set_image(EImagePresets::BLOWJOB);
+                    ss << "She sucked them off";
+                    break;
+                }
+            case 2:
+                if (girl.is_sex_type_allowed(SKILL_TITTYSEX)) {
+                    shift.set_image(EImageBaseType::TITTY);
+                    ss << "She used her tits to get them off";
+                    break;
+                }
+            case 3:
+                if (girl.is_sex_type_allowed(SKILL_HANDJOB)) {
+                    shift.set_image(EImageBaseType::HAND);
+                    ss << "She jerked them off";
+                    break;
+                }
+            case 4:
+                if (girl.is_sex_type_allowed(SKILL_FOOTJOB)) {
+                    shift.set_image(EImageBaseType::FOOT);
+                    ss << "She used her feet to get them off";
+                    break;
+                }
+            default:/*                         */    {
+                shift.set_image(EImageBaseType::STRIP);
+                ss << "She flashed them";
+                break;
+            }
         }
         ss << ".\n \n";
     }
 
     if (SecLev < 10) SecLev = 10;
-    brothel.m_SecurityLevel += int(SecLev);
+    shift.building().m_SecurityLevel += int(SecLev);
 
     ss << "\nPatrolling the building, ${name} increased the security level by " << int(SecLev) << ".";
-    girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    // Improve girl
-    m_Wages += 70;
-    HandleGains(girl, 0);
-    return false;
 }
 
 double SecurityJob::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -3141,8 +2145,7 @@ double SecurityJob::GetPerformance(const sGirl& girl, bool estimate) const {
     if (estimate)    // for third detail string
     {
         SecLev = girl.combat() + (girl.magic() + girl.agility()) / 2;
-    }
-    else            // for the actual check
+    } else            // for the actual check
     {
 
         SecLev = g_Dice % (girl.combat() / 2)
@@ -3152,8 +2155,7 @@ double SecurityJob::GetPerformance(const sGirl& girl, bool estimate) const {
 
     SecLev += girl.get_trait_modifier(traits::modifiers::WORK_SECURITY);
 
-    if (!estimate)
-    {
+    if (!estimate) {
         int t = girl.tiredness() - 70;
         if (t > 0) SecLev -= t * 2;
 
@@ -3165,7 +2167,7 @@ double SecurityJob::GetPerformance(const sGirl& girl, bool estimate) const {
         int y = girl.happiness();
         if (y < 20) SecLev -= 20 - y;
 
-        if (SecLev < 0)    SecLev = 0;
+        if (SecLev < 0) SecLev = 0;
     }
 
     return SecLev;
@@ -3174,10 +2176,12 @@ double SecurityJob::GetPerformance(const sGirl& girl, bool estimate) const {
 class CatacombJob : public cSimpleJob {
 public:
     CatacombJob();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+void CatacombJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
     int num_monsters = 0;
     int type_monster_girls = 0;
     int type_unique_monster_girls = 0;
@@ -3189,26 +2193,24 @@ bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
     std::string Girls_list;
     std::string item_list;
 
-    cGirls::EquipCombat(girl);    // ready armor and weapons!
-
-    int haulcount = 2 + ((girl.strength() + girl.constitution()) / 10);    // how much she can bring back            - max 22 points
+    int haulcount = 2 + ((girl.strength() + girl.constitution()) /
+                         10);    // how much she can bring back            - max 22 points
     // each girl costs 5 haul points                        - max 5 girls
     float beastpercent = g_Game->gang_manager().Gang_Gets_Beast();      // each beast costs 3 haul points                       - max 8 beasts
     double itemspercent = g_Game->gang_manager().Gang_Gets_Items();     // each item costs 2 if an item is found or 1 if not    - max 11 items
     int numgirls = 0, numitems = 0;
 
-    while (haulcount > 0 && girl.health() > 40)
-    {
-        gold += uniform(0, 150);
-        double roll = uniform(0, 10000) / 100.0;
+    while (haulcount > 0 && girl.health() > 40) {
+        gold += shift.uniform(0, 150);
+        double roll = shift.uniform(0, 10000) / 100.0;
         int getwhat = 0;                                // 0=girl, 1=beast, 2=item
-        if (roll < beastpercent)                        getwhat = 1;
-        else if (roll < beastpercent + itemspercent)    getwhat = 2;
+        if (roll < beastpercent) getwhat = 1;
+        else if (roll < beastpercent + itemspercent) getwhat = 2;
 
         EFightResult fight_outcome = EFightResult::DRAW;
         // she may be able to coax a beast or if they are looking for an item, it may be guarded
-        if ((getwhat == 1 && chance((girl.animalhandling() + girl.beastiality()) / 3))
-            || (getwhat == 2 && chance(50)))
+        if ((getwhat == 1 && shift.chance((girl.animalhandling() + girl.beastiality()) / 3))
+            || (getwhat == 2 && shift.chance(50)))
             fight_outcome = EFightResult::VICTORY;    // no fight so auto-win
         else        // otherwise, do the fight
         {
@@ -3216,8 +2218,7 @@ bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
             if (tempgirl)        // `J` reworked in case there are no Non-Human Random Girls
             {
                 fight_outcome = GirlFightsGirl(girl, *tempgirl);
-            }
-            else // `J` this should have been corrected with the addition of the default random girl but leaving it in just in case.
+            } else // `J` this should have been corrected with the addition of the default random girl but leaving it in just in case.
             {
                 g_LogFile.log(ELogLevel::ERROR, "You have no Catacomb Girls for your girls to fight");
                 fight_outcome = EFightResult::DEFEAT;
@@ -3226,47 +2227,51 @@ bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
 
         if (fight_outcome == EFightResult::VICTORY)  // If she won
         {
-            if (getwhat == 0)        { haulcount -= 5;    numgirls++; }                        // Catacombs girl type
-            else if (getwhat == 1)    { haulcount -= 3;    type_beasts++;    num_monsters++; }    // Beast type
-            else
-            {
+            if (getwhat == 0) {
+                haulcount -= 5;
+                numgirls++;
+            }                        // Catacombs girl type
+            else if (getwhat == 1) {
+                haulcount -= 3;
+                type_beasts++;
+                num_monsters++;
+            }    // Beast type
+            else {
                 haulcount--;
                 int chance_val = (girl.intelligence() + girl.agility()) / 2;
-                if (chance(chance_val))        // percent chance she will find an item
+                if (shift.chance(chance_val))        // percent shift.chance she will find an item
                 {
                     haulcount--;
                     numitems++;
                 }
             }
-        }
-        else if (fight_outcome == EFightResult::DEFEAT) // she lost
+        } else if (fight_outcome == EFightResult::DEFEAT) // she lost
         {
             haulcount -= 50;
             raped = true;
             break;
-        }
-        else if (fight_outcome == EFightResult::DRAW) // it was a draw
+        } else if (fight_outcome == EFightResult::DRAW) // it was a draw
         {
-            haulcount -= uniform(1, 5);
+            haulcount -= shift.uniform(1, 5);
         }
     }
 
-    if (raped)
-    {
+    if (raped) {
+        int NumMon = shift.uniform(1, 6);
+        // TODO is this correct?
         ss.str("");
-        int NumMon = uniform(1, 6);
-        ss << "${name} was defeated then" << ((NumMon <= 3) ? "" : " gang") << " raped and abused by " << NumMon << " monsters.";
-        int health = -NumMon, happy = -NumMon * 5, spirit = -NumMon, sex = -NumMon * 2, combat = -NumMon * 2, injury = 9 + NumMon;
+        ss << "${name} was defeated then" << ((NumMon <= 3) ? "" : " gang") << " raped and abused by " << NumMon
+           << " monsters.";
+        int health = -NumMon, happy = -NumMon * 5, spirit = -NumMon, sex = -NumMon * 2, combat =
+                -NumMon * 2, injury = 9 + NumMon;
 
-        if (girl.lose_trait(traits::VIRGIN))
-        {
+        if (girl.lose_trait(traits::VIRGIN)) {
             ss << " That's a hell of a way to lose your virginity; naturally, she's rather distressed by this fact.";
             health -= 1, happy -= 10, spirit -= 2, sex -= 2, combat -= 2, injury += 2;
         }
         girl.AddMessage(ss.str(), EImageBaseType::DEATH, EVENT_DANGER);
 
-        if (!girl.calc_insemination(cGirls::GetBeast(), 1.0 + (NumMon * 0.5)))
-        {
+        if (!girl.calc_insemination(cGirls::GetBeast(), 1.0 + (NumMon * 0.5))) {
             g_Game->push_message(girl.FullName() + " has gotten inseminated", 0);
             health -= 1, happy -= 10, spirit -= 4, sex -= 4, combat -= 2, injury += 2;
         }
@@ -3277,16 +2282,15 @@ bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
         cGirls::GirlInjured(girl, injury);
         girl.enjoyment(EActivity::FUCKING, sex);
         girl.enjoyment(EActivity::FIGHTING, combat);
-
-        return false;
+        return;
     }
 
     g_Game->storage().add_to_beasts(type_beasts);
-    while (numgirls > 0)
-    {
+    while (numgirls > 0) {
         numgirls--;
         std::shared_ptr<sGirl> ugirl = nullptr;
-        if (chance( (float)g_Game->settings().get_percent(settings::WORLD_CATACOMB_UNIQUE) ))    // chance of getting unique girl
+        if (shift.chance((float) g_Game->settings().get_percent(
+                settings::WORLD_CATACOMB_UNIQUE)))    // shift.chance of getting unique girl
         {
             ugirl = g_Game->GetRandomUniqueGirl(false, true);                // Unique monster girl type
         }
@@ -3294,138 +2298,119 @@ bool CatacombJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) 
         {
             // the girl will be added to the dungeon, which will start managing object lifetimes
             ugirl = g_Game->CreateRandomGirl(SpawnReason::CATACOMBS);    // create a random girl
-            if (ugirl)
-            {
+            if (ugirl) {
                 type_monster_girls++;
                 Girls_list += ((Girls_list.empty()) ? "   " : ",\n   ") + ugirl->FullName();
             }
-        }
-        else                // otherwise set the unique girls stuff
+        } else                // otherwise set the unique girls stuff
         {
             ugirl->remove_status(STATUS_CATACOMBS);
             type_unique_monster_girls++;
             UGirls_list += ((UGirls_list.empty()) ? "   " : ",\n   ") + ugirl->FullName();
         }
 
-        if (ugirl)
-        {
+        if (ugirl) {
             num_monsters++;
-            if (g_Game->get_objective() && g_Game->get_objective()->m_Objective == OBJECTIVE_CAPTUREXCATACOMBGIRLS)
-            {
+            if (g_Game->get_objective() &&
+                g_Game->get_objective()->m_Objective == OBJECTIVE_CAPTUREXCATACOMBGIRLS) {
                 g_Game->get_objective()->m_SoFar++;
             }
             std::stringstream Umsg;
-            ugirl->add_temporary_trait(traits::KIDNAPPED, uniform(2, 16));
+            ugirl->add_temporary_trait(traits::KIDNAPPED, shift.uniform(2, 16));
             Umsg << ugirl->FullName() << " was captured in the catacombs by ${name}.\n";
             ugirl->AddMessage(Umsg.str(), EImageBaseType::PROFILE, EVENT_DUNGEON);
             g_Game->dungeon().AddGirl(ugirl, DUNGEON_GIRLCAPTURED);    // Either type of girl goes to the dungeon
         }
     }
-    while (numitems > 0)
-    {
+    while (numitems > 0) {
         numitems--;
         sInventoryItem* TempItem = g_Game->inventory_manager().GetRandomCatacombItem();
-        if(g_Game->player().add_item(TempItem)) {
+        if (g_Game->player().add_item(TempItem)) {
             item_list += ((item_list.empty()) ? "   " : ",\n   ") + TempItem->m_Name;
             num_items++;
         }
     }
 
-    if (num_monsters > 0)
-    {
-        ss << "She encountered " << num_monsters << " monster" << (num_monsters > 1 ? "s" : "") << " and captured:\n";
-        if (type_monster_girls > 0)
-        {
-            ss << type_monster_girls << " catacomb girl" << (type_monster_girls > 1 ? "s" : "") << ":\n" << Girls_list << ".\n";
+    if (num_monsters > 0) {
+        ss << "She encountered " << num_monsters << " monster" << (num_monsters > 1 ? "s" : "")
+           << " and captured:\n";
+        if (type_monster_girls > 0) {
+            ss << type_monster_girls << " catacomb girl" << (type_monster_girls > 1 ? "s" : "") << ":\n"
+               << Girls_list << ".\n";
         }
-        if (type_unique_monster_girls > 0)
-        {
-            ss << type_unique_monster_girls << " unique girl" << (type_unique_monster_girls > 1 ? "s" : "") << ":\n" << UGirls_list << ".\n";
+        if (type_unique_monster_girls > 0) {
+            ss << type_unique_monster_girls << " unique girl" << (type_unique_monster_girls > 1 ? "s" : "") << ":\n"
+               << UGirls_list << ".\n";
         }
         if (type_beasts > 0)
             ss << type_beasts << " beast" << (type_beasts > 1 ? "s." : ".");
         ss << "\n \n";
     }
-    if (num_items > 0)
-    {
+    if (num_items > 0) {
         ss << (num_monsters > 0 ? "Further, she" : "She") << " came out with ";
         if (num_items == 1) ss << "one item:\n";
-        else    ss << num_items << " items:\n";
+        else ss << num_items << " items:\n";
         ss << item_list << ".\n \n";
     }
-    if (gold > 0) ss << "She " << (num_monsters + num_items > 0 ? "also " : "") << "came out with " << gold << " gold.";
+    if (gold > 0)
+        ss << "She " << (num_monsters + num_items > 0 ? "also " : "") << "came out with " << gold << " gold.";
 
     if (num_monsters + num_items + gold < 1) ss << "She came out empty handed.";
 
-    girl.AddMessage(ss.str(), EImageBaseType::COMBAT, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    girl.AddMessage(ss.str(), EImageBaseType::COMBAT, shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     ss.str("");
-    if (girl.lust() > 90 && type_monster_girls + type_unique_monster_girls > 0 && girl.is_sex_type_allowed(SKILL_LESBIAN))
-    {
-        ss << "${name} was real horny so she had a little fun with the girl" << (type_monster_girls + type_unique_monster_girls > 1 ? "s" : "") << " she captured.";
+    if (girl.lust() > 90 && type_monster_girls + type_unique_monster_girls > 0 &&
+        girl.is_sex_type_allowed(SKILL_LESBIAN)) {
+        ss << "${name} was real horny so she had a little fun with the girl"
+           << (type_monster_girls + type_unique_monster_girls > 1 ? "s" : "") << " she captured.";
         girl.lust_release_regular();
         girl.lesbian(type_monster_girls + type_unique_monster_girls);
-        girl.AddMessage(ss.str(), EImagePresets::LESBIAN, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-    }
-    else if (girl.lust() > 90 && type_beasts > 0 && girl.is_sex_type_allowed(SKILL_BEASTIALITY))
-    {
-        ss << "${name} was real horny so she had a little fun with the beast" << (type_beasts > 1 ? "s" : "") << " she captured.";
+        girl.AddMessage(ss.str(), EImagePresets::LESBIAN, shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    } else if (girl.lust() > 90 && type_beasts > 0 && girl.is_sex_type_allowed(SKILL_BEASTIALITY)) {
+        ss << "${name} was real horny so she had a little fun with the beast" << (type_beasts > 1 ? "s" : "")
+           << " she captured.";
         girl.lust_release_regular();
         girl.beastiality(type_beasts);
-        girl.AddMessage(ss.str(), EImageBaseType::BEAST, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-        if (!girl.calc_insemination(cGirls::GetBeast(), 1.0))
-        {
+        girl.AddMessage(ss.str(), EImageBaseType::BEAST, shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+        if (!girl.calc_insemination(cGirls::GetBeast(), 1.0)) {
             g_Game->push_message(girl.FullName() + " has gotten inseminated", 0);
         }
     }
 
-    if (girl.is_pregnant())
-    {
-        if (girl.strength() >= 60)
-        {
+    if (girl.is_pregnant()) {
+        if (girl.strength() >= 60) {
             ss << "\n \nFighting monsters and exploring the catacombs proved to be quite exhausting for a pregnant girl, even for one as strong as ${name} .\n";
-        }
-        else
-        {
+        } else {
             ss << "\n \nFighting monsters and exploring the catacombs was quite exhausting for a pregnant girl like ${name} .\n";
         }
-        girl.tiredness(10 - girl.strength() / 20 );
+        girl.tiredness(10 - girl.strength() / 20);
     }
 
-    m_Earnings += gold;
-
-    // Improve girl
-    HandleGains(girl, m_Performance);
-
-    return false;
+    shift.data().Earnings += gold;
 }
 
-CatacombJob::CatacombJob() : cSimpleJob(JOB_EXPLORECATACOMBS, "ExploreCatacombs.xml", {EActivity::FIGHTING}){
+CatacombJob::CatacombJob() : cSimpleJob(JOB_EXPLORECATACOMBS, "ExploreCatacombs.xml") {
 }
 
-void RegisterBarJobs(cJobManager& mgr) {
-    mgr.register_job(wrap(std::make_unique<cBarCookJob>()));
-    mgr.register_job(wrap(std::make_unique<cBarMaidJob>()));
-    mgr.register_job(wrap(std::make_unique<cBarWaitressJob>()));
-    mgr.register_job(wrap(std::make_unique<cBarPianoJob>()));
-    mgr.register_job(wrap(std::make_unique<cBarSingerJob>()));
-    mgr.register_job(wrap(std::make_unique<cEscortJob>()));
-    mgr.register_job(wrap(std::make_unique<cDealerJob>()));
-    mgr.register_job(wrap(std::make_unique<cEntertainerJob>()));
-    mgr.register_job(wrap(std::make_unique<cXXXEntertainerJob>()));
-    mgr.register_job(wrap(std::make_unique<cMasseuseJob>()));
-    mgr.register_job(wrap(std::make_unique<cPeepShowJob>()));
-    mgr.register_job(wrap(std::make_unique<cBrothelStripper>()));
-    mgr.register_job(wrap(std::make_unique<ClubBarmaid>()));
-    mgr.register_job(wrap(std::make_unique<ClubStripper>()));
-    mgr.register_job(wrap(std::make_unique<ClubWaitress>()));
-    mgr.register_job(wrap(std::make_unique<AdvertisingJob>()));
-    mgr.register_job(wrap(std::make_unique<CustServiceJob>()));
-    mgr.register_job(wrap(std::make_unique<BeastCareJob>()));
-    mgr.register_job(wrap(std::make_unique<SecurityJob>()));
-    mgr.register_job(wrap(std::make_unique<CatacombJob>()));
-    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_WHOREGAMBHALL, "HWhr", "She will give her sexual favors to the customers.")));
-    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_BARWHORE, "SWhr", "She will provide sex to the customers.")));
-    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_WHOREBROTHEL, "BWhr", "She will whore herself to customers within the building's walls. This is safer but a little less profitable.")));
-    mgr.register_job(wrap(std::make_unique<cWhoreJob>(JOB_WHORESTREETS, "StWr", "She will whore herself on the streets. It is more dangerous than whoring inside but more profitable.")));
+void RegisterBrothelJobs(cJobManager& mgr) {
+    mgr.register_job(std::make_unique<cEscortJob>());
+    mgr.register_job(std::make_unique<cDealerJob>());
+    mgr.register_job(std::make_unique<cEntertainerJob>());
+    mgr.register_job(std::make_unique<cXXXEntertainerJob>());
+    mgr.register_job(std::make_unique<cMasseuseJob>());
+    mgr.register_job(std::make_unique<cPeepShowJob>());
+    mgr.register_job(std::make_unique<cBrothelStripper>());
+    mgr.register_job(std::make_unique<ClubBarmaid>());
+    mgr.register_job(std::make_unique<ClubStripper>());
+    mgr.register_job(std::make_unique<ClubWaitress>());
+    mgr.register_job(std::make_unique<AdvertisingJob>());
+    mgr.register_job(std::make_unique<CustServiceJob>());
+    mgr.register_job(std::make_unique<BeastCareJob>());
+    mgr.register_job(std::make_unique<SecurityJob>());
+    mgr.register_job(std::make_unique<CatacombJob>());
+    mgr.register_job(std::make_unique<cWhoreJob>(JOB_WHOREGAMBHALL, "HWhr", "She will give her sexual favors to the customers."));
+    mgr.register_job(std::make_unique<cWhoreJob>(JOB_BARWHORE, "SWhr", "She will provide sex to the customers."));
+    mgr.register_job(std::make_unique<cWhoreJob>(JOB_WHOREBROTHEL, "BWhr", "She will whore herself to customers within the building's walls. This is safer but a little less profitable."));
+    mgr.register_job(std::make_unique<cWhoreJob>(JOB_WHORESTREETS, "StWr", "She will whore herself on the streets. It is more dangerous than whoring inside but more profitable."));
 }

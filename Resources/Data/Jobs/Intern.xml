@@ -3,9 +3,15 @@
     <Description>
         Will train in how to be a nurse.
     </Description>
+
+    <Config>
+        <Enjoyment PrimaryAction="Medical" SecondaryAction="Service"/>
+    </Config>
+
     <Performance>
         <!-- unused: Intern job is a training job -->
     </Performance>
+
     <Gains XP="5" Skill="0">
     </Gains>
 

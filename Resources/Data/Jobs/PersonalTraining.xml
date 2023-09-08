@@ -4,6 +4,9 @@
         You will oversee her training personally.
     </Description>
 
+    <Config Shift="full">
+    </Config>
+
     <Messages>
         <Message Name="work">
             <Text>You oversee ${name}'s training.</Text>

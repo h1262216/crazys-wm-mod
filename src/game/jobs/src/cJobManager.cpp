@@ -50,7 +50,7 @@ extern cRng g_Dice;
 
 void RegisterCraftingJobs(cJobManager& mgr);
 void RegisterSurgeryJobs(cJobManager& mgr);
-void RegisterWrappedJobs(cJobManager& mgr);
+void RegisterSpecialJobs(cJobManager& mgr);
 void RegisterManagerJobs(cJobManager& mgr);
 void RegisterTherapyJobs(cJobManager& mgr);
 void RegisterBarJobs(cJobManager& mgr);
@@ -64,7 +64,7 @@ void RegisterArenaJobs(cJobManager& mgr);
 void RegisterCleaningJobs(cJobManager& mgr);
 void RegisterHouseJobs(cJobManager& mgr);
 void RegisterCentreJobs(cJobManager& mgr);
-void RegisterStripClubJobs(cJobManager& mgr);
+void RegisterBrothelJobs(cJobManager& mgr);
 
 namespace settings {
     extern const char* WORLD_RAPE_STREETS;
@@ -144,7 +144,8 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
 
     // - Community Centre Jobs
     JobFilters[JOBFILTER_COMMUNITYCENTRE] = sJobFilter{"CommunityCentre", "Community Centre", "These are jobs for running a community centre."};
-    register_filter(JOBFILTER_COMMUNITYCENTRE, JOB_CENTREMANAGER, JOB_CLEANCENTRE, {JOB_RESTING});
+    JobFilters[JOBFILTER_COMMUNITYCENTRE].Contents.push_back(JOB_RESTING);
+    JobFilters[JOBFILTER_COMMUNITYCENTRE].Contents.push_back(JOB_CLEANCENTRE);
     // - Counseling Centre Jobs
     JobFilters[JOBFILTER_COUNSELINGCENTRE] = sJobFilter{"CounselingCentre", "Counseling Centre", "These are jobs for running a counseling centre."};
     register_filter(JOBFILTER_COUNSELINGCENTRE, JOB_COUNSELOR, JOB_ANGER, {});
@@ -179,7 +180,7 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
 
     RegisterCraftingJobs(*this);
     RegisterSurgeryJobs(*this);
-    RegisterWrappedJobs(*this);
+    RegisterSpecialJobs(*this);
     RegisterManagerJobs(*this);
     RegisterFilmingJobs(*this);
     RegisterFilmCrewJobs(*this);
@@ -193,6 +194,14 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     RegisterCleaningJobs(*this);
     RegisterHouseJobs(*this);
     RegisterCentreJobs(*this);
+    RegisterBrothelJobs(*this);
+
+    // validate
+    for(int j = JOBS::JOB_RESTING; j < JOBS::NUM_JOBS; ++j) {
+        if(m_OOPJobs[j].get() == nullptr) {
+            g_LogFile.error("jobs", "Missing implementation for job ", ::get_job_name((JOBS)j));
+        }
+    }
 }
 
 sCustomer cJobManager::GetMiscCustomer(cBuilding& brothel)
@@ -1631,4 +1640,55 @@ EJobFilter cJobManager::get_filter_id(const std::string& name) const {
 
 const sJobFilter& cJobManager::get_filter(EJobFilter filter) const {
     return JobFilters.at(filter);
+}
+
+
+bool cJobManager::assign_job(sGirl& girl, JOBS job, EJobShift shift) const {
+    if(is_full_time(job)) {
+        shift = EJobShift::FULL;
+    }
+
+    // Check that the job is valid
+    if(shift == EJobShift::FULL || shift == EJobShift::DAY) {
+        auto check = get_job(job)->IsJobValid(girl, false);
+        if(!check) {
+            g_Game->push_message(girl.Interpolate(check.Reason), 0);
+            return false;
+        }
+    }
+    if(shift == EJobShift::FULL || shift == EJobShift::NIGHT) {
+        auto check = get_job(job)->IsJobValid(girl, true);
+        if(!check) {
+            g_Game->push_message(girl.Interpolate(check.Reason), 0);
+            return false;
+        }
+    }
+
+    // Additional checks
+    if(get_job_info(job).Singleton) {
+        if (girl.m_Building->num_girls_on_job(job, shift == EJobShift::NIGHT) > 0) {
+            g_Game->push_message("There can be only one " + get_job_name(job) + "!", 0);
+            return false;
+        }
+    }
+
+    // Assignment
+    if(shift == EJobShift::FULL) {
+        girl.m_DayJob = job;
+        girl.m_NightJob = job;
+    } else if(shift == EJobShift::DAY) {
+        girl.m_DayJob = job;
+        if(is_full_time(girl.m_NightJob)) {
+            girl.m_NightJob = JOB_RESTING;
+        }
+    } else if(shift == EJobShift::NIGHT) {
+        girl.m_NightJob = job;
+        if(is_full_time(girl.m_DayJob)) {
+            girl.m_DayJob = JOB_RESTING;
+        }
+    } else {
+        g_Game->push_message("Invalid shift. This is a bug!", COLOR_WARNING);
+        return false;
+    }
+    return true;
 }

@@ -1,20 +1,23 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="AMng">
+<Treatment Name="Anger Management" ShortName="AMng">
     <Description>
         She will go to anger management to get over her anger problems. (Aggressive, Tsundere, Yandere)
     </Description>
 
-    <Therapy Duration="4" FightChance="20" Title="therapy" SuccessBonus="3" HealthDanger="5">
-        <RemoveTrait Trait="Aggressive">She is no longer Aggressive.</RemoveTrait>
-        <RemoveTrait Trait="Tsundere">She is no longer a Tsundere.</RemoveTrait>
-        <RemoveTrait Trait="Yandere">She is no longer a Yandere.</RemoveTrait>
+    <Therapy Duration="4" FightChance="20" Title="therapy" SuccessBonus="3">
     </Therapy>
+
+    <Outcomes>
+        <LoseTrait Trait="Aggressive">She is no longer Aggressive.</LoseTrait>
+        <LoseTrait Trait="Tsundere">She is no longer a Tsundere.</LoseTrait>
+        <LoseTrait Trait="Yandere">She is no longer a Yandere.</LoseTrait>
+    </Outcomes>
 
     <Messages>
         <Message Name="therapy">
             <Text>${name} underwent therapy for anger issues.</Text>
         </Message>
-        <Message Name="no-need">
+        <Message Name="no-effect-possible">
             <Text>${name} doesn't need anger management.</Text>
         </Message>
         <Message Name="no-counselor">

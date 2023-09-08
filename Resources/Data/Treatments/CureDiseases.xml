@@ -1,9 +1,33 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="Cure">
+<Treatment Name="Cure Diseases" ShortName="Cure">
     <Description>
         She will try to get her diseases cured.
     </Description>
 
+    <Outcomes>
+        <LoseTrait Trait="Herpes">
+            She has been cured of her Herpes.
+        </LoseTrait>
+        <LoseTrait Trait="Chlamydia">
+            She no longer has Chlamydia.
+        </LoseTrait>
+        <LoseTrait Trait="Syphilis">
+            The doctors managed to cure her of Syphilis.
+        </LoseTrait>
+        <LoseTrait Trait="AIDS">
+            The miracle-workers in your hospital managed to defeat ${name}'s AIDS.
+        </LoseTrait>
+    </Outcomes>
+
     <Messages>
+        <Message Name="surgery">
+            <Text>${name} is in the Clinic to get her diseases treated.</Text>
+        </Message>
+        <Message Name="doctor.work">
+            <Text>Today, she worked on curing ${name}'s diseases.</Text>
+        </Message>
+        <Message Name="no-effect-possible">
+            <Text>${name} doesn't have any diseases to be cured.</Text>
+        </Message>
     </Messages>
 </Treatment>

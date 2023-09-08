@@ -4,6 +4,11 @@
         She will work in a soup kitchen.
     </Description>
 
+    <Config BaseWages="20">
+        <Enjoyment PrimaryAction="Service" SecondaryAction="Social" />
+        <Filter>CommunityCentre</Filter>
+    </Config>
+
     <Performance>
         <Factor Stat="Intelligence" Weight="1" />
         <Factor Stat="Charisma" Weight="1" />
@@ -43,10 +48,6 @@
                 ${name} seems to finally be getting over her Shyness.</Text>
         </LoseTrait>
     </Gains>
-
-    <Config>
-        <Filter>CommunityCentre</Filter>
-    </Config>
 
     <Messages>
         <Message Name="refuse">
@@ -140,6 +141,10 @@
                 While handing out food she served different portions to people in line.
             </Text>
             <Text>Being assigned to the food counter, she put a sign "self serving" and went out.</Text>
+        </Message>
+
+        <Message Name="event.sex">
+            <Text>Her Lust got the better of her today and she decided to let them eat her pussy! After a few minutes they started fucking her.</Text>
         </Message>
     </Messages>
 </Job>

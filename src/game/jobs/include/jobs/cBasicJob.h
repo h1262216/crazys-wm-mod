@@ -84,6 +84,7 @@ protected:
     //void customer_attempts_violence() const;
 
     void on_post_shift(cGirlShift& shift) const override;
+    virtual void make_summary_message(cGirlShift& shift) const;
 
     void update_enjoyment_of(cGirlShift& shift, EActivity action, int change_chance) const;
 

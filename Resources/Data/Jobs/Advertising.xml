@@ -4,6 +4,10 @@
         She will advertise the building's features in the city.
     </Description>
 
+    <Config DefaultImage="Advertise">
+        <Enjoyment PrimaryAction="Social"/>
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="3"/>
         <Factor Stat="Confidence" Weight="3"/>

@@ -1,13 +1,11 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="BRS">
+<Treatment Name="Breast Reduction Surgery" ShortName="BRS">
     <Description>
         She will undergo breast reduction surgery.
         *(Takes up to 3 turns per level, less if a Nurse is on duty)
     </Description>
 
-    <Surgery Duration="3">
-        <TraitExclude Trait="Flat Chest">${name} already has a Flat Chest.</TraitExclude>
-    </Surgery>
+    <Surgery Duration="3" />
 
     <Messages>
         <Message Name="surgery">
@@ -16,6 +14,10 @@
 
         <Message Name="doctor.work">
             <Text>Today, she worked on shrinking ${name}'s boobs.</Text>
+        </Message>
+
+        <Message Name="no-effect-possible">
+            <Text>${name}'s breasts are as small as they can get.</Text>
         </Message>
 
         <Include>DefaultSurgeryMessages.xml</Include>

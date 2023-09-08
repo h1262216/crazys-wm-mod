@@ -4,6 +4,10 @@
         She will be an escort.
     </Description>
 
+    <Config DefaultImage="Escort">
+        <Enjoyment PrimaryAction="Social" SecondaryAction="Stripping" />
+    </Config>
+
     <Performance>
         <Factor Skill="Anal" Weight="1"/>
         <Factor Skill="BDSM" Weight="1"/>
@@ -70,6 +74,9 @@
     </Gains>
 
     <Messages>
+        <Message Name="refuse">
+            <Text>${name} refused to work as an Escort during the ${shift} shift.</Text>
+        </Message>
         <Message Name="work">
             <Text>
                 ${name} has been assigned to work as an Escort. She is informed that various men will ask for her to accompany them on dates,
@@ -79,6 +86,23 @@
                 This is her choice, however.
             </Text>
         </Message>
+
+        <Message Name="no-work.deaf">
+            <Text>
+                ${name} is deaf, meaning she would be unable to hear the conversation that is so critical to being successful as an escort.
+                As there is practically no chance that a client will want to have an entire date in sign language, assuming he even knows it,
+                ${name} is particularly unsuited to work as an escort. You should consider alternate employment for her. Nobody chooses her this week.
+            </Text>
+        </Message>
+
+        <Message Name="no-work.mute">
+            <Text>
+                ${name} is mute, and while some men enjoy a woman who stays silent, these men are not paying escorts to engage them in conversation.
+                As it is severely unlikely that a client will want to spend the entire date deciphering sign language, even if they do know it,
+                ${name} is particularly unsuited for work as an escort. You should consider alternate employment for her. Nobody chooses her this week.
+            </Text>
+        </Message>
+
         <Message Name="pre-text">
             <Text Condition="Aggressive|Assassin|Yandere|Brawler|Tsundere" Updates="Escort-=2">
                 ${name} has some particularly aggressive tendencies that make her a poor choice for patrons seeking polite conversation.

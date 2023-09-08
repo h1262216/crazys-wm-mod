@@ -21,6 +21,7 @@
 #include "cInventory.h"
 #include <sstream>
 #include "events.h"
+#include "IGenericJob.h"
 
 #include "IGame.h"
 #include "cGirls.h"
@@ -28,6 +29,7 @@
 #include "cJobManager.h"
 #include "character/predicates.h"
 #include "buildings/cDungeon.h"
+#include "cGenericJob.h"
 
 /*    First we give her all the possible choices in the freetimechoice enum
    *    start each name with "FT_"
@@ -94,7 +96,7 @@ const char* event_from_ft(freetimechoice choice) {
 }
 
 // `J` Job Brothel - General
-sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
+void WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
 {
     auto brothel = girl.m_Building;
     girl.exp(100);
@@ -180,9 +182,9 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
 
                         // if there are restrictions for a choice, check them here
                     case FT_Cook:
-                        if (girl.enjoyment(EActivity::COOKING) > -10) {
+                        /*if (girl.m_Enjoyment[ACTION_WORKCOOKING] > -10) {
                             choicemade = true;    // She is not going to cook if she hates it
-                        }
+                        }*/
                         break;
                     case FT_Shopping:
                         if (girl.m_Money >= 10) {
@@ -474,7 +476,7 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
                                 girl.m_DayJob = girl.m_NightJob = JOB_INDUNGEON;
                                 assert(girl.m_Building);
                                 g_Game->dungeon().AddGirl(girl.m_Building->remove_girl(&girl), DUNGEON_GIRLSTEAL);
-                                return {false, 0, 0, 0};
+                                return;
                             } else if (girl.m_Money >= 200 && rng.percent(
                                     50))            // 'Mute' Pay 200 gold fine, if not enough gold goes to prision
                             {
@@ -486,7 +488,7 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
                                         << "She got caught by the clinic guards and was unable to pay so they sent her to jail.\n";
                                 girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
                                 g_Game->GetPrison().AddGirl(girl.m_Building->remove_girl(&girl));
-                                return {false, 0, 0, 0};
+                                return;
                             } else if (rng.percent(20)) // 'Mute' Gets raped by guards
                             {
                                 ss << "Unfortunately she got caught and was raped by the guards.\n";
@@ -1343,7 +1345,7 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
             girldiedmsg << ".";
         }
         g_Game->push_message(girldiedmsg.str(), COLOR_WARNING);
-        return {false, 0, 0, 0};
+        return;
     }
 
     // update stats and skills
@@ -1354,11 +1356,4 @@ sWorkJobResult WorkFreetime(sGirl& girl, bool Day0Night1, cRng& rng)
 
     // update money
     girl.m_Money += U_Money;
-
-    return {false, 0, 0, 0};
-}
-
-double JP_Freetime(const sGirl& girl, bool estimate)    // not used
-{
-    return 0;
 }

@@ -1314,9 +1314,3 @@ sWorkJobResult WorkPersonalBedWarmer(sGirl& girl, bool Day0Night1, cRng& rng)
     girl.AddMessage(ss.str(), imagetype, msgtype);
     return {false, std::max(0, tips), 0, wages};
 }
-
-
-double JP_PersonalBedWarmer(const sGirl& girl, bool estimate)// not used
-{
-    return 0;
-}

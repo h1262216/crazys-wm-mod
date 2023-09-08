@@ -1,9 +1,12 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="Abrt">
+<Treatment Name="Abortion" ShortName="Abrt">
     <Description>
         She will get an abortion, removing pregnancy and/or insemination.
     </Description>
 
     <Messages>
+        <Message Name="no-effect-possible">
+            <Text>${name} is not Pregnant!</Text>
+        </Message>
     </Messages>
 </Treatment>

@@ -4,6 +4,19 @@
         Will help the doctor and heal sick people.
     </Description>
 
+    <Config DefaultImage="Nurse" Shift="full">
+        <Enjoyment PrimaryAction="Medical" SecondaryAction="Social" />
+        <WageFunction>
+            <Point Performance="245" Wages="20" />
+            <Point Performance="185" Wages="15" />
+            <Point Performance="145" Wages="10" />
+            <Point Performance="100" Wages="5" />
+            <Point Performance="70" Wages="0" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
+
     <Performance>
         <Factor Skill="Medicine" Weight="3"/>
         <Factor Stat="Intelligence" Weight="1"/>
@@ -76,20 +89,13 @@
         </GainTrait>
     </Gains>
 
-    <Config>
-        <WageFunction>
-            <Point Performance="245" Wages="20" />
-            <Point Performance="185" Wages="15" />
-            <Point Performance="145" Wages="10" />
-            <Point Performance="100" Wages="5" />
-            <Point Performance="70" Wages="0" />
-            <Point Performance="0" Wages="-15" />
-        </WageFunction>
-    </Config>
-    
     <Messages>
         <Message Name="work">
             <Text>${name} worked as a nurse.</Text>
+        </Message>
+
+        <Message Name="refuse">
+            <Text>${name} refused to see any patients during the ${shift} shift.</Text>
         </Message>
 
         <Message Name="work.perfect">

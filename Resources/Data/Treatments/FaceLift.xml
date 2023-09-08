@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="FLft">
+<Treatment Name="Face Lift" ShortName="FLft">
     <Description>
         She will undergo surgery to make her younger.
         *(Takes up to 5 turns, less if a Nurse is on duty)
@@ -21,6 +21,10 @@
 
         <Message Name="doctor.work">
             <Text>Today, she removed signs of age from ${name}.</Text>
+        </Message>
+
+        <Message Name="no-effect-possible">
+            <Text>${name} is too young to get a Face Lift.</Text>
         </Message>
 
         <Include>DefaultSurgeryMessages.xml</Include>

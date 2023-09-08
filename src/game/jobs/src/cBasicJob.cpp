@@ -94,11 +94,6 @@ void cBasicJob::apply_gains(cGirlShift& shift) const {
 
     m_Gains.apply(girl, shift.data().Performance);
 
-    // Handle enjoyment updates
-    if(shift.data().Enjoyment > girl.happiness() + 50) {
-        girl.happiness(1);
-    }
-
     // add messages for how much she enjoys the job
     if (shift.data().Enjoyment <= -66 && has_text("enjoy.hate")) {
         shift.add_line("enjoy.hate");
@@ -118,14 +113,23 @@ void cBasicJob::apply_gains(cGirlShift& shift) const {
 
     // gain/lose happiness based on enjoyment
     if(shift.data().Enjoyment > girl.happiness() + 25) {
-        girl.happiness(2);
+        if(shift.data().Enjoyment > girl.happiness() + 50) {
+            shift.data().DebugMessage << " +3 happy due to enjoyment.\n";
+            girl.happiness(3);
+        } else {
+            shift.data().DebugMessage << " +2 happy due to enjoyment.\n";
+            girl.happiness(2);
+        }
     } else if(shift.data().Enjoyment < girl.happiness() - 33) {
+        shift.data().DebugMessage << " -2 happy due to enjoyment.\n";
         girl.happiness(-2);
     }
 
     if(shift.data().Enjoyment < -50) {
+        shift.data().DebugMessage << " -1 love due to enjoyment.\n";
         girl.pclove(-1);
     } else if(shift.data().Enjoyment > 80 && girl.pclove() < 50) {
+        shift.data().DebugMessage << " +1 love due to enjoyment.\n";
         girl.pclove(1);
     }
 
@@ -136,6 +140,8 @@ void cBasicJob::apply_gains(cGirlShift& shift) const {
         } else {
             update_enjoyment_of(shift, m_Info.PrimaryAction, 33);
         }
+    } else {
+        shift.data().DebugMessage << " No primary action, so no enjoyment based updates.\n";
     }
 }
 
@@ -267,40 +273,44 @@ void cBasicJob::on_post_shift(cGirlShift& shift) const {
         //brothel->m_Fame -= girl.fame();
         shift.girl().AddMessage("${name} did not work so she made no money.", EImageBaseType::PROFILE, EVENT_SUMMARY);
     } else {
-        // TODO check that there is no partial event left.
-        auto& ss = shift.data().EventMessage;
-        shift.data().EventImage = EImageBaseType::PROFILE;
-        shift.data().EventType = EEventType::EVENT_SUMMARY;
-        //brothel->m_Fame += girl.fame();
-        auto money_data = job_manager().CalculatePay(shift.data());
-
-        if(money_data.Earnings > 0 || money_data.Tips > 0) {
-            ss << "${name} made " << money_data.Earnings;
-            if (money_data.Tips != 0) {
-                ss << " and " << money_data.Tips << " in tips. ";
-            } else {
-                ss << " gold. ";
-            }
-        }
-
-        if(shift.data().Cost > 0) {
-            ss << "She spent " << shift.data().Cost << " gold on supplies and ingredients. ";
-        }
-        if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
-        ss << "In total, she got " << money_data.GirlGets << " gold and you ";
-        if(money_data.PlayerGets > 0) {
-            ss << "got " << money_data.PlayerGets << " gold.";
-        } else {
-            ss << "spent " << -money_data.PlayerGets << " gold.";
-        }
-
-        ss << "\n\n";
-
+        make_summary_message(shift);
         apply_gains(shift);
-
         shift.generate_event();
     }
 }
+
+
+void cBasicJob::make_summary_message(cGirlShift& shift) const {
+// TODO check that there is no partial event left.
+    auto& ss = shift.data().EventMessage;
+    shift.data().EventImage = EImageBaseType::PROFILE;
+    shift.data().EventType = EEventType::EVENT_SUMMARY;
+    //brothel->m_Fame += girl.fame();
+    auto money_data = job_manager().CalculatePay(shift.data());
+
+    if(money_data.Earnings > 0 || money_data.Tips > 0) {
+        ss << "${name} made " << money_data.Earnings;
+        if (money_data.Tips != 0) {
+            ss << " and " << money_data.Tips << " in tips. ";
+        } else {
+            ss << " gold. ";
+        }
+    }
+
+    if(shift.data().Cost > 0) {
+        ss << "She spent " << shift.data().Cost << " gold on supplies and ingredients. ";
+    }
+    if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
+    ss << "In total, she got " << money_data.GirlGets << " gold and you ";
+    if(money_data.PlayerGets > 0) {
+        ss << "got " << money_data.PlayerGets << " gold.";
+    } else {
+        ss << "spent " << -money_data.PlayerGets << " gold.";
+    }
+
+    ss << "\n\n";
+}
+
 
 int lust_influence(const sJobPleasureData& data, const sGirl& girl) {
     if(data.Skill == NUM_SKILLS)
@@ -498,6 +508,8 @@ bool cBasicJob::CheckRefuseWork(cGirlShift& shift) const {
             break;
         case ECheckWorkResult::REFUSE_HORNY:
             refuse_with_text("refuse.horny");
+            shift.girl().lust_release_regular();
+            shift.set_image(EImagePresets::MASTURBATE);
             break;
         case ECheckWorkResult::REFUSES:
             refuse_with_text("refuse.generic");

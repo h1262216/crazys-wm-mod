@@ -4,6 +4,10 @@
         She will patrol the building, stopping mis-deeds.
     </Description>
 
+    <Config DefaultImage="Security" BaseWages="70">
+        <Enjoyment PrimaryAction="Fighting"/>
+    </Config>
+
     <Gains XP="15" Skill="3">
         <Skill Name="Combat" Weight="1"/>
         <Skill Name="Magic" Weight="1"/>

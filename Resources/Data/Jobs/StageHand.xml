@@ -1,0 +1,30 @@
+<!DOCTYPE Job SYSTEM "job.dtd">
+<Job ShortName="StgHd">
+    <Description>
+        She assists in film production and cleans the studio.
+    </Description>
+
+    <Config BaseWages="25" DefaultImage="Stagehand">
+        <Enjoyment BaseEnjoyment="0" PrimaryAction="Service" SecondaryAction="Crafting" />
+        <Filter>StudioCrew</Filter>
+    </Config>
+
+    <Performance Modifier="work.cleaning">
+        <Factor Skill="Service" Weight="2"/>
+        <Factor Skill="Crafting" Weight="2"/>
+        <Factor Stat="Agility" Weight="1"/>
+
+        <Trait Name="Clumsy" Value="-10" />
+    </Performance>
+
+    <Gains XP="10" Skill="2">
+        <Skill Name="Crafting" Weight="1" Max="50" />
+        <Skill Name="Service" Weight="1" Max="66" />
+    </Gains>
+
+    <Messages>
+    <Message Name="work">
+        <Text>${name} worked as a stagehand.</Text>
+    </Message>
+    </Messages>
+</Job>

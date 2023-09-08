@@ -3,6 +3,11 @@
     <Description>
         She will go out into the wilds to capture beasts.
     </Description>
+
+    <Config DefaultImage="Combat" BaseWages="40" FightingJob="1">
+        <Enjoyment PrimaryAction="Fighting"/>
+    </Config>
+
     <Performance>
         <Factor Skill="AnimalHandling" Weight="2"/>
         <Factor Skill="Combat" Weight="2"/>

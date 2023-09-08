@@ -5,6 +5,10 @@
         Needless to say, this is a dangerous job.
     </Description>
 
+    <Config DefaultImage="Combat" FightingJob="1">
+        <Enjoyment PrimaryAction="Fighting" />
+    </Config>
+
     <Performance>
         <Factor Skill="Combat" Weight="3"/>
         <Factor Skill="Magic" Weight="1" />

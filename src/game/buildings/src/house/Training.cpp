@@ -17,75 +17,163 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "deprecated/BasicJob.h"
-#include "deprecated/Treatment.h"
+#include "jobs/cBasicJob.h"
+#include "jobs/Treatment.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 #include "buildings/cBuilding.h"
 #include "utils/streaming_random_selection.hpp"
 #include "IGame.h"
 #include "character/predicates.h"
+#include "jobs/cJobManager.h"
+#include "xml/getattr.h"
 
 extern const char* const TrainingInteractionId;
 
-using namespace deprecated;
+class PracticeJob : public cBasicJob {
+public:
+    PracticeJob();
 
-namespace {
-    class PracticeJob : public cBasicJob {
-    public:
-        PracticeJob();
+    void DoWork(cGirlShift& shift) const override;
+    bool CheckRefuseWork(cGirlShift& girl) const override;
 
-        sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
-    };
+private:
+    int mMistressId;
+    int mSkillId;
+};
 
-    class MistressJob : public cBasicJob {
-    public:
-        MistressJob();
+class MistressJob : public cBasicJob {
+public:
+    MistressJob();
 
-        sWorkJobResult DoWork(sGirl& girl, bool is_night) override;
-        eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
-    };
-}
+    void DoWork(cGirlShift& shift) const override;
+    void on_post_shift(cGirlShift& shift) const override;
+private:
+    int mSlackerId;
+};
+
+class SexTrainingJob : public cTreatmentJob {
+public:
+    SexTrainingJob(std::string xml_file);
+
+    double GetPerformance(const sGirl& girl, bool estimate) const override;
+
+    virtual void HandleTraining(cGirlShift& shift) const = 0;
+    virtual void OnNoProgress(cGirlShift& shift) const;
+    virtual void OnRegularProgress(cGirlShift& shift) const;
+    const char* specific_config_element() const override { return "SexTraining"; }
+    void load_from_xml_callback(const tinyxml2::XMLElement& job_element) override;
+
+
+protected:
+    int calculate_progress(const sGirl& girl, cGirlShift& shift) const;
+    void CountTheDays(cGirlShift& shift, int progress) const;
+
+    void DoWork(cGirlShift& shift) const override;
+
+    int& tiredness(cGirlShift& shift) const;
+
+    int Enjoyment;
+
+    std::string TargetName;
+
+    int TirednessId;
+};
+
+class SoStraight : public SexTrainingJob {
+public:
+    SoStraight() : SexTrainingJob("SoStraight.xml") {
+    }
+    void HandleTraining(cGirlShift& shift) const override;
+};
+
+class SoLesbian : public SexTrainingJob {
+public:
+    SoLesbian() : SexTrainingJob("SoLesbian.xml") {
+    }
+    void HandleTraining(cGirlShift& shift) const override;
+};
+
+class SoBi : public SexTrainingJob {
+public:
+    SoBi() : SexTrainingJob("SoBi.xml") {
+    }
+    void HandleTraining(cGirlShift& shift) const override;
+};
+
+class FakeOrg : public SexTrainingJob {
+public:
+    FakeOrg() : SexTrainingJob("FakeOrgasm.xml") {
+    }
+    void HandleTraining(cGirlShift& shift) const override;
+    void OnNoProgress(cGirlShift& shift) const override;
+    void OnRegularProgress(cGirlShift& shift) const override;
+};
+
 
 MistressJob::MistressJob() : cBasicJob(JOB_MISTRESS, "Mistress.xml") {
     m_Info.FreeOnly = true;
     m_Info.Provides.emplace_back(TrainingInteractionId);
+    mSlackerId = RegisterVariable("slacker", "");
 }
 
-sWorkJobResult MistressJob::DoWork(sGirl& girl, bool is_night) {
-    if (m_Performance > 150) {
-        ProvideInteraction(TrainingInteractionId, 3);
-        add_text("work.good");
+void MistressJob::DoWork(cGirlShift& shift) const {
+    if (shift.performance() > 150) {
+        shift.provide_interaction(TrainingInteractionId, 3);
+        shift.add_text("work.good");
     } else {
-        add_text("work.normal");
-        ProvideInteraction(TrainingInteractionId, 2);
+        shift.add_text("work.normal");
+        shift.provide_interaction(TrainingInteractionId, 2);
     }
 
-    apply_gains(girl, m_Performance);
-
-    if(m_Performance > 100) {
-        auto* target_girl = girl.m_Building->girls().get_random_girl([](const sGirl& g) {
+    if(shift.performance() > 100) {
+        auto* target_girl = shift.building().girls().get_random_girl([](const sGirl& g) {
             return g.is_slave() && g.obedience() < 50;
         });
         if (target_girl) {
-            SetSubstitution("slacker", target_girl->FullName());
-            add_text("slacker");
+            shift.data().set_var(mSlackerId, target_girl->FullName());
+            shift.add_text("slacker");
             target_girl->upd_temp_stat(STAT_OBEDIENCE, 4);
             target_girl->upd_temp_stat(STAT_PCFEAR, 2);
         }
     }
 
-    girl.AddMessage(ss.str(), EImageBaseType::TEACHER, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-    return {false, 0, 0, 100};
+    shift.data().EventImage = EImageBaseType::TEACHER;
+    shift.generate_event();
 }
 
-deprecated::IGenericJob::eCheckWorkResult MistressJob::CheckWork(sGirl& girl, bool is_night) {
-    return SimpleRefusalCheck(girl, EActivity::SOCIAL);
+void MistressJob::on_post_shift(cGirlShift& shift) const {
+    if (shift.data().Refused != ECheckWorkResult::ACCEPTS) {
+        //brothel->m_Fame -= girl.fame();
+        shift.girl().AddMessage("${name} did not work so she made no money.", EImageBaseType::PROFILE, EVENT_SUMMARY);
+    } else {
+        std::string tasks = shift.data().EventMessage.str();
+        auto& ss = shift.data().EventMessage;
+        ss.str("");
+        shift.data().EventImage = EImageBaseType::PROFILE;
+        shift.data().EventType = EEventType::EVENT_SUMMARY;
+        auto money_data = job_manager().CalculatePay(shift.data());
+
+        if(!tasks.empty()) {
+            ss << "She trained: \n";
+            ss << tasks;
+            ss << "\n";
+        }
+
+        if (money_data.Wages > 0) ss << "You paid her a salary of " << money_data.Wages << ". ";
+        else ss << "You did not pay her a salary. ";
+        ss << "\n\n";
+
+        apply_gains(shift);
+
+        shift.generate_event();
+    }
 }
 
 PracticeJob::PracticeJob() : cBasicJob(JOB_TRAINING, "Training.xml") {
     m_Info.Consumes.emplace_back(TrainingInteractionId);
+    mMistressId = RegisterVariable("Mistress", "Mistress");
+    mSkillId = RegisterVariable("Skill", "SKILL");
 }
 
 namespace {
@@ -121,15 +209,17 @@ namespace {
     }
 }
 
-
-sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
-    auto building = girl.m_Building;
-    sGirl* mistress = RequestInteraction(TrainingInteractionId);
-    SetSubstitution("mistress", mistress ? mistress->FullName() : "The Mistress");
+void PracticeJob::DoWork(cGirlShift& shift) const {
+    auto& girl = shift.girl();
+    sGirl* mistress = shift.request_interaction(TrainingInteractionId);
+    if(mistress)
+        shift.data().set_var(mMistressId, mistress->FullName());
     girl.tiredness(2);
 
+    shift.data().Wages = 20;
+
     if(!mistress) {
-        add_text("no-mistress");
+        shift.add_text("no-mistress");
         RandomSelector<SKILLS> selector;
         SKILLS skills[] = {SKILL_NORMALSEX, SKILL_ANAL, SKILL_FOOTJOB, SKILL_HANDJOB, SKILL_LESBIAN,
                            SKILL_TITTYSEX, SKILL_ORALSEX, SKILL_PERFORMANCE, SKILL_STRIP};
@@ -140,18 +230,15 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
         }
 
         girl.exp(5);
-        sImagePreset image = EImagePresets::MASTURBATE;
+        shift.data().EventImage = EImagePresets::MASTURBATE;
         if(selector.selection()) {
             auto target = *selector.selection();
-            image = skill_to_image(target);
+            shift.data().EventImage = skill_to_image(target);
             if(girl.get_skill(target) < 50) {
                 girl.upd_skill(target, 1);
-                ss << "\n" << get_skill_name(target) << " + 1";
+                shift.data().EventMessage << "\n" << get_skill_name(target) << " + 1";
             }
         }
-
-        girl.AddMessage(ss.str(), image, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-        return sWorkJobResult{false, 0, 0, 20};
     } else {
         mistress->tiredness(2);
 
@@ -188,26 +275,26 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
             selector.process(&skill, weight);
         }
 
-        // this will always be non NULL, because SKILL_PERFORMANCE cannot be forbidden
+        // this will always be non-NULL, because SKILL_PERFORMANCE cannot be forbidden
         SKILLS target = *selector.selection();
-        sImagePreset image = skill_to_image(target);
+        shift.data().EventImage = skill_to_image(target);
 
-        SetSubstitution("skill", get_skill_name(target));
+        shift.data().set_var(mSkillId, get_skill_name(target));
         int my_value = girl.get_skill(target);
         int other_value = mistress->get_skill(target);
         if(my_value >= other_value) {
-            add_text("lack-of-skill");
+            shift.add_text("lack-of-skill");
             girl.exp(5);
             // if total skill < 50, we still get some update
             if(girl.get_skill(target) < 50) {
                 girl.upd_skill(target, 1);
-                ss << "\n" << get_skill_name(target) << " + 1";
+                shift.data().EventMessage << "\n" << get_skill_name(target) << " + 1";
             }
-            if(chance(5)) {
+            if(shift.chance(5)) {
                 mistress->upd_skill(target, 1);
             }
         } else {
-            add_text(std::string("train.") + get_skill_name(target));
+            shift.add_text(std::string("train.") + get_skill_name(target));
             girl.exp(5);
             int perf = mistress->job_performance(JOB_MISTRESS, false);
             int min_gain = 1;
@@ -227,24 +314,25 @@ sWorkJobResult PracticeJob::DoWork(sGirl& girl, bool is_night) {
             else if (girl.has_active_trait(traits::SLOW_LEARNER)) max_gain -= 1;
 
             max_gain += std::min((other_value - my_value) / 10, 3);
-            int amount = uniform(min_gain, std::max(max_gain, min_gain));
+            int amount = shift.uniform(min_gain, std::max(max_gain, min_gain));
             girl.upd_skill(target, amount);
-            ss << "\n${name}'s " << get_skill_name(target) << " skill increased by " << amount << " points.";
-        }
 
-        girl.AddMessage(ss.str(), image, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-        return sWorkJobResult{false, 0, 0, 20};
+            shift.data().EventMessage << "\n${name}'s " << get_skill_name(target) << " skill increased by " << amount << " points.";
+        }
     }
+
+    shift.generate_event();
 }
 
-deprecated::IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.disobey_check(EActivity::FUCKING, JOB_TRAINING))            // they refuse to work
+bool PracticeJob::CheckRefuseWork(cGirlShift& shift) const {
+    auto& girl = shift.girl();
+    if (cBasicJob::CheckRefuseWork(shift))
     {
-
         sGirl* mistress = nullptr;
-        if(girl.is_slave() && (mistress = RequestInteraction(TrainingInteractionId))) {
-            SetSubstitution("mistress", mistress->FullName() );
-            add_text("refuse.forced");
+        if(girl.is_slave() && (mistress = shift.request_interaction(TrainingInteractionId))) {
+            // TODO FIX THIS
+            shift.data().set_var(mMistressId, mistress->FullName());
+            shift.add_text("refuse.forced");
             // smaller changes than for dungeon torture, but still we should combine the code at some point
             girl.obedience(2);
             girl.upd_temp_stat(STAT_OBEDIENCE, 5);
@@ -255,171 +343,151 @@ deprecated::IGenericJob::eCheckWorkResult PracticeJob::CheckWork(sGirl& girl, bo
             girl.tiredness(2);
             girl.health(-2);
 
-            girl.AddMessage(ss.str(), EImageBaseType::TORTURE, EVENT_NOWORK);
-        } else {
-            add_text("refuse");
-            girl.AddMessage(ss.str(), EImageBaseType::REFUSE, EVENT_NOWORK);
-        }
+            shift.data().EventImage = EImageBaseType::TORTURE;
+            shift.data().EventType = EVENT_NOWORK;
 
-        return eCheckWorkResult::REFUSES;
+            shift.generate_event();
+        } else {
+            shift.add_text("refuse");
+            shift.data().EventImage = EImageBaseType::REFUSE;
+            shift.data().EventType = EVENT_NOWORK;
+
+            shift.generate_event();
+        }
+        return true;
     }
-    return eCheckWorkResult::ACCEPTS;
+    return false;
 }
 
-class TrainingJob : public ITreatmentJob {
-public:
-    TrainingJob(JOBS job, std::string xml_file, const char* trait, sImagePreset image) :
-        ITreatmentJob(job, std::move(xml_file)), TargetTrait(trait), ImageType(image)
-    {
-        m_Info.Consumes.emplace_back(TrainingInteractionId);
+SexTrainingJob::SexTrainingJob(std::string xml_file) :
+    cTreatmentJob(std::move(xml_file))
+{
+    TirednessId = RegisterVariable("Tiredness", 0);
+    m_Info.Consumes.emplace_back(TrainingInteractionId);
+}
+
+void SexTrainingJob::DoWork(cGirlShift& shift) const {
+    auto mistress = shift.request_interaction(TrainingInteractionId);
+    if(!mistress) {
+        shift.add_text("no-mistress");
+        shift.data().EventType = EVENT_WARNING;
+        shift.data().EventImage = EImageBaseType::PROFILE;
+        shift.generate_event();
+        return;
     }
 
-    double GetPerformance(const sGirl& girl, bool estimate) const override;
-    eCheckWorkResult CheckWork(sGirl& girl, bool is_night) override;
+    // Base adjustment
+    tiredness(shift) = shift.uniform(5, 15);
 
-    virtual void HandleTraining(sGirl& girl, bool is_night) = 0;
-    virtual void OnComplete(sGirl& girl) = 0;
-    virtual void OnNoProgress(sGirl& girl);
-    virtual void OnRegularProgress(sGirl& girl, bool is_night);
+    shift.add_line("training");
+    shift.data().EventType = shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
 
-protected:
-    int calculate_progress(const sGirl& girl) const;
-    void CountTheDays(sGirl& girl, bool is_night, int progress);
+    HandleTraining(shift);
+    // TODO Figure this out!
+    {
+        std::stringstream mistress_msg;
+        mistress_msg << "She trained " << shift.girl().FullName() << " to be a " << TargetName << ".\n";
+        mistress->exp(5);
+        mistress->AddMessage(mistress_msg.str(), EImageBaseType::PROFILE, shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    }
 
-    void ReceiveTreatment(sGirl& girl, bool is_night) override;
+    shift.girl().tiredness(tiredness(shift));
 
-    EEventType TypeOfEvent;
-    int Tiredness;
-    int Enjoyment;
+    shift.generate_event();
+}
 
-    const char* TargetTrait;
-    sImagePreset ImageType;
 
-private:
-
-    sGirl* m_Mistress = nullptr;
-};
-
-int TrainingJob::calculate_progress(const sGirl& girl) const {
+int SexTrainingJob::calculate_progress(const sGirl& girl, cGirlShift& shift) const {
     int progress = 0;
-    progress += uniform(10, 20);
+    progress += shift.uniform(10, 20);
     progress += girl.obedience() / 20;
-    if (girl.pcfear() > 50)                progress +=uniform(0, girl.pcfear() / 20);        // She will do as she is told
-    if (girl.pclove() > 50)                progress += uniform(0, girl.pclove() / 20);       // She will do what you ask
+    if (girl.pcfear() > 50)                progress += shift.uniform(0, girl.pcfear() / 20);        // She will do as she is told
+    if (girl.pclove() > 50)                progress += shift.uniform(0, girl.pclove() / 20);       // She will do what you ask
 
     // Negative Stats/Skills
     progress -= girl.spirit() / 25;
-    if (girl.pclove() < -30)               progress -= uniform(0, -girl.pclove() / 10);      // She will not do what you want
-    if (girl.happiness() < 50)             progress -= uniform(1, 5);                        // She is not feeling like it
-    if (girl.health() < 50)                progress -= uniform(1, 5);                        // She is feeling sick
-    if (girl.tiredness() > 50)             progress -= uniform(1, 5);                        // She is tired
+    if (girl.pclove() < -30)               progress -= shift.uniform(0, -girl.pclove() / 10);      // She will not do what you want
+    if (girl.happiness() < 50)             progress -= shift.uniform(1, 5);                        // She is not feeling like it
+    if (girl.health() < 50)                progress -= shift.uniform(1, 5);                        // She is feeling sick
+    if (girl.tiredness() > 50)             progress -= shift.uniform(1, 5);                        // She is tired
 
     return progress;
 }
 
-void TrainingJob::ReceiveTreatment(sGirl& girl, bool is_night) {
-    // Base adjustment
-    Tiredness = uniform(5, 15);
-
-    add_text("training") << "\n";
-
-    TypeOfEvent = is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
-
-    HandleTraining(girl, is_night);
-
-    girl.enjoyment(EActivity::FUCKING, Enjoyment);
-    girl.tiredness(Tiredness);
-
-    girl.AddMessage(ss.str(), ImageType, TypeOfEvent);
+double SexTrainingJob::GetPerformance(const sGirl& girl, bool estimate) const {
+    return 0;
+    // TODO figure this out.
+    /*if (girl.has_active_trait(TargetTrait.c_str()))    return -1000;
+    return 250;*/
 }
 
-double TrainingJob::GetPerformance(const sGirl& girl, bool estimate) const {
-    if (girl.has_active_trait(TargetTrait))    return -1000;
-    return 250;
-}
 
-deprecated::IGenericJob::eCheckWorkResult TrainingJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.has_active_trait(TargetTrait))
-    {
-        add_text("is-already");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
-        girl.FullJobReset(JOB_RESTING);
-        return eCheckWorkResult::IMPOSSIBLE;    // not refusing
-    }
-
-    m_Mistress = RequestInteraction(TrainingInteractionId);
-    if(!m_Mistress) {
-        add_text("no-mistress");
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
-        return eCheckWorkResult::IMPOSSIBLE;
-    }
-
-    return eCheckWorkResult::ACCEPTS;
-}
-
-void TrainingJob::CountTheDays(sGirl& girl, bool is_night, int progress)
+void SexTrainingJob::CountTheDays(cGirlShift& shift, int progress) const
 {
-    if (girl.disobey_check(EActivity::FUCKING, job())) progress /= 2;    // if she disobeys, half her time is wasted
+    /// if (girl.disobey_check(ACTION_WORKTRAINING, job())) progress /= 2;    // if she disobeys, half her time is wasted
 
     if (progress <= 0)                                // she lost time so more tired
     {
-        Tiredness += uniform(5, 5-progress);
-        Enjoyment -= uniform(0, 2);
+        tiredness(shift) += shift.uniform(5, 5-progress);
+        //Enjoyment -= shift.uniform(0, 2);
     }
     else if (progress > 33)                        // or if she trained a lot
     {
-        Tiredness += uniform(progress / 4, progress / 2);
-        Enjoyment += uniform(0, 2);
+        tiredness(shift) += shift.uniform(progress / 4, progress / 2);
+        //Enjoyment += shift.uniform(0, 2);
     }
     else                                        // otherwise just a bit tired
     {
-        Tiredness += uniform(0, progress / 3);
-        Enjoyment -= uniform(-2, 2);
+        tiredness(shift) += shift.uniform(0, progress / 3);
+        //Enjoyment -= shift.uniform(-2, 2);
     }
 
-    girl.make_treatment_progress(progress);
+    shift.girl().make_treatment_progress(progress);
 
     if (progress <= 0)
     {
-        TypeOfEvent = EVENT_WARNING;
-        OnNoProgress(girl);
+        shift.data().EventType = EVENT_WARNING;
+        OnNoProgress(shift);
     }
-    else if (girl.get_treatment_progress() >= 100 && is_night)
+    else if (shift.girl().get_treatment_progress() >= 100 && shift.is_night_shift())
     {
-        girl.finish_treatment();
-        TypeOfEvent = EVENT_GOODNEWS;
-        OnComplete(girl);
-        girl.FullJobReset(JOB_RESTING);
+        shift.girl().finish_treatment();
+        shift.data().EventType = EVENT_GOODNEWS;
+        shift.add_line("complete");
+        on_complete_treatment(shift);
+        shift.girl().FullJobReset(JOB_RESTING);
     }
     else {
-        OnRegularProgress(girl, is_night);
+        OnRegularProgress(shift);
     }
 }
 
-void TrainingJob::OnNoProgress(sGirl& girl) {
-    add_text("no-progress") << "\n";
-    Tiredness += uniform(5, 15);
+void SexTrainingJob::OnNoProgress(cGirlShift& shift) const {
+    shift.add_line("no-progress");
+    tiredness(shift) += shift.uniform(5, 15);
 }
 
-void TrainingJob::OnRegularProgress(sGirl& girl, bool is_night) {
-    add_text("progress");
-    if (girl.get_treatment_progress() >= 100)
+void SexTrainingJob::OnRegularProgress(cGirlShift& shift) const {
+    if (shift.girl().get_treatment_progress() >= 100)
     {
-        ss << "almost complete.";
-        Tiredness -= (girl.get_treatment_progress() - 100) / 2;    // her last day so she rested a bit
+        shift.add_line("almost-done");
+        tiredness(shift) -= (shift.girl().get_treatment_progress() - 100) / 2;    // her last day so she rested a bit
     }
-    else ss << "in progress (" << girl.get_treatment_progress() << "%).";
+    else {
+        shift.add_line("in-progress");
+    }
 }
 
-class SoStraight : public TrainingJob {
-public:
-    SoStraight() : TrainingJob(JOB_SO_STRAIGHT, "SoStraight.xml", traits::STRAIGHT, EImageBaseType::VAGINAL) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-};
+int& SexTrainingJob::tiredness(cGirlShift& shift) const {
+    return std::get<int>(shift.data().get_var_ref(TirednessId));
+}
 
-void SoStraight::HandleTraining(sGirl& girl, bool is_night) {
+void SexTrainingJob::load_from_xml_callback(const tinyxml2::XMLElement& element) {
+    TargetName = GetStringAttribute(element, "TargetName");
+}
+
+void SoStraight::HandleTraining(cGirlShift& shift) const {
+    auto& girl = shift.girl();
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.normalsex() / 5;
@@ -428,104 +496,80 @@ void SoStraight::HandleTraining(sGirl& girl, bool is_night) {
     progress += girl.tittysex() / 20;
     progress += girl.anal() / 20;
 
-    progress += calculate_progress(girl);
+    progress += calculate_progress(girl, shift);
 
     if (!likes_men(girl))
     {
-        add_text("dislikes-men") << "\n";
+        shift.add_line("dislikes-men");
         progress -= girl.lesbian() / 5;                    // it is hard to change something you are good at
-        Tiredness += girl.lesbian() / 10;
+        tiredness(shift) += girl.lesbian() / 10;
     }
     if (girl.has_active_trait(traits::BISEXUAL)) progress -= girl.lesbian() / 20;    // it is hard to change something you are good at
 
     int trait = girl.get_trait_modifier(traits::modifiers::SO_STRAIGHT);
-    progress += uniform(trait / 2, trait + trait / 2);
+    progress += shift.uniform(trait / 2, trait + trait / 2);
     if (girl.has_active_trait(traits::BROKEN_WILL))        {
-        add_text("broken-will") << "\n";
+        shift.add_line("broken-will");
     }
 
-    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(10, 30);
+    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= shift.uniform(10, 30);
 
-    CountTheDays(girl, is_night, progress);
+    CountTheDays(shift, progress);
 
     // Improve girl
     girl.exp( 1 + std::max(0, progress / 20) );
-    girl.lesbian( uniform(-15, -2) );
-    girl.normalsex( uniform(2, 15) );
-    girl.group( uniform(1, 5) );
-    girl.anal( uniform(1, 5) );
-    girl.oralsex( uniform(1, 5) );
-    girl.handjob( uniform(1, 5) );
-    girl.tittysex( uniform(1, 5) );
+    girl.lesbian( shift.uniform(-15, -2) );
+    girl.normalsex( shift.uniform(2, 15) );
+    girl.group( shift.uniform(1, 4) );
+    girl.anal( shift.uniform(1, 4) );
+    girl.oralsex( shift.uniform(1, 4) );
+    girl.handjob( shift.uniform(1, 4) );
+    girl.tittysex( shift.uniform(1, 4) );
 }
 
-void SoStraight::OnComplete(sGirl& girl) {
-    add_text("complete") << "\n";
-    girl.lose_trait(traits::LESBIAN);    girl.gain_trait(traits::BISEXUAL);    girl.lose_trait(traits::STRAIGHT);
-}
-
-class SoLesbian : public TrainingJob {
-public:
-    SoLesbian() : TrainingJob(JOB_SO_LESBIAN, "SoLesbian.xml", traits::LESBIAN, EImageBaseType::VAGINAL) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-};
-
-void SoLesbian::HandleTraining(sGirl& girl, bool is_night) {
+void SoLesbian::HandleTraining(cGirlShift& shift) const {
+    auto& girl = shift.girl();
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.lesbian() / 5;
     progress += girl.group() / 20;
     progress += girl.oralsex() / 25;
-    progress += calculate_progress(girl);
+    progress += calculate_progress(girl, shift);
 
     if (girl.has_active_trait(traits::STRAIGHT))
     {
-        add_text("dislikes-women") << "\n";
+        shift.add_line("dislikes-women");
         progress -= girl.normalsex() / 5;                // it is hard to change something you are good at
-        Tiredness += girl.normalsex() / 10;
+        tiredness(shift) += girl.normalsex() / 10;
     }
     if (girl.has_active_trait(traits::BISEXUAL)) progress -= girl.normalsex() / 20;                    // it is hard to change something you are good at
 
     int trait = girl.get_trait_modifier(traits::modifiers::SO_LESBIAN);
-    progress += uniform(trait / 2, trait + trait / 2);
+    progress += shift.uniform(trait / 2, trait + trait / 2);
 
     if (girl.has_active_trait(traits::BROKEN_WILL))    {
-        add_text("broken-will") << "\n";
+        shift.add_line("broken-will");
     }
 
     //    if (girl.check_virginity())                {}
 
-    if (!girl.is_sex_type_allowed(SKILL_LESBIAN))        progress -= uniform(10, 30);
+    if (!girl.is_sex_type_allowed(SKILL_LESBIAN))        progress -= shift.uniform(10, 30);
 
-    CountTheDays(girl, is_night, progress);
+    CountTheDays(shift, progress);
 
     // Improve girl
     girl.exp( 1 + std::max(0, progress / 20) );
-    girl.lesbian( uniform(2, 15) );
-    girl.normalsex( uniform(-2, -15) );
-    girl.group( uniform(1, -3) );
-    girl.anal( uniform(-1, -5) );
-    girl.oralsex( uniform(1, -3) );
-    girl.handjob( uniform(1, -3) );
-    girl.tittysex( uniform(-1, -5) );
+    girl.lesbian( shift.uniform(2, 15) );
+    girl.normalsex( shift.uniform(-2, -15) );
+    girl.group( shift.uniform(1, -3) );
+    girl.anal( shift.uniform(-1, -5) );
+    girl.oralsex( shift.uniform(1, -3) );
+    girl.handjob( shift.uniform(1, -3) );
+    girl.tittysex( shift.uniform(-1, -5) );
 }
 
-void SoLesbian::OnComplete(sGirl& girl) {
-    add_text("complete");
-    girl.gain_trait(traits::LESBIAN);    girl.lose_trait(traits::BISEXUAL);    girl.lose_trait(traits::STRAIGHT);
-}
-
-class SoBi : public TrainingJob {
-public:
-    SoBi() : TrainingJob(JOB_SO_BISEXUAL, "SoBi.xml", traits::BISEXUAL, EImagePresets::LESBIAN) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-};
-
-void SoBi::HandleTraining(sGirl& girl, bool is_night) {
+void SoBi::HandleTraining(cGirlShift& shift) const {
+    auto& girl = shift.girl();
     int progress = 0;
     if (girl.has_active_trait(traits::STRAIGHT))
     {
@@ -554,93 +598,76 @@ void SoBi::HandleTraining(sGirl& girl, bool is_night) {
         progress += girl.tittysex() / 20;
         progress += girl.anal() / 20;
     }
-    progress += calculate_progress(girl);
+    progress += calculate_progress(girl, shift);
 
     int trait = girl.get_trait_modifier(traits::modifiers::SO_BI);
-    progress += uniform(trait / 2, trait + trait / 2);
+    progress += shift.uniform(trait / 2, trait + trait / 2);
     if (girl.has_active_trait(traits::BROKEN_WILL))    {
-        add_text("broken-will") << "\n";
+        shift.add_line("broken-will");
     }
 
-    if (!girl.is_sex_type_allowed(SKILL_LESBIAN))        progress -= uniform(5, 15);
-    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(5, 15);
+    if (!girl.is_sex_type_allowed(SKILL_LESBIAN))        progress -= shift.uniform(5, 15);
+    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= shift.uniform(5, 15);
 
-    CountTheDays(girl, is_night, progress);
+    CountTheDays(shift, progress);
 
     girl.exp( 1 + std::max(0, progress / 20) );
-    girl.lesbian( uniform(1, 10) );
-    girl.normalsex( uniform(1, 10) );
-    girl.group( uniform(2, 15) );
-    girl.anal( uniform(0, 5) );
-    girl.oralsex( uniform(0, 5) );
-    girl.handjob( uniform(0, 5) );
-    girl.tittysex( uniform(0, 3) );
+    girl.lesbian( shift.uniform(1, 10) );
+    girl.normalsex( shift.uniform(1, 10) );
+    girl.group( shift.uniform(2, 15) );
+    girl.anal( shift.uniform(0, 5) );
+    girl.oralsex( shift.uniform(0, 5) );
+    girl.handjob( shift.uniform(0, 5) );
+    girl.tittysex( shift.uniform(0, 3) );
 }
 
-void SoBi::OnComplete(sGirl& girl) {
-    add_text("complete") << "\n";
-    girl.lose_trait(traits::LESBIAN);    girl.gain_trait(traits::BISEXUAL);    girl.lose_trait(traits::STRAIGHT);
-}
+void FakeOrg::HandleTraining(cGirlShift& shift) const {
+    auto& girl = shift.girl();
 
-class FakeOrg : public TrainingJob {
-public:
-    FakeOrg() : TrainingJob(JOB_FAKEORGASM, "FakeOrgasm.xml", traits::FAKE_ORGASM_EXPERT, EImagePresets::MASTURBATE) {
-    }
-    void HandleTraining(sGirl& girl, bool is_night) override;
-    void OnComplete(sGirl& girl) override;
-    void OnNoProgress(sGirl& girl) override;
-    void OnRegularProgress(sGirl& girl, bool is_night) override;
-};
-
-void FakeOrg::HandleTraining(sGirl& girl, bool is_night) {
     // Positive Stats/Skills
     int progress = 0;
     progress += girl.performance() / 5;
     progress += girl.group() / 20;
     progress += girl.normalsex() / 20;
     progress += girl.lesbian() / 20;
-    progress += calculate_progress(girl);
+    progress += calculate_progress(girl, shift);
 
     int trait = girl.get_trait_modifier(traits::modifiers::FAKE_ORGASM);
-    progress += uniform(trait / 2, trait + trait / 2);
-    if (girl.has_active_trait(traits::BROKEN_WILL))    { add_text("broken-will") << "\n"; }
+    progress += shift.uniform(trait / 2, trait + trait / 2);
+    if (girl.has_active_trait(traits::BROKEN_WILL))    { shift.add_line("broken-will"); }
 
-    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= uniform(5, 15);
+    if (!girl.is_sex_type_allowed(SKILL_NORMALSEX))      progress -= shift.uniform(5, 15);
 
-    CountTheDays(girl, is_night, progress);
+    CountTheDays(shift, progress);
 
     // Improve girl
     girl.exp( 1 + std::max(0, progress / 20) );
-    girl.lesbian( uniform(0, 5) );
-    girl.normalsex( uniform(0, 5) );
-    girl.group( uniform(0, 5) );
-    girl.anal( std::max(0, uniform(-2, 2)) );
-    girl.performance( uniform(3, 15) );
-    girl.confidence( uniform(-1, 5) );
-    girl.constitution( std::max(0, uniform(-2, 1)) );
-    girl.spirit( uniform(-5, 5) );
+    girl.lesbian( shift.uniform(0, 5) );
+    girl.normalsex( shift.uniform(0, 5) );
+    girl.group( shift.uniform(0, 5) );
+    girl.anal( std::max(0, shift.uniform(-2, 2)) );
+    girl.performance( shift.uniform(3, 15) );
+    girl.confidence( shift.uniform(-1, 5) );
+    girl.constitution( std::max(0, shift.uniform(-2, 1)) );
+    girl.spirit( shift.uniform(-5, 5) );
 }
 
-void FakeOrg::OnNoProgress(sGirl& girl) {
-    add_text("no-progress") << "\n";
-    Tiredness += uniform(5, 15);
+void FakeOrg::OnNoProgress(cGirlShift& shift) const {
+    shift.add_line("no-progress");
+    tiredness(shift) += shift.uniform(5, 15);
 }
 
-void FakeOrg::OnComplete(sGirl& girl) {
-    add_text("complete") << "\n";
-    girl.lose_trait(traits::SLOW_ORGASMS);    girl.lose_trait(traits::FAST_ORGASMS);    girl.gain_trait(traits::FAKE_ORGASM_EXPERT);
-}
-
-void FakeOrg::OnRegularProgress(sGirl& girl, bool is_night) {
-    int status = girl.get_treatment_progress();
-    if (status >= 100)    Tiredness -= (status - 100) / 2;    // her last day so she rested a bit
+void FakeOrg::OnRegularProgress(cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    int status = shift.girl().get_treatment_progress();
+    if (status >= 100)    tiredness(shift) -= (status - 100) / 2;    // her last day so she rested a bit
     else                  ss << "Training in progress (" << status << "%).\n \n";
-    if (status < 25)      ss << "She has no idea what she sounds like during sex but it ain't orgasmic.";
+    if (status < 25)      ss << "She has no idea what she sounds like during sex, but it ain't orgasmic.";
     else if (status < 50) ss << "When she realizes she should finish, you can see it click in her mind and easily notice her changing things up.";
     else if (status < 75) ss << "She is still not getting into rhythm with her partner but it still seems enjoyable.";
     else                  ss << "She is almost there but you want her to practice a little more to get it perfect.";
 
-    if (!is_night)
+    if (!shift.is_night_shift())
     {
         ss << "\nYou tell her to take a break for lunch and ";
         if (status < 50)      ss << "clear her mind, she has a lot more work to do.";
@@ -656,10 +683,10 @@ void FakeOrg::OnRegularProgress(sGirl& girl, bool is_night) {
 }
 
 void RegisterTrainingJobs(cJobManager& mgr) {
-    mgr.register_job(wrap(std::make_unique<SoStraight>()));
-    mgr.register_job(wrap(std::make_unique<SoLesbian>()));
-    mgr.register_job(wrap(std::make_unique<SoBi>()));
-    mgr.register_job(wrap(std::make_unique<FakeOrg>()));
-    mgr.register_job(wrap(std::make_unique<PracticeJob>()));
-    mgr.register_job(wrap(std::make_unique<MistressJob>()));
+    mgr.register_job(std::make_unique<SoStraight>());
+    mgr.register_job(std::make_unique<SoLesbian>());
+    mgr.register_job(std::make_unique<SoBi>());
+    mgr.register_job(std::make_unique<FakeOrg>());
+    mgr.register_job(std::make_unique<PracticeJob>());
+    mgr.register_job(std::make_unique<MistressJob>());
 }

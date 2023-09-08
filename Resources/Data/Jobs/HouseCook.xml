@@ -4,6 +4,18 @@
         She will cook for your house.
     </Description>
 
+    <Config DefaultImage="Cook" BaseWages="20">
+        <Enjoyment PrimaryAction="Cooking" SecondaryAction="Service" />
+        <WageFunction>
+            <Point Performance="245" Wages="20" />
+            <Point Performance="185" Wages="15" />
+            <Point Performance="145" Wages="10" />
+            <Point Performance="100" Wages="5" />
+            <Point Performance="70" Wages="0" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
     <Performance>
         <Factor Skill="Cooking" Weight="3"/>
         <Factor Skill="Herbalism" Weight="1"/>
@@ -58,17 +70,6 @@
 
         <Skill Name="Cooking"/>
     </Gains>
-
-    <Config>
-        <WageFunction>
-            <Point Performance="245" Wages="20" />
-            <Point Performance="185" Wages="15" />
-            <Point Performance="145" Wages="10" />
-            <Point Performance="100" Wages="5" />
-            <Point Performance="70" Wages="0" />
-            <Point Performance="0" Wages="-15" />
-        </WageFunction>
-    </Config>
 
     <Messages>
         <Message Name="work">

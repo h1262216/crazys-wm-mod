@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="Lipo">
+<Treatment Name="Liposuction" ShortName="Lipo">
     <Description>
         She will undergo liposuction to "enhance" her figure.
     </Description>
@@ -8,6 +8,18 @@
         <TraitExclude Trait="Great Figure">${name} already has a Great Figure.</TraitExclude>
     </Surgery>
 
+    <Outcomes>
+        <LoseTrait Trait="Plump" Priority="1">
+            Thanks to the surgery she is no longer Plump.
+        </LoseTrait>
+        <LoseTrait Trait="Fat" Priority="1">
+            Thanks to the surgery she is no longer Fat.
+        </LoseTrait>
+        <GainTrait Trait="Great Figure" Priority="0">
+            Thanks to the surgery she now has a Great Figure.
+        </GainTrait>
+    </Outcomes>
+
     <Messages>
         <Message Name="surgery">
             <Text>${name} is in the Clinic to get fat removed.</Text>
@@ -15,6 +27,10 @@
 
         <Message Name="doctor.work">
             <Text>Today, she performed a Liposuction on ${name}.</Text>
+        </Message>
+
+        <Message Name="no-effect-possible">
+            <Text>There is no more fat that could be removed with Liposuction.</Text>
         </Message>
 
         <Include>DefaultSurgeryMessages.xml</Include>

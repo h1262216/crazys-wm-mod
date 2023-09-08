@@ -4,6 +4,19 @@
         She will cook food for the bar.
     </Description>
 
+    <Config DefaultImage="Cook">
+        <Filter>Bar</Filter>
+        <Enjoyment PrimaryAction="Cooking" />
+        <WageFunction>
+            <Point Performance="245" Wages="155" />
+            <Point Performance="185" Wages="95" />
+            <Point Performance="145" Wages="55" />
+            <Point Performance="100" Wages="15" />
+            <Point Performance="70" Wages="-5" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
     <Performance>
         <Factor Skill="Cooking" Weight="2"/>
         <Factor Stat="Confidence" Weight="1"/>
@@ -58,17 +71,6 @@
         <Stat Name="Intelligence" Weight="1" Max="50"/>
     </Gains>
 
-    <Config>
-        <WageFunction>
-            <Point Performance="245" Wages="155" />
-            <Point Performance="185" Wages="95" />
-            <Point Performance="145" Wages="55" />
-            <Point Performance="100" Wages="15" />
-            <Point Performance="70" Wages="-5" />
-            <Point Performance="0" Wages="-15" />
-        </WageFunction>
-    </Config>
-
     <Messages>
         <Message Name="work">
             <Text>${name} is assigned to work as a cook in the kitchen, preparing food for the customers.</Text>
@@ -97,7 +99,7 @@
         <Message Name="refuse">
             <Text>${name} refused to cook food in the bar to${shift}.</Text>
         </Message>
-        <Message Name="event.nympho-nowork">
+        <Message Name="refuse.horny">
             <Text>${name} let lust get the better of her and she ended up missing her ${shift} shift.</Text>
         </Message>
 

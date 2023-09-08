@@ -4,6 +4,10 @@
         She will help girls get over their addictions and problems.
     </Description>
 
+    <Config BaseWages="25" Shift="full" DefaultImage="Teacher">
+        <Enjoyment PrimaryAction="Social" SecondaryAction="Mental"/>
+    </Config>
+
     <Performance>
         <Factor Stat="Intelligence" Weight="1"/>
         <Factor Stat="Confidence" Weight="1"/>
@@ -11,6 +15,8 @@
         <Factor Stat="Charisma" Weight="1"/>
         <Mod>work.counselor</Mod>
     </Performance>
+
+    <Requirements FreeOnly="1" />
 
     <Gains XP="10" Skill="2">
         <Skill Name="Service" Weight="1" />

@@ -1,14 +1,26 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Mlkr">
+<Job ShortName="CRnc">
     <Description>
-        She will milk the various animals and girls you own.
+        She will tend to strange beasts.
     </Description>
+
+    <Config DefaultImage="Herd" BaseWages="40" FightingJob="1">
+        <Enjoyment PrimaryAction="Farming" SecondaryAction="Fighting"/>
+        <WageFunction>
+            <Point Performance="245" Wages="155" />
+            <Point Performance="185" Wages="95" />
+            <Point Performance="145" Wages="55" />
+            <Point Performance="100" Wages="15" />
+            <Point Performance="70" Wages="-5" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
 
     <Performance>
         <Factor Skill="AnimalHandling" Weight="3"/>
-        <Factor Skill="Handjob" Weight="3"/>
-        <Factor Stat="Intelligence" Weight="2"/>
-        <Factor Skill="Farming" Weight="2" />
+        <Factor Stat="Confidence" Weight="1"/>
+        <Factor Stat="Strength" Weight="1"/>
+        <Factor Stat="Constitution" Weight="1"/>
 
         <!-- good traits -->
         <Trait Name="Quick Learner" Value="5"/>
@@ -30,7 +42,7 @@
         <Trait Name="No Arms" Value="-125"/>
         <Trait Name="No Feet" Value="-60"/>
         <Trait Name="No Hands" Value="-50"/>
-        <Trait Name="No Legs" Value="-100"/>
+        <Trait Name="No Legs" Value="-150"/>
         <Trait Name="Blind" Value="-30"/>
         <Trait Name="Deaf" Value="-15"/>
         <Trait Name="Retarded" Value="-60"/>
@@ -42,36 +54,44 @@
         <Trait Name="Viras Blood Addict" Value="-25"/>
     </Performance>
 
-    <Gains XP="10" Skill="3">
-        <Skill Name="AnimalHandling"/>
-        <Skill Name="Handjob"/>
+    <Gains XP="15" Skill="3">
+        <Skill Name="AnimalHandling" Weight="3" />
+        <Stat Name="Confidence" Weight="1" />
+        <Stat Name="Strength" Weight="1" />
+        <Stat Name="Constitution" Weight="1" />
+
+        <LoseTrait Trait="Elegant">
+            <TraitChangeAmount Value="100" Chance="50" />
+            <Text>Working with dirty, smelly beasts has damaged ${name}'s hair,
+                skin and nails making her less Elegant.</Text>
+        </LoseTrait>
     </Gains>
 
     <Messages>
         <Message Name="work">
-            <Text>${name} worked as a milker on the farm.</Text>
+            <Text>${name} worked as a catacomb rancher on the farm.</Text>
         </Message>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>
         </Message>
 
         <Message Name="work.perfect">
-            <Text>Her milk bucket practically fills itself as she walks down the rows of cows.</Text>
+            <Text>She must be perfect at this.</Text>
         </Message>
         <Message Name="work.great">
-            <Text>Her hands moved like lightning as she gracefully milks the cows teats.</Text>
+            <Text>She's unbelievable at this and is always getting praised by people for her work.</Text>
         </Message>
         <Message Name="work.good">
-            <Text>She knows exactly when the cows are ready to be milked and how to best milk them.</Text>
+            <Text>She's good at this job and gets praised by people often.</Text>
         </Message>
         <Message Name="work.ok">
-            <Text>She can milk the cows without spilling much.</Text>
+            <Text>She made a few mistakes but overall she is okay at this.</Text>
         </Message>
         <Message Name="work.bad">
-            <Text>She isn't very good at aiming the teats into the bucket.</Text>
+            <Text>She was nervous and made a few mistakes. She isn't that good at this.</Text>
         </Message>
         <Message Name="work.worst">
-            <Text>She can't seem to get the hang of this.</Text>
+            <Text>She was nervous and constantly making mistakes. She really isn't very good at this job.</Text>
         </Message>
     </Messages>
 </Job>

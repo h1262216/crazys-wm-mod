@@ -1,10 +1,10 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="EThr">
+<Treatment Name="Extreme Therapy" ShortName="EThr">
     <Description>
         She will go to extreme therapy to get over her hardcore mental problems. (Mind Fucked, Broken Will)
     </Description>
 
-    <Therapy Duration="5" FightChance="5" Title="therapy" SuccessBonus="4" HealthDanger="4">
+    <Therapy Duration="5" FightChance="5" Title="therapy" SuccessBonus="4">
         <RemoveTrait Trait="Mind Fucked">She is no longer Mind Fucked.</RemoveTrait>
         <RemoveTrait Trait="Broken Will">She no longer has a Broken Will.</RemoveTrait>
     </Therapy>
@@ -13,7 +13,7 @@
         <Message Name="therapy">
             <Text>${name} underwent therapy for extreme mental issues.</Text>
         </Message>
-        <Message Name="no-need">
+        <Message Name="no-effect-possible">
             <Text>${name} doesn't need extreme therapy for anything.</Text>
         </Message>
         <Message Name="no-counselor">

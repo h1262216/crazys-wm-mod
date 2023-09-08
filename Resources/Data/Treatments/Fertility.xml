@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="FrtT">
+<Treatment Name="Fertility Treatment" ShortName="FrtT">
     <Description>
         She will undergo surgery to make her fertile.
         *(Takes up to 5 turns, less if a Nurse is on duty)
@@ -16,6 +16,10 @@
 
         <Message Name="doctor.work">
             <Text>Today, she worked on improving ${name}'s fertility.</Text>
+        </Message>
+
+        <Message Name="no-effect-possible">
+            <Text>${name} is already a Broodmother, she cannot be more fertile.</Text>
         </Message>
 
         <Include>DefaultSurgeryMessages.xml</Include>

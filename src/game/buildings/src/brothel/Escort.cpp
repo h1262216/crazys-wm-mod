@@ -19,7 +19,6 @@
 
 #include "BrothelJobs.h"
 #include <character/predicates.h>
-#include "deprecated/BasicJob.h"
 #include "character/sGirl.h"
 #include "cGirls.h"
 
@@ -39,15 +38,13 @@ namespace {
     };
 }
 
-bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
-    EActivity actiontype = EActivity::SOCIAL;
-    m_Escort = 0;
-    m_Prepare = (girl.agility() + girl.service() / 2);
+void cEscortJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
+    auto& ss = shift.data().EventMessage;
+    shift.set_variable(m_Prepare_id, girl.agility() + girl.service() / 2);
 
     int fame = 0;
-    sImagePreset imagetype = EImageBaseType::ESCORT;
 
-    int roll_a = d100();                            // customer type
+    int roll_a = shift.d100();                            // customer type
     double cust_wealth = 1;
     int cust_type = 0;
     std::string cust_type_text;
@@ -73,7 +70,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     your daughter.*/
 
     //a little pre-game randomness
-    add_text("pre-text");
+    shift.add_text("pre-text");
 
 // The type of customer She Escorts
 ///*default*/    int cust_type = 2;    string cust_type_text = "Commoner";
@@ -121,7 +118,7 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         }
         else
         {
-            choice = uniform(0, MD_NumberOfEscortChoices-1);    // randomly choose from all of the choices
+            choice = shift.uniform(0, MD_NumberOfEscortChoices-1);    // randomly choose from all of the choices
             if (choice == Es_DeadBeat) {
                 choicemade = true;    // ready so continue
             }
@@ -129,9 +126,9 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     };
 
     auto sex_event_fn = [&](const std::string& prefix) {
-        auto type = choose_sex(prefix, girl, client);
+        auto type = choose_sex(prefix, shift, client);
         if (type != SexType::NONE) {
-            imagetype = handle_sex(prefix, fame, girl, type);
+            shift.set_image(handle_sex(prefix, fame, shift, type));
         }
     };
 
@@ -139,40 +136,40 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         // boob event
         if (girl.breast_size() > BreastSize::BIG_BOOBS)
         {
-            add_text("client.large-boobs") << "\n";
+            shift.add_line("client.large-boobs");
             client.TittyLover = true;
         }
         else
         {
-            if (chance(40))
+            if (shift.chance(40))
             {
-                add_text("client.small-boobs") << "\n";
+                shift.add_line("client.small-boobs");
                 client.TittyLover = true;
             }
             else
             {
-                add_text("client.disappointed-boobs") << "\n";
-                m_Escort -= 1;
+                shift.add_line("client.disappointed-boobs");
+                adjust_escort(shift, -1);
             }
         }
 
         // ass
         if (girl.any_active_trait({traits::GREAT_ARSE, traits::DELUXE_DERRIERE, traits::PHAT_BOOTY}) && !client.TittyLover)
         {
-            m_Escort += 1;
+            adjust_escort(shift, 1);
             client.AssLover = true;
-            add_text("client.great-ass") << "\n";
+            shift.add_line("client.great-ass");
         }
 
         if (girl.any_active_trait({traits::SEXY_AIR, traits::GREAT_FIGURE, traits::HOURGLASS_FIGURE}))
         {
-            add_text("client.sexy");
-            m_Escort += 1;
+            shift.add_text("client.sexy");
+            adjust_escort(shift, 1);
         }
 
         if (girl.has_active_trait(traits::BRUISES))
         {
-            add_text("client.bruises");
+            shift.add_text("client.bruises");
         }
     };
 
@@ -189,26 +186,26 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             //Regular event
 
             // telling what she is meeting and where; how prepared and when does she arrive...
-            add_text("regular") << "\n";
-            m_Escort += skill_to_mod(m_Prepare);
+            shift.add_line("regular");
+            adjust_escort(shift, std::get<int>(shift.get_variable(m_Prepare_id)));
 
             // beauty check
-            add_text("regular.beauty-check") << "\n";
-            m_Escort += skill_to_mod(girl.beauty());
+            shift.add_line("regular.beauty-check");
+            adjust_escort(shift, skill_to_mod(girl.beauty()));
 
             //boob event
-            if (girl.breast_size() > BreastSize::BIG_BOOBS && chance(75))
+            if (girl.breast_size() > BreastSize::BIG_BOOBS && shift.chance(75))
             {
-                m_Escort += 1;
-                add_text("regular.boobs");
+                adjust_escort(shift, 1);
+                shift.add_text("regular.boobs");
             }
 
-            add_text("regular.beauty-traits");
+            shift.add_text("regular.beauty-traits");
 
             if (girl.has_item("Bad Nurse Costume") || girl.has_item("Sexy Nurse Costume"))
             {
                 ss << "The three of them do spend a moment staring at the revealing \"nurse\" costume that ${name} has decided to wear to this assignation. \"You didn't tell me that she was in the medical profession,\" says the boss, his gaze lingering on her very short skirt while his wife chokes on her drink.\n";
-                m_Escort -= 1;
+                adjust_escort(shift, -1);
             }
             else if (girl.has_item("Black Knight Uniform Coat"))
             {
@@ -217,27 +214,27 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             else if (girl.has_item("Chinese Dress") || girl.has_item("Enchanted Dress") || girl.has_item("Hime Dress") || girl.has_item("Linen Dress") || girl.has_item("Miko Dress") || girl.has_item("Bourgeoise Gown") || girl.has_item("Faerie Gown") || girl.has_item("Peasant Gown"))
             {
                 ss << "\"What a lovely dress, darling,\" the wife begins with a compliment. ${name} is happy to see that the client is pleased with her choice of attire.";
-                m_Escort += 1;
+                adjust_escort(shift, 1);
             }
             else if (girl.has_item("Brothel Gown") || girl.has_item("Trashy Dress"))
             {
                 ss << "\"What a.. lovely.. dress,\" says the wife, elbowing her husband, who is staring with an open mouth at ${name}'s trashy brothel attire. The client winces slightly.";
-                m_Escort -= 1;
+                adjust_escort(shift, -1);
             }
             else if (girl.has_item("Bunny Outfit"))
             {
                 ss << "All three patrons stare with consternation at the revealing bunny outfit that ${name} is wearing. The boss sweats a little while locking eyes on her cleavage, and his wife politely inquires if perhaps she just got off of work at a casino. The client hides his face and deep embarrassment in his hands.";
-                m_Escort -= 2;
+                adjust_escort(shift, -2);
             }
             else if (girl.has_item("Dancer Costume"))
             {
                 ss << "\"Oh, you're a dancer!\" cries the wife with pleasure, looking at ${name}'s dancer costume. \"How wonderful! I always wanted to be a dancer when I was younger. You must tell me everything about it!\"\n";
-                m_Escort += 1;
+                adjust_escort(shift, 1);
             }
             else if (girl.has_item("Gantz Suit") || girl.has_item("Plug Suit"))
             {
                 ss << "Nobody says anything as ${name} sits, but they are all staring speechless at the skin-tight leather/latex dress she is wearing. \"Oh my,\" whispers the boss, loosening his collar and turning red. His wife just continues staring as the client buries his face in his hands.\n";
-                m_Escort -= 3;
+                adjust_escort(shift, -3);
             }
             else if (girl.has_item("Gemstone Dress") || girl.has_item("Noble Gown") || girl.has_item("Royal Gown") || girl.has_item("Silken Dress") || girl.has_item("Velvet Dress"))
             {
@@ -245,55 +242,55 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             }
             else if (girl.has_item("Maid Uniform"))
             {
-                ss << "\"Do you work at one of the nearby estates?\" inquires the wife, looking at ${name}'s maid uniform. \"I'm so glad you were able to join us with your work schedule.\" The client is surprised, but not disappointed, with the choice of attire, and quickly invents a story about her job.\n";
+                ss << "\"Do you work at one of the nearby estates?\" inquires the wife, looking at ${name}'s maid shift.uniform. \"I'm so glad you were able to join us with your work schedule.\" The client is surprised, but not disappointed, with the choice of attire, and quickly invents a story about her job.\n";
             }
             else if (girl.has_item("Nurse Uniform"))
             {
-                ss << "\"Oh, you must be coming straight from the hospital,\" exclaims the wife, looking over ${name}'s nurse uniform. \"I'm so glad you could join us. I know how demanding those poor nurses work over there.\" The client is surprised at the choice of attire, but quickly runs with it, inventing a story about her job.\n";
+                ss << "\"Oh, you must be coming straight from the hospital,\" exclaims the wife, looking over ${name}'s nurse shift.uniform. \"I'm so glad you could join us. I know how demanding those poor nurses work over there.\" The client is surprised at the choice of attire, but quickly runs with it, inventing a story about her job.\n";
             }
             else if (girl.has_item("School Uniform"))
             {
-                ss << "\"Aren't you a pretty young thing,\" says the wife, looking over ${name}'s school uniform, and then back at the client. \"You didn't tell me she was continuing her education! What school do you attend, darling?\" she inquires, and the client quickly invents a story to justify the outfit.\n";
+                ss << "\"Aren't you a pretty young thing,\" says the wife, looking over ${name}'s school shift.uniform, and then back at the client. \"You didn't tell me she was continuing her education! What school do you attend, darling?\" she inquires, and the client quickly invents a story to justify the outfit.\n";
             }
             else if (girl.has_item("Slave Rags"))
             {
                 ss << "\"Oh, you poor thing,\" says the wife softly, taking in the slave rags that ${name} is wearing. \"Is everything.. all right.. with your, um, job?\" asks the boss, awkwardly trying to navigate around the fact that ${name} is apparently a slave who does not possess anything more than these revealing rags. The client struggles valiantly to explain how he has come to fall in love with a poor slave and is trying to buy her freedom. Everyone sits in uncomfortable silence for a moment.\n";
-                m_Escort -= 1;
+                adjust_escort(shift, -1);
             }
 
             //CONVERSATION PHASE (CHARISMA CHECK)
             ss << "\n";
-            add_text("regular.service") << "\n";
-            add_text("regular.performance") << "\n";
-            m_Escort += skill_to_mod(girl.service());
-            m_Escort += skill_to_mod(girl.performance());
+            shift.add_line("regular.service");
+            shift.add_line("regular.performance");
+            adjust_escort(shift, skill_to_mod(girl.service()));
+            adjust_escort(shift, skill_to_mod(girl.performance()));
 
             //random stuff
-            add_text("regular.conversation-traits") << "\n";
+            shift.add_line("regular.conversation-traits");
 
             //RESULTS PHASE (POINT CHECK)
             bool group_offer = false;
-            if (m_Escort >= 9)
+            if (get_escort(shift) >= 9)
             {
-                add_text("regular.best") << "\n";
+                shift.add_line("regular.best");
                 fame += 2;
                 group_offer = true;
                 cust_wealth = 2;
             }
-            else if (m_Escort >= 6)
+            else if (get_escort(shift) >= 6)
             {
-                add_text("regular.good") << "\n";
+                shift.add_line("regular.good");
                 fame += 1;
                 sex_offer = true;
                 cust_wealth = 1.5;
             }
-            else if (m_Escort >= 1)
+            else if (get_escort(shift) >= 1)
             {
-                add_text("regular.neutral") << "\n";
+                shift.add_line("regular.neutral");
             }
             else
             {
-                add_text("regular.bad") << "\n";
+                shift.add_line("regular.bad");
                 fame -= 1;
                 cust_wealth = 0;
             }
@@ -303,42 +300,42 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             {
                 if (girl.morality() >= 50)
                 {
-                    add_text("regular.group.moral");
+                    shift.add_text("regular.group.moral");
                     sex_offer = true;
                 }
                 else if (girl.lust() <= 50)
                 {
-                    add_text("regular.group.no-lust");
+                    shift.add_text("regular.group.no-lust");
                 }
                 else
                 {
                     if (is_virgin(girl))
                     {
-                        add_text("regular.group.virgin") << "\n";
+                        shift.add_line("regular.group.virgin");
                         fame += skill_to_mod(girl.lesbian());
-                        imagetype = EImagePresets::LESBIAN;
+                        shift.set_image(EImagePresets::LESBIAN);
                         girl.lesbian(2);
                         girl.lust_release_regular();
                     }
                     else
                     {
-                        add_text("regular.group.sex") << "\n";
+                        shift.add_line("regular.group.sex");
                         fame += skill_to_mod(girl.group());
-                        imagetype = EImagePresets::ORGY;
+                        shift.set_image(EImagePresets::ORGY);
                         girl.group(2);
                         girl.lust_release_regular();
                     }
-                    add_text("regular.group.after-sex") << "\n";
+                    shift.add_line("regular.group.after-sex");
                 }
             }
 
             if (sex_offer)
             {
                 if (girl.morality() >= 50) {
-                    add_text("regular.client.moral") << "\n";
+                    shift.add_line("regular.client.moral");
                     client.SexOffer = SexType::ORAL;
                 } else if (girl.lust() <= 50) {
-                    add_text("regular.client.no-lust") << "\n";
+                    shift.add_line("regular.client.no-lust");
                 } else {
                     client.SexOffer = SexType::ANY;
                 }
@@ -354,56 +351,55 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             cust_type = 2; cust_type_text = "Commoner";
             //COMMENER
             // telling what she is meeting and where; how prepared and when does she arrive...
-            add_text("commoner") << "\n";
-            m_Escort += skill_to_mod(m_Prepare);
-
+            shift.add_line("commoner");
+            adjust_escort(shift, std::get<int>(shift.get_variable(m_Prepare_id)));
 
             // beauty check
-            add_text("commoner.beauty-check") << "\n";
-            m_Escort += skill_to_mod(girl.beauty());
+            shift.add_line("commoner.beauty-check");
+            adjust_escort(shift, skill_to_mod(girl.beauty()));
 
             traits_check_fn();
 
             //CONVERSATION PHASE (REFINEMENT  CHECK)
-            add_text("commoner.refinement") << "\n";
-            m_Escort += skill_to_mod(girl.refinement());
+            shift.add_line("commoner.refinement");
+            adjust_escort(shift, skill_to_mod(girl.refinement()));
             if (girl.has_active_trait(traits::ELEGANT))
             {
-                add_text("commoner.refinement.elegant") << "\n";
-                m_Escort += 1;
+                shift.add_line("commoner.refinement.elegant");
+                adjust_escort(shift, 1);
             } else if (girl.has_active_trait(traits::DOMINATRIX))
             {
-                add_text("commoner.refinement.dominant") << "\n";
-                m_Escort += (2 * skill_to_mod(girl.refinement()) - 1) / 2;
+                shift.add_line("commoner.refinement.dominant");
+                adjust_escort(shift, (2 * skill_to_mod(girl.refinement()) - 1) / 2);
             }
             if (girl.has_active_trait(traits::SOCIAL_DRINKER))
             {
-                add_text("commoner.refinement.social-drinker") << "\n";
-                m_Escort -= 1;
+                shift.add_line("commoner.refinement.social-drinker");
+                adjust_escort(shift, -1);
             }
 
             //RESULTS PHASE (POINT CHECK)
-            if (m_Escort >= 9)
+            if (get_escort(shift) >= 9)
             {
-                add_text("commoner.best") << "\n";
+                shift.add_line("commoner.best");
                 fame += 2;
                 sex_offer = true;
                 cust_wealth = 2;
             }
-            else if (m_Escort >= 6)
+            else if (get_escort(shift) >= 6)
             {
-                add_text("commoner.good") << "\n";
+                shift.add_line("commoner.good");
                 fame += 1;
                 sex_offer = true;
                 cust_wealth = 1.5;
             }
-            else if (m_Escort >= 1)
+            else if (get_escort(shift) >= 1)
             {
-                add_text("commoner.neutral") << "\n";
+                shift.add_line("commoner.neutral");
             }
             else
             {
-                add_text("commoner.bad") << "\n";
+                shift.add_line("commoner.bad");
                 fame -= 1;
                 cust_wealth = 0;
             }
@@ -413,15 +409,15 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             {
                 if (girl.morality() >= 50)
                 {
-                    add_text("commoner.sex.moral") << "\n";
+                    shift.add_line("commoner.sex.moral");
                 }
                 else if (girl.lust() <= 50)
                 {
-                    add_text("commoner.sex.no-lust") << "\n";
+                    shift.add_line("commoner.sex.no-lust");
                 }
                 else
                 {
-                    add_text("commoner.sex.accept") << "\n";
+                    shift.add_line("commoner.sex.accept");
                     client.SexOffer = SexType::ANY;
                 }
             }
@@ -436,45 +432,45 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
         {
             cust_type = 1; cust_type_text = "Dead Beat";
             // telling what she is meeting and where; how prepared and when does she arrive...
-            add_text("deadbeat") << "\n";
-            m_Escort += skill_to_mod(m_Prepare);
+            shift.add_line("deadbeat");
+            adjust_escort(shift, std::get<int>(shift.get_variable(m_Prepare_id)));
 
             // beauty check
-            add_text("deadbeat.beauty-check") << "\n";
-            m_Escort += skill_to_mod(girl.beauty());
+            shift.add_line("deadbeat.beauty-check");
+            adjust_escort(shift, skill_to_mod(girl.beauty()));
 
             traits_check_fn();
 
             //CONVERSATION PHASE (CHARISMA CHECK)
-            add_text("deadbeat.charisma") << "\n";
-            m_Escort += skill_to_mod(girl.charisma());
-            if (girl.has_active_trait(traits::ALCOHOLIC) && chance(50))
+            shift.add_line("deadbeat.charisma");
+            adjust_escort(shift, skill_to_mod(girl.charisma()));
+            if (girl.has_active_trait(traits::ALCOHOLIC) && shift.chance(50))
             {
-                add_text("deadbeat.alcoholic") << "\n";
+                shift.add_line("deadbeat.alcoholic");
             }
 
             //RESULTS PHASE (POINT CHECK)
-            if (m_Escort >= 9)
+            if (get_escort(shift) >= 9)
             {
-                add_text("deadbeat.best") << "\n";
+                shift.add_line("deadbeat.best");
                 fame += 2;
                 sex_offer = true;
                 cust_wealth = 2;
             }
-            else if (m_Escort >= 6)
+            else if (get_escort(shift) >= 6)
             {
-                add_text("deadbeat.good") << "\n";
+                shift.add_line("deadbeat.good");
                 fame += 1;
                 sex_offer = true;
                 cust_wealth = 1.5;
             }
-            else if (m_Escort >= 1)
+            else if (get_escort(shift) >= 1)
             {
-                add_text("deadbeat.neutral") << "\n";
+                shift.add_line("deadbeat.neutral");
             }
             else
             {
-                add_text("deadbeat.bad") << "\n";
+                shift.add_line("deadbeat.bad");
                 fame -= 1;
                 cust_wealth = 0;
             }
@@ -484,15 +480,15 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             {
                 if (girl.morality() >= 50)
                 {
-                    add_text("deadbeat.sex.moral");
+                    shift.add_text("deadbeat.sex.moral");
                 }
                 else if (girl.lust() <= 50)
                 {
-                    add_text("deadbeat.sex.no-lust");
+                    shift.add_text("deadbeat.sex.no-lust");
                 }
                 else
                 {
-                    add_text("deadbeat.sex.accept") << "\n";
+                    shift.add_line("deadbeat.sex.accept");
                     client.SexOffer = SexType::ANY;
                 }
             }
@@ -505,49 +501,34 @@ bool cEscortJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
 
 
     // work out the pay between the house and the girl
-    m_Earnings = (int)(girl.askprice() * cust_type * cust_wealth);
+    shift.data().Earnings = (int)(girl.askprice() * cust_type * cust_wealth);
     // m_Tips = (jobperformance > 0) ? (rng%jobperformance) * cust_type * cust_wealth : 0;
-    ss << "\n \n${name} receives " << m_Earnings << " in payment for her work as an Escort for a " << cust_type_text << " client. Her fame as an Escort has changed by " << fame << ".";
+    ss << "\n \n${name} receives " << shift.data().Earnings << " in payment for her work as an Escort for a " << cust_type_text << " client. Her fame as an Escort has changed by " << fame << ".";
 
     // Improve stats
-    apply_gains(girl, m_Performance);
-    girl.fame(uniform(0, 2));
-
-    girl.AddMessage(ss.str(), imagetype, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    return false;
+    girl.fame(shift.uniform(0, 2));
 }
 
-deprecated::IGenericJob::eCheckWorkResult cEscortJob::CheckWork(sGirl& girl, bool is_night) {
-    if (girl.disobey_check(EActivity::SOCIAL, JOB_ESCORT))
+bool cEscortJob::CheckCanWork(cGirlShift& shift) const {
+    if (shift.girl().has_active_trait(traits::DEAF) && shift.chance(50))
     {
-        ss << "${name} refused to work during the " << (is_night ? "night" : "day") << " shift.";
-        girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
-        return eCheckWorkResult::REFUSES;
+        shift.add_line("no-work.deaf");
+        return false;
     }
-
-    if (girl.has_active_trait(traits::DEAF) && chance(50))
+    else if (shift.girl().has_active_trait(traits::MUTE) && shift.chance(50))
     {
-        ss << "${name} is deaf, meaning she would be unable to hear the conversation that is so critical to being successful as an escort. "
-              "As there is practically no chance that a client will want to have an entire date in sign language, assuming he even knows it, "
-              "${name} is particularly unsuited to work as an escort. You should consider alternate employment for her. Nobody chooses her this week.\n";
-        return eCheckWorkResult::IMPOSSIBLE;
+        shift.add_line("no-work.mute");
+        return false;
     }
-    else if (girl.has_active_trait(traits::MUTE) && chance(50))
-    {
-        ss << "${name} is mute, and while some men enjoy a woman who stays silent, these men are not paying escorts to engage them in conversation. "
-              "As it is severely unlikely that a client will want to spend the entire date deciphering sign language, even if they do know it,"
-              " ${name} is particularly unsuited for work as an escort. You should consider alternate employment for her. Nobody chooses her this week.\n";
-        return eCheckWorkResult::IMPOSSIBLE;
-    }
-    return eCheckWorkResult::ACCEPTS;
+    return true;
 }
 
-sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl& girl, SexType type) {
+sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, cGirlShift& shift, SexType type) const {
+    auto& girl = shift.girl();
     switch(type) {
     case SexType::SEX:
-        add_text("client.normal-sex") << "\n";
-        add_text(prefix + ".normal-sex.outro");
+        shift.add_line("client.normal-sex");
+        shift.add_text(prefix + ".normal-sex.outro");
         fame += skill_to_mod(girl.normalsex());
         girl.normalsex(2);
         girl.lust_release_regular();
@@ -556,50 +537,50 @@ sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl&
     case SexType::ANAL:
         if (girl.has_item("Compelling Buttplug"))
         {
-            add_text("client.buttplug.compelling");
+            shift.add_text("client.buttplug.compelling");
             fame += 1;
         }
         else if (girl.has_item("Large Buttplug"))
         {
-            add_text("client.buttplug.large");
+            shift.add_text("client.buttplug.large");
             fame += 2;
         }
         fame += skill_to_mod(girl.anal());
-        add_text("client.anal-sex") << "\n";
-        add_text(prefix + ".anal-sex.outro");
+        shift.add_line("client.anal-sex");
+        shift.add_text(prefix + ".anal-sex.outro");
         girl.anal(2);
         girl.lust_release_regular();
         return EImageBaseType::ANAL;
     break;
     case SexType::HAND:
         fame += skill_to_mod(girl.handjob());
-        add_text("client.handjob") << "\n";
-        add_text(prefix + ".handjob.outro");
+        shift.add_line("client.handjob");
+        shift.add_text(prefix + ".handjob.outro");
         girl.handjob(2);
         return EImageBaseType::HAND;
     break;
     case SexType::TITTY:
         fame += skill_to_mod(girl.tittysex());
-        add_text(prefix + ".titty-sex.intro") << "\n";
-        add_text("client.titty-sex") << "\n";
-        add_text(prefix + ".titty-sex.outro");
+        shift.add_line(prefix + ".titty-sex.intro");
+        shift.add_line("client.titty-sex");
+        shift.add_text(prefix + ".titty-sex.outro");
         girl.tittysex(2);
         return EImageBaseType::TITTY;
     break;
     case SexType::ORAL:
         if (girl.any_active_trait({traits::STRONG_GAG_REFLEX, traits::GAG_REFLEX}))
         {
-            add_text("client.oral-sex-gag") << "\n";
+            shift.add_line("client.oral-sex-gag");
             fame -= 1;
         } else {
-            add_text("client.oral-sex-no-gag") << "\n";
+            shift.add_line("client.oral-sex-no-gag");
         }
 
         fame += skill_to_mod(girl.oralsex());
-        add_text(prefix + ".oral-sex.outro");
+        shift.add_text(prefix + ".oral-sex.outro");
 
         girl.oralsex(2);
-        if(girl.oralsex() > 60 && chance(25)) {
+        if(girl.oralsex() > 60 && shift.chance(25)) {
             return EImageBaseType::SUCKBALLS;
         }
         return EImagePresets::BLOWJOB;
@@ -610,21 +591,21 @@ sImagePreset cEscortJob::handle_sex(const std::string& prefix, int& fame, sGirl&
     }
 }
 
-auto cEscortJob::choose_sex(const std::string& prefix, const sGirl& girl, const sClientData& client) -> SexType {
+auto cEscortJob::choose_sex(const std::string& prefix, cGirlShift& shift, const sClientData& client) const -> SexType {
     SexType type = client.SexOffer;
     if(type == SexType::NONE) return type;
 
-    if (client.TittyLover && chance(50)) {
+    if (client.TittyLover && shift.chance(50)) {
         type = SexType::TITTY;
     }
-    else if (client.AssLover && chance(50))
+    else if (client.AssLover && shift.chance(50))
     {
-        add_text("client.ass-lover") << "\n";
-        if (is_virgin(girl)) {
-            add_text("client.ass-lover.virgin") << "\n";
+        shift.add_line("client.ass-lover");
+        if (is_virgin(shift.girl())) {
+            shift.add_line("client.ass-lover.virgin");
             type = SexType::ANAL;
         } else {
-            if(chance(50)) {
+            if(shift.chance(50)) {
                 type = SexType::ANAL;
             } else {
                 type = SexType::SEX;
@@ -633,12 +614,12 @@ auto cEscortJob::choose_sex(const std::string& prefix, const sGirl& girl, const 
     }
     else
     {
-        add_text(prefix + ".init-sex") << "\n";
+        shift.add_line(prefix + ".init-sex");
     }
 
     if(type == SexType::ANY) {
-        int roll_sex = d100();
-        if (roll_sex >= 50 && !is_virgin(girl)) {
+        int roll_sex = shift.d100();
+        if (roll_sex >= 50 && !is_virgin(shift.girl())) {
             return SexType::SEX;
         } else if(roll_sex > 40) {
             return SexType::ANAL;
@@ -652,7 +633,15 @@ auto cEscortJob::choose_sex(const std::string& prefix, const sGirl& girl, const 
     return type;
 }
 
-cEscortJob::cEscortJob() : cSimpleJob(JOB_ESCORT, "Escort.xml", {EActivity::SOCIAL, 0, EImageBaseType::ESCORT}) {
-    RegisterVariable("Escort", m_Escort);
-    RegisterVariable("Prepare", m_Prepare);
+cEscortJob::cEscortJob() : cSimpleJob(JOB_ESCORT, "Escort.xml") {
+    m_Escort_id = RegisterVariable("Escort", 0);
+    m_Prepare_id = RegisterVariable("Prepare", 0);
+}
+
+int cEscortJob::get_escort(const cGirlShift& shift) const {
+    return std::get<int>(shift.get_variable(m_Escort_id));
+}
+
+void cEscortJob::adjust_escort(cGirlShift& shift, int amount) const {
+    shift.set_variable(m_Escort_id, get_escort(shift) + amount);
 }

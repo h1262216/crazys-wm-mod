@@ -169,30 +169,3 @@ sWorkJobResult WorkTorturer(sGirl& girl, bool Day0Night1, cRng& rng)
     return {false, 0, 0, std::max(0, wages)};
 }
 
-double JP_Torturer(const sGirl& girl, bool estimate)        // not used
-{
-    //SIN - this is a special case.
-    //AFAIK the torturer ID/skills not used at all in the job processing (apart from names in strings)
-    //Who does the currently has ZERO affect on outcome.
-    //So this stat just shows how much THIS girl (i.e. the torturer) will 'enjoy' job.
-    //standardized per J's instructs
-
-    double jobperformance =
-        //main stat - how evil?
-        (100 - girl.morality()) +
-        //secondary stats - obedience, effectiveness and understanding of anatomy
-        ((girl.obedience() + girl.combat() + girl.strength() + girl.medicine()) / 4) +
-        //add level
-        girl.level();
-
-    //either
-    if (girl.has_active_trait(traits::PSYCHIC))                                                //I feel your pain... such suffering...
-    {
-        if (girl.has_active_trait(traits::MASOCHIST)) jobperformance += 30;    //... [smiles] and I like it!
-        else                                            jobperformance -= 30;
-    }
-
-    jobperformance += girl.get_trait_modifier(traits::modifiers::WORK_TORTURER);
-
-    return jobperformance;
-}

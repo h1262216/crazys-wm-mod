@@ -1,30 +1,31 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Vet">
+<Job ShortName="Mlkr">
     <Description>
-        She will tend to sick animals.
+        She will milk the various animals and girls you own.
     </Description>
 
-    <Performance Modifier="work.veterinarian">
-        <Factor Skill="Medicine" Weight="3"/>
+    <Config DefaultImage="Herd" BaseWages="20">
+        <Enjoyment PrimaryAction="Farming"/>
+    </Config>
+
+    <Performance>
         <Factor Skill="AnimalHandling" Weight="3"/>
+        <Factor Skill="Handjob" Weight="3"/>
         <Factor Stat="Intelligence" Weight="2"/>
-        <Factor Stat="Charisma" Weight="2"/>
-        <Factor Skill="Beastiality" Weight="2"/>
+        <Factor Skill="Farming" Weight="2" />
 
         <!-- good traits -->
         <Trait Name="Quick Learner" Value="5"/>
         <Trait Name="Psychic" Value="10"/>
-        <Trait Name="Optimist" Value="10"/>    <!-- less willing to give up on the animal -->
         <Trait Name="Farmers Daughter" Value="30"/>
         <Trait Name="Country Gal" Value="10"/>
 
         <!-- bad traits -->
-        <Trait Name="Dependent" Value="-50"/>  <!-- needs others to do the job -->
+        <Trait Name="Dependent" Value="-50"/> <!-- needs others to do the job -->
         <Trait Name="Clumsy" Value="-20"/> <!-- spills food and breaks things often -->
         <Trait Name="Aggressive" Value="-20"/> <!-- gets mad easy -->
-        <Trait Name="Nervous" Value="-30"/>    <!-- don't like to be around people -->
+        <Trait Name="Nervous" Value="-30"/> <!-- don't like to be around people -->
         <Trait Name="Meek" Value="-20"/>
-        <Trait Name="Pessimist" Value="-10"/>  <!-- more likely to give up on the animal -->
 
         <Trait Name="One Arm" Value="-40"/>
         <Trait Name="One Foot" Value="-40"/>
@@ -33,7 +34,7 @@
         <Trait Name="No Arms" Value="-125"/>
         <Trait Name="No Feet" Value="-60"/>
         <Trait Name="No Hands" Value="-50"/>
-        <Trait Name="No Legs" Value="-150"/>
+        <Trait Name="No Legs" Value="-100"/>
         <Trait Name="Blind" Value="-30"/>
         <Trait Name="Deaf" Value="-15"/>
         <Trait Name="Retarded" Value="-60"/>
@@ -45,49 +46,36 @@
         <Trait Name="Viras Blood Addict" Value="-25"/>
     </Performance>
 
-    <Gains XP="15" Skill="3">
-        <Skill Name="Medicine" Weight="2" />
-        <Skill Name="AnimalHandling" Weight="3" />
-        <Skill Name="Beastiality" Weight="1" />
-        <Stat Name="Intelligence" Weight="1" />
+    <Gains XP="10" Skill="3">
+        <Skill Name="AnimalHandling"/>
+        <Skill Name="Handjob"/>
     </Gains>
-
-    <Config>
-        <WageFunction>
-            <Point Performance="245" Wages="155" />
-            <Point Performance="185" Wages="95" />
-            <Point Performance="145" Wages="55" />
-            <Point Performance="100" Wages="15" />
-            <Point Performance="70" Wages="-5" />
-            <Point Performance="0" Wages="-15" />
-        </WageFunction>
-    </Config>
 
     <Messages>
         <Message Name="work">
-            <Text>${name} worked as a Veterinarian on the farm.</Text>
+            <Text>${name} worked as a milker on the farm.</Text>
         </Message>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>
         </Message>
 
         <Message Name="work.perfect">
-            <Text>She must be perfect at this.</Text>
+            <Text>Her milk bucket practically fills itself as she walks down the rows of cows.</Text>
         </Message>
         <Message Name="work.great">
-            <Text>She's unbelievable at this and is always getting praised by people for her work.</Text>
+            <Text>Her hands moved like lightning as she gracefully milks the cows teats.</Text>
         </Message>
         <Message Name="work.good">
-            <Text>She's good at this job and gets praised by people often.</Text>
+            <Text>She knows exactly when the cows are ready to be milked and how to best milk them.</Text>
         </Message>
         <Message Name="work.ok">
-            <Text>She made a few mistakes but overall she is okay at this.</Text>
+            <Text>She can milk the cows without spilling much.</Text>
         </Message>
         <Message Name="work.bad">
-            <Text>She was nervous and made a few mistakes. She isn't that good at this.</Text>
+            <Text>She isn't very good at aiming the teats into the bucket.</Text>
         </Message>
         <Message Name="work.worst">
-            <Text>She was nervous and constantly making mistakes. She really isn't very good at this job.</Text>
+            <Text>She can't seem to get the hang of this.</Text>
         </Message>
     </Messages>
 </Job>

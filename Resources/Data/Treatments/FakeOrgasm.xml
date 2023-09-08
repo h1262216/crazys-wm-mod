@@ -1,14 +1,23 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="FOEx">
+<Treatment Name="Fake Orgasm Expert" ShortName="FOEx">
     <Description>
         She will be taught how to fake her orgasms.
     </Description>
+
+    <Config DefaultImage="Masturbate" Shift="full">
+        <Filter>HouseTraining</Filter>
+    </Config>
+    <SexTraining TargetName="Fake Orgasm Expert" />
+
+    <Outcomes>
+        <GainTrait Trait="Fake Orgasm Expert"/>
+    </Outcomes>
 
     <Messages>
         <Message Name="training">
             <Text>${name} is trained to fake her orgasms.</Text>
         </Message>
-        <Message Name="is-already">
+        <Message Name="no-effect-possible">
             <Text>${name} is already a "Fake Orgasm Expert".</Text>
         </Message>
         <Message Name="no-mistress">

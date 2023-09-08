@@ -4,6 +4,10 @@
         She will look after the needs of the beasts in your Brothel.
     </Description>
 
+    <Config DefaultImage="Herd" BaseWages="20">
+        <Enjoyment PrimaryAction="Farming"/>
+    </Config>
+
     <Performance>
         <Factor Skill="Service" Weight="1"/>
         <Factor Skill="Magic" Weight="1"/>

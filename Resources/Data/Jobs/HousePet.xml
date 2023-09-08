@@ -4,6 +4,9 @@
         She will be trained to become the house pet.
     </Description>
 
+    <Config Shift="full">
+    </Config>
+
     <Performance>
     </Performance>
 

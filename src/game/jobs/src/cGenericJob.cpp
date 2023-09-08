@@ -108,7 +108,7 @@ namespace {
     std::string make_string(std::string v) { return std::move(v); }
 }
 
-void cGirlShift::add_literal(const std::string& text) {
+void cGirlShift::add_literal(const std::string& text, LocalSubstitutions subs) {
     interpolate_string(m_Data->EventMessage, text, [&](const std::string& var) -> std::string {
         if (var == "shift") {
             return is_night_shift() ? "night" : "day";
@@ -123,19 +123,24 @@ void cGirlShift::add_literal(const std::string& text) {
                     }, value);
                 }
             }
+            for(auto& cnd: subs) {
+                if(var == cnd.first) {
+                    return cnd.second;
+                }
+            }
             return girl().GetInterpolationFor(var);
         }
         assert(false);
     }, rng());
 }
 
-void cGirlShift::add_text(const std::string& prompt) {
+void cGirlShift::add_text(const std::string& prompt, LocalSubstitutions subs) {
     auto& tpl = m_JobClass->get_text(prompt, *this);
-    add_literal(tpl);
+    add_literal(tpl, std::move(subs));
 }
 
-void cGirlShift::add_line(const std::string& prompt) {
-    add_text(prompt);
+void cGirlShift::add_line(const std::string& prompt, LocalSubstitutions subs) {
+    add_text(prompt, std::move(subs));
     m_Data->EventMessage << "\n";
 }
 
@@ -243,6 +248,8 @@ void cGenericJob::PreShift(sGirlShiftData& shift) {
     if(is_impossible(shift.Refused)) {
         HandleWorkImpossible(wrapped);
     } else if(is_refused(shift.Refused)) {
+        /// TODO in specific cases, this can overwrite image/eventz types
+        /// That we set deliberately earlier.
         shift.EventImage = EImageBaseType::REFUSE;
         shift.EventType = EVENT_NOWORK;
         wrapped.generate_event();

@@ -74,9 +74,10 @@ public:
     bool has_interaction(const std::string& name) const;
 
     // message generation
-    void add_literal(const std::string& text);
-    void add_text(const std::string& prompt);
-    void add_line(const std::string& prompt);
+    using LocalSubstitutions = std::initializer_list<std::pair<std::string, std::string>>;
+    void add_literal(const std::string& text, LocalSubstitutions subs={});
+    void add_text(const std::string& prompt, LocalSubstitutions subs={});
+    void add_line(const std::string& prompt, LocalSubstitutions subs={});
 
     void set_image(sImagePreset preset);
     void generate_event();

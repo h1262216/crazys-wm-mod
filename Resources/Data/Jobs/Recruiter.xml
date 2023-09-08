@@ -4,6 +4,12 @@
         She will go out and try and recruit girls for you.
     </Description>
 
+    <Config Shift="full" BaseWages="100">
+        <Enjoyment PrimaryAction="Social" />
+    </Config>
+
+    <Requirements FreeOnly="1" />
+
     <Performance>
         <Factor Stat="PCLove" Weight="1" />
         <Factor Stat="Charisma" Weight="1" />

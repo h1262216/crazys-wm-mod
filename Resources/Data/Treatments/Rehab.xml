@@ -1,10 +1,10 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="Rehb">
+<Treatment Name="Rehab" ShortName="Rehb">
     <Description>
         She will go to rehab to get over her addictions.
     </Description>
 
-    <Therapy Duration="6" FightChance="25" Title="rehab" SuccessBonus="8" HealthDanger="10">
+    <Therapy Duration="6" FightChance="25" Title="rehab" SuccessBonus="8">
         <RemoveTrait Trait="Smoker">She is no longer a Smoker.</RemoveTrait>
         <RemoveTrait Trait="Cum Addict">She is no longer a Cum Addict.</RemoveTrait>
         <RemoveTrait Trait="Alcoholic">She is no longer an Alcoholic.</RemoveTrait>
@@ -17,7 +17,7 @@
         <Message Name="therapy">
             <Text>${name} was in rehab to get over her addiction.</Text>
         </Message>
-        <Message Name="no-need">
+        <Message Name="no-effect-possible">
             <Text>${name} is not addicted to anything.</Text>
         </Message>
         <Message Name="no-counselor">

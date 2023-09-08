@@ -4,6 +4,18 @@
         She will strip on the tables and stage for the customers.
     </Description>
 
+    <Config DefaultImage="Strip">
+        <Enjoyment PrimaryAction="Stripping" />
+        <WageFunction>
+            <Point Performance="245" Wages="155" />
+            <Point Performance="185" Wages="95" />
+            <Point Performance="145" Wages="55" />
+            <Point Performance="100" Wages="15" />
+            <Point Performance="70" Wages="-5" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="2"/>
         <Factor Stat="Charisma" Weight="2"/>
@@ -71,17 +83,6 @@
         <Skill Name="Strip" Weight="2" />
         <Stat Name="Confidence" Weight="1" Max="33"/>
     </Gains>
-
-    <Config>
-        <WageFunction>
-            <Point Performance="245" Wages="155" />
-            <Point Performance="185" Wages="95" />
-            <Point Performance="145" Wages="55" />
-            <Point Performance="100" Wages="15" />
-            <Point Performance="70" Wages="-5" />
-            <Point Performance="0" Wages="-15" />
-        </WageFunction>
-    </Config>
 
     <Messages>
         <Message Name="work">

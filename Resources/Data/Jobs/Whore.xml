@@ -5,6 +5,10 @@
        DUMMY
     </Description>
 
+    <Config>
+        <Enjoyment PrimaryAction="Fucking" />
+    </Config>
+
     <Gains XP="0" Skill="0">
         <GainTrait Trait="Good Kisser">
             <TraitChangeAmount Value="50" Chance="50">

@@ -4,6 +4,18 @@
         She will strip for the customers.
     </Description>
 
+    <Config DefaultImage="Strip">
+        <Enjoyment PrimaryAction="Stripping"/>
+        <WageFunction>
+            <Point Performance="245" Wages="155" />
+            <Point Performance="185" Wages="95" />
+            <Point Performance="145" Wages="55" />
+            <Point Performance="100" Wages="15" />
+            <Point Performance="70" Wages="-5" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
     <Performance>
         <Factor Stat="Beauty" Weight="2"/>
         <Factor Stat="Charisma" Weight="2"/>
@@ -16,17 +28,6 @@
         The original code had a fame bonus and a pregnancy malus
         -->
     </Performance>
-
-    <Config>
-        <WageFunction>
-            <Point Performance="245" Wages="155" />
-            <Point Performance="185" Wages="95" />
-            <Point Performance="145" Wages="55" />
-            <Point Performance="100" Wages="15" />
-            <Point Performance="70" Wages="-5" />
-            <Point Performance="0" Wages="-15" />
-        </WageFunction>
-    </Config>
 
     <Gains XP="20" Skill="3">
         <LoseTrait Trait="Nervous">

@@ -4,6 +4,11 @@
         She will play the piano for the customers.
     </Description>
 
+    <Config DefaultImage="Piano">
+        <Filter>Bar</Filter>
+        <Enjoyment PrimaryAction="Performing"/>
+    </Config>
+
     <Performance>
         <Factor Skill="Performance" Weight="3"/>
         <Factor Stat="Confidence" Weight="1"/>
@@ -114,7 +119,7 @@
         <Message Name="refuse">
             <Text>${name} refused to play piano in your bar to${shift}.</Text>
         </Message>
-        <Message Name="event.nympho-nowork">
+        <Message Name="refuse.horny">
             <Text>${name} let lust get the better of her, and she ended up missing her ${shift} shift.</Text>
         </Message>
 

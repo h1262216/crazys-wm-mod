@@ -4,6 +4,12 @@
         She will become a doctor. Doctors earn extra cash from treating locals. (requires at least 1 to perform surgeries)
     </Description>
 
+    <Config Shift="full" BaseWages="100" DefaultImage="Nurse">
+        <Enjoyment PrimaryAction="Medical" SecondaryAction="Mental" />
+    </Config>
+
+    <Requirements FreeOnly="1" />
+
     <Performance>
         <Factor Skill="Medicine" Weight="2"/>
         <Factor Stat="Intelligence" Weight="1"/>

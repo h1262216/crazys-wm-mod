@@ -20,81 +20,71 @@
 #ifndef WM_FARMJOBS_H
 #define WM_FARMJOBS_H
 
-#include "deprecated/SimpleJob.h"
+#include "jobs/cSimpleJob.h"
 
-using namespace deprecated;
-
-class cFarmJob : public cSimpleJob {
-public:
-    using cSimpleJob::cSimpleJob;
-protected:
-    // a version of handle gains that leaves fame unaffected
-    void HandleGains(sGirl& girl);
-};
-
-class cFarmJobFarmer : public cFarmJob {
+class cFarmJobFarmer : public cSimpleJob {
 public:
     cFarmJobFarmer();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-class cFarmJobMarketer : public cFarmJob {
+class cFarmJobMarketer : public cSimpleJob {
 public:
     cFarmJobMarketer();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
 
-class cFarmJobVeterinarian : public cFarmJob {
+class cFarmJobVeterinarian : public cSimpleJob {
 public:
     cFarmJobVeterinarian();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 private:
 };
 
-class cFarmJobShepherd : public cFarmJob {
+class cFarmJobShepherd : public cSimpleJob {
 public:
     cFarmJobShepherd();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-class cFarmJobRancher : public cFarmJob {
+class cFarmJobRancher : public cSimpleJob {
 public:
     cFarmJobRancher();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-class cFarmJobMilker : public cFarmJob {
+class cFarmJobMilker : public cSimpleJob {
 public:
     cFarmJobMilker();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night);
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-class cFarmJobGetMilked : public cFarmJob {
+class cFarmJobGetMilked : public cSimpleJob {
 public:
     cFarmJobGetMilked();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 private:
-    double toOz(int ml)            { return (0.0338 * ml); }
+    double toOz(int ml) const { return (0.0338 * ml); }
 };
 
-class cFarmJobCatacombRancher : public cFarmJob {
+class cFarmJobCatacombRancher : public cSimpleJob {
 public:
     cFarmJobCatacombRancher();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-class cFarmJobBeastCapture : public cFarmJob {
+class cFarmJobBeastCapture : public cSimpleJob {
 public:
     cFarmJobBeastCapture();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night);
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
 };
 
-class cFarmJobResearch : public cFarmJob {
+class cFarmJobResearch : public cSimpleJob {
 public:
     cFarmJobResearch();
-    bool JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) override;
+    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
     double GetPerformance(const sGirl& girl, bool estimate) const override;
 };
 

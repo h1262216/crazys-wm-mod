@@ -1,18 +1,32 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="SHrd">
+<Job ShortName="Vet">
     <Description>
-        She will tend to food animals.
+        She will tend to sick animals.
     </Description>
 
-    <Performance>
+    <Config DefaultImage="Herd" BaseWages="20">
+        <Enjoyment PrimaryAction="Farming" SecondaryAction="Medical"/>
+        <WageFunction>
+            <Point Performance="245" Wages="155" />
+            <Point Performance="185" Wages="95" />
+            <Point Performance="145" Wages="55" />
+            <Point Performance="100" Wages="15" />
+            <Point Performance="70" Wages="-5" />
+            <Point Performance="0" Wages="-15" />
+        </WageFunction>
+    </Config>
+
+    <Performance Modifier="work.veterinarian">
+        <Factor Skill="Medicine" Weight="3"/>
         <Factor Skill="AnimalHandling" Weight="3"/>
-        <Factor Stat="Intelligence" Weight="1"/>
-        <Factor Stat="Charisma" Weight="1"/>
-        <Factor Stat="Confidence" Weight="1"/>
+        <Factor Stat="Intelligence" Weight="2"/>
+        <Factor Stat="Charisma" Weight="2"/>
+        <Factor Skill="Beastiality" Weight="2"/>
 
         <!-- good traits -->
         <Trait Name="Quick Learner" Value="5"/>
         <Trait Name="Psychic" Value="10"/>
+        <Trait Name="Optimist" Value="10"/>    <!-- less willing to give up on the animal -->
         <Trait Name="Farmers Daughter" Value="30"/>
         <Trait Name="Country Gal" Value="10"/>
 
@@ -22,6 +36,7 @@
         <Trait Name="Aggressive" Value="-20"/> <!-- gets mad easy -->
         <Trait Name="Nervous" Value="-30"/>    <!-- don't like to be around people -->
         <Trait Name="Meek" Value="-20"/>
+        <Trait Name="Pessimist" Value="-10"/>  <!-- more likely to give up on the animal -->
 
         <Trait Name="One Arm" Value="-40"/>
         <Trait Name="One Foot" Value="-40"/>
@@ -42,60 +57,38 @@
         <Trait Name="Viras Blood Addict" Value="-25"/>
     </Performance>
 
-    <Gains XP="10" Skill="3">
-        <Skill Name="AnimalHandling" Weight="2"/>
-        <Stat Name="Confidence" Weight="1" />
-
-        <LoseTrait Trait="Elegant">
-            <TraitChangeAmount Value="50" Chance="33" />
-            <Text>Working with dirty, smelly animals has damaged ${name}'s hair,
-                skin and nails making her less Elegant.</Text>
-        </LoseTrait>
-
-        <LoseTrait Trait="City Girl">
-            <TraitChangeAmount Value="33" Chance="25" />
-            <Text>Having been caring for dirty, smelly animals for so long,
-                ${name} no longer considers herself a City Girl.</Text>
-        </LoseTrait>
-
-        <GainTrait Trait="Farmer">
-            <TraitChangeAmount Value="40" Chance="50">
-                <TraitChangeCondition What="JobPerformance" Lower="100" Upper="200" />
-            </TraitChangeAmount>
-            <Text>${name} has been taking care of animals for so long, she now considers herself a Farmer.</Text>
-        </GainTrait>
-
-        <GainTrait Trait="Country Gal">
-            <TraitChangeAmount Value="33" Chance="33" />
-            <Text>Spending so much time at the Farm has turned ${name} into a Country Gal.</Text>
-        </GainTrait>
+    <Gains XP="15" Skill="3">
+        <Skill Name="Medicine" Weight="2" />
+        <Skill Name="AnimalHandling" Weight="3" />
+        <Skill Name="Beastiality" Weight="1" />
+        <Stat Name="Intelligence" Weight="1" />
     </Gains>
 
     <Messages>
         <Message Name="work">
-            <Text>${name} worked as a shepherd in the farm.</Text>
+            <Text>${name} worked as a Veterinarian on the farm.</Text>
         </Message>
         <Message Name="refuse">
             <Text>${name} refused to work during the ${shift} shift.</Text>
         </Message>
 
         <Message Name="work.perfect">
-            <Text>The animals come to ${name} when they are ready for market.</Text>
+            <Text>She must be perfect at this.</Text>
         </Message>
         <Message Name="work.great">
-            <Text>${name} seems to know just when to choose the best animals to send to market.</Text>
+            <Text>She's unbelievable at this and is always getting praised by people for her work.</Text>
         </Message>
         <Message Name="work.good">
-            <Text>${name} has little trouble finding animals to send to market.</Text>
+            <Text>She's good at this job and gets praised by people often.</Text>
         </Message>
         <Message Name="work.ok">
-            <Text>${name} usually sends the right animals to market.</Text>
+            <Text>She made a few mistakes but overall she is okay at this.</Text>
         </Message>
         <Message Name="work.bad">
-            <Text>${name} doesn't know what animals to send to the market so she just guesses.</Text>
+            <Text>She was nervous and made a few mistakes. She isn't that good at this.</Text>
         </Message>
         <Message Name="work.worst">
-            <Text>${name} has no idea what she is doing.</Text>
+            <Text>She was nervous and constantly making mistakes. She really isn't very good at this job.</Text>
         </Message>
     </Messages>
 </Job>

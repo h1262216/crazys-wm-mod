@@ -4,6 +4,10 @@
         She will let people watch her change and maybe more...
     </Description>
 
+    <Config DefaultImage="Strip">
+        <Enjoyment PrimaryAction="Stripping"/>
+    </Config>
+
     <Performance>
         <!-- intel and agility for smarts and speed to cheat; cust service, performance to bluff/cheat, and a bit of magic for 'luck'-->
         <Factor Stat="Charisma" Weight="1"/>

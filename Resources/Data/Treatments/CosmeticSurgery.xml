@@ -1,11 +1,29 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment ShortName="CosS">
+<Treatment Name="Cosmetic Surgery" ShortName="CosS">
     <Description>
         She will undergo magical surgery to "enhance" her appearance.
         *(Takes up to 5 turns, less if a Nurse is on duty)
     </Description>
 
     <Surgery Duration="5" />
+
+    <Outcomes>
+        <GainTrait Trait="Sexy Air" Priority="1">
+            She gains the Sexy Air trait.
+        </GainTrait>
+        <GainTrait Trait="Cute" Priority="1">
+            She gains the Cute trait.
+        </GainTrait>
+        <GainAttribute Attribute="Beauty" Min="6" Max="14" Threshold="30" Priority="2">
+            She doesn't look as ugly anymore.
+        </GainAttribute>
+        <GainAttribute Attribute="Beauty" Min="5" Max="12" Threshold="80" Priority="1">
+            Her Beauty is increased.
+        </GainAttribute>
+        <GainAttribute Attribute="Beauty" Min="3" Max="6" Priority="0">
+            Her Beauty is increased.
+        </GainAttribute>
+    </Outcomes>
 
     <Messages>
         <Message Name="surgery">
@@ -14,6 +32,10 @@
 
         <Message Name="doctor.work">
             <Text>Today, she worked on improving ${name}'s appearance.</Text>
+        </Message>
+
+        <Message Name="no-effect-possible">
+            <Text>${name} is as pretty as she can be, no Cosmetic Surgery will improve her further.</Text>
         </Message>
 
         <Include>DefaultSurgeryMessages.xml</Include>

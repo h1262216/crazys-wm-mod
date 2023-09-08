@@ -54,7 +54,3 @@ void cSimpleJob::load_from_xml_callback(const tinyxml2::XMLElement& job_element)
         m_PerformanceToEarnings = LoadLinearFunction(*wages, "Performance", "Wages");
     }
 }
-
-void cSimpleJob::InitWork(cGirlShift& shift) const {
-    cBasicJob::InitWork(shift);
-}

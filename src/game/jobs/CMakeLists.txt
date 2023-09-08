@@ -11,14 +11,9 @@ set(JOBS_SRC
         src/cSimpleJob.cpp
         src/TextInterface.cpp
         src/WorkFreetime.cpp
+        src/SpecialJobs.cpp
         src/Treatment.cpp
         src/sAttributeCondition.cpp
-        src-deprecated/IGenericJob.cpp
-        src-deprecated/BasicJob.cpp
-        src-deprecated/TextInterface.cpp
-        src-deprecated/JobData.cpp
-        src-deprecated/SimpleJob.cpp
-        src-deprecated/Wrapper.cpp
         )
 
 add_library(WmJobsInterface INTERFACE)

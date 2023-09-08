@@ -56,12 +56,12 @@ namespace {
 }
 
 cWhoreJob::cWhoreJob(JOBS job, const char* short_name, const char* description) :
-        cSimpleJob(job, "Whore.xml", {EActivity::FUCKING}) {
+        cSimpleJob(job, "Whore.xml") {
     m_CacheDescription = description;
     m_CacheShortName = short_name;
 }
 
-bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
+void cWhoreJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     /*
     *    WD:    Modified to fix customer service problems.. I hope :)
     *
@@ -80,7 +80,7 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     *
     *    Redid the code for deadbeat customers
     *
-    *    % Chance of customers without any money getting service is
+    *    % shift.chance of customers without any money getting service is
     *  percent(50 - INTELLIGENCE) / 5) where  20 < INTELLIGENCE < 100
     *    If caught will set deadbeat flag
     *
@@ -88,7 +88,7 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     *    code to add pay to customers funds instead of generating
     *    New customer.
     *
-    *    % Chance of customer refusing to pay despite having funds is
+    *    % shift.chance of customer refusing to pay despite having funds is
     *    percent((40 - HAPPINESS) / 2) && percent(CONFIDENCE - 25)
     *    If caught by guards they will pay
     *
@@ -100,7 +100,7 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     *    Street Work Really needs its own NumCustomers() counter
     *
     *    Rival gangs can damage girls doing Street Work
-    *  % Chance of destroying rival gang is depended on best of
+    *  % shift.chance of destroying rival gang is depended on best of
     *    SKILL_COMBAT & SKILL_MAGIC / 5
     *
     *    Changed message for rival gangs attacking street girls to give
@@ -116,9 +116,8 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     *
     */
 
-    m_OralCount = 0;        // how much oral she gave for use with AdjustTraitGroupGagReflex
-    const JOBS job = girl.get_job(is_night);
-    const bool bStreetWork = (job == JOB_WHORESTREETS);
+    // how much oral she gave for use with AdjustTraitGroupGagReflex
+    const bool bStreetWork = (shift.data().Job == JOB_WHORESTREETS);
 
     // work out how many customers the girl can service
 
@@ -129,8 +128,9 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     // Max number on customers the girl can fuck
     int b = girl.beauty(), c = girl.charisma(), f = girl.fame();
     int NumCusts = std::min(8, 2 + ((b + c + f + 1) / 50));
-    m_NumSleptWith = 0;        // Total num customers she fucks this session
-
+    int num_slept_with = 0;
+    int oral_score = 0;
+    
     if (bStreetWork)
     {
         NumCusts = NumCusts * 2 / 3;
@@ -139,13 +139,14 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     /*
     *    WD:    Rival Gang is incompleate
     *
-    *    Chance of defeating gang is based on  combat / magic skill
+    *    shift.chance of defeating gang is based on  combat / magic skill
     *    Added Damage and Tiredness
     *    ToDo Girl fightrivalgang() if its implemented
     *
     */
     std::string summary = "";
-    if (bStreetWork && chance(5))
+    auto& ss = shift.data().EventMessage;
+    if (bStreetWork && shift.chance(5))
     {
         cRival* rival = g_Game->random_rival();
         if (rival && rival->m_NumGangs > 0)
@@ -154,8 +155,8 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             summary += "${name} was attacked by enemy goons. \n";
             ss << "${name} ran into some enemy goons and was attacked.\n";
 
-            // WD: Health loss, Damage 0-15, 25% chance of 0 damage
-            int iNum = std::max(uniform(0, 20) - 5, 0);
+            // WD: Health loss, Damage 0-15, 25% shift.chance of 0 damage
+            int iNum = std::max(shift.uniform(0, 20) - 5, 0);
             int iOriginal = girl.health();
             girl.health(-iNum);
             iNum = iOriginal - girl.health();
@@ -166,18 +167,18 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
             ss << " damage.\n";
 
             // WD:    Tiredness (5 + 2 * damage) points avg is (6 + Health Damage) is bell curve
-            iNum = uniform(0, iNum-1) + uniform(0, iNum - 1) + 5;
+            iNum = shift.uniform(0, iNum-1) + shift.uniform(0, iNum - 1) + 5;
             girl.tiredness(iNum);
 
             // WD:    If girl used magic to defend herself she will use mana
             if (girl.mana() > 20 && girl.magic() > girl.combat())
             {
                 girl.mana(-20);
-                iNum = girl.magic() / 5;        // WD: Chance to destroy rival gang
+                iNum = girl.magic() / 5;        // WD: shift.chance to destroy rival gang
             }
-            else iNum = girl.combat() / 5;    // WD: Chance to destroy rival gang
+            else iNum = girl.combat() / 5;    // WD: shift.chance to destroy rival gang
 
-            if (chance(iNum)) rival->m_NumGangs--;            // WD:    Destroy rival gang
+            if (shift.chance(iNum)) rival->m_NumGangs--;            // WD:    Destroy rival gang
 
             girl.AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_WARNING);
         }
@@ -193,42 +194,38 @@ bool cWhoreJob::JobProcessing(sGirl& girl, cBuilding& brothel, bool is_night) {
     {
         // WD:    Move exit test to top of loop
         // if she has already slept with the max she can attact then stop processing her fucking routine
-        if (m_NumSleptWith >= NumCusts) break;
+        if (num_slept_with >= NumCusts) break;
         // Stop if she has worked the bare minimum and tiredness is high enough to get a warning, pushing too hard is bad for the business too
-        if ((girl.tiredness() > 80 || girl.health() < 20) && m_NumSleptWith >= 2) break;
+        if ((girl.tiredness() > 80 || girl.health() < 20) && num_slept_with >= 2) break;
 
-        HandleCustomer(girl, brothel, is_night);
+        HandleCustomer(shift, girl, shift.building(), num_slept_with, oral_score);
     }
 
     // WD:    Reduce number of availabe customers for next whore
     int iNum = g_Game->GetNumCustomers();        // WD: Should not happen but lets make sure
-    if (iNum < m_NumSleptWith)    g_Game->customers().AdjustNumCustomers(-iNum);
-    else                        g_Game->customers().AdjustNumCustomers(-m_NumSleptWith);
+    if (iNum < num_slept_with)    g_Game->customers().AdjustNumCustomers(-iNum);
+    else                        g_Game->customers().AdjustNumCustomers(-num_slept_with);
 
     // End of shift messages
     ss.str("");
-    ss << "${name} saw " << m_NumSleptWith << " customers this shift.";
+    ss << "${name} saw " << num_slept_with << " customers this shift.";
     if (g_Game->GetNumCustomers() == 0)    { ss << "\n \nThere were no more customers left."; }
-    else if (m_NumSleptWith < NumCusts)        { ss << "\n \nShe ran out of customers who like her."; }
+    else if (num_slept_with < NumCusts)        { ss << "\n \nShe ran out of customers who like her."; }
     summary += ss.str();
 
-    girl.AddMessage(summary, EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-
-    apply_gains(girl, m_Performance);
+    girl.AddMessage(summary, EImageBaseType::PROFILE, shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 
     //gain
     //SIN: use a few of the new traits
     if (girl.has_active_trait(traits::NYMPHOMANIAC))
         cGirls::PossiblyGainNewTrait(girl, traits::CUM_ADDICT, girl.oralsex() / 10, "${name} has tasted so much cum she now craves it at all times.");
 
-    if (girl.oralsex() > 30 && chance(m_OralCount))
+    if (girl.oralsex() > 30 && shift.chance(oral_score))
         cGirls::AdjustTraitGroupGagReflex(girl, +1, true);
-
-    return false;
 }
 
-void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
-    m_FuckMessage.str("");
+void cWhoreJob::HandleCustomer(cGirlShift& shift, sGirl& girl, cBuilding& brothel, int& num_slept_with, int& oral_score) const {
+    std::stringstream m_FuckMessage;
 
     int pay = girl.askprice();
     int tip = 0;
@@ -242,8 +239,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     // WD:    Create Customer
     sCustomer Cust = g_Game->GetCustomer(brothel);
 
-    const JOBS job = girl.get_job(is_night);
-    const bool bStreetWork = (job == JOB_WHORESTREETS);
+    const bool bStreetWork = (shift.data().Job == JOB_WHORESTREETS);
 
     if (bStreetWork) {
         pay = pay * 2 / 3;
@@ -264,12 +260,12 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     {
         Cust.m_SexPref = Cust.m_SexPrefB;
         SexType = (SKILLS)Cust.m_SexPref;
-        Cust.set_stat(STAT_HAPPINESS, 32 + uniform(0, 8) + uniform(0, 8));  // `J` and they are less happy
+        Cust.set_stat(STAT_HAPPINESS, 32 + shift.uniform(0, 8) + shift.uniform(0, 8));  // `J` and they are less happy
     }
     else    // `J` otherwise they are happy with their first choice.
     {
         // WD:    Set the customers begining happiness/satisfaction
-        Cust.set_stat(STAT_HAPPINESS, 42 + uniform(0, 9) + uniform(0, 9)); // WD: average 51 range 42 to 60
+        Cust.set_stat(STAT_HAPPINESS, 42 + shift.uniform(0, 9) + shift.uniform(0, 9)); // WD: average 51 range 42 to 60
         SexType = (SKILLS)Cust.m_SexPref;
     }
 
@@ -291,7 +287,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     // WD:    TRACE Customer Money = {Cust->m_Money}, Pay = {pay}, Can Pay = {bCustCanPay}
 
     // WD:    If the customer doesn't have enough money, he will only sleep with her if he is stupid
-    if (!bCustCanPay && !chance((50 - Cust.intelligence()) / 5))
+    if (!bCustCanPay && !shift.chance((50 - Cust.intelligence()) / 5))
     {
         //continue;
         // WD: Hack to avoid many newcustomer() calls
@@ -315,15 +311,15 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             acceptsGirl = true;
         }
     }
-    else if (girl.has_active_trait(traits::ZOMBIE) && Cust.m_Fetish == FETISH_FREAKYGIRLS && chance(10))
+    else if (girl.has_active_trait(traits::ZOMBIE) && Cust.m_Fetish == FETISH_FREAKYGIRLS && shift.chance(10))
     {
         m_FuckMessage << "This customer is intrigued to fuck a Zombie girl.\n \n";
         acceptsGirl = true;
     }
     else
     {
-        // 50% chance of getting something a little weirder during the night
-        if (is_night && Cust.m_Fetish < NUM_FETISH - 2 && chance(50)) Cust.m_Fetish += 2;
+        // 50% shift.chance of getting something a little weirder during the night
+        if (shift.is_night_shift() && Cust.m_Fetish < NUM_FETISH - 2 && shift.chance(50)) Cust.m_Fetish += 2;
 
         // Check for fetish match
         if (cGirls::CheckGirlType(girl, (Fetishs)Cust.m_Fetish))
@@ -343,103 +339,103 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             g_Game->player().customerfear(5);
             acceptsGirl = false;
         }
-        else if (girl.has_active_trait(traits::LESBIAN) && Cust.m_IsWoman && chance(50))
+        else if (girl.has_active_trait(traits::LESBIAN) && Cust.m_IsWoman && shift.chance(50))
         {
             m_FuckMessage << "The female customer chooses her because she is a Lesbian.\n \n";
             acceptsGirl = true;
         }
-        else if (!likes_women(girl) && Cust.m_IsWoman && chance(10))
+        else if (!likes_women(girl) && Cust.m_IsWoman && shift.chance(10))
         {
             m_FuckMessage << "${name} refuses to accept a female customer because she is Straight.\n \n";
             brothel.m_Fame -= 2;
             acceptsGirl = false;
         }
-        else if (!likes_men(girl) && !Cust.m_IsWoman && chance(10))
+        else if (!likes_men(girl) && !Cust.m_IsWoman && shift.chance(10))
         {
             m_FuckMessage << "${name} refuses to accept a male customer because she is a Lesbian.\n \n";
             brothel.m_Fame -= 5;
             acceptsGirl = false;
         }
-        else if (girl.dignity() >= 70 && Cust.m_SexPref == SKILL_BEASTIALITY && chance(20))    //
+        else if (girl.dignity() >= 70 && Cust.m_SexPref == SKILL_BEASTIALITY && shift.chance(20))    //
         {
             m_FuckMessage << "${name} refuses to sleep with a beast because she has too much dignity for that.\n \n";
             brothel.m_Fame -= 5;
             acceptsGirl = false;
         }
-        else if ((girl.any_active_trait({traits::QUEEN, traits::PRINCESS})) && Cust.m_SexPref == SKILL_BEASTIALITY && chance(20))
+        else if ((girl.any_active_trait({traits::QUEEN, traits::PRINCESS})) && Cust.m_SexPref == SKILL_BEASTIALITY && shift.chance(20))
         {
             m_FuckMessage << "${name} refuses to sleep with a beast because one of Royal blood is above that.\n \n";
             brothel.m_Fame -= 5;
             acceptsGirl = false;
         }
-        else if (girl.is_pregnant() && Cust.m_SexPref == SKILL_BEASTIALITY && chance(35))
+        else if (girl.is_pregnant() && Cust.m_SexPref == SKILL_BEASTIALITY && shift.chance(35))
         {
             m_FuckMessage << "${name} refuses because she shouldn't fuck beasts in her condition.\n \n";
             brothel.m_Fame -= 5;
             acceptsGirl = false;
         }
-        else if (girl.health() < 33 && chance(50))
+        else if (girl.health() < 33 && shift.chance(50))
         {
             m_FuckMessage << "The customer refuses because ${name} looks sick and he doesn't want to catch anything.\n \n";
             brothel.m_Fame -= 10;
             acceptsGirl = false;
         }
-        else if (girl.has_active_trait(traits::YOUR_DAUGHTER) && chance(20))
+        else if (girl.has_active_trait(traits::YOUR_DAUGHTER) && shift.chance(20))
         {
             m_FuckMessage << "The customer chooses her because " << (Cust.m_IsWoman ? "she" : "he") << " wants to fuck your daughter.\n \n";
             knowdaughter = true;
             acceptsGirl = true;
         }
-        else if (girl.has_active_trait(traits::YOUR_WIFE) && chance(20))
+        else if (girl.has_active_trait(traits::YOUR_WIFE) && shift.chance(20))
         {
             m_FuckMessage << "The customer chooses her because " << (Cust.m_IsWoman ? "she" : "he") << " wants to fuck your wife.\n \n";
             knowwife = true;
             acceptsGirl = true;
         }
-        else if (girl.has_active_trait(traits::PORN_STAR) && chance(15))
+        else if (girl.has_active_trait(traits::PORN_STAR) && shift.chance(15))
         {
             m_FuckMessage << "The customer chooses her because " << (Cust.m_IsWoman ? "she" : "he") << " has seen her in porn.\n \n";
             acceptsGirl = true;
         }
-        else if ((girl.any_active_trait({traits::QUEEN, traits::PRINCESS})) && chance(10))
+        else if ((girl.any_active_trait({traits::QUEEN, traits::PRINCESS})) && shift.chance(10))
         {
             m_FuckMessage << "The customer chooses her because she is former royalty.\n \n";
             acceptsGirl = true;
         }
-        else if (girl.has_active_trait(traits::TEACHER) && chance(10))
+        else if (girl.has_active_trait(traits::TEACHER) && shift.chance(10))
         {
             m_FuckMessage << "The customer chooses her because " << (Cust.m_IsWoman ? "she" : "he") << " used to daydream about this back when "
                         << (Cust.m_IsWoman ? "she" : "he") << " was in ${name}'s class.\n \n";
             acceptsGirl = true;
         }
-        else if (girl.has_active_trait(traits::OLD) && chance(20))
+        else if (girl.has_active_trait(traits::OLD) && shift.chance(20))
         {
             m_FuckMessage << "The customer chooses her because " << (Cust.m_IsWoman ? "she" : "he") << " likes mature women.\n \n";
             acceptsGirl = true;
         }
-        else if (girl.has_active_trait(traits::NATURAL_PHEROMONES) && chance(20))
+        else if (girl.has_active_trait(traits::NATURAL_PHEROMONES) && shift.chance(20))
         {
             m_FuckMessage << "The customer chooses her for reasons " << (Cust.m_IsWoman ? "she" : "he") << " can't explain. There's something about her.\n \n";
             acceptsGirl = true;
         }
-        else if (chance(10) && girl.has_active_trait(traits::LOLITA))
+        else if (shift.chance(10) && girl.has_active_trait(traits::LOLITA))
         {
             m_FuckMessage << "The customer chooses her because "
                         << (Cust.m_IsWoman ? "she wants a young woman, uncorrupted by men.\n" : "he's hoping for a virgin, and she looks like one.\n") << "\n";
             acceptsGirl = true;
         }
-        else if (chance(20) && girl.has_active_trait(traits::SOCIAL_DRINKER))
+        else if (shift.chance(20) && girl.has_active_trait(traits::SOCIAL_DRINKER))
         {
             m_FuckMessage << "The customer chooses her because she's fun, flirty and half-cut.\n \n";
             acceptsGirl = true;
         }
-        else if (chance(40) && girl.has_active_trait(traits::EXHIBITIONIST) && girl.beauty() >= 50)
+        else if (shift.chance(40) && girl.has_active_trait(traits::EXHIBITIONIST) && girl.beauty() >= 50)
         {
             m_FuckMessage << "The customer chooses her because she walks into the waiting room naked and the customer likes what "
                         << (Cust.m_IsWoman ? "she sees.\n" : "he sees.\n") << "\n";
             acceptsGirl = true;
         }
-        else if (chance(5) && (is_sex_crazy(girl) || girl.dignity() < 0))
+        else if (shift.chance(5) && (is_sex_crazy(girl) || girl.dignity() < 0))
         {
             m_FuckMessage << "${name} gets bored of waiting for someone to step up and starts " << (Cust.m_IsWoman ? "fingering this lady" : "giving this guy a handjob")
                         << " right there in the waiting room. The customer quickly chooses her.\n \n";
@@ -481,17 +477,17 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     // Horizontal boogy
     std::string fm;
     /// TODO this has the possibility of the girl running away. In that case, the job should stop.
-    cGirls::GirlFucks(&girl, is_night, &Cust, group, fm, SexType, m_NumSleptWith == 0);
+    cGirls::GirlFucks(&girl, shift.is_night_shift(), &Cust, group, fm, SexType, num_slept_with == 0);
     m_FuckMessage << fm;
 
-    /* */if (SexType == SKILL_ORALSEX)        m_OralCount += 5;
-    else if (SexType == SKILL_GROUP)          m_OralCount += 5;
-    else if (SexType == SKILL_BEASTIALITY)    m_OralCount += uniform(0, 2);
-    else if (SexType == SKILL_LESBIAN)        m_OralCount += uniform(0, 1);
-    else if (SexType == SKILL_TITTYSEX)       m_OralCount += uniform(0, 1);
-    else if (SexType == SKILL_HANDJOB)        m_OralCount += uniform(0, 1);
+    /* */if (SexType == SKILL_ORALSEX)        oral_score += 5;
+    else if (SexType == SKILL_GROUP)          oral_score += 5;
+    else if (SexType == SKILL_BEASTIALITY)    oral_score += shift.uniform(0, 2);
+    else if (SexType == SKILL_LESBIAN)        oral_score += shift.uniform(0, 1);
+    else if (SexType == SKILL_TITTYSEX)       oral_score += shift.uniform(0, 1);
+    else if (SexType == SKILL_HANDJOB)        oral_score += shift.uniform(0, 1);
 
-    m_NumSleptWith++;
+    num_slept_with++;
     if (!bStreetWork) brothel.m_Filthiness++;
 
     // update how happy the customers are on average
@@ -503,12 +499,12 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     sGang* guardgang = g_Game->gang_manager().GetRandomGangOnMission(MISS_GUARDING);
     if (!bCustCanPay)
     {
-        if (chance(Cust.confidence() - 25))    // Runner
+        if (shift.chance(Cust.confidence() - 25))    // Runner
         {
             m_FuckMessage << " The customer couldn't pay and ";
             if (guardgang)
             {
-                if (uniform(0, Cust.agility()) > guardgang->m_Num + uniform(0, guardgang->agility()))
+                if (shift.uniform(0, Cust.agility()) > guardgang->m_Num + shift.uniform(0, guardgang->agility()))
                 {
                     m_FuckMessage << "managed to elude your guards.";
                     pay = 0;
@@ -536,7 +532,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
         {
             // offers to pay the girl what he has
             m_FuckMessage << " The customer couldn't pay the full amount";
-            if (chance(girl.intelligence()))    // she turns him over to the goons
+            if (shift.chance(girl.intelligence()))    // she turns him over to the goons
             {
                 m_FuckMessage << " so your girl turned them over to your men";
                 if (Cust.m_IsWoman)    femalecustcaught = true;
@@ -548,12 +544,12 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
         }
     }
         // WD:    Unhappy Customer tries not to pay and does a runner
-    else if (chance((40 - Cust.happiness()) / 2) && chance(Cust.confidence() - 25))
+    else if (shift.chance((40 - Cust.happiness()) / 2) && shift.chance(Cust.confidence() - 25))
     {
         m_FuckMessage << " The customer refused to pay and ";
         if (guardgang)
         {
-            if (uniform(0, Cust.agility()) > guardgang->m_Num + uniform(0, guardgang->agility()))
+            if (shift.uniform(0, Cust.agility()) > guardgang->m_Num + shift.uniform(0, guardgang->agility()))
             {
                 m_FuckMessage << "managed to elude your guards.";
                 pay = 0;
@@ -561,7 +557,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             else if (Cust.m_Money > pay + 10)
             {
                 Cust.m_Money -= pay; // WD: ??? not needed Cust record is not saved when this fn ends!  Leave for now just in case ???
-                int extra = 10 + uniform(0, Cust.m_Money);
+                int extra = 10 + shift.uniform(0, Cust.m_Money);
                 m_FuckMessage << "tried to run off. Your men caught him before he got out the door and forced him to pay the full amount plus " << extra << " extra for not throwing them in the dungeon.";
                 pay += extra;
             }
@@ -584,12 +580,12 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             pay = 0;
         }
     }
-    else if ((knowwife || knowdaughter) && chance(Cust.confidence() / 5))
+    else if ((knowwife || knowdaughter) && shift.chance(Cust.confidence() / 5))
     {
         m_FuckMessage << " The customer wanted to screw you and your " << (knowwife ? "wife" : "daughter") << " so they made a break for it";
         if (guardgang)
         {
-            if (uniform(0, Cust.agility()) > guardgang->m_Num + uniform(0, guardgang->agility()))
+            if (shift.uniform(0, Cust.agility()) > guardgang->m_Num + shift.uniform(0, guardgang->agility()))
             {
                 m_FuckMessage << " and managed to elude your guards.";
                 pay = 0;
@@ -597,7 +593,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             else if (Cust.m_Money > pay + 10)
             {
                 Cust.m_Money -= pay; // WD: ??? not needed Cust record is not saved when this fn ends!  Leave for now just in case ???
-                int extra = 10 + uniform(0, Cust.m_Money);
+                int extra = 10 + shift.uniform(0, Cust.m_Money);
                 m_FuckMessage << " tried to run off. Your men caught him before he got out the door and forced him to pay the full amount plus " << extra << " extra for not throwing them in the dungeon.";
                 pay += extra;
             }
@@ -623,10 +619,10 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     else  // Customer has enough money
     {
         Cust.m_Money -= (unsigned)pay; // WD: ??? not needed Cust record is not saved when this fn ends!  Leave for now just in case ??? // Yes this is necessary for TIP calculation.
-        if (girl.has_active_trait(traits::YOUR_DAUGHTER) && knowdaughter && Cust.m_Money >= 20 && chance(50))
+        if (girl.has_active_trait(traits::YOUR_DAUGHTER) && knowdaughter && Cust.m_Money >= 20 && shift.chance(50))
         {
             m_FuckMessage << "The customer tosses your daughter a bag of gold";
-            switch (uniform(0, 2))
+            switch (shift.uniform(0, 2))
             {
                 case 0:        m_FuckMessage << " saying no dad should do this to their daughter.";                    break;
                 case 1:        m_FuckMessage << ". They seem to enjoy the thought of fucking the boss's daughter.";    break;
@@ -635,10 +631,10 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             Cust.m_Money -= 20;
             tip += 20;
         }
-        else if (girl.has_active_trait(traits::YOUR_WIFE) && knowwife && Cust.m_Money >= 20 && chance(50))
+        else if (girl.has_active_trait(traits::YOUR_WIFE) && knowwife && Cust.m_Money >= 20 && shift.chance(50))
         {
             m_FuckMessage << "The customer tosses your wife a bag of gold";
-            switch (uniform(0, 2))
+            switch (shift.uniform(0, 2))
             {
                 case 0:        m_FuckMessage << " and tells her she can do better.";        break;
                 case 1:        m_FuckMessage << " and asks who is better in the sack.";    break;
@@ -647,9 +643,9 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             Cust.m_Money -= 20;
             tip += 20;
         }
-        else if (girl.has_active_trait(traits::YOUR_DAUGHTER) && Cust.m_Money >= 20 && chance(15))
+        else if (girl.has_active_trait(traits::YOUR_DAUGHTER) && Cust.m_Money >= 20 && shift.chance(15))
         {
-            if (chance(50))
+            if (shift.chance(50))
             {
                 m_FuckMessage << "Learning that she was your daughter the customer tosses some extra gold down saying no dad should do this to their daughter.";
             }
@@ -660,9 +656,9 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             Cust.m_Money -= 20;
             tip += 20;
         }
-        else if (girl.has_active_trait(traits::YOUR_WIFE) && Cust.m_Money >= 20 && chance(15))
+        else if (girl.has_active_trait(traits::YOUR_WIFE) && Cust.m_Money >= 20 && shift.chance(15))
         {
-            if (chance(50))
+            if (shift.chance(50))
             {
                 m_FuckMessage << "Learning that she was your wife the customer tosses some extra gold down saying no husband should do this to their wife.";
             }
@@ -686,7 +682,7 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
             else Cust.m_Money = 0;
 
             m_FuckMessage << "\nShe received a tip of " << tip << " gold.";
-            m_Tips += tip;
+            shift.data().Tips += tip;
 
             // If the customer is a government official
             if (Cust.m_Official == 1)
@@ -708,8 +704,8 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     }
     else
     {
-        // chance of customer beating or attempting to beat girl
-        if (cJobManager::work_related_violence(girl, is_night, false)) {
+        // shift.chance of customer beating or attempting to beat girl
+        if (cJobManager::work_related_violence(girl, shift.is_night_shift(), false)) {
             pay = 0;        // WD TRACE WorkRelatedViloence {girl.m_Name} earns nothing
             // if gravely injured, stop working
             if(girl.health() < 10) {
@@ -722,9 +718,9 @@ void cWhoreJob::HandleCustomer(sGirl& girl, cBuilding& brothel, bool is_night) {
     auto imageType = skill_to_image(SexType);
 
     // WD:    Save gold earned
-    m_Earnings += pay;
-    m_Tips += tip;
-    girl.AddMessage(m_FuckMessage.str(), imageType, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
+    shift.data().Earnings += pay;
+    shift.data().Tips += tip;
+    girl.AddMessage(m_FuckMessage.str(), imageType, shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 }
 
 double cWhoreJob::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -737,11 +733,6 @@ double cWhoreJob::GetPerformance(const sGirl& girl, bool estimate) const {
     {
     }
     return jobperformance;
-}
-
-deprecated::IGenericJob::eCheckWorkResult cWhoreJob::CheckWork(sGirl& girl, bool is_night) {
-    // whores accept or reject individual customers atm, I think?
-    return eCheckWorkResult::ACCEPTS;
 }
 
 void cWhoreJob::load_from_xml_internal(const tinyxml2::XMLElement& source, const std::string& file_name) {
