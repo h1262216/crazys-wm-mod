@@ -7,7 +7,7 @@ set(JOBS_SRC
         src/Cleaning.cpp
         src/cCrafting.cpp
         src/JobData.cpp
-        src/Matron.cpp
+        src/cMatronJob.cpp
         src/cSimpleJob.cpp
         src/TextInterface.cpp
         src/WorkFreetime.cpp

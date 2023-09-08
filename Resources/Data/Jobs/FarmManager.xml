@@ -1,0 +1,42 @@
+<!DOCTYPE Job SYSTEM "job.dtd">
+<Job ShortName="FMgr">
+    <Description>
+        She will watch over the farm and girls working there.
+    </Description>
+
+    <Config BaseWages="100" Shift="full">
+        <Enjoyment PrimaryAction="Social" SecondaryAction="Medical"/>
+        <Filter>FarmStaff</Filter>
+    </Config>
+
+    <Performance>
+    </Performance>
+
+    <Gains XP="10" Skill="3">
+        <Skill Name="Medicine" Weight="1" Max="25"/>
+        <Stat Name="Confidence" Weight="1" Max="50"/>
+        <Stat Name="Charisma" Weight="1" Max="50"/>
+        <Skill Name="Service" Weight="2" Max="66"/>
+
+        <GainTrait Trait="Charismatic">
+            <TraitChangeAmount Value="40" Chance="50">
+                <TraitChangeCondition What="Confidence" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Performance" Lower="20" Upper="50"/>
+                <TraitChangeCondition What="Charisma" Lower="10" Upper="40"/>
+            </TraitChangeAmount>
+            <Text>She has worked as a Farm Manager long enough that she has learned to be more Charismatic.</Text>
+        </GainTrait>
+
+        <GainTrait Trait="Psychic">
+            <TraitChangeAmount Value="60" Chance="15">
+                <TraitChangeCondition What="JobPerformance" Lower="180" Upper="220"/>
+            </TraitChangeAmount>
+            <Text>She has learned to handle the girls so well that you'd almost think she was Psychic.</Text>
+        </GainTrait>
+    </Gains>
+
+    <Requirements FreeOnly="1" />
+
+    <Messages>
+    </Messages>
+</Job>

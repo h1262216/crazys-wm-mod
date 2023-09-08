@@ -138,7 +138,6 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     JobFilters[JOBFILTER_ARENA] = sJobFilter{"ArenaFight", "Fighters", "These are jobs for the fighters in the arena."};
     //- Arena Staff
     JobFilters[JOBFILTER_ARENASTAFF] = sJobFilter{"ArenaStaff", "Staff", "These are jobs that help run an arena."};
-    JobFilters[JOBFILTER_ARENASTAFF].Contents.push_back(JOB_DOCTORE);
     JobFilters[JOBFILTER_ARENASTAFF].Contents.push_back(JOB_RESTING);
     //- Arena Production
     JobFilters[JOBFILTER_ARENA_PRODUCTION] = sJobFilter{"ArenaProducers", "Production", "These are jobs that produce things."};
