@@ -100,7 +100,7 @@ void cScreenInfoTraits::load_effects(int trait_id) {
 
     ClearListBox(m_EffectsList_id);
 
-    for(auto stat : StatsRange) {
+    for(auto stat: StatsRange) {
         int value = collection->stat_effects()[stat];
         if(value != 0) {
             std::vector<FormattedCellData> data = {mk_text("Stat"), mk_text(get_stat_name(stat)), mk_num(value)};
@@ -108,7 +108,7 @@ void cScreenInfoTraits::load_effects(int trait_id) {
         }
     }
 
-    for(auto skill : SkillsRange) {
+    for(auto skill: SkillsRange) {
         int value = collection->skill_effects()[skill];
         if(value != 0) {
             std::vector<FormattedCellData> data = {mk_text("Skill"), mk_text(get_skill_name(skill)), mk_num(value)};
@@ -121,16 +121,20 @@ void cScreenInfoTraits::load_effects(int trait_id) {
         }
     }
 
+    for(auto activity: ActivityRange) {
+        int value = collection->enjoy_effects()[(int)activity];
+        if(value != 0) {
+            std::vector<FormattedCellData> data = {mk_text("Enjoyment"), mk_text(get_activity_name(activity)), mk_num(value)};
+            AddToListBox(m_EffectsList_id, -1, std::move(data));
+        }
+    }
+
     std::vector<std::pair<std::string, int>> modifiers(collection->get_all_modifiers().begin(), collection->get_all_modifiers().end());
     std::sort(begin(modifiers), end(modifiers));
     for(const auto& mod: modifiers) {
         if(starts_with(mod.first, "fetish:")) {
             Fetishs fetish = get_fetish_id(mod.first.substr(7));
             std::vector<FormattedCellData> data = {mk_text("Fetish"), mk_text(get_fetish_name(fetish)), mk_num(mod.second)};
-            AddToListBox(m_EffectsList_id, -1, std::move(data));
-        } else if(starts_with(mod.first, "enjoy:")) {
-            EActivity action = get_activity_id(mod.first.substr(6));
-            std::vector<FormattedCellData> data = {mk_text("Enjoyment"), mk_text(get_activity_name(action)), mk_num(mod.second)};
             AddToListBox(m_EffectsList_id, -1, std::move(data));
         } else if(starts_with(mod.first, "sex:")) {
             std::vector<FormattedCellData> data = {mk_text("Sex"), mk_text(mod.first.substr(4)), mk_num(mod.second)};
