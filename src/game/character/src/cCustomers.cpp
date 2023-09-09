@@ -222,7 +222,7 @@ void cCustomers::GenerateCustomers(cBuilding& brothel, bool Day0Night1)
  *    adding a .5 bonus to night time trade as well - should see more
  *    punters after dark it seems to me
  */
-    int num = int(brothel.num_girls() * (Day0Night1 ? 2.0 : 1.5));
+    int num = int(brothel.num_girls() * (Day0Night1 ? 2.0 : 1.5) + 1);
     ss << "The number of girls in this brothel attracted " << num << " initial " << daynighttime << " customers.\n \n";
 /*
  *    the customers attracted by the places fame (for this shift)

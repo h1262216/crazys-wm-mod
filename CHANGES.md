@@ -1,11 +1,24 @@
 # Version 7.2.2alpha1
 Started reworking the UI
 
-* Added a new in-game main screen (player's office) as a central location  
+## Gameplay
+* New Enjoyment system.
+* Tweaked slave buy/sell prices: 
+  - Skills developed > 75 give extra boost to worth
+  - Each level increases price by 100 gold
+  - Stronger effect of obedience on price: When buying, very obedient girls are much more expensive, when selling, very disobedient girls are worth quite a lot less
+
+## UI Updates:
+* Added a new in-game main screen (player's office) as a central location
 * Added ability to hide dialog window by pressing `h`.
-* re-enable "Preg" image variations without `images.xml`
+* Show jobs that are unavailable for a girl in different color
+* Show girls that the player cannot afford in market in different color
 * Added a cheating menu in the interactions if cheats are enabled.
   For now, it allows to add arbitrary traits to the girl. Very helpful for testing.
+
+
+## Bugfixes
+* re-enable "Preg" image variations without `images.xml`
 
 # Version 7.2.1beta8
 Small bug fixes and improvements.

@@ -63,12 +63,10 @@ cBarMaidJob::cBarMaidJob() : cSimpleJob(JOB_BARMAID, "BarMaid.xml") {
 
 void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     //    Job setup                //
-    EActivity actiontype = EActivity::SOCIAL;
     int roll_jp = shift.d100(), roll_e = shift.d100(), roll_c = shift.d100();
     auto& brothel = shift.building();
     auto& ss = shift.data().EventMessage;
 
-    shift.data().Earnings = 15 + (int)m_PerformanceToEarnings(float(shift.performance()));
     int fame = 0;                // girl
     int Bhappy = 0, Bfame = 0, Bfilth = 0;    // brothel
 
@@ -84,21 +82,14 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     if (numhercust < 0) numhercust = 1;
     if (numhercust > numallcust) numhercust = numallcust;
 
-    double drinkssold = 0;                                            // how many drinks she can sell in a shift
-    for (int i = 0; i < numhercust; i++)
-    {
-        drinkssold += 1 + shift.uniform(0, shift.data().Performance / 30);    // 200jp can serve up to 7 drinks per customer
-    }
-    double drinkswasted = 0;                                        // for when she messes up an order
-
     if (shift.chance(20))
     {
-        if (girl.enjoyment(actiontype) >= 75)
+        if (girl.enjoyment(EActivity::SOCIAL) >= 75)
         {
             shift.add_literal("Excited to get to work ${name} brings her 'A' game to${shift}.");
             shift.data().Performance += 40;
         }
-        else if (girl.enjoyment(actiontype) <= 25)
+        else if (girl.enjoyment(EActivity::SOCIAL) <= 25)
         {
             shift.add_literal("The thought of working to${shift} made ${name} feel uninspired so she didn't really try.");
             shift.data().Performance -= 40;
@@ -126,6 +117,10 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
         shift.add_literal("\n \n");
     }
 
+
+    double drinkssold = 0;                                            // how many drinks she can sell in a shift
+    double drinkswasted = 0;                                        // for when she messes up an order
+
     //a little pre-game randomness
     if (girl.has_active_trait(traits::ALCOHOLIC))
     {
@@ -136,6 +131,11 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
             drinkswasted += shift.uniform(10, 20);
         }
         shift.add_literal("\n \n");
+    }
+
+    for (int i = 0; i < numhercust; i++)
+    {
+        drinkssold += 1 + shift.uniform(0, shift.performance() / 30);    // 200jp can serve up to 7 drinks per customer
     }
 
     add_performance_text(shift);
@@ -231,33 +231,23 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     int d1 = ds + dw;                                                    // all drinks needed
     int d2 = g_Game->storage().drinks() >= d1 ? d1 : g_Game->storage().drinks();        // Drinks taken from stock
     int d3 = g_Game->storage().drinks() >= d1 ? 0 : d1 - g_Game->storage().drinks();    // Drinks needed to be bought
-    int profit = (ds * 3) - (d3 * 1);
+    int profit = (ds * 3) - d3;
     g_Game->storage().add_to_drinks(-d2);
-    if (profit < 0) profit = profit;
-    else/*       */ profit = profit;
+    shift.data().Cost = d3;
+    shift.data().Earnings = ds * 3;
+
     if ((int)d1 > 0)
     {
         shift.add_literal("\n${name}");
-        /* */if ((int)drinkssold <= 0)    shift.add_literal(" didn't sell any drinks.");
-        else if ((int)drinkssold == 1)    shift.add_literal(" only sold one drink.");
-        else/*                      */    ss << " sold " << ds << " drinks.";
-        /* */if ((int)dw > 0)    ss << "\n" << dw << " were not paid for or were spilled.";
-        /* */if (d2 > 0)/*           */ ss << "\n" << d2 << " drinks were taken from the bar's stock.";
-        /* */if (d3 > 0)/*           */ ss << "\n" << d3 << " drinks had to be restocked durring the week at a cost of 1 gold each.";
-        ss << "\n \n${name}";
-        /* */if (profit > 0)/*       */    ss << " made you a profit of " << profit << " gold.";
-        else if (profit < 0)/*       */    ss << " cost you " << profit << " gold.";
-        else if (d1 > 0)/*           */ ss << " broke even for the week.";
-        else/*                       */ ss << " made no money.";
+        if (ds == 0)        shift.add_literal(" didn't sell any drinks.");
+        else if (ds == 1)   shift.add_literal(" only sold one drink.");
+        else                ss << " sold " << ds << " drinks.";
+        if ((int)dw > 0)    ss << "\n" << dw << " were not paid for or were spilled.";
+        if (d2 > 0)         ss << "\n" << d2 << " drinks were taken from the bar's stock.";
+        if (d3 > 0)         ss << "\n" << d3 << " drinks had to be restocked during the week at a cost of 1 gold each.";
     }
 
-    if (girl.is_unpaid())
-    {
-        /* */if (shift.data().Earnings > 0)    ss << "\n${name} turned in an extra " << shift.data().Earnings << " gold from other sources.";
-        else if (shift.data().Earnings < 0)    ss << "\nShe cost you " << shift.data().Earnings << " gold from other sources.";
-        shift.data().Earnings += profit;
-    }
-    else
+    if (!girl.is_unpaid())
     {
         if (profit >= 10)    // base pay is 10 unless she makes less
         {
@@ -276,7 +266,6 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
         if (dw > 0)
         {
             girl.happiness(-(dw / 5));
-
             int c = std::min(dw, shift.data().Wages);
             shift.add_literal("\nYou take 1 gold out of her pay for each drink she wasted.");
             shift.data().Wages -= c;

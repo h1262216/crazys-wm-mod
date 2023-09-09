@@ -179,7 +179,12 @@ void cScreenSlaveMarket::init(bool back)
         {
             col = COLOR_ATTENTION;
         }
-        AddToListBox(m_SlaveList_id, i, girl->FullName(), col);
+        int cost = g_Game->tariff().slave_buy_price(*girl);
+        if(!g_Game->gold().afford(cost)) {
+            col = COLOR_NEUTRAL2;
+        }
+        std::vector<FormattedCellData> data = {mk_text(girl->FullName()), mk_num(cost)};
+        AddToListBox(m_SlaveList_id, i, data, col);
     }
 
     m_SelectedGirl = 0;

@@ -42,22 +42,45 @@ double cTariff::slave_base_price(sGirl& girl) const
     cost = girl.askprice() * 15;                        // base price is the girl's ask price stat
     for (int i = 0; i < NUM_SKILLS; i++)                // add to that the sum of her skills
     {
-        cost += (unsigned int)girl.get_skill(i);
+        int skill = girl.get_skill(i);
+        cost += i;
+        if(skill > 75) {
+            cost += 2 * (skill - 75);
+        }
     }
+
+    // stats not included in ask_price:
+    cost += girl.strength() + girl.agility();
+    cost += 100 * girl.level();
+
     if (is_virgin(girl))    cost *= 1.5;    // virgins fetch a premium
     return cost;
 }
 
 int cTariff::slave_buy_price(sGirl& girl) const
 {
-    return int(slave_base_price(girl) * g_Game->settings().get_percent(settings::MONEY_BUY_SLAVE).as_ratio());
+    int base_price = slave_base_price(girl);
+    // increase price for buying obedient slaves
+    int obd_factor = 50 + girl.obedience();
+    if(girl.obedience() > 50) {
+        obd_factor += girl.obedience() - 50;
+    }
+    base_price = (base_price * obd_factor) / 100;
+
+    return int(base_price * g_Game->settings().get_percent(settings::MONEY_BUY_SLAVE).as_ratio());
 }
 
 int cTariff::slave_sell_price(sGirl& girl) const
 {
+    int base_price = slave_base_price(girl);
+    // decrease price for selling disobedient slaves
+    int obd_factor = 50 + girl.obedience();
+    if(girl.obedience() < 25) {
+        obd_factor -= 25 - girl.obedience();
+    }
+    base_price = (base_price * obd_factor) / 100;
 
-    double cost = slave_base_price(girl);
-    return int(cost * g_Game->settings().get_percent(settings::MONEY_SELL_SLAVE).as_ratio());    // multiply by the config factor for selling slaves
+    return int(base_price * g_Game->settings().get_percent(settings::MONEY_SELL_SLAVE).as_ratio());    // multiply by the config factor for selling slaves
 }
 
 int cTariff::empty_room_cost(cBuilding& brothel)
