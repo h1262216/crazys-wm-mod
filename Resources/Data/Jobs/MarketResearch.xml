@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Profile"  BaseWages="50">
         <Enjoyment PrimaryAction="Social" SecondaryAction="Mental" BaseEnjoyment="0" />
+        <Obedience Difficulty="15" Fear="5" Dignity="90" />
     </Config>
 
     <Performance>

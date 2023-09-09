@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Herd" BaseWages="40" FightingJob="1">
-        <Enjoyment PrimaryAction="Farming" SecondaryAction="Fighting"/>
+        <Enjoyment BaseEnjoyment="-2" PrimaryAction="Farming" SecondaryAction="Fighting"/>
+        <Obedience Difficulty="30" Fear="33" Dignity="60"/>
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

@@ -7,6 +7,7 @@
     <Config DefaultImage="Craft" BaseWages="40">
         <Filter>ArenaProducers</Filter>
         <Enjoyment PrimaryAction="Crafting" SecondaryAction="Physical"/>
+        <Obedience Difficulty="20" Fear="5" Dignity="80" />
     </Config>
 
     <Performance>

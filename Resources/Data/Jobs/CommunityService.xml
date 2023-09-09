@@ -5,7 +5,8 @@
     </Description>
 
     <Config BaseWages="80">
-        <Enjoyment PrimaryAction="Social" SecondaryAction="Service" />
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Social" SecondaryAction="Service" />
+        <Obedience Difficulty="20" Fear="10" Dignity="75" />
         <Filter>CommunityCentre</Filter>
     </Config>
 

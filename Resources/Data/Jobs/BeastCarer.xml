@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Herd" BaseWages="20">
         <Enjoyment PrimaryAction="Farming"/>
+        <Obedience Difficulty="25" Dignity="70" />
     </Config>
 
     <Performance>

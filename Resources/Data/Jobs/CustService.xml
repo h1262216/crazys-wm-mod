@@ -6,6 +6,7 @@
 
     <Config BaseWages="50">
         <Enjoyment PrimaryAction="Social" SecondaryAction="Service"/>
+        <Obedience Difficulty="25" Fear="5" Dignity="80" />
     </Config>
 
     <Performance>

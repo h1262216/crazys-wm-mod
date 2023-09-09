@@ -3,6 +3,12 @@
     <Description>
         She will clean the clinic.
     </Description>
+
+    <Config DefaultImage="Maid">
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Service"/>
+        <Obedience Difficulty="20" Fear="0" Dignity="80" />
+    </Config>
+
     <Performance Modifier="work.cleaning">
         <Factor Skill="Service" Weight="3"/>
         <Factor Stat="Morality" Weight="1"/>

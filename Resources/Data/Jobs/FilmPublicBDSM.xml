@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Group_BDSM" MinimumHealth="40" RefuseIfPregnant="1" CanBeForced="1">
-        <Enjoyment BaseEnjoyment="-20" PrimaryAction="Fucking" SecondaryAction="Performing" />
-        <Obedience Difficulty="45" Dignity="60" Fear="50" />
+        <Enjoyment BaseEnjoyment="-25" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="55" Dignity="20" Fear="50" />
         <Pleasure Amount="10" SkillMin="66" BaseValue="50" Skill="BDSM" />
     </Config>
 

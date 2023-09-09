@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Card">
         <Enjoyment PrimaryAction="Social" />
+        <Obedience Difficulty="20" Fear="5" Dignity="85" />
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

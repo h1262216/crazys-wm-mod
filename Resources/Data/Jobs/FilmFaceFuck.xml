@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="DeepThroat" MinimumHealth="25" CanBeForced="1">
-        <Enjoyment BaseEnjoyment="10" PrimaryAction="Fucking" SecondaryAction="Performing" />
-        <Obedience Difficulty="35" />
+        <Enjoyment BaseEnjoyment="-10" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="45" Dignity="40" Fear="10" />
         <Pleasure Amount="15" SkillMin="50" BaseValue="30" Skill="OralSex" />
     </Config>
 

@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Director" BaseWages="75">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Crafting" SecondaryAction="Social" />
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Crafting" SecondaryAction="Social" />
+        <Obedience Difficulty="10" Fear="0" Dignity="95" />
         <Filter>StudioCrew</Filter>
     </Config>
 

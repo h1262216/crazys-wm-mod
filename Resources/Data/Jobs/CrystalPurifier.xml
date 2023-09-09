@@ -6,6 +6,7 @@
 
     <Config DefaultImage="CrystalPurifier" BaseWages="50">
         <Enjoyment BaseEnjoyment="0" PrimaryAction="Crafting" SecondaryAction="Mental" />
+        <Obedience Difficulty="15" Fear="0" Dignity="85" />
         <Filter>StudioCrew</Filter>
     </Config>
 

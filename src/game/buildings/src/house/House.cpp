@@ -75,7 +75,6 @@ void HousePet::DoWork(cGirlShift& shift) const {
     auto& ss = shift.data().EventMessage;
 
 #pragma region //    Job setup                //
-    EActivity actiontype = EActivity::SUBMISSION;
     int roll_a = shift.d100(), roll_b = shift.d100(), roll_c = shift.d100();
     int train = roll_a - girl.obedience() - girl.get_training(TRAINING_PUPPY);
 
@@ -345,7 +344,7 @@ void HousePet::DoWork(cGirlShift& shift) const {
 
     // Improve stats
     girl.exp(15);
-    girl.enjoyment(actiontype, enjoy);
+    girl.enjoyment(EActivity::SUBMISSION, enjoy);
     girl.upd_Training(TRAINING_PUPPY, training);
     girl.obedience(ob);
 }

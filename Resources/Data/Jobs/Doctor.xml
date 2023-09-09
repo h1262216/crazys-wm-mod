@@ -5,7 +5,8 @@
     </Description>
 
     <Config Shift="full" BaseWages="100" DefaultImage="Nurse">
-        <Enjoyment PrimaryAction="Medical" SecondaryAction="Mental" />
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Medical" SecondaryAction="Mental" />
+        <Obedience Difficulty="10" Fear="0" Dignity="95" />
     </Config>
 
     <Requirements FreeOnly="1" />

@@ -6,6 +6,8 @@
 
     <Config>
         <Filter>HouseTraining</Filter>
+        <Enjoyment BaseEnjoyment="5" />
+        <Obedience Difficulty="15" Fear="0" Dignity="80"/>
     </Config>
 
     <Performance>

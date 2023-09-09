@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Ecchi">
-        <Enjoyment PrimaryAction="Social" SecondaryAction="Service"/>
+        <Enjoyment BaseEnjoyment="-2" PrimaryAction="Social" SecondaryAction="Service"/>
+        <Obedience Difficulty="20" Dignity="75" />
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

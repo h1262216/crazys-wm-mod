@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Ecchi">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" SecondaryAction="Stripping" />
-        <Obedience Difficulty="10" Dignity="10" />
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Performing" SecondaryAction="Stripping" />
+        <Obedience Difficulty="20" Dignity="60" />
     </Config>
 
     <Performance>

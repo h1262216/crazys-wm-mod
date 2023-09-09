@@ -4,9 +4,9 @@
         She will star in a comedy movie.
     </Description>
 
-    <Config  DefaultImage="Profile">
-        <Enjoyment BaseEnjoyment="10" PrimaryAction="Performing" SecondaryAction="Social" />
-        <Obedience Difficulty="10" />
+    <Config DefaultImage="Profile">
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" SecondaryAction="Social" />
+        <Obedience Difficulty="20" Fear="0" Dignity="80" />
     </Config>
 
     <Performance>

@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Combat" BaseWages="40" FightingJob="1">
-        <Enjoyment PrimaryAction="Fighting"/>
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Fighting"/>
+        <Obedience Difficulty="35" Fear="50" Dignity="60"/>
     </Config>
 
     <Performance>

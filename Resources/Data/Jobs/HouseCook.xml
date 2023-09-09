@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Cook" BaseWages="20">
         <Enjoyment PrimaryAction="Cooking" SecondaryAction="Service" />
+        <Obedience Difficulty="15" Dignity="80" />
         <WageFunction>
             <Point Performance="245" Wages="20" />
             <Point Performance="185" Wages="15" />

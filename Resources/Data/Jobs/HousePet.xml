@@ -5,6 +5,8 @@
     </Description>
 
     <Config Shift="full">
+        <Enjoyment BaseEnjoyment="-15" PrimaryAction="Stripping" SecondaryAction="Submission"/>
+        <Obedience Difficulty="45" Dignity="40" Fear="20"/>
     </Config>
 
     <Performance>

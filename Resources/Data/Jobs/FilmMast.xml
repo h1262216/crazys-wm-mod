@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Masturbate">
-        <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" SecondaryAction="Fucking" />
-        <Obedience Difficulty="10" Dignity="15" />
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Performing" SecondaryAction="Fucking" />
+        <Obedience Difficulty="20" Dignity="55" />
         <!-- Not sure which skill to use here -->
         <Pleasure Amount="25" SkillMin="20" BaseValue="5" Skill="Lesbian" />
     </Config>

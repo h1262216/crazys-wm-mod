@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Cook">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" SecondaryAction="Cooking" />
-        <Obedience Difficulty="10" />
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" SecondaryAction="Cooking" />
+        <Obedience Difficulty="20" Fear="0" Dignity="90" />
     </Config>
 
     <Performance Modifier=".performance">

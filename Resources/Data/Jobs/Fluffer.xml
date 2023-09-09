@@ -5,9 +5,9 @@
     </Description>
 
     <Config DefaultImage="Blowjob" BaseWages="50">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Service" />
+        <Enjoyment BaseEnjoyment="-10" PrimaryAction="Fucking" SecondaryAction="Service" />
         <Filter>StudioCrew</Filter>
-        <Obedience Dignity="50" Difficulty="10" />
+        <Obedience Dignity="50" Difficulty="20" Fear="5" />
     </Config>
 
     <Performance>

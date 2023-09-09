@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Massage">
         <Enjoyment PrimaryAction="Service" SecondaryAction="Stripping" />
+        <Obedience Difficulty="25" Dignity="80" />
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

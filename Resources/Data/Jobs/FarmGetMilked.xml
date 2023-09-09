@@ -5,7 +5,8 @@
     </Description>
 
     <Config>
-        <Enjoyment PrimaryAction="Fucking"/>
+        <Enjoyment BaseEnjoyment="-10" PrimaryAction="Fucking"/>
+        <Obedience Difficulty="40" Fear="15" Dignity="33"/>
     </Config>
 
     <!-- GetMilked has a non-trivial performance calculation -->

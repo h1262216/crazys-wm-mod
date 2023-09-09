@@ -7,6 +7,7 @@
     <Config DefaultImage="Wait">
         <Filter>Bar</Filter>
         <Enjoyment PrimaryAction="Service" SecondaryAction="Social" />
+        <Obedience Difficulty="20" Dignity="80" />
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

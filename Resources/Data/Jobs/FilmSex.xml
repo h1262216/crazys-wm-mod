@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Sex" CanBeForced="1">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Performing" />
-        <Obedience Difficulty="25" Dignity="30" />
+        <Enjoyment BaseEnjoyment="-10" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="35" Dignity="40" Fear="5"/>
         <Pleasure Amount="20" SkillMin="25" BaseValue="15" Skill="NormalSex" />
     </Config>
 

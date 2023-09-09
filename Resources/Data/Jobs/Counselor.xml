@@ -6,6 +6,7 @@
 
     <Config BaseWages="25" Shift="full" DefaultImage="Teacher">
         <Enjoyment PrimaryAction="Social" SecondaryAction="Mental"/>
+        <Obedience Difficulty="20" Fear="10" Dignity="80" />
     </Config>
 
     <Performance>

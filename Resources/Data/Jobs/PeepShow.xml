@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Strip">
-        <Enjoyment PrimaryAction="Stripping"/>
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Stripping"/>
+        <Obedience Difficulty="30" Dignity="65" />
     </Config>
 
     <Performance>

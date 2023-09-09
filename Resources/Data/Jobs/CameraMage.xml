@@ -6,6 +6,7 @@
 
     <Config DefaultImage="CameraMage" BaseWages="50">
         <Enjoyment BaseEnjoyment="10" PrimaryAction="Crafting" SecondaryAction="Mental" />
+        <Obedience Difficulty="15" Dignity="85" />
         <Filter>StudioCrew</Filter>
     </Config>
 

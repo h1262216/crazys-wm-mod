@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Blowjob">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Performing" />
-        <Obedience Difficulty="20" Dignity="20" />
+        <Enjoyment BaseEnjoyment="-10" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="30" Dignity="50" Fear="5"/>
         <Pleasure Amount="15" SkillMin="25" BaseValue="10" Skill="OralSex" />
     </Config>
 

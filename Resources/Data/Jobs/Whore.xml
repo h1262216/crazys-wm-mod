@@ -6,7 +6,8 @@
     </Description>
 
     <Config>
-        <Enjoyment PrimaryAction="Fucking" />
+        <Enjoyment BaseEnjoyment="-15" PrimaryAction="Fucking" />
+        <Obedience Difficulty="35" Dignity="50" />
     </Config>
 
     <Gains XP="0" Skill="0">

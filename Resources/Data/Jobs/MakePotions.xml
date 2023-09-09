@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Craft" BaseWages="20">
         <Enjoyment PrimaryAction="Crafting" SecondaryAction="Cooking" />
+        <Obedience Difficulty="15" Fear="0" Dignity="80"/>
     </Config>
 
     <Performance>

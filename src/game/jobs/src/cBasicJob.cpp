@@ -173,7 +173,7 @@ void cBasicJob::load_from_xml_internal(const tinyxml2::XMLElement& job_data, con
         const auto* ob_el = config_el->FirstChildElement("Obedience");
         if(ob_el) {
             m_Obedience.Fear = ob_el->IntAttribute("Fear", -1);
-            m_Obedience.MaxDignity = ob_el->IntAttribute("Dignity", 1000);
+            m_Obedience.MaxDignity = ob_el->IntAttribute("Dignity", 100);
             m_Obedience.Obedience = ob_el->IntAttribute("Difficulty", 10);
         }
 
@@ -365,7 +365,7 @@ sDisobeyData cBasicJob::calculate_disobey_chance(cGirlShift& shift) const {
         }
     } else if(m_Info.PrimaryAction == EActivity::STRIPPING) {
         if(girl.any_active_trait({traits::SHY, traits::NERVOUS})) {
-            obd_fear += 5;
+            obd_fear += 5 + obd_fear / 3;
         }
     } else if(m_Info.PrimaryAction == EActivity::FIGHTING) {
         obd_fear += 10 - girl.combat() / 10 - (girl.strength() + girl.constitution()) / 20;
@@ -431,10 +431,10 @@ void cBasicJob::disobey_check(cGirlShift& shift) const {
     auto chances = calculate_disobey_chance(shift);
 
     if(get_setting_bool(settings::USER_SHOW_NUMBERS)) {
-        shift.data().DebugMessage << "Obedience:\n" << " Fear: " << chances.Fear << "%\n";
-        shift.data().DebugMessage << " Dignity: " << chances.Dignity << "%\n";
+        shift.data().DebugMessage << "Obedience:\n" << " Fear: " << chances.Fear << "% [" << m_Obedience.Fear << "]\n";
+        shift.data().DebugMessage << " Dignity: " << chances.Dignity << "% [" << girl.dignity() << " / " << m_Obedience.MaxDignity << "]\n";
         shift.data().DebugMessage << " Hate: " << chances.Hate << "%\n";
-        shift.data().DebugMessage << " Enjoy: " << chances.Rebel << "%\n";
+        shift.data().DebugMessage << " Rebel: " << chances.Rebel << "% [" << m_Obedience.Obedience << "]\n";
         shift.data().DebugMessage << " Lust: " << chances.Lust << "\n";
     }
 

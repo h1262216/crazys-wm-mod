@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Bunny">
-        <Enjoyment PrimaryAction="Performing" SecondaryAction="Stripping" />
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Performing" SecondaryAction="Stripping" />
+        <Obedience Difficulty="30" Dignity="65" />
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Hand">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Fucking" SecondaryAction="Performing" />
-        <Obedience Difficulty="20" Dignity="20" />
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Fucking" SecondaryAction="Performing" />
+        <Obedience Difficulty="30" Dignity="55" />
         <Pleasure Amount="10" SkillMin="20" BaseValue="5" Skill="Handjob" />
     </Config>
 

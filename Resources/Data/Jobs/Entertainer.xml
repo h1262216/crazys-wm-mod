@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Bunny">
         <Enjoyment PrimaryAction="Performing" SecondaryAction="Social" />
+        <Obedience Difficulty="25" Fear="5" Dignity="80" />
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

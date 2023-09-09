@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Nurse" Shift="full">
         <Enjoyment PrimaryAction="Medical" SecondaryAction="Social" />
+        <Obedience Difficulty="15" Fear="0" Dignity="80"/>
         <WageFunction>
             <Point Performance="245" Wages="20" />
             <Point Performance="185" Wages="15" />

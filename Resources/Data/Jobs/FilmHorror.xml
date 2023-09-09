@@ -6,7 +6,7 @@
 
     <Config DefaultImage="Death">
         <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" />
-        <Obedience Difficulty="10" Dignity="5" />
+        <Obedience Difficulty="20" Dignity="85" />
     </Config>
 
     <Performance>

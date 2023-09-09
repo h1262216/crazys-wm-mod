@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Cook" BaseWages="20">
         <Enjoyment PrimaryAction="Cooking"/>
+        <Obedience Difficulty="15" Dignity="85" />
     </Config>
 
     <Performance>

@@ -6,6 +6,7 @@
 
     <Config BaseWages="40" DefaultImage="Teacher">
         <Enjoyment PrimaryAction="Mental" SecondaryAction="Farming"/>
+        <Obedience Difficulty="20" Fear="0" Dignity="90"/>
     </Config>
 
     <Performance>

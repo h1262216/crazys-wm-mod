@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Escort">
-        <Enjoyment PrimaryAction="Social" SecondaryAction="Stripping" />
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Social" SecondaryAction="Stripping" />
+        <Obedience Difficulty="35" Fear="10" Dignity="70" />
     </Config>
 
     <Performance>

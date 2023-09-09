@@ -6,7 +6,7 @@
 
     <Config DefaultImage="Combat">
         <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" SecondaryAction="Fighting" />
-        <Obedience Difficulty="10" />
+        <Obedience Difficulty="20" Fear="5" Dignity="85"/>
     </Config>
 
     <Performance>

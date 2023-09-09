@@ -5,7 +5,8 @@
     </Description>
 
     <Config DefaultImage="Strip">
-        <Enjoyment PrimaryAction="Stripping"/>
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Stripping"/>
+        <Obedience Difficulty="35" Dignity="60" />
         <WageFunction>
             <Point Performance="245" Wages="155" />
             <Point Performance="185" Wages="95" />

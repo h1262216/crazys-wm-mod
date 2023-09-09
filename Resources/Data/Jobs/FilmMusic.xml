@@ -5,8 +5,8 @@
     </Description>
 
     <Config DefaultImage="Sing">
-        <Enjoyment BaseEnjoyment="0" PrimaryAction="Performing" />
-        <Obedience Difficulty="10" />
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Performing" />
+        <Obedience Difficulty="20" Dignity="90" />
     </Config>
 
     <Performance>

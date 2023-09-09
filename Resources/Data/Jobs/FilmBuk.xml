@@ -6,7 +6,7 @@
 
     <Config DefaultImage="Bukkake" CanBeForced="1">
         <Enjoyment BaseEnjoyment="-20" PrimaryAction="Fucking" SecondaryAction="Performing" />
-        <Obedience Difficulty="30" Dignity="35" />
+        <Obedience Difficulty="40" Dignity="40" Fear="10" />
         <Pleasure Amount="10" SkillMin="0" BaseValue="20" Skill="Group" />
     </Config>
 

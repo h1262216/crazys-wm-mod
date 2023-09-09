@@ -7,6 +7,7 @@
     <Config DefaultImage="Piano">
         <Filter>Bar</Filter>
         <Enjoyment PrimaryAction="Performing"/>
+        <Obedience Difficulty="20" Dignity="90" />
     </Config>
 
     <Performance>

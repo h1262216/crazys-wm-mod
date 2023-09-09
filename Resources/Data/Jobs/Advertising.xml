@@ -6,6 +6,7 @@
 
     <Config DefaultImage="Advertise">
         <Enjoyment PrimaryAction="Social"/>
+        <Obedience Difficulty="15" Fear="5" Dignity="90" />
     </Config>
 
     <Performance>

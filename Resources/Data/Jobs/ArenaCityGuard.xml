@@ -6,8 +6,8 @@
 
     <Config BaseWages="10" Shift="full" DefaultImage="Security" FightingJob="1">
         <Filter>ArenaFight</Filter>
-        <Enjoyment PrimaryAction="Physical" SecondaryAction="Fighting" />
-        <Obedience Difficulty="15" Fear="15" />
+        <Enjoyment BaseEnjoyment="5" PrimaryAction="Physical" SecondaryAction="Fighting" />
+        <Obedience Difficulty="20" Fear="15" Dignity="80" />
     </Config>
 
     <Performance>

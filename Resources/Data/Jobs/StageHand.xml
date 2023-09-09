@@ -6,6 +6,7 @@
 
     <Config BaseWages="25" DefaultImage="Stagehand">
         <Enjoyment BaseEnjoyment="0" PrimaryAction="Service" SecondaryAction="Crafting" />
+        <Obedience Difficulty="20" Fear="0" Dignity="80" />
         <Filter>StudioCrew</Filter>
     </Config>
 

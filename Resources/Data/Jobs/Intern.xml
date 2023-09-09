@@ -5,7 +5,8 @@
     </Description>
 
     <Config>
-        <Enjoyment PrimaryAction="Medical" SecondaryAction="Service"/>
+        <Enjoyment BaseEnjoyment="-5" PrimaryAction="Medical" SecondaryAction="Service"/>
+        <Obedience Difficulty="25" Dignity="70" />
     </Config>
 
     <Performance>

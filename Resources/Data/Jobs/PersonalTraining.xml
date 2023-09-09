@@ -5,6 +5,8 @@
     </Description>
 
     <Config Shift="full">
+        <Enjoyment BaseEnjoyment="-10" />
+        <Obedience Difficulty="30" Dignity="60" Fear="10" />
     </Config>
 
     <Messages>
