@@ -37,7 +37,6 @@ void cSimpleJob::DoWork(cGirlShift& shift) const
 }
 
 cSimpleJob::cSimpleJob(JOBS job, const char* xml) : cBasicJob(job, xml) {
-    // RegisterVariable("Image", m_ImageType);
 }
 
 void cSimpleJob::gain_fame(cGirlShift& shift, int fame) const {

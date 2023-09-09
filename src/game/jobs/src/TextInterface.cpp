@@ -35,18 +35,32 @@ int cJobTextInterface::LookupNumber(const std::string& name) const {
         return m_Shift->girl().get_stat(get_stat_id(name.substr(split_point+1)));
     } else if(type == "skill") {
         return m_Shift->girl().get_skill(get_skill_id(name.substr(split_point+1)));
-    } /*else if (type.size() == name.size()) {
-        // TODO
-        return *m_MappedIntValues.at(name);
-    } */else {
+    } else if (type.size() == name.size()) {
+        if(name == "Performance") {
+            return m_Shift->performance();
+        } else if(name == "Wages") {
+            return m_Shift->data().Wages;
+        } else if(name == "Tips") {
+            return m_Shift->data().Tips;
+        }
+        g_LogFile.error("job", "Unknown variable ", name);
+        BOOST_THROW_EXCEPTION(std::runtime_error("Unknown variable: " + name));
+    } else {
         g_LogFile.error("job", "Unknown value category ", type, " of variable ", name);
         BOOST_THROW_EXCEPTION(std::runtime_error("Unknown value category: " + type));
     }
 }
 
 void cJobTextInterface::SetVariable(const std::string& name, int value) const {
-    //int* looked_up = m_MappedIntValues.at(name);
-    //*looked_up = value;
+    if(name == "Performance") {
+        m_Shift->data().Performance = value;
+    } else if(name == "Wages") {
+        m_Shift->data().Wages = value;
+    } else if(name == "Tips") {
+        m_Shift->data().Tips = value;
+    } else {
+        BOOST_THROW_EXCEPTION(std::runtime_error("Unknown variable: " + name));
+    }
 }
 
 void cJobTextInterface::SetVariable(const std::string& name, std::string value) const {

@@ -95,12 +95,12 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     {
         if (girl.enjoyment(actiontype) >= 75)
         {
-            ss << "Excited to get to work ${name} brings her 'A' game to${shift}.";
+            shift.add_literal("Excited to get to work ${name} brings her 'A' game to${shift}.");
             shift.data().Performance += 40;
         }
         else if (girl.enjoyment(actiontype) <= 25)
         {
-            ss << "The thought of working to${shift} made ${name} feel uninspired so she didn't really try.";
+            shift.add_literal("The thought of working to${shift} made ${name} feel uninspired so she didn't really try.");
             shift.data().Performance -= 40;
         }
     }
@@ -111,19 +111,19 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     {
         int bg = shift.rng().bell(-1, 1);
         roll_e += bg;                    // enjoy adj
-        /* */if (bg < 0)    ss << "A few customers did not really like ${name}'s Bourgeoise Gown.";
-        else if (bg > 0)    ss << "A few customers complimented ${name}'s Bourgeoise Gown.";
-        else/*        */    ss << "${name}'s Bourgeoise Gown didn't really help or hurt her tips.";
-        ss << "\n \n";
+        if (bg < 0)         shift.add_literal("A few customers did not really like ${name}'s Bourgeoise Gown.");
+        else if (bg > 0)    shift.add_literal("A few customers complimented ${name}'s Bourgeoise Gown.");
+        else                shift.add_literal("${name}'s Bourgeoise Gown didn't really help or hurt her tips.");
+        shift.add_literal("\n \n");
     }
     else if (girl.has_item("Maid Uniform"))
     {
         int bg = shift.rng().bell(-1, 1);
         roll_e += bg;                    // enjoy adj
-        /* */if (bg < 0)    ss << "A few customers teased ${name} for wearing a Maid's Uniform in a bar.";
-        else if (bg > 0)    ss << "${name}'s Maid Uniform didn't do much for most of the patrons, but a few of them seemed to really like it.";
-        else/*        */    ss << "${name}'s Maid Uniform didn't do much to help her.";
-        ss << "\n \n";
+        if (bg < 0)         shift.add_literal("A few customers teased ${name} for wearing a Maid's Uniform in a bar.");
+        else if (bg > 0)    shift.add_literal("${name}'s Maid Uniform didn't do much for most of the patrons, but a few of them seemed to really like it.");
+        else                shift.add_literal("${name}'s Maid Uniform didn't do much to help her.");
+        shift.add_literal("\n \n");
     }
 
     //a little pre-game randomness
@@ -131,11 +131,11 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     {
         if (shift.chance(10))
         {
-            ss << "${name}'s alcoholic nature caused her to drink several bottles of booze becoming drunk and her serving suffered cause of it.";
+            shift.add_literal("${name}'s alcoholic nature caused her to drink several bottles of booze becoming drunk and her serving suffered cause of it.");
             shift.data().Performance -= 50;
             drinkswasted += shift.uniform(10, 20);
         }
-        ss << "\n \n";
+        shift.add_literal("\n \n");
     }
 
     add_performance_text(shift);
@@ -156,14 +156,14 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
         (shift.chance(16) && girl.has_active_trait(traits::ABNORMALLY_LARGE_BOOBS)) ||
         (shift.chance(20) && girl.has_active_trait(traits::TITANIC_TITS)))
     {
-        ss << "A patron was obviously staring at her large breasts. ";
+        shift.add_literal("A patron was obviously staring at her large breasts. ");
         if (shift.performance() < 150)
         {
-            ss << "But she had no idea how to take advantage of it.\n";
+            shift.add_literal("But she had no idea how to take advantage of it.\n");
         }
         else
         {
-            ss << "So she over-charged them for drinks while they were too busy drooling to notice the price.\n";
+            shift.add_literal("So she over-charged them for drinks while they were too busy drooling to notice the price.\n");
             shift.data().Earnings += 15;
         }
     }
@@ -177,45 +177,45 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     if (girl.morality() <= -20 && shift.chance(10))
     {
-        ss << "A patron came up to her and said he wanted to order some milk but that he wanted it straight from the source. ";
+        shift.add_literal("A patron came up to her and said he wanted to order some milk but that he wanted it straight from the source. ");
         if (girl.lactation() >= 20)
         {
-            ss << "With a smile she said she was willing to do it for an extra charge. The patron quickly agreed and ${name} proceed to take out one of her tits and let the patron suck out some milk.\n";
+            shift.add_literal("With a smile she said she was willing to do it for an extra charge. The patron quickly agreed and ${name} proceed to take out one of her tits and let the patron suck out some milk.\n");
             girl.lactation(-20);
             shift.data().Tips += 40;
         }
         else
         {
-            ss << "She was willing to do it but didn't have enough milk production.";
+            shift.add_literal("She was willing to do it but didn't have enough milk production.");
         }
     }
 
     if (girl.is_pregnant() && shift.chance(10))
     {
-        ss << "A customer tried to buy ${name} a drink, but she refused for the sake of her unborn child.";
+        shift.add_literal("A customer tried to buy ${name} a drink, but she refused for the sake of her unborn child.");
     }
 
     if (girl.any_active_trait({traits::DEEP_THROAT, traits::NO_GAG_REFLEX}) && shift.chance(5))
     {
-        ss << "Some customers were having a speed drinking contest and challenged ${name} to take part.\n";
-        if (girl.is_pregnant()) ss << "She refused for the sake of her unborn child.";
+        shift.add_literal("Some customers were having a speed drinking contest and challenged ${name} to take part.\n");
+        if (girl.is_pregnant()) shift.add_literal("She refused for the sake of her unborn child.");
         else
         {
-            ss << "Her talent at getting things down her throat meant she could pour the drink straight down. She won easily, earning quite a bit of gold.";
+            shift.add_literal("Her talent at getting things down her throat meant she could pour the drink straight down. She won easily, earning quite a bit of gold.");
             shift.data().Tips += 30;
         }
     }
 
     if (girl.has_item("Golden Pendant") && shift.chance(10))//zzzzz FIXME need more CRAZY
     {
-        ss << "A patron complimented her gold necklace, you're not sure if it was an actual compliment or ";
+        shift.add_literal("A patron complimented her gold necklace, you're not sure if it was an actual compliment or ");
         if (girl.breast_size() >= BreastSize::BIG_BOOBS)
         {
-            ss << "an excuse to stare at her ample cleavage.";
+            shift.add_literal("an excuse to stare at her ample cleavage.");
         }
         else
         {
-            ss << "an attempt to get a discount on their bill.";
+            shift.add_literal("an attempt to get a discount on their bill.");
         }
         girl.happiness(5);//girls like compliments
     }
@@ -237,9 +237,9 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     else/*       */ profit = profit;
     if ((int)d1 > 0)
     {
-        ss << "\n${name}";
-        /* */if ((int)drinkssold <= 0)    ss << " didn't sell any drinks.";
-        else if ((int)drinkssold == 1)    ss << " only sold one drink.";
+        shift.add_literal("\n${name}");
+        /* */if ((int)drinkssold <= 0)    shift.add_literal(" didn't sell any drinks.");
+        else if ((int)drinkssold == 1)    shift.add_literal(" only sold one drink.");
         else/*                      */    ss << " sold " << ds << " drinks.";
         /* */if ((int)dw > 0)    ss << "\n" << dw << " were not paid for or were spilled.";
         /* */if (d2 > 0)/*           */ ss << "\n" << d2 << " drinks were taken from the bar's stock.";
@@ -261,7 +261,7 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     {
         if (profit >= 10)    // base pay is 10 unless she makes less
         {
-            ss << "\n \n"<< "${name} made the bar a profit so she gets paid 10 gold for the shift.";
+            shift.add_literal("\n\n${name} made the bar a profit so she gets paid 10 gold for the shift.");
             shift.data().Earnings -= 10;
             shift.data().Wages += 10;
         }
@@ -278,52 +278,8 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
             girl.happiness(-(dw / 5));
 
             int c = std::min(dw, shift.data().Wages);
-            int d = std::min(dw - c, shift.data().Tips);
-            int e = std::min(0, dw - d);
-            bool left = false;
-            if (dw < (int)shift.data().Wages)                    // she pays for all wasted drinks out of wages
-            {
-                ss << "\nYou take 1 gold out of her pay for each drink she wasted.";
-                shift.data().Wages -= c;
-                profit += c;
-                left = true;
-            }
-            else if (dw < (int)shift.data().Wages + (int)shift.data().Tips)    // she pays for all wasted drinks out of wages and tips
-            {
-                ss << "\nYou take 1 gold from her wages and tips for each drink she wasted.";
-                shift.data().Wages -= c;
-                shift.data().Tips -= d;
-                shift.data().Earnings += c + d;
-                left = true;
-            }
-            else                                    // no pay plus she has to pay from her pocket
-            {
-                shift.data().Wages -= c;
-                shift.data().Tips -= d;
-                shift.data().Earnings += c + d;
-                if (girl.m_Money < 1)                // she can't pay so you scold her
-                {
-                    girl.pcfear(shift.rng().bell(-1,5));
-                    ss << "\nYou take all her wages and tips and then scold her for wasting so many drinks.";
-                }
-                else if (girl.m_Money >= e)        // she has enough to pay it back
-                {
-                    girl.pcfear(shift.rng().bell(-1, 2));
-                    girl.pclove(-shift.rng().bell(-1, 2));
-                    ss << "\nYou take all her wages and tips and then make her pay for the rest out of her own money.";
-                    girl.m_Money -= e;
-                    shift.data().Earnings += e;
-                }
-                else                                // she does not have all but can pay some
-                {
-                    girl.pcfear(shift.rng().bell(-1, 4));
-                    girl.pclove(-shift.rng().bell(-1, 2));
-                    ss << "\nYou take all her wages and tips and then make her pay for what she can of the rest out of her own money.";
-                    e = girl.m_Money;
-                    girl.m_Money -= e;
-                    shift.data().Earnings += e;
-                }
-            }
+            shift.add_literal("\nYou take 1 gold out of her pay for each drink she wasted.");
+            shift.data().Wages -= c;
         }
     }
 
@@ -381,7 +337,7 @@ void cBarWaitressJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     //try and add randomness here
     if (check_public_sex(girl, ESexParticipants::ANY, SKILL_STRIP, sPercent(50), true))
     {
-        ss << "During her shift, ${name} couldn't help but instinctively and excessively rub her ass against the crotches of the clients whenever she got the chance. Her slutty behavior earned her some extra tips, as a couple of patrons noticed her intentional butt grinding.\n";
+        shift.add_literal("During her shift, ${name} couldn't help but instinctively and excessively rub her ass against the crotches of the clients whenever she got the chance. Her slutty behavior earned her some extra tips, as a couple of patrons noticed her intentional butt grinding.\n");
         shift.data().Tips += 30;
     }
 

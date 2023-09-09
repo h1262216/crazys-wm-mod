@@ -234,18 +234,13 @@ int cBasicJob::get_performance_class(int performance) {
     else { return 0;}
 }
 
-//// TODO
-// FIXME
-const char* SecurityAmountId = "";
-const char* TroubleAmountId = "";
-
 void cBasicJob::shift_enjoyment(cGirlShift& shift, bool security) const {
     shift.add_literal("\n");
     int roll = shift.d100();
     if(security) {
         roll -= std::min(10, shift.building().m_SecurityLevel / 10);
         if (roll <= 8 && shift.chance(50)) {
-            roll += shift.consume_resource(SecurityAmountId, 9 - roll);
+            //roll += shift.consume_resource(SecurityAmountId, 9 - roll);
         }
     }
 
@@ -254,8 +249,9 @@ void cBasicJob::shift_enjoyment(cGirlShift& shift, bool security) const {
             shift.add_text("shift.bad");
         }
         shift.data().Enjoyment -= shift.uniform(1, 4);
-        if(security)
-            shift.provide_resource(TroubleAmountId, 5);
+        if(security) {
+            //shift.provide_resource(TroubleAmountId, 5);
+        }
     } else if (roll <= 80) {
         if(has_text("shift.neutral")) {
             shift.add_text("shift.neutral");

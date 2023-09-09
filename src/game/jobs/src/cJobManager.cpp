@@ -91,7 +91,7 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     };
 
     // General Jobs
-    JobFilters[JOBFILTER_GENERAL] = sJobFilter{"General", "These are general jobs that work individually in any building."};
+    JobFilters[JOBFILTER_GENERAL] = sJobFilter{"General", "General", "These are general jobs that work individually in any building."};
     register_filter(JOBFILTER_GENERAL, JOB_RESTING, JOB_BEASTCARER, {});
 
     // - Bar Jobs
