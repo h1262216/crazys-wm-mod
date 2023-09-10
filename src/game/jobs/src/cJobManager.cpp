@@ -32,7 +32,6 @@
 #include "IGame.h"
 #include "events.h"
 #include "combat/combat.h"
-//#include "Crafting.h"
 #include "Inventory.h"
 #include "cRival.h"
 #include "buildings/cDungeon.h"
@@ -44,12 +43,10 @@
 #include "character/lust.h"
 #include "jobs/cGenericJob.h"
 #include "jobs/sGirlShiftData.h"
-#include "cSimpleJob.h"
 
 extern cRng g_Dice;
 
 void RegisterCraftingJobs(cJobManager& mgr);
-void RegisterSurgeryJobs(cJobManager& mgr);
 void RegisterSpecialJobs(cJobManager& mgr);
 void RegisterManagerJobs(cJobManager& mgr);
 void RegisterTherapyJobs(cJobManager& mgr);
@@ -151,11 +148,11 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     register_filter(JOBFILTER_COUNSELINGCENTRE, JOB_COUNSELOR, JOB_ANGER, {});
 
     // - Clinic Surgeries
-    JobFilters[JOBFILTER_CLINIC] = sJobFilter{"Clinic", "Medical Clinic", "These are procerures the girls can have done in the Medical Clinic."};
+    JobFilters[JOBFILTER_CLINIC] = sJobFilter{"Clinic", "Medical Clinic", "These are procedures the girls can have done in the Medical Clinic."};
     register_filter(JOBFILTER_CLINIC, JOB_GETHEALING, JOB_FERTILITY, {});
     // Clinic staff
     JobFilters[JOBFILTER_CLINICSTAFF] = sJobFilter{"ClinicStaff", "Clinic Staff", "These are jobs that help run a medical clinic."};
-    register_filter(JOBFILTER_CLINICSTAFF, JOB_CHAIRMAN, JOB_JANITOR, {JOB_RESTING});
+    JobFilters[JOBFILTER_CLINICSTAFF].Contents.push_back(JOB_RESTING);
 
     // - Farm Staff
     JobFilters[JOBFILTER_FARMSTAFF] = sJobFilter{"FarmStaff", "Farm Staff", "These are jobs for running a farm"};
@@ -179,7 +176,6 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
     JobFilters[JOBFILTER_HOUSETTRAINING] = sJobFilter{"HouseTraining", "Sex Training", "Training the girl in sexual matters."};
 
     RegisterCraftingJobs(*this);
-    RegisterSurgeryJobs(*this);
     RegisterSpecialJobs(*this);
     RegisterManagerJobs(*this);
     RegisterFilmingJobs(*this);

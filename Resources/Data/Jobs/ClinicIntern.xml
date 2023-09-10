@@ -5,9 +5,16 @@
     </Description>
 
     <Config>
+        <Filter>ClinicStaff</Filter>
         <Enjoyment BaseEnjoyment="-5" PrimaryAction="Medical" SecondaryAction="Service"/>
         <Obedience Difficulty="25" Dignity="70" />
     </Config>
+
+    <Requirements>
+        <Condition ForbiddenTrait="AIDS">
+            Health laws prohibit anyone with AIDS from working in the Medical profession.
+        </Condition>
+    </Requirements>
 
     <Performance>
         <!-- unused: Intern job is a training job -->

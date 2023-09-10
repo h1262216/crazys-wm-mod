@@ -5,9 +5,9 @@
     </Description>
 
     <Config BaseWages="100" Shift="full">
+        <Filter>ClinicStaff</Filter>
         <Enjoyment PrimaryAction="Social" SecondaryAction="Medical" BaseEnjoyment="10"/>
         <Obedience Difficulty="10" Fear="0" Dignity="100"/>
-        <Filter>ClinicStaff</Filter>
     </Config>
 
     <Performance>

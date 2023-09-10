@@ -5,6 +5,7 @@
     </Description>
 
     <Config DefaultImage="Nurse" Shift="full">
+        <Filter>ClinicStaff</Filter>
         <Enjoyment PrimaryAction="Medical" SecondaryAction="Social" />
         <Obedience Difficulty="15" Fear="0" Dignity="80"/>
         <WageFunction>
@@ -17,6 +18,12 @@
         </WageFunction>
     </Config>
 
+    <Requirements>
+        <Condition Attribute="Medicine" Lower="25" />
+        <Condition ForbiddenTrait="AIDS">
+            Health laws prohibit anyone with AIDS from working in the Medical profession.
+        </Condition>
+    </Requirements>
 
     <Performance>
         <Factor Skill="Medicine" Weight="3"/>

@@ -5,6 +5,7 @@
     </Description>
 
     <Config DefaultImage="Maid">
+        <Filter>ClinicStaff</Filter>
         <Enjoyment BaseEnjoyment="-5" PrimaryAction="Service"/>
         <Obedience Difficulty="20" Fear="0" Dignity="80" />
     </Config>

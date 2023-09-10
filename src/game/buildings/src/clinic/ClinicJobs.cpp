@@ -17,7 +17,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "jobs/cSimpleJob.h"
+#include "ClinicJobs.h"
 #include "character/sGirl.h"
 #include "character/cCustomers.h"
 #include "character/predicates.h"
@@ -26,30 +26,8 @@
 #include "IGame.h"
 #include "jobs/cJobManager.h"
 
-extern const char* const CarePointsBasicId;
-extern const char* const CarePointsGoodId;
-extern const char* const DoctorInteractionId;
-
-struct DoctorJob : public cSimpleJob {
-    DoctorJob();
-    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
-    sJobValidResult IsJobValid(const sGirl& girl, bool night_shift) const override;
-};
-
-DoctorJob::DoctorJob() : cSimpleJob(JOB_DOCTOR, "Doctor.xml") {
+DoctorJob::DoctorJob() : cSimpleJob(JOB_DOCTOR, "ClinicDoctor.xml") {
     m_Info.Provides.emplace_back(DoctorInteractionId);
-}
-
-sJobValidResult DoctorJob::IsJobValid(const sGirl& girl, bool night_shift) const {
-    if (girl.has_active_trait(traits::AIDS)) {
-        return {false, "Health laws prohibit anyone with AIDS from working in the Medical profession"};
-    }
-
-    if (girl.medicine() < 50 || girl.intelligence() < 50) {
-        return {false, "${name} does not have enough training to work as a Doctor."};
-    }
-
-    return {true, ""};
 }
 
 void DoctorJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
@@ -78,21 +56,7 @@ void DoctorJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     // TODO figure out external patients
 }
 
-struct NurseJob : public cSimpleJob {
-    NurseJob();
-    void JobProcessing(sGirl& girl, cGirlShift& shift) const override;
-    sJobValidResult IsJobValid(const sGirl& girl, bool night_shift) const override;
-};
-
-sJobValidResult NurseJob::IsJobValid(const sGirl& girl, bool night_shift) const {
-    if (girl.has_active_trait(traits::AIDS)) {
-        return {false, "Health laws prohibit anyone with AIDS from working in the Medical profession"};
-    }
-
-    return {true, ""};
-}
-
-NurseJob::NurseJob() : cSimpleJob(JOB_NURSE, "Nurse.xml") {
+NurseJob::NurseJob() : cSimpleJob(JOB_NURSE, "ClinicNurse.xml") {
     m_Info.Provides.emplace_back(CarePointsBasicId);
     m_Info.Provides.emplace_back(CarePointsGoodId);
 }
@@ -270,23 +234,8 @@ void NurseJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     girl.AddMessage(ss.str(), EImageBaseType::PROFILE, shift.is_night_shift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
 }
 
-struct InternJob : public cBasicJob {
-    InternJob();
-    void DoWork(cGirlShift&) const override;
-    double GetPerformance(const sGirl& girl, bool estimate) const override;
-    sJobValidResult IsJobValid(const sGirl& girl, bool night_shift) const override;
-};
-
-InternJob::InternJob() : cBasicJob(JOB_INTERN, "Intern.xml") {
+InternJob::InternJob() : cBasicJob(JOB_INTERN, "ClinicIntern.xml") {
     m_Info.Provides.emplace_back(CarePointsBasicId);
-}
-
-sJobValidResult InternJob::IsJobValid(const sGirl& girl, bool night_shift) const {
-    if (girl.has_active_trait(traits::AIDS)) {
-        return {false, "Health laws prohibit anyone with AIDS from working in the Medical profession"};
-    }
-
-    return {true, ""};
 }
 
 double InternJob::GetPerformance(const sGirl& girl, bool estimate) const {
@@ -454,4 +403,16 @@ void RegisterClinicJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<DoctorJob>());
     mgr.register_job(std::make_unique<NurseJob>());
     mgr.register_job(std::make_unique<InternJob>());
+    mgr.register_job(std::make_unique<SurgeryJob>("AssJob.xml"));
+    mgr.register_job(std::make_unique<SurgeryJob>("CosmeticSurgery.xml"));
+    mgr.register_job(std::make_unique<SurgeryJob>("Liposuction.xml"));
+    mgr.register_job(std::make_unique<BreastReduction>());
+    mgr.register_job(std::make_unique<BoobJob>());
+    mgr.register_job(std::make_unique<SurgeryJob>("VaginalRejuvenation.xml"));
+    mgr.register_job(std::make_unique<FaceLift>());
+    mgr.register_job(std::make_unique<TubesTied>());
+    mgr.register_job(std::make_unique<Fertility>());
+    mgr.register_job(std::make_unique<CureDiseases>());
+    mgr.register_job(std::make_unique<Abortion>());
+    mgr.register_job(std::make_unique<Healing>());
 }
