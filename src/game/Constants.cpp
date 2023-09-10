@@ -87,10 +87,10 @@ StatSkill get_stat_skill_id(const std::string& name) {
 }
 
 const char* get_stat_skill_name(StatSkill val) {
-    if(val.which() == 0) {
-        return get_stat_name(boost::get<STATS>(val));
+    if(val.index() == 0) {
+        return get_stat_name(std::get<STATS>(val));
     } else {
-        return get_skill_name(boost::get<SKILLS>(val));
+        return get_skill_name(std::get<SKILLS>(val));
     }
 }
 

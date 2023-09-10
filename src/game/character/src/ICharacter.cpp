@@ -454,7 +454,6 @@ namespace
         int operator()(STATS stat) const {
             return target->upd_base_stat(stat, amount);
         }
-        using result_type = int;
     };
 
     struct GetVisitor {
@@ -466,7 +465,6 @@ namespace
         int operator()(STATS stat) const {
             return target->get_stat(stat);
         }
-        using result_type = int;
     };
 
     struct GetBaseVisitor {
@@ -478,7 +476,6 @@ namespace
         int operator()(STATS stat) const {
             return target->get_base_stat(stat);
         }
-        using result_type = int;
     };
 
 }
@@ -486,17 +483,17 @@ namespace
 
 int ICharacter::get_attribute(StatSkill id) const {
     GetVisitor visitor{this};
-    return id.apply_visitor(visitor);
+    return std::visit(visitor, id);
 }
 
 int ICharacter::update_attribute(StatSkill id, int amount) {
     UpdateVisitor visitor{this, amount};
-    return id.apply_visitor(visitor);
+    return std::visit(visitor, id);
 }
 
 int ICharacter::gain_attribute(StatSkill id, int min, int max, int target) {
     GetBaseVisitor gv{this};
-    int base_value = id.apply_visitor(gv);
+    int base_value = std::visit(gv, id);
     // determine mode
     if(base_value > target) {
         min = min / 2;

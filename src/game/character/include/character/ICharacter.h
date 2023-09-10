@@ -26,7 +26,7 @@
 #include "sAttribute.h"
 #include <memory>
 #include <vector>
-#include <boost/variant.hpp>
+#include <variant>
 #include <unordered_map>
 
 #include "traits/fwd.h"
@@ -35,7 +35,7 @@ namespace tinyxml2 {
     class XMLElement;
 }
 
-using StatSkill = boost::variant<STATS, SKILLS>;
+using StatSkill = std::variant<STATS, SKILLS>;
 
 class Inventory;
 class sInventoryItem;

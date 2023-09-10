@@ -21,7 +21,7 @@
 
 #include <array>
 #include <string>
-#include <boost/variant.hpp>
+#include <variant>
 #include "utils/enum.h"
 #include "traits/ids.h"
 
@@ -135,7 +135,7 @@ const std::array<sAttribute, NUM_SKILLS>& get_all_skills();
 const char* get_skill_name(SKILLS stat);
 SKILLS get_skill_id(const std::string& name);
 
-using StatSkill = boost::variant<STATS, SKILLS>;
+using StatSkill = std::variant<STATS, SKILLS>;
 StatSkill get_stat_skill_id(const std::string& name);
 const char* get_stat_skill_name(StatSkill);
 

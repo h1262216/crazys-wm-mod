@@ -22,7 +22,7 @@
 #include "xml/getattr.h"
 #include "xml/util.h"
 #include "tinyxml2.h"
-#include <iostream>
+#include <limits>
 
 int cSkillCap::operator()(const ICharacter& character) const {
     int cap = std::numeric_limits<int>::max();

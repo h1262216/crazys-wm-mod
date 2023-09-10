@@ -32,7 +32,7 @@ namespace tinyxml2 {
 }
 
 class sGirl;
-using StatSkill = boost::variant<STATS, SKILLS>;
+using StatSkill = std::variant<STATS, SKILLS>;
 
 struct sWeightedStatSkill {
     StatSkill Source;
