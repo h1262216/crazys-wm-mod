@@ -30,8 +30,19 @@ def get_amount_of_trait(el):
     return amount / 100
 
 
+def get_optional_singleton(parent, node):
+    el = parent.findall(node)
+    if len(el) > 1:
+        raise RuntimeError(f"More than on <{node}> element")
+    elif len(el) == 1:
+        return el[0]
+    return None
+
+
 def handle_job(job):
-    job_data = {"Name": job.attrib["ShortName"], "GainTraits": {}, "LoseTraits": {}}
+    job_data = {"Name": job.attrib["ShortName"], "GainTraits": {}, "LoseTraits": {}, "Wages": "-",
+                "PrimaryAction": "-", "SecondaryAction": "-", "BaseEnjoyment": "0",
+                "Obedience": "0", "Fear": "0", "Dignity": "0"}
     perf_el = job.findall("Performance")
     if len(perf_el) > 1:
         raise RuntimeError("More than on <Performance> element")
@@ -41,15 +52,27 @@ def handle_job(job):
             if trait.attrib["Name"] not in all_trait_names:
                 raise RuntimeError(f"Invalid trait: '{trait.attrib['Name']}'")
 
-    gains_el = job.findall("Gains")
-    if len(gains_el) > 1:
-        raise RuntimeError("More than on <Gains> element")
-    elif len(gains_el) == 1:
-        gains_el = gains_el[0]
+    gains_el = get_optional_singleton(job, "Gains")
+    if gains_el is not None:
         for trait in gains_el.iter("LoseTrait"):
             job_data["LoseTraits"][trait.attrib["Trait"]] = get_amount_of_trait(trait)
         for trait in gains_el.iter("GainTrait"):
             job_data["GainTraits"][trait.attrib["Trait"]] = get_amount_of_trait(trait)
+
+    config_el = get_optional_singleton(job, "Config")
+    if config_el is not None:
+        job_data["Wages"] = config_el.attrib.get("BaseWages", "-")
+        enjoyment_el = get_optional_singleton(config_el, "Enjoyment")
+        if enjoyment_el is not None:
+            job_data["PrimaryAction"] = enjoyment_el.attrib.get("PrimaryAction", "-")
+            job_data["SecondaryAction"] = enjoyment_el.attrib.get("SecondaryAction", "-")
+            job_data["BaseEnjoyment"] = enjoyment_el.attrib.get("BaseEnjoyment", "0")
+
+        obedience_el = get_optional_singleton(config_el, "Obedience")
+        if obedience_el is not None:
+            job_data["Obedience"] = obedience_el.attrib.get("Difficulty", "10")
+            job_data["Dignity"] = obedience_el.attrib.get("Dignity", "100")
+            job_data["Fear"] = obedience_el.attrib.get("Fear", "0")
 
     return job_data
 
@@ -78,11 +101,32 @@ th {
 </style></head>
 """
 
-out_file += '<table class="outer"><tr><th>File</th><th>Code</th><th>Trait Gains</th><th>Trait Losses</th></tr>'
+
+def make_table_header(columns: list):
+    result = "<tr>\n"
+    for c in columns:
+        result += f"  <th>{c}</th>\n"
+    return result + "</tr>\n"
+
+
+def make_table_row(contents: list):
+    result = "<tr>\n"
+    for c in contents:
+        result += f"  <td>{c}</td>\n"
+    return result + "</tr>\n"
+
+
+out_file += '<table class="outer">' + make_table_header(["File", "Code", "Trait Gains", "Trait Losses", "Wages",
+                                                         "Primary Act.", "Secondary Act.", "Enjoy", "Obd.",
+                                                         "Dig.", "Fear"])
 job_file_list = sorted((data_path / "Jobs").glob("*.xml"))
 for job_file in job_file_list:
     doc = ET.fromstring(prepare_xml(job_file.read_text()))
-    data = handle_job(doc)
+    try:
+        data = handle_job(doc)
+    except Exception:
+        print(f"Error in {job_file}")
+        raise
 
     for t, v in data["GainTraits"].items():
         trait_info_changes[t][job_file.stem] = v
@@ -91,7 +135,9 @@ for job_file in job_file_list:
 
     gains = format_trait_change(data["GainTraits"])
     losses = format_trait_change(data["LoseTraits"])
-    line = f"<tr><td>{job_file.name}</td><td>{data['Name']}</td><td>{gains}</td><td>{losses}</td></tr>"
+    line = make_table_row([job_file.name, data['Name'], gains, losses, data['Wages'],
+                           data["PrimaryAction"], data["SecondaryAction"], data["BaseEnjoyment"],
+                           data["Obedience"], data["Dignity"], data["Fear"]])
     out_file += "\n" + line
 out_file += "</table></html>"
 
