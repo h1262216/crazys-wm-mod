@@ -238,7 +238,6 @@ void cGenericJob::Work(sGirlShiftData& shift) {
 
     InitWork(wrapped);
     DoWork(wrapped);
-    girl.AddMessage(wrapped.data().DebugMessage.str(), EImageBaseType::PROFILE, EEventType::EVENT_DEBUG);
 }
 
 void cGenericJob::PreShift(sGirlShiftData& shift) {
@@ -259,6 +258,9 @@ void cGenericJob::PreShift(sGirlShiftData& shift) {
 void cGenericJob::PostShift(sGirlShiftData& shift) {
     cGirlShift wrapped{&shift, this};
     on_post_shift(wrapped);
+    if(!wrapped.data().DebugMessage.str().empty()) {
+        shift.girl().AddMessage(wrapped.data().DebugMessage.str(), EImageBaseType::PROFILE, EEventType::EVENT_DEBUG);
+    }
 }
 
 void cGenericJob::on_pre_shift(cGirlShift& shift) const {

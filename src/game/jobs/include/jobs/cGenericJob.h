@@ -26,6 +26,7 @@
 #include <memory>
 
 #include "jobs/sGirlShiftData.h"
+#include "jobs/cGirlShift.h"
 #include "utils/lookup.h"
 
 class ITextRepository;
@@ -38,59 +39,6 @@ namespace tinyxml2 {
 
 class cGenericJob;
 class cBuilding;
-
-class cGirlShift {
-public:
-    cGirlShift(sGirlShiftData* data, const cGenericJob* job);
-
-    sGirlShiftData& data();
-    const sGirlShiftData& data() const;
-    sGirl& girl();
-    cBuilding& building();
-    bool is_night_shift() const;
-
-    // rng utilities
-    cRng& rng();
-    int d100();
-    bool chance(float percent);
-    bool chance_capped(int percent);
-    int uniform(int min, int max);
-
-    // variables
-    void set_variable(int id, int value);
-    sGirlShiftData::JobStateVar_t get_variable(int index) const;
-
-    int performance() const;
-    int enjoyment() const;
-
-    // resources
-    int consume_resource(const std::string& name, int amount);
-    void provide_resource(const std::string& name, int amount);
-    bool try_consume_resource(const std::string& name, int amount);
-
-    // one-on-one interactions
-    void provide_interaction(const std::string& name, int amount);
-    sGirl* request_interaction(const std::string& name);
-    bool has_interaction(const std::string& name) const;
-
-    // message generation
-    using LocalSubstitutions = std::initializer_list<std::pair<std::string, std::string>>;
-    void add_literal(const std::string& text, LocalSubstitutions subs={});
-    void add_text(const std::string& prompt, LocalSubstitutions subs={});
-    void add_line(const std::string& prompt, LocalSubstitutions subs={});
-
-    void set_image(sImagePreset preset);
-    void generate_event();
-
-
-
-    // other
-    void set_result(ECheckWorkResult result);
-private:
-    sGirlShiftData* m_Data;
-    const cGenericJob* m_JobClass;
-};
-
 
 class cGenericJob : public IGenericJob {
     friend class cGirlShift;

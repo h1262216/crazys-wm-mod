@@ -92,7 +92,7 @@ void cBasicJob::update_enjoyment_of(cGirlShift& shift, EActivity action, int cha
 void cBasicJob::apply_gains(cGirlShift& shift) const {
     auto& girl = shift.girl();
 
-    m_Gains.apply(girl, shift.data().Performance);
+    m_Gains.apply(shift);
 
     // add messages for how much she enjoys the job
     if (shift.data().Enjoyment <= -66 && has_text("enjoy.hate")) {

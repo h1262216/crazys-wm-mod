@@ -31,6 +31,7 @@ namespace tinyxml2 {
     class XMLElement;
 }
 
+class cGirlShift;
 class sGirl;
 using StatSkill = std::variant<STATS, SKILLS>;
 
@@ -79,10 +80,10 @@ struct sTraitChange {
 
 class cJobGains {
 public:
-    void apply(sGirl& target, int performance) const;
+    void apply(cGirlShift& shift) const;
     void load(const tinyxml2::XMLElement& source);
 private:
-    void gain_traits(sGirl& girl, int performance) const;
+    void gain_traits(cGirlShift& shift) const;
 
     int XP    = 0;                                      //!< Amount of experience points gained
     int Skill = 0;                                      //!< Amount of gains for stats/skills

@@ -22,15 +22,17 @@
 #include "xml/util.h"
 #include "xml/getattr.h"
 #include "utils/streaming_random_selection.hpp"
-#include "cRng.h"
 #include "cGirls.h"
 #include "IGame.h"
 #include "traits/ITraitsManager.h"
 #include "traits/ITraitSpec.h"
 #include "traits/ITraitsCollection.h"
 #include "jobs.h"
+#include "cGirlShift.h"
 
-extern cRng g_Dice;
+namespace settings {
+    extern const char* USER_SHOW_NUMBERS;
+}
 
 float cJobPerformance::eval(const sGirl& girl, bool estimate) const {
     float performance = 0.f;
@@ -86,19 +88,32 @@ void cJobPerformance::load(const tinyxml2::XMLElement& source, const std::string
     }
 }
 
-void cJobGains::apply(sGirl& girl, int performance) const {
+void cJobGains::apply(cGirlShift& shift) const {
+    auto& girl = shift.girl();
+
     // Improve stats
     int xp = XP, skill = Skill;
     enum LearningAbility {
         SLOW, NORMAL, QUICK
     } learner = NORMAL;
 
+    shift.data().DebugMessage << "\nGains: ";
+
     if (girl.has_active_trait(traits::QUICK_LEARNER))        { xp += 3; learner = QUICK; }
     else if (girl.has_active_trait(traits::SLOW_LEARNER))    { xp -= 3; learner = SLOW; }
 
-    girl.exp(g_Dice.in_range(xp/2, xp));
+    int gain_xp = shift.uniform(xp/2, xp);
+    girl.exp(gain_xp);
+    shift.data().EventMessage << "She gained: \n" << "  " << gain_xp << " Exp.";
+    if(g_Game->settings().get_bool(settings::USER_SHOW_NUMBERS)) {
+        shift.data().EventMessage << " (" << girl.exp() << ")";
+    }
+    shift.data().EventMessage << "\n";
+    shift.data().DebugMessage << " XP: [" << xp/2 << ", " << xp << "] -> " << gain_xp << "\n";
 
     if(!Gains.empty()) {
+        // TODO something without dynamic memory allocation would be better here I think
+        std::unordered_map<StatSkill, int> accumulated_gains;
         while (skill > 0) {
             RandomSelector<const sWeightedStatSkill> target;
             for (auto& factor: Gains) {
@@ -109,30 +124,56 @@ void cJobGains::apply(sGirl& girl, int performance) const {
                 }
                 target.process(&factor, weight);
             }
+
             auto gain = target.selection();
             if(gain) {
                 int amount = 1;
                 skill -= amount;
+                int current_value = girl.get_attribute(gain->Source);
+
+                shift.data().DebugMessage << " Selected " << get_stat_skill_name(gain->Source)
+                    << ": max=" << gain->Maximum << ", val=" << current_value << "\n";
 
                 // 66% slowdown of learning above maximum
-                if(girl.get_attribute(gain->Source) > gain->Maximum && g_Dice.percent(66)) {
+                if( current_value > gain->Maximum && g_Dice.percent(66)) {
                     amount = 0;
+                    shift.data().DebugMessage << " No gain because maximum is exceeded\n";
                 }
 
                 // for skills, quick/slow learner makes a difference
-                if(gain->Source.which() == 1) {
+                if(gain->Source.index() == 1) {
                     if(learner == SLOW && g_Dice.percent(33)) {
                         amount = 0;
+                        shift.data().DebugMessage << " No gain because Slow Learner\n";
                     } else if (learner == QUICK && g_Dice.percent(33)) {
                         amount *= 2;
+                        shift.data().DebugMessage << " Double gain because Quick Learner\n";
                     }
                 }
-                girl.update_attribute(gain->Source, amount);
+
+                // receive the accumulated gains
+                if(amount > 0) {
+                    auto found = accumulated_gains.find(gain->Source);
+                    if(found != accumulated_gains.end()) {
+                        found->second += amount;
+                    } else {
+                        accumulated_gains[gain->Source] = amount;
+                    }
+                }
             }
+        }
+
+        for(auto [gain, amount]: accumulated_gains) {
+            int new_value = girl.update_attribute(gain, amount);
+            shift.data().EventMessage << "  " << amount << " " << get_stat_skill_name(gain);
+            if(g_Game->settings().get_bool(settings::USER_SHOW_NUMBERS)) {
+                shift.data().EventMessage << " (" << new_value << ")";
+            }
+            shift.data().EventMessage << "\n";
         }
     }
 
-    gain_traits(girl, performance);
+    gain_traits(shift);
 }
 
 namespace {
@@ -153,12 +194,18 @@ sTraitChange::sTraitChange(bool g, std::string trait, std::string message, EEven
     }
 }
 
-void cJobGains::gain_traits(sGirl& girl, int performance) const {
+void cJobGains::gain_traits(cGirlShift& shift) const {
+    int performance = shift.performance();
+    auto& girl = shift.girl();
+
     for(auto& trait : TraitChanges) {
+        shift.data().DebugMessage << " Trait " << trait.TraitName << "\n";
         int amount = 0;
         for(auto& change : trait.ChangeAmounts) {
-            if(!g_Dice.percent(change.Chance))
+            if(!g_Dice.percent(change.Chance)) {
+                shift.data().DebugMessage << "  discarding (" << change.Chance << "%).\n";
                 continue;
+            }
             int base = change.BaseAmount;
             int factor = lin_factor(performance, change.PerformanceRequirementMin, change.PerformanceRequirementMax);
 
@@ -169,6 +216,7 @@ void cJobGains::gain_traits(sGirl& girl, int performance) const {
                 factor = std::min(factor, new_factor);
             }
 
+            shift.data().DebugMessage << "  base: " << base << ", factor: " << factor << "\n";
             amount += (factor * base) / 100;
         }
         if(amount <= 0)
@@ -250,7 +298,7 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
     for(const auto& stat_skill : IterateChildElements(source, "Skill")) {
         float weight = stat_skill.FloatAttribute("Weight", 1.0);
         float min = stat_skill.FloatAttribute("Min", -100);
-        float max = stat_skill.FloatAttribute("Max", -100);
+        float max = stat_skill.FloatAttribute("Max", 100);
         auto skill = get_skill_id(GetStringAttribute(stat_skill, "Name"));
         Gains.push_back({skill, weight, min, max});
     }
@@ -258,7 +306,7 @@ void cJobGains::load(const tinyxml2::XMLElement& source) {
     for(const auto& stat_skill : IterateChildElements(source, "Stat")) {
         float weight = stat_skill.FloatAttribute("Weight", 1.0);
         float min = stat_skill.FloatAttribute("Min", -100);
-        float max = stat_skill.FloatAttribute("Max", -100);
+        float max = stat_skill.FloatAttribute("Max", 100);
         auto skill = get_stat_id(GetStringAttribute(stat_skill, "Name"));
         Gains.push_back({skill, weight, min, max});
     }
