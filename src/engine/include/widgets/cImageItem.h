@@ -48,7 +48,7 @@ public:
     cAnimatedSurface m_AnimatedImage;
     cSurface m_Image;
 
-
+    std::string GetImageFileName() const;
 private:
     bool m_loaded;
     int m_MinWidth = -1;

@@ -113,3 +113,13 @@ bool cImageItem::SetAnimation(std::string filename) {
 
     return false;
 }
+
+std::string cImageItem::GetImageFileName() const {
+    if(m_Image) {
+        return m_Image.GetFileName();
+    } else if(m_AnimatedImage) {
+        return m_AnimatedImage.GetFileName();
+    } else {
+        return {};
+    }
+}

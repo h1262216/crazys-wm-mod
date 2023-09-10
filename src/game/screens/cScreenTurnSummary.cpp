@@ -602,7 +602,9 @@ void cScreenTurnSummary::present_image(const CEvent& event) {
     PrepareImage(m_Background_id, image_file);
     if (m_ImagePath_id >= 0){
         std::string t;
-        if (image_item) t = image_item->m_Image.GetFileName();
+        if (image_item) {
+            t = image_item->GetImageFileName();
+        }
         EditTextItem(t, m_ImagePath_id);
     }
 }

@@ -150,6 +150,7 @@ void cScreenGallery::update_image()
 
 void cScreenGallery::init(bool back)
 {
+    m_ScheduledUpdates.clear();
     m_SelectedGirl = &active_girl();
 
     if(!back) {
@@ -188,6 +189,9 @@ void cScreenGallery::determine_images() {
             spec.BasicImage = img;
             auto result = g_Game->image_lookup().find_images(m_SelectedGirl->GetImageFolder().str(), spec,
                                                         1000);
+            for(auto& r : result) {
+                std::cout << r.first->FileName << "  " << r.second << "\n";
+            }
             std::sort(begin(result), end(result), [](const auto& a, const auto& b){ return a.second < b.second; });
             for(auto& tgt: result) {
                 unmatched.erase(tgt.first);
