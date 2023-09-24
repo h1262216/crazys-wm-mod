@@ -24,7 +24,7 @@
 
 #include <unordered_map>
 #include <vector>
-#include <boost/optional.hpp>
+#include <optional>
 #include <random>
 #include "cImageList.h"
 
@@ -54,9 +54,9 @@ public:
 
     struct sFallbackData {
         EImageBaseType NewImageType;
-        boost::optional<ESexParticipants> TargetParticipants;
+        std::optional<ESexParticipants> TargetParticipants;
         ESexParticipants SourceParticipants;
-        boost::optional<ETriValue> TargetTiedUp;
+        std::optional<ETriValue> TargetTiedUp;
         int Cost = 1;
     };
     struct sImgTypeInfo {

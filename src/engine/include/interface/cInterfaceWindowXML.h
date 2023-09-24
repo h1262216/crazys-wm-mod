@@ -20,7 +20,7 @@
 #define __CINTERFACEWINDOWXML_H
 
 #include "interface/cInterfaceWindow.h"
-#include <boost/optional/optional_fwd.hpp>
+#include <optional>
 
 class cInterfaceWindowXML : public cInterfaceWindow
 {
@@ -42,8 +42,8 @@ private:
 
     int read_x_coordinate(const tinyxml2::XMLElement& element, const char* attribute) const;
     int read_y_coordinate(const tinyxml2::XMLElement& element, const char* attribute) const;
-    int read_width(const tinyxml2::XMLElement& element, const char* attribute, boost::optional<int> fallback) const;
-    int read_height(const tinyxml2::XMLElement& element, const char* attribute, boost::optional<int> fallback) const;
+    int read_width(const tinyxml2::XMLElement& element, const char* attribute, std::optional<int> fallback) const;
+    int read_height(const tinyxml2::XMLElement& element, const char* attribute, std::optional<int> fallback) const;
 
     void read_definition(const tinyxml2::XMLElement& root);
 

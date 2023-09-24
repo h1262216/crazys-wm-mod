@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boost/optional.hpp"
+#include <optional>
 #include "utils/DirPath.h"
 #include "CLog.h"
 
@@ -79,7 +79,7 @@ namespace {
 
   // look up my current home directory in /etc/passwd (or NIS or
   // wherever).
-  boost::optional<std::string> find_pwd_home()
+  std::optional<std::string> find_pwd_home()
   {
     size_t bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
     if(bufsize == static_cast<size_t>(-1))
@@ -100,7 +100,7 @@ namespace {
 	return {};
       }
 
-    return boost::make_optional<std::string>(pwd.pw_dir);
+    return std::make_optional<std::string>(pwd.pw_dir);
   }
 
   // Expand "~/some/dir" to "<my home-dir>/some/dir"

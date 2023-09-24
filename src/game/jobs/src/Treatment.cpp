@@ -109,8 +109,8 @@ void cTreatmentJob::on_complete_treatment(cGirlShift& shift) const {
     }
 
     if(selected_effect.selection().has_value()) {
-        apply_result(*selected_effect.selection().get(), shift);
-        auto msg = selected_effect.selection().get()->Message;
+        apply_result(*selected_effect.selection().value(), shift);
+        auto msg = selected_effect.selection().value()->Message;
         if(!msg.empty()) {
             shift.add_literal(msg);
             shift.data().EventMessage << "\n";

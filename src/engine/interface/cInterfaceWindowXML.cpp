@@ -27,7 +27,7 @@
 #include "widgets/cListBox.h"
 #include "interface/cWindowManager.h"
 #include "include/interface/cTheme.h"
-#include <boost/optional.hpp>
+#include <optional>
 
 cInterfaceWindowXML::cInterfaceWindowXML(const char* base_file) :
         cInterfaceWindow(base_file),
@@ -92,7 +92,7 @@ int cInterfaceWindowXML::read_y_coordinate(const tinyxml2::XMLElement& element, 
     return window_manager().GetTheme().calc_y(GetIntAttribute(element, attribute));
 }
 
-int cInterfaceWindowXML::read_width(const tinyxml2::XMLElement& element, const char* attribute, boost::optional<int> fallback) const {
+int cInterfaceWindowXML::read_width(const tinyxml2::XMLElement& element, const char* attribute, std::optional<int> fallback) const {
     if(!fallback) {
         return window_manager().GetTheme().calc_w(GetIntAttribute(element, attribute));
     } else {
@@ -100,7 +100,7 @@ int cInterfaceWindowXML::read_width(const tinyxml2::XMLElement& element, const c
     }
 }
 
-int cInterfaceWindowXML::read_height(const tinyxml2::XMLElement& element, const char* attribute, boost::optional<int> fallback) const {
+int cInterfaceWindowXML::read_height(const tinyxml2::XMLElement& element, const char* attribute, std::optional<int> fallback) const {
     if(!fallback) {
         return window_manager().GetTheme().calc_h(GetIntAttribute(element, attribute));
     } else {
@@ -114,8 +114,8 @@ void cInterfaceWindowXML::read_listbox_definition(const tinyxml2::XMLElement& el
     std::string name = GetStringAttribute(el, "Name");
     int x = read_x_coordinate(el, "XPos");
     int y = read_y_coordinate(el, "YPos");
-    int w = read_width(el, "Width", boost::none);
-    int h = read_height(el, "Height", boost::none);
+    int w = read_width(el, "Width", std::nullopt);
+    int h = read_height(el, "Height", std::nullopt);
     int fontsize = read_height(el, "FontSize", 10);
     int rowheight = read_height(el, "RowHeight", 20);
 
@@ -170,8 +170,8 @@ void cInterfaceWindowXML::read_text_item(const tinyxml2::XMLElement& el)
     AddTextItem(id,
                 read_x_coordinate(el, "XPos"),
                 read_y_coordinate(el, "YPos"),
-                read_width(el, "Width", boost::none),
-                read_height(el, "Height", boost::none),
+                read_width(el, "Width", std::nullopt),
+                read_height(el, "Height", std::nullopt),
                 GetStringAttribute(el, "Text"),
                 read_height(el, "FontSize", 11),
                 el.BoolAttribute("ForceScrollbar", false),
@@ -189,8 +189,8 @@ void cInterfaceWindowXML::read_window_definition(const tinyxml2::XMLElement& el)
 {
     CreateWindow(read_x_coordinate(el, "XPos"),
                  read_y_coordinate(el, "YPos"),
-                 read_width(el, "Width", boost::none),
-                 read_height(el, "Height", boost::none),
+                 read_width(el, "Width", std::nullopt),
+                 read_height(el, "Height", std::nullopt),
                  GetIntAttribute(el, "Border"));
 }
 
@@ -200,8 +200,8 @@ void cInterfaceWindowXML::read_editbox_definition(const tinyxml2::XMLElement& el
     AddEditBox(id,
                read_x_coordinate(el, "XPos"),
                read_y_coordinate(el, "YPos"),
-               read_width(el, "Width", boost::none),
-               read_height(el, "Height", boost::none),
+               read_width(el, "Width", std::nullopt),
+               read_height(el, "Height", std::nullopt),
                el.IntAttribute("Border", 0),
                read_height(el, "FontSize", 16));
     register_id(id, GetStringAttribute(el, "Name"));
@@ -213,8 +213,8 @@ void cInterfaceWindowXML::read_checkbox_definition(const tinyxml2::XMLElement& e
     AddCheckbox(id,
                 read_x_coordinate(el, "XPos"),
                 read_y_coordinate(el, "YPos"),
-                read_width(el, "Width", boost::none),
-                read_height(el, "Height", boost::none),
+                read_width(el, "Width", std::nullopt),
+                read_height(el, "Height", std::nullopt),
                 GetStringAttribute(el, "Text"),
                 read_height(el, "FontSize", 11),
                 el.BoolAttribute("LeftOrRight", true));
@@ -230,15 +230,15 @@ void cInterfaceWindowXML::read_image_definition(const tinyxml2::XMLElement& el)
     } else {
         type = GetStringAttribute(el, "Dir");
     }
-    int width = read_width(el, "Width", boost::none);
-    int height = read_height(el, "Height", boost::none);
+    int width = read_width(el, "Width", std::nullopt);
+    int height = read_height(el, "Height", std::nullopt);
     int min_width = width;
     int min_height = height;
     if(el.Attribute("MinWidth")) {
-        min_width = read_width(el, "MinWidth", boost::none);
+        min_width = read_width(el, "MinWidth", std::nullopt);
     }
     if(el.Attribute("MinHeight")) {
-        min_height = read_height(el, "MinHeight", boost::none);
+        min_height = read_height(el, "MinHeight", std::nullopt);
     }
     int id = AddImage(type, file,
                       read_x_coordinate(el, "XPos"),
@@ -270,8 +270,8 @@ void cInterfaceWindowXML::read_button_definition(const tinyxml2::XMLElement& el)
     id = AddButton(off, disabled, on,
                    read_x_coordinate(el, "XPos"),
                    read_y_coordinate(el, "YPos"),
-                   read_width(el, "Width", boost::none),
-                   read_height(el, "Height", boost::none)
+                   read_width(el, "Width", std::nullopt),
+                   read_height(el, "Height", std::nullopt)
                    );
     if(const char* pw = el.Attribute("PushWindow")) {
         SetButtonNavigation(id, pw, false);
@@ -288,7 +288,7 @@ void cInterfaceWindowXML::read_slider_definition(const tinyxml2::XMLElement& el)
     AddSlider(id,
               read_x_coordinate(el, "XPos"),
               read_y_coordinate(el, "YPos"),
-              read_width(el, "Width", boost::none),
+              read_width(el, "Width", std::nullopt),
               el.IntAttribute("MinValue", 0),
               el.IntAttribute("MaxValue", 100),
               el.IntAttribute("Increment", 5),

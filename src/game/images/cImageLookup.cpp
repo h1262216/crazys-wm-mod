@@ -71,17 +71,17 @@ void cTransitionMatrix<T>::fill(int value) {
 
 
 namespace {
-    boost::optional<ESexParticipants> parse_participant_fallback(const std::string& fb) {
+    std::optional<ESexParticipants> parse_participant_fallback(const std::string& fb) {
         if(iequals(fb, "keep")) {
-            return boost::none;
+            return std::nullopt;
         } else {
             return get_participant_id(fb);
         }
     }
 
-    boost::optional<ETriValue> parse_optional_trival(const std::string& fb) {
+    std::optional<ETriValue> parse_optional_trival(const std::string& fb) {
         if(iequals(fb, "keep")) {
-            return boost::none;
+            return std::nullopt;
         } else {
             return parse_tri_value(fb);
         }

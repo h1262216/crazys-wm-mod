@@ -22,7 +22,7 @@
 
 
 #include "cRng.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <random>
 
 extern cRng g_Dice;
@@ -87,7 +87,7 @@ public:
         }
     }
 
-    const boost::optional<T>& selection() const {
+    const std::optional<T>& selection() const {
         return m_CurrentSelection;
     }
 
@@ -101,12 +101,12 @@ public:
 
     void reset() {
         m_TotalWeight = 0;
-        m_CurrentSelection = boost::none;
+        m_CurrentSelection = std::nullopt;
     }
 private:
     float m_TotalWeight    = 0.0;
     int m_Priority = std::numeric_limits<int>::min();
-    boost::optional<T> m_CurrentSelection = boost::none;
+    std::optional<T> m_CurrentSelection = std::nullopt;
     std::uniform_real_distribution<double> m_Dist = std::uniform_real_distribution<double>(0.0, 1.0);
 };
 
