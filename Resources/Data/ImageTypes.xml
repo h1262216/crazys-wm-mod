@@ -217,7 +217,7 @@
         <Fallback>oral</Fallback>
     </Type>
     <Type Name="sixtynine">
-        <Description>She is having sex in 69 position.</Description>
+        <Description>The classic 69 position. Nice!</Description>
         <Display>Sixty-Nine</Display>
         <Fallback>sex</Fallback>
         <Fallback Cost="50">oral</Fallback>
@@ -225,41 +225,51 @@
     </Type>
     <Type Name="rape">
         <Display>Rape</Display>
+        <Description>The girl is raped, forced to have intercourse against her will.</Description>
         <Fallback TiedUp="yes" Cost="50">sex</Fallback>
         <Fallback>bdsm</Fallback>
     </Type>
     <Type Name="rapebeast">
         <Display>Rape (Beast)</Display>
+        <Description>The girl is raped by a monster.</Description>
         <Fallback>beast</Fallback>
     </Type>
 
     <Type Name="strip">
         <Display>Strip</Display>
+        <Description>She is taking off clothes, stripping for customers, 
+		flashing and teasing people generally inside.
+		</Description>		
         <Fallback>ecchi</Fallback>
         <Fallback>nude</Fallback>
         <Fallback>dance</Fallback>
     </Type>
     <Type Name="ecchi">
         <Display>Ecchi</Display>
+        <Description>Revealing or slutty images.</Description>
         <Fallback>nude</Fallback>
         <Fallback>bunny</Fallback>
     </Type>
     <Type Name="kiss">
         <Display>Kiss</Display>
+        <Description>A smooch on the lips.</Description>
         <Fallback>ecchi</Fallback>
         <Fallback>fondle</Fallback>
     </Type>
     <Type Name="fondle">
         <Display>Fondle</Display>
+        <Description>Groping or other such physical contact.</Description>
         <Fallback>ecchi</Fallback>
         <Fallback>kiss</Fallback>
     </Type>
     <Type Name="chastity">
         <Display>Chastity</Display>
+        <Description>Placed into a chastity belt or similar device.</Description>
         <Fallback>ecchi</Fallback>
     </Type>
     <Type Name="nude">
         <Display>Nude</Display>
+        <Description>She is naked.</Description>
         <Fallback>ecchi</Fallback>
         <Fallback>strip</Fallback>
         <Fallback Cost="150">massage</Fallback>
@@ -267,26 +277,31 @@
     </Type>
     <Type Name="bunny">
         <Display>Playboy Bunny</Display>
+        <Description>Playboy bunny outfit.</Description>
         <Fallback>ecchi</Fallback>
     </Type>
     <Type Name="massage">
         <Display>Massage</Display>
+        <Description>She is massaging a client or getting massaged.</Description>
         <Pattern>massage.*</Pattern>
         <Pattern>masseuse.*</Pattern>
         <Fallback>ecchi</Fallback>
     </Type>
     <Type Name="milk">
         <Display>Milk</Display>
+        <Description>She is getting milked.</Description>
         <Fallback>titty</Fallback>
         <Fallback>nude</Fallback>
     </Type>
     <Type Name="dom">
         <Display>Dominatrix</Display>
+        <Description>Acting as a dominatrix (torturer, dominatrix job, ...).</Description>
         <Fallback>profile</Fallback>
         <Fallback Cost="90">combat</Fallback>
     </Type>
     <Type Name="sub">
         <Display>Submissive</Display>
+        <Description>Acting as a submissive.</Description>
         <Fallback>presented</Fallback>
         <Fallback TiedUp="yes">profile</Fallback>
         <Fallback Cost="150">bdsm</Fallback>
@@ -294,49 +309,59 @@
 
     <Type Name="maid">
         <Display>Maid</Display>
+        <Description>The traditional French maid used for cleaning.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="sing">
         <Display>Singing</Display>
+        <Description>She is singing.</Description>
         <Fallback>music</Fallback>
         <Fallback Cost="150">bunny</Fallback>
     </Type>
     <Type Name="wait">
         <Display>Waitress</Display>
+        <Description>She is acting as a waitress.</Description>
         <Fallback>bunny</Fallback>
         <Fallback Cost="200">profile</Fallback>
     </Type>
     <Type Name="card">
         <Display>Card Dealer</Display>
+        <Description>Dealing or playing cards.</Description>
         <Fallback>bunny</Fallback>
         <Fallback>bunny</Fallback>
         <Fallback Cost="200">profile</Fallback>
     </Type>
     <Type Name="nurse">
         <Display>Nurse</Display>
+        <Description>She is acting as a nurse and providing medical help.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="dinner">
         <Display>Dinner</Display>
+        <Description>Eating with the player.</Description>
         <Fallback>drinks</Fallback>
         <Fallback>escort</Fallback>
     </Type>
     <Type Name="drinks">
         <Display>Drinks</Display>
+        <Description>Having drinks with the player.</Description>
         <Fallback>dinner</Fallback>
         <Fallback>escort</Fallback>
     </Type>
     <Type Name="piano">
         <Display>Piano</Display>
+        <Description>She is playing the piano.</Description>
         <Fallback>music</Fallback>
     </Type>
     <Type Name="dance">
         <Display>Dance</Display>
+        <Description>She is dancing.</Description>
         <Fallback>music</Fallback>
         <Fallback>formal</Fallback>
     </Type>
     <Type Name="music">
         <Display>Music</Display>
+        <Description>She is playing music that isn't covered by piano, singing, or dance.</Description>
         <Fallback Cost="10">sing</Fallback>
         <Fallback Cost="10">piano</Fallback>
         <Fallback>profile</Fallback>
@@ -345,59 +370,71 @@
     </Type>
     <Type Name="stagehand">
         <Display>Stage Hand</Display>
+        <Description>Provides a helping hand to the movie set.</Description>
         <Fallback>studiocrew</Fallback>
         <Fallback>maid</Fallback>
         <Fallback>craft</Fallback>
     </Type>
     <Type Name="crystalpurifier">
         <Display>Crystal Purifier</Display>
+        <Description>Essentially the editor of magic-movies.</Description>
         <Fallback>studiocrew</Fallback>
     </Type>
     <Type Name="director">
         <Display>Director</Display>
+        <Description>Directing a movie or scene.</Description>
         <Fallback>studiocrew</Fallback>
         <Fallback>formal</Fallback>
     </Type>
     <Type Name="cameramage">
         <Display>Camera Mage</Display>
+        <Description>Operating a camera.</Description>
         <Fallback>studiocrew</Fallback>
     </Type>
     <Type Name="studiocrew">
         <Display>Studio Crew</Display>
+        <Description>Generic fallback image for being part of the crew to produce a movie or scene.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="security">
         <Display>Security</Display>
+        <Description>She provides security. Holding weapons but not actively fighting.</Description>
         <Fallback Cost="50">combat</Fallback>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="cook">
         <Display>Cook</Display>
+        <Description>Cooking food.</Description>
         <Fallback Cost="50">bake</Fallback>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="bake">
         <Display>Bake</Display>
+        <Description>She is baking food.</Description>
         <Fallback Cost="50">cook</Fallback>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="farm">
         <Display>Farm</Display>
+        <Description>Generic farm work.</Description>
         <Fallback>herd</Fallback>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="herd">
         <Display>Herd</Display>
+        <Description>She is working with animals.</Description>
         <Fallback>farm</Fallback>
     </Type>
     <Type Name="advertise">
         <Display>Advertise</Display>
+		<Description>Publicly advertising. Images similar to strip but public.</Description>
         <Pattern>advertise.*</Pattern>
         <Pattern>sign.*</Pattern>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="escort">
         <Display>Escort</Display>
+        <Description>Clothed with a client, a professional date, sex is separate.</Description>
         <Fallback>formal</Fallback>
         <Fallback Cost="75">dinner</Fallback>
         <Fallback Cost="75">drinks</Fallback>
@@ -406,102 +443,133 @@
 
     <Type Name="sport">
         <Display>Sport</Display>
+        <Description>She is doing sports or exercising.</Description>
         <Pattern>sport.*</Pattern>
         <Pattern>workout.*</Pattern>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="study">
         <Display>study</Display>
+        <Description>She is studying, i.e. reading a book or otherwise looking clever.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="teacher">
         <Display>Teacher</Display>
+        <Description>She is dressed or acting as a teacher.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="combat">
         <Display>Combat</Display>
+        <Description>Fighting or with weapons.</Description>
         <Fallback>security</Fallback>
         <Fallback Cost="150">sport</Fallback>
         <Fallback Cost="150">profile</Fallback>
     </Type>
     <Type Name="magic">
         <Display>Magic</Display>
+        <Description>She is casting a spell.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="bed">
         <Display>Bed</Display>
+		<Description>On/in a bed.</Description>
         <Fallback Cost="100">rest</Fallback>
         <Fallback Cost="150">profile</Fallback>
         <Fallback>nude</Fallback>
     </Type>
     <Type Name="rest">
         <Display>Resting</Display>
+		<Description>She is resting.</Description>
         <Fallback Cost="50">bed</Fallback>
         <Fallback Cost="100">profile</Fallback>
     </Type>
     <Type Name="bath">
         <Display>Bath</Display>
+        <Description>She is taking a bath or otherwise cleaning herself.</Description>
         <Fallback>nude</Fallback>
         <Fallback Cost="150">swim</Fallback>
     </Type>
     <Type Name="pray">
         <Display>Pray</Display>
+        <Description>She is praying or located in a church/temple.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="swim">
         <Display>swim</Display>
+        <Description>She is going swimming or dressed in a swimsuit, 
+		potentially near a beach.
+		</Description>			
         <Fallback>bath</Fallback>
         <Fallback>nude</Fallback>
     </Type>
     <Type Name="shop">
         <Display>Shopping</Display>
+        <Description>She spends her free time going shopping.
+		</Description>			
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="craft">
         <Display>Crafting</Display>
+        <Description>Creating items.</Description>
         <Fallback>profile</Fallback>
     </Type>
 
     <Type Name="birthhuman">
         <Display>Birth (Human)</Display>
+       <Description>Giving birth to a human.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="birthbeast">
         <Display>Birth (Beast)</Display>
+       <Description>Giving birth to a beast, monster, tentacled creature.
+	   </Description>			
         <Fallback>profile</Fallback>
     </Type>
 
     <Type Name="refuse">
         <Display>Refuse</Display>
+        <Description>She refuses to do a job.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="death">
         <Display>Death</Display>
+        <Description>She died or is severely injured.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="profile">
         <Display>Profile</Display>
+        <Description>A generic profile image.</Description>
         <Fallback Cost="50">portrait</Fallback>
     </Type>
     <Type Name="portrait">
         <Display>Portrait</Display>
+        <Description>A portrait-style profile image. Just head and upper torso, 
+		leave preg and futa status ambiguous.
+		</Description>			
         <Fallback Cost="25">profile</Fallback>
     </Type>
     <Type Name="jail">
         <Display>Jail</Display>
+        <Description>She is in a jail or dungeon.
+		</Description>			
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="torture">
         <Display>Torture</Display>
+        <Description>She is getting tortured.
+		</Description>			
         <Fallback>jail</Fallback>
         <Fallback>sub</Fallback>
     </Type>
     <Type Name="formal">
         <Display>Formal</Display>
+        <Description>She is wearing formal clothes.</Description>
         <Fallback>profile</Fallback>
     </Type>
     <Type Name="presented">
         <Display>Presented (Market)</Display>
+        <Description>She is being displayed at the Slave Market.
+		</Description>			
         <Fallback Cost="150">profile</Fallback>
         <Fallback Cost="100" TiedUp="yes">profile</Fallback>
         <Fallback>jail</Fallback>
@@ -509,21 +577,28 @@
     </Type>
     <Type Name="brand">
         <Display>Slave Brand</Display>
+        <Description>She is branded as a slave.</Description>
         <Fallback>presented</Fallback>
         <Fallback>sub</Fallback>
     </Type>
     <Type Name="puppygirl">
         <Display>Puppy Girl</Display>
+        <Description>She is acting or looking like a puppy.
+		</Description>
         <Fallback>ecchi</Fallback>
         <Fallback>bunny</Fallback>
     </Type>
     <Type Name="ponygirl">
         <Display>Pony Girl</Display>
+        <Description>She is acting or looking like a pony.
+		</Description>
         <Fallback>ecchi</Fallback>
         <Fallback>bunny</Fallback>
     </Type>
     <Type Name="catgirl">
         <Display>Cat Girl</Display>
+        <Description>She is acting or looking like a cat.
+		</Description>
         <Fallback>ecchi</Fallback>
         <Fallback>bunny</Fallback>
     </Type>
