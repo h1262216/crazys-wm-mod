@@ -24,7 +24,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
-#include <boost/variant/variant_fwd.hpp>
+#include <variant>
 
 class sGirl;
 class sImageSpec;
@@ -37,7 +37,7 @@ namespace scripting {
     class sLuaParameter;
 
     class IScriptManager;
-    using sScriptValue = boost::variant<boost::blank, bool, float, std::string>;
+    using sScriptValue = std::variant<std::monostate, bool, float, std::string>;
 
     /// Specifies what to execute for a given event: The name of the target script (lua file) and the function's name.
     struct sEventTarget {

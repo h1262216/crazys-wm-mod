@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022, The Pink Petal Development Team.
+ * Copyright 2019-2023, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
@@ -20,8 +20,6 @@
 
 #ifndef CRAZYS_WM_MOD_SLUAPARAMETER_HPP
 #define CRAZYS_WM_MOD_SLUAPARAMETER_HPP
-
-#include <boost/variant.hpp>
 
 class sGirl;
 class sCustomer;

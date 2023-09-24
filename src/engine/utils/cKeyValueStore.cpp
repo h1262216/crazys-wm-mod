@@ -1,21 +1,21 @@
 /*
-* Copyright 2009, 2010, The Pink Petal Development Team.
-* The Pink Petal Devloment Team are defined as the game's coders
-* who meet on http://pinkpetal.org
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright 2019-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
+ * who meet on http://pinkpetal.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "utils/cKeyValueStore.h"
 #include "tinyxml2.h"
@@ -26,35 +26,35 @@
 #include "utils/lookup.h"
 
 int cKeyValueBase::get_integer(const char *name) const {
-    return boost::get<sIntWithBounds>(get_value(name)).value;
+    return std::get<sIntWithBounds>(get_value(name)).value;
 }
 
 bool cKeyValueBase::get_bool(const char *name) const {
-    return boost::get<bool>(get_value(name));
+    return std::get<bool>(get_value(name));
 }
 
 const std::string& cKeyValueBase::get_str(const char* name) const {
-    return boost::get<std::string>(get_value(name));
+    return std::get<std::string>(get_value(name));
 }
 
 
 float cKeyValueBase::get_float(const char* name) const {
     const auto& val = get_value(name);
-    if(val.type() == typeid(float)) {
-        return boost::get<float>(val);
+    if(std::holds_alternative<float>(val)) {
+        return std::get<float>(val);
     } else {
-        return (float)boost::get<sPercent>(val);
+        return (float)std::get<sPercent>(val);
     }
 }
 
 sPercent cKeyValueBase::get_percent(const char* name) const {
-    return boost::get<sPercent>(get_value(name));
+    return std::get<sPercent>(get_value(name));
 }
 
 
 void cKeyValueBase::set_value(const char *name, bool value) {
     auto& val = get_value(name);
-    if(val.type() == typeid(bool)) {
+    if(std::holds_alternative<bool>(val)) {
         val = value;
     } else {
         throw std::logic_error("Cannot set non-bool setting to bool value");
@@ -63,8 +63,8 @@ void cKeyValueBase::set_value(const char *name, bool value) {
 
 void cKeyValueBase::set_value(const char* name, int value) {
     auto& val = get_value(name);
-    if(val.type() == typeid(sIntWithBounds)) {
-        boost::get<sIntWithBounds>(val).assign_checked(value);
+    if(std::holds_alternative<sIntWithBounds>(val)) {
+        std::get<sIntWithBounds>(val).assign_checked(value);
     } else {
         throw std::logic_error("Cannot set non-integer setting to integer value");
     }
@@ -72,7 +72,7 @@ void cKeyValueBase::set_value(const char* name, int value) {
 
 void cKeyValueBase::set_value(const char* name, float value) {
     auto& val = get_value(name);
-    if(val.type() == typeid(float)) {
+    if(std::holds_alternative<float>(val)) {
         val = value;
     } else {
         throw std::logic_error("Cannot set non-float setting to float value");
@@ -81,7 +81,7 @@ void cKeyValueBase::set_value(const char* name, float value) {
 
 void cKeyValueBase::set_value(const char* name, std::string value) {
     auto& val = get_value(name);
-    if(val.type() == typeid(std::string)) {
+    if(std::holds_alternative<std::string>(val)) {
         val = std::move(value);
     } else {
         throw std::logic_error("Cannot set non-string setting to string value");
@@ -90,7 +90,7 @@ void cKeyValueBase::set_value(const char* name, std::string value) {
 
 void cKeyValueBase::set_value(const char* name, sPercent value) {
     auto& val = get_value(name);
-    if(val.type() == typeid(sPercent)) {
+    if(std::holds_alternative<sPercent>(val)) {
         val = std::move(value);
     } else {
         throw std::logic_error("Cannot set non-string setting to string value");
@@ -104,13 +104,13 @@ void cKeyValueBase::load_xml(const tinyxml2::XMLElement& root) {
         try {
             auto name = GetStringAttribute(element, m_KeyName);
             auto& value = get_value(name);
-            switch(value.which()) {
+            switch(value.index()) {
                 case 0:         // bool
                     value = GetBoolAttribute(element, m_ValueName);
                     break;
                 case 1:         // IntWithBounds
                 {
-                    auto& bounded = boost::get<sIntWithBounds>(value);
+                    auto& bounded = std::get<sIntWithBounds>(value);
                     bounded.assign_checked(GetIntAttribute(element, m_ValueName, bounded.Min, bounded.Max));
                 }
                     break;
@@ -171,7 +171,7 @@ namespace {
             t.SetAttribute(AttributeName, value.value);
         }
 
-        void operator()(boost::blank value) const {
+        void operator()(std::monostate value) const {
         }
 
         using result_type = void;
@@ -180,7 +180,7 @@ namespace {
 
 void cKeyValueBase::save_value_xml(tinyxml2::XMLElement& target, const settings_value_t& value) const {
     auto vis = visitor{m_ValueName, target};
-    value.apply_visitor(vis);
+    std::visit(vis, value);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -189,27 +189,13 @@ const settings_value_t& cSimpleKeyValue::get_value(const char* tag) const {
     return const_cast<cSimpleKeyValue*>(this)->get_value(tag);
 }
 
-namespace {
-    // https://stackoverflow.com/questions/31320857/how-to-determine-if-a-boostvariant-variable-is-empty
-    struct is_blank_f : boost::static_visitor<bool> {
-        bool operator()(boost::blank) const { return true; }
-
-        template<typename T>
-        bool operator()(T const&) const { return false; }
-    };
-
-    bool is_blank(settings_value_t const& v) {
-        return boost::apply_visitor(is_blank_f(), v);
-    }
-}
-
 settings_value_t& cSimpleKeyValue::get_value(const char* tag) {
     auto ref_iter = m_Settings.find(tag);
     if(ref_iter == m_Settings.end()) {
         throw std::out_of_range(std::string("Key ") + tag + " not found");
     }
     auto& ref = ref_iter->second;
-    if(is_blank(ref.value)) {
+    if(std::holds_alternative<std::monostate>(ref.value)) {
         return get_value(ref.fallback);
     }
     return ref.value;

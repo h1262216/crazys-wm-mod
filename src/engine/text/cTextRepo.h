@@ -23,7 +23,7 @@
 #include "text/repo.h"
 #include "utils/lookup.h"
 #include <vector>
-#include <boost/variant.hpp>
+#include <variant>
 
 class TextGroup {
 public:
@@ -51,7 +51,7 @@ private:
     int         m_Chance;
 
     using group_ptr = std::unique_ptr<TextGroup>;
-    boost::variant<std::vector<group_ptr>, std::string> m_Contents;
+    std::variant<std::vector<group_ptr>, std::string> m_Contents;
 };
 
 class cTextRepository : public ITextRepository {

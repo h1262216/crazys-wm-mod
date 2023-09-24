@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/variant.hpp>
 #include "Constants.h"
 #include "sAttributeCondition.h"
 

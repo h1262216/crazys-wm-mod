@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 /// An error type for our cell data.
 ///
@@ -18,7 +18,7 @@ struct Error
 };
 
 /// Data that we want to put in a \c cListBox cell.
-using CellData = boost::variant<std::string, int, bool, Error>;
+using CellData = std::variant<std::string, int, bool, Error>;
 
 /// Cell data with attached formatting.
 struct FormattedCellData {

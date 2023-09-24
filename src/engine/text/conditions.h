@@ -22,7 +22,7 @@
 
 #include "text/repo.h"
 #include <vector>
-#include <boost/variant.hpp>
+#include <variant>
 
 /// A condition that is the logical AND of its sub-conditions
 struct sConjunctCondition : public ICondition {
@@ -56,7 +56,7 @@ struct sCompareCondition : public ICondition {
         GREATER
     } Comparison;
 
-    using ValueRef = boost::variant<int, std::string>;
+    using ValueRef = std::variant<int, std::string>;
     ValueRef Left;
     ValueRef Right;
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2009, 2010, The Pink Petal Development Team.
- * The Pink Petal Devloment Team are defined as the game's coders
+ * Copyright 2019-2023, The Pink Petal Development Team.
+ * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -63,8 +63,8 @@ namespace {
 bool sCompareCondition::check(const IInteractionInterface& lookup) const {
 
     GetValueVisitor visitor{&lookup};
-    int left = Left.apply_visitor(visitor);
-    int right = Right.apply_visitor(visitor);
+    int left = std::visit(visitor, Left);
+    int right = std::visit(visitor, Right);
 
     switch (Comparison) {
         case sCompareCondition::LESS:

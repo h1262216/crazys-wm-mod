@@ -84,22 +84,22 @@ void cScreenGameConfig::init(bool back) {
                 AddToListBox(list_id, -1, std::vector<FormattedCellData>({mk_text(cls), mk_text("-"), mk_text("")}), COLOR_EMPHASIS);
             }
         }
-        switch(setting->value.which()) {
+        switch(setting->value.index()) {
             case 0:
-                value = boost::get<bool>(setting->value) ? "Yes" : "No";
+                value = std::get<bool>(setting->value) ? "Yes" : "No";
                 break;
             case 1:
-                value = std::to_string(boost::get<sIntWithBounds>(setting->value).value);
+                value = std::to_string(std::get<sIntWithBounds>(setting->value).value);
                 break;
             case 2:
             {
-                float raw = boost::get<float>(setting->value);
+                float raw = std::get<float>(setting->value);
                 value = std::to_string(raw);
                 break;
             }
             case 3:
             {
-                sPercent raw = boost::get<sPercent>(setting->value);
+                sPercent raw = std::get<sPercent>(setting->value);
                 std::stringstream conv;
                 conv.precision(1);
                 conv.imbue(std::locale(""));
@@ -109,7 +109,7 @@ void cScreenGameConfig::init(bool back) {
             }
 
             case 4:
-                value = boost::get<std::string>(setting->value);
+                value = std::get<std::string>(setting->value);
                 break;
         }
 
@@ -154,7 +154,7 @@ void cScreenGameConfig::set_ids() {
     SetListBoxDoubleClickCallback(list_id, [this](int sel){
         if(sel < 0) return;
         auto& setting = m_SettingsList.at(sel);
-        switch(setting->value.which()) {
+        switch(setting->value.index()) {
             case 0:
                 input_choice(setting->name, {"Yes", "No"},
                         [this, setting](int c){ m_Settings.set_value(setting->tag, c == 0); init(true); });

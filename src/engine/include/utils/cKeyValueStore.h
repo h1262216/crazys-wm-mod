@@ -20,7 +20,7 @@
 #ifndef WM_CKEYVALUESTORE_H
 #define WM_CKEYVALUESTORE_H
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <string>
 #include "utils/lookup.h"
 #include "IKeyValueStore.h"
@@ -64,7 +64,7 @@ namespace IntWithBoundsFactoryFunctions {
     }
 }
 
-using settings_value_t = boost::variant<bool, sIntWithBounds, float, sPercent, std::string, boost::blank>;
+using settings_value_t = std::variant<bool, sIntWithBounds, float, sPercent, std::string, std::monostate>;
 
 /*!
     \brief Base class for implementing Key-Value stores.

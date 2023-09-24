@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022, The Pink Petal Development Team.
+ * Copyright 2019-2023, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
@@ -133,7 +133,7 @@ cEventMapping::RunSyncWithParams(const sEventID& event, std::initializer_list<sL
         }
     }
     g_LogFile.warning("scripting", "Could not find event ", event.name, "to run!");
-    return boost::blank{};
+    return std::monostate{};
 }
 
 void cEventMapping::SetEventHandler(sEventID id, std::string script, std::string function)

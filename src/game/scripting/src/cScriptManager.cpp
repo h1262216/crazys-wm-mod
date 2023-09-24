@@ -49,7 +49,7 @@ namespace {
         }
     private:
         std::function<void(const sScriptValue& val)> m_Callback;
-        sScriptValue m_Result = boost::blank{};
+        sScriptValue m_Result = std::monostate{};
         bool m_IsFinished = false;
     };
 }

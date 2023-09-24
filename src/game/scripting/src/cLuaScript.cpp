@@ -259,7 +259,7 @@ sScriptValue cLuaScript::RunSynchronous(const std::string& event_name, std::init
             lua_pop(s, 1);
             return result;
         } else if (top == 0) {
-            return boost::blank{};
+            return std::monostate{};
         }
         g_LogFile.error("scripting", "Function '", event_name, "' did return ", top , " values. ");
         lua_settop(s, 0);   // so we don't interfere with the next function call.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022, The Pink Petal Development Team.
+ * Copyright 2019-2023, The Pink Petal Development Team.
  * The Pink Petal Development Team are defined as the game's coders
  * who meet on http://pinkpetal.org
  *
@@ -19,8 +19,8 @@
 
 #include <stdexcept>
 #include <CLog.h>
+#include <cassert>
 #include "cLuaState.h"
-#include <boost/variant.hpp>
 
 extern "C" {
 #include "lua.h"
@@ -96,11 +96,11 @@ sScriptValue scripting::get_value(lua_State* interpreter, int index) {
     } else if(lua_isboolean(interpreter, index)) {
         return sScriptValue((bool)lua_toboolean(interpreter, index));
     } else if(lua_isnil(interpreter, index)) {
-        return boost::blank{};
+        return std::monostate{};
     } else {
         const char* top_as_str = lua_tostring(interpreter, index);
         g_LogFile.error("lua", "Could not convert lua return value to C++ value: ", top_as_str);
-        return boost::blank{};
+        return std::monostate{};
     }
 }
 
@@ -169,7 +169,7 @@ void sLuaThread::resume(int num_params) {
             lua_pop(InterpreterState, top);
             DoneHandler(ret_val);
         } else if (DoneHandler) {
-            DoneHandler(boost::blank{});
+            DoneHandler(std::monostate{});
         } else {
             lua_pop(InterpreterState, top);
         }

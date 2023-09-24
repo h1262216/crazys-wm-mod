@@ -20,7 +20,6 @@
 #ifndef WM_CGAMESETTINGS_H
 #define WM_CGAMESETTINGS_H
 
-#include <boost/variant.hpp>
 #include <string>
 #include <vector>
 #include "utils/cKeyValueStore.h"

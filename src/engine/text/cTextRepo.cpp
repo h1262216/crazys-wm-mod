@@ -36,7 +36,7 @@ namespace {
 }
 
 void TextGroup::add_entry(std::unique_ptr<TextGroup> group) {
-    boost::get<std::vector<group_ptr>>(m_Contents).emplace_back(std::move(group));
+    std::get<std::vector<group_ptr>>(m_Contents).emplace_back(std::move(group));
 }
 
 const std::string& TextGroup::get_text(const IInteractionInterface& lookup) const {
@@ -84,12 +84,10 @@ const std::string& TextGroup::get_text(const IInteractionInterface& lookup) cons
             return empty_string;
 
         }
-
-        using result_type = const std::string&;
     };
 
-    Visitor visit {&lookup};
-    return m_Contents.apply_visitor(visit);
+    Visitor visitor {&lookup};
+    return std::visit(visitor, m_Contents);
 }
 
 bool TextGroup::empty() const {
@@ -100,10 +98,9 @@ bool TextGroup::empty() const {
         bool operator()(const std::vector<group_ptr>& content) const {
             return content.empty();
         }
-        using result_type = bool;
     };
-    Visitor visit {};
-    return m_Contents.apply_visitor(visit);
+    Visitor visitor {};
+    return std::visit(visitor, m_Contents);
 }
 
 void TextGroup::add_entry(std::unique_ptr<ICondition> conds, std::unique_ptr<IAction> actions, int priority, int chance,
