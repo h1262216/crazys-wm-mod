@@ -162,7 +162,7 @@ enum class ESexParticipants {
     LESBIAN,                    ///< With another woman
     HETERO,                     ///< With another man
     THREESOME_FFM,              ///< With a woman and a man
-    THREESOME_MMF,              ///< With two women
+    THREESOME_MMF,              ///< With two men
     GANGBANG,                   ///< With lots of men
     LESBIAN_GROUP,              ///< With lots of women
     ORGY,                       ///< Multiple; mixed gender
