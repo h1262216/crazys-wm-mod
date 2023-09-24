@@ -63,7 +63,7 @@
 		<Stat
 			Name="Obedience"
 			Min="10"
-			Max="50" />
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="40"
@@ -236,7 +236,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="60" />
+			Max="35" />
 		<Stat
 			Name="Spirit"
 			Min="45"
@@ -437,8 +437,8 @@
 			Max="90" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="70" />
+			Min="10"
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -755,8 +755,8 @@
 			Max="100" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="40" />
+			Min="15"
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -918,8 +918,8 @@
 			Max="25" />
 		<Stat
 			Name="Obedience"
-			Min="30"
-			Max="50" />
+			Min="20"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -1100,7 +1100,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="40" />
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -1252,8 +1252,8 @@
 			Max="25" />
 		<Stat
 			Name="Obedience"
-			Min="60"
-			Max="70" />
+			Min="30"
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="50"
@@ -1415,8 +1415,8 @@
 			Max="23" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="60" />
+			Min="10"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -1573,7 +1573,7 @@
 		<Stat
 			Name="Obedience"
 			Min="5"
-			Max="40" />
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="15"
@@ -1869,7 +1869,7 @@
 		<Stat
 			Name="Obedience"
 			Min="30"
-			Max="100" />
+			Max="70" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -2031,12 +2031,12 @@
 			Max="25" />
 		<Stat
 			Name="Obedience"
-			Min="60"
-			Max="60" />
+			Min="30"
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="50"
-			Max="60" />
+			Max="70" />
 		<Stat
 			Name="Beauty"
 			Min="50"
@@ -2510,8 +2510,8 @@
 			Max="40" />
 		<Stat
 			Name="Obedience"
-			Min="30"
-			Max="40" />
+			Min="20"
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -2693,8 +2693,8 @@
 			Max="40" />
 		<Stat
 			Name="Obedience"
-			Min="30"
-			Max="40" />
+			Min="20"
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -3025,8 +3025,8 @@
 			Max="0" />
 		<Stat
 			Name="Obedience"
-			Min="50"
-			Max="70" />
+			Min="20"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="60"
@@ -3183,7 +3183,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="60" />
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -3358,7 +3358,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="60" />
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="60"
@@ -3534,8 +3534,8 @@
 			Max="90" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="70" />
+			Min="15"
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -3695,8 +3695,8 @@
 			Max="90" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="70" />
+			Min="15"
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -3874,8 +3874,8 @@
 			Max="35" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="50" />
+			Min="35"
+			Max="45" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -4051,8 +4051,8 @@
 			Max="35" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="50" />
+			Min="30"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -4234,8 +4234,8 @@
 			Max="35" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="50" />
+			Min="30"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -4421,8 +4421,8 @@
 			Max="35" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="50" />
+			Min="30"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -4604,8 +4604,8 @@
 			Max="35" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="50" />
+			Min="30"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="40"
@@ -4783,8 +4783,8 @@
 			Max="35" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="50" />
+			Min="30"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="40"
@@ -4972,8 +4972,8 @@
 			Max="35" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="50" />
+			Min="30"
+			Max="40" />
 		<Stat
 			Name="Spirit"
 			Min="40"
@@ -5168,7 +5168,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="80" />
+			Max="70" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -5328,8 +5328,8 @@
 			Max="20" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="60" />
+			Min="15"
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -5507,8 +5507,8 @@
 			Max="30" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="60" />
+			Min="15"
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -5686,8 +5686,8 @@
 			Max="28" />
 		<Stat
 			Name="Obedience"
-			Min="70"
-			Max="70" />
+			Min="50"
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="50"
@@ -5866,7 +5866,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="30" />
+			Max="25" />
 		<Stat
 			Name="Spirit"
 			Min="15"
@@ -6014,7 +6014,7 @@
 			Max="28" />
 		<Stat
 			Name="Obedience"
-			Min="20"
+			Min="15"
 			Max="30" />
 		<Stat
 			Name="Spirit"
@@ -6209,8 +6209,8 @@
 			Max="25" />
 		<Stat
 			Name="Obedience"
-			Min="70"
-			Max="70" />
+			Min="50"
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="50"
@@ -6380,8 +6380,8 @@
 			Max="21" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="40" />
+			Min="15"
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -6563,8 +6563,8 @@
 			Max="50" />
 		<Stat
 			Name="Obedience"
-			Min="20"
-			Max="70" />
+			Min="15"
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -6746,8 +6746,8 @@
 			Max="30" />
 		<Stat
 			Name="Obedience"
-			Min="50"
-			Max="80" />
+			Min="40"
+			Max="70" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -6913,8 +6913,8 @@
 			Max="42" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="100" />
+			Min="30"
+			Max="80" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -7070,8 +7070,8 @@
 			Max="41" />
 		<Stat
 			Name="Obedience"
-			Min="25"
-			Max="70" />
+			Min="20"
+			Max="65" />
 		<Stat
 			Name="Spirit"
 			Min="50"
@@ -7216,7 +7216,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="40" />
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -7386,7 +7386,7 @@
 			Max="28" />
 		<Stat
 			Name="Obedience"
-			Min="20"
+			Min="15"
 			Max="30" />
 		<Stat
 			Name="Spirit"
@@ -7704,8 +7704,8 @@
 			Max="26" />
 		<Stat
 			Name="Obedience"
-			Min="30"
-			Max="60" />
+			Min="20"
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="70"
@@ -7888,7 +7888,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="40" />
+			Max="30" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -8047,7 +8047,7 @@
 		<Stat
 			Name="Obedience"
 			Min="5"
-			Max="65" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="10"
@@ -8264,7 +8264,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -8430,8 +8430,8 @@
 			Max="30" />
 		<Stat
 			Name="Obedience"
-			Min="60"
-			Max="100" />
+			Min="40"
+			Max="80" />
 		<Stat
 			Name="Spirit"
 			Min="0"
@@ -8583,7 +8583,7 @@
 			Max="22" />
 		<Stat
 			Name="Obedience"
-			Min="30"
+			Min="20"
 			Max="30" />
 		<Stat
 			Name="Spirit"
@@ -8757,7 +8757,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="60" />
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -8942,7 +8942,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -9119,7 +9119,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -9288,7 +9288,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -9454,8 +9454,8 @@
 			Max="23" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="70" />
+			Min="30"
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="20"
@@ -9634,7 +9634,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="30" />
+			Max="25" />
 		<Stat
 			Name="Spirit"
 			Min="15"
@@ -9782,7 +9782,7 @@
 			Max="62" />
 		<Stat
 			Name="Obedience"
-			Min="50"
+			Min="40"
 			Max="50" />
 		<Stat
 			Name="Spirit"
@@ -9937,7 +9937,7 @@
 			Max="30" />
 		<Stat
 			Name="Obedience"
-			Min="70"
+			Min="50"
 			Max="70" />
 		<Stat
 			Name="Spirit"
@@ -10095,7 +10095,7 @@
 		<Stat
 			Name="Obedience"
 			Min="10"
-			Max="50" />
+			Max="45" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -10240,7 +10240,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="50" />
+			Max="45" />
 		<Stat
 			Name="Spirit"
 			Min="40"
@@ -10392,8 +10392,8 @@
 			Max="28" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="60" />
+			Min="35"
+			Max="55" />
 		<Stat
 			Name="Spirit"
 			Min="60"
@@ -10573,8 +10573,8 @@
 			Max="54" />
 		<Stat
 			Name="Obedience"
-			Min="40"
-			Max="60" />
+			Min="35"
+			Max="55" />
 		<Stat
 			Name="Spirit"
 			Min="50"
@@ -10741,7 +10741,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -10917,7 +10917,7 @@
 			Max="27" />
 		<Stat
 			Name="Obedience"
-			Min="60"
+			Min="40"
 			Max="70" />
 		<Stat
 			Name="Spirit"
@@ -11079,7 +11079,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -11268,7 +11268,7 @@
 		<Stat
 			Name="Obedience"
 			Min="0"
-			Max="60" />
+			Max="50" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -11411,7 +11411,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -11746,8 +11746,8 @@
 			Max="30" />
 		<Stat
 			Name="Obedience"
-			Min="60"
-			Max="100" />
+			Min="50"
+			Max="80" />
 		<Stat
 			Name="Spirit"
 			Min="0"
@@ -11906,7 +11906,7 @@
 		<Stat
 			Name="Obedience"
 			Min="20"
-			Max="70" />
+			Max="60" />
 		<Stat
 			Name="Spirit"
 			Min="30"
@@ -12082,7 +12082,7 @@
 			Max="23" />
 		<Stat
 			Name="Obedience"
-			Min="70"
+			Min="50"
 			Max="70" />
 		<Stat
 			Name="Spirit"

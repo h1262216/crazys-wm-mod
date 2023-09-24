@@ -501,7 +501,11 @@ string cGirls::GetDetailsString(sGirl& girl, bool purchase)
     // display Age, Looks, Rebel, Constitution
     ss << "\n\n" << basestr[0]; if (girl.age() == 100) ss << "Unknown"; else ss << girl.age();
     ss << '\n'   << basestr[2] << (girl.beauty() + girl.charisma()) / 2;
-    ss << '\n'   << basestr[1] << girl.rebel();
+    if(!purchase) {
+        ss << '\n' << basestr[1] << girl.rebel();
+    } else {
+        ss << '\n' << "Obedience : \t" << girl.obedience();
+    }
     ss << '\n'   << basestr[3] << girl.stat_with_change_str(STAT_CONSTITUTION);
 
     // display HHT and money

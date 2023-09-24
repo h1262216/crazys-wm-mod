@@ -153,9 +153,10 @@
         <Modifiers>
             <Modifier Name="stat:PCFear" Value="-60" />
             <Modifier Name="stat:Spirit" Value="60" />
+            <Modifier Name="stat:Confidence" Value="30" />
             <Modifier Name="skill-cap:Combat" Value="12" />
             <Modifier Name="skill-cap:Magic" Value="8" />
-            <Modifier Name="stat:Obedience" Value="-90" />
+            <Modifier Name="stat:Obedience" Value="-50" />
             <Modifier Name="fetish:Dangerous" Value="10" />
             <Modifier Name="fetish:Cool" Value="10" />
             <Modifier Name="fetish:Nerd" Value="-5" />

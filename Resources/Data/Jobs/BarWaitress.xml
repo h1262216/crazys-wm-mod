@@ -131,13 +131,12 @@
             She is informed that this is a genteel and conservative establishment,
             and she should focus on providing timely and efficient service.
             <Text>
-                ${name} worked as a waitress in the bar.
             </Text>
             <Text Condition="Mind Fucked">
                 ${name} nods in understanding, but she also has a hand down her skirt,
                 absent-mindedly rubbing her pussy as she listens.
                 You are not entirely sure that she understands what "genteel and conservative" means here..
-                ${name}'s mind fucked state may make this a more interesting shift than you anticipated.
+                ${name}'s Mind Fucked state may make this a more interesting shift than you anticipated.
             </Text>
         </Message>
         <Message Name="refuse">

@@ -194,6 +194,9 @@ void cBasicJob::InitWork(cGirlShift& shift) const {
     shift.data().Performance = GetPerformance(girl, false);
     shift.data().Enjoyment = CalculateBasicEnjoyment(shift);
 
+    shift.data().DebugMessage <<  "Initial Performance: " <<  shift.data().Performance  << "\n";
+    shift.data().DebugMessage <<  "Initial Enjoyment: " <<  shift.data().Enjoyment << "\n";
+
     // TODO Salary-based enjoyment
     int delta_enjoy = 0;
     if(shift.performance() < 50) {

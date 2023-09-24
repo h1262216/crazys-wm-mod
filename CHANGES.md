@@ -19,6 +19,8 @@ Started reworking the UI
 
 ## Bugfixes
 * re-enable "Preg" image variations without `images.xml`
+* Fixed crash in gallery screen
+* Fixed crash in turn summary screen
 
 # Version 7.2.1beta8
 Small bug fixes and improvements.
