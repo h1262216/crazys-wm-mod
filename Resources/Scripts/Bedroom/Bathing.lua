@@ -6,7 +6,7 @@ function Bathing(girl)
         Dialog("You look ${name} over: \"I think you need a bath, you look dirty!\" :wink:")
     end
 
-    if girl:obey_check(wm.ACTIVITIES.STRIPPING) then
+    if girl:obey_check(wm.ACTIVITIES.TEASING) then
         Dialog("You lead ${name} to your private chambers, and into your personal bathroom. One of your personal slaves " ..
                 "has already drawn a steaming hot bath.")
         local wants_to_please = girl:pclove() > 80 or (girl:pclove() > 50 and (girl:has_trait(wm.TRAITS.EXHIBITIONIST) or girl:lust() > 75))

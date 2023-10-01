@@ -72,7 +72,7 @@
         <Modifier Name="stat:Confidence" Value="20" />
         <Modifier Name="stat:Charisma" Value="10" />
         <Modifier Name="stat:Morality" Value="-10" />
-        <Modifier Name="enjoy:Stripping" Value="30" />
+        <Modifier Name="enjoy:Teasing" Value="30" />
         <Modifier Name="enjoy:Performing" Value="15" />
         <Modifier Name="enjoy:Fucking" Value="10" />
         <Modifier Name="enjoy:Social" Value="5" />
@@ -93,7 +93,7 @@
             <Modifier Name="enjoy:Social" Value="-20" />
             <Modifier Name="fetish:Cool" Value="-20" />
             <Modifier Name="fetish:Nerd" Value="10" />
-            <Modifier Name="enjoy:Stripping" Value="-15" />
+            <Modifier Name="enjoy:Teasing" Value="-15" />
             <Modifier Name="enjoy:Performing" Value="-15" />
             <Modifier Name="enjoy:Social" Value="-15" />
         </Modifiers>
@@ -133,7 +133,7 @@
             <Modifier Name="skill-cap:Group" Value="-3" />
             <Modifier Name="stat:Fame" Value="5" />
             <Modifier Name="enjoy:Fucking" Value="-10" />
-            <Modifier Name="enjoy:Stripping" Value="-10" />
+            <Modifier Name="enjoy:Teasing" Value="-10" />
             <Modifier Name="enjoy:Farming" Value="-20" />
             <Modifier Name="enjoy:Physical" Value="-15" />
             <Modifier Name="enjoy:Crafting" Value="-10" />
@@ -162,7 +162,7 @@
             <Modifier Name="stat:Dignity" Value="20" />
             <Modifier Name="stat:Fame" Value="10" />
             <Modifier Name="enjoy:Fucking" Value="-10" />
-            <Modifier Name="enjoy:Stripping" Value="-10" />
+            <Modifier Name="enjoy:Teasing" Value="-10" />
             <Modifier Name="enjoy:Farming" Value="-25" />
             <Modifier Name="enjoy:Physical" Value="-20" />
             <Modifier Name="enjoy:Crafting" Value="-15" />
@@ -191,7 +191,7 @@
             <Modifier Name="stat:Dignity" Value="30" />
             <Modifier Name="stat:Fame" Value="15" />
             <Modifier Name="enjoy:Fucking" Value="-10" />
-            <Modifier Name="enjoy:Stripping" Value="-10" />
+            <Modifier Name="enjoy:Teasing" Value="-10" />
             <Modifier Name="enjoy:Farming" Value="-35" />
             <Modifier Name="enjoy:Physical" Value="-30" />
             <Modifier Name="enjoy:Crafting" Value="-25" />
@@ -244,7 +244,7 @@
             <Modifier Name="fetish:Cool" Value="15" />
             <Modifier Name="fetish:Elegant" Value="-30" />
 
-            <Modifier Name="enjoy:Stripping" Value="5" />
+            <Modifier Name="enjoy:Teasing" Value="5" />
             <Modifier Name="enjoy:Performing" Value="5" />
             <Modifier Name="enjoy:Fucking" Value="10" />
         </Modifiers>

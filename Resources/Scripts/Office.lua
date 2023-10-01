@@ -77,7 +77,7 @@ function InteractOffice(girl)
 
         Dialog("Remove your clothing.  I want to get a better look my investment.")
 
-        if girl:obey_check(wm.ACTIVITIES.STRIPPING) then
+        if girl:obey_check(wm.ACTIVITIES.TEASING) then
             girl:strip(2)
             wm.UpdateImage(wm.IMG.STRIP)
             if girl:has_trait(wm.TRAITS.EXHIBITIONIST, wm.TRAITS.NYMPHOMANIAC) and girl:pclove() > 0 then

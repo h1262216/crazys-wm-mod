@@ -284,7 +284,7 @@ const char* get_building_type_name(BuildingType type) {
 
 const std::array<const char*, NUM_ACTIVITIES>& get_activity_names() {
     static std::array<const char*, NUM_ACTIVITIES> names {
-        "Fighting", "Fucking", "Stripping", "Crafting", "Farming", "Cooking",
+        "Fighting", "Fucking", "Teasing", "Crafting", "Farming", "Cooking",
         "Physical", "Social", "Mental", "Medical", "Performing", "Service",
         "Submission", "Generic"
     };

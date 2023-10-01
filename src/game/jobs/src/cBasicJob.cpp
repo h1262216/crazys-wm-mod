@@ -362,7 +362,7 @@ sDisobeyData cBasicJob::calculate_disobey_chance(cGirlShift& shift) const {
         if(girl.any_active_trait({traits::SHY, traits::NERVOUS})) {
             obd_fear += 15;
         }
-    } else if(m_Info.PrimaryAction == EActivity::STRIPPING) {
+    } else if(m_Info.PrimaryAction == EActivity::TEASING) {
         if(girl.any_active_trait({traits::SHY, traits::NERVOUS})) {
             obd_fear += 5 + obd_fear / 3;
         }

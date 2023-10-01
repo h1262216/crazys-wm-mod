@@ -611,7 +611,7 @@ enum Goals{                                // `J` new
 enum class EActivity {
     FIGHTING,       // fighting activities
     FUCKING,        // fucking activities
-    STRIPPING,      // no-touching sexual activities
+    TEASING,        // no-touching sexual activities
     CRAFTING,       // any sort of production job, including cooking
     FARMING,        // caring for plants or animals
     COOKING,        // cooking, and generally working with foodstuffs
@@ -620,7 +620,7 @@ enum class EActivity {
     MENTAL,         // activities that mainly exercise the brain
     MEDICAL,        // nurse, doctor, medic etc.
     PERFORMANCE,    // singing, dancing, acting, etc.
-    SERVICE,        // maid, cleaning, etc.
+    SERVICE,        // maid, cleaning, etc., non-sexual submissive role
     SUBMISSION,     // any action where she lets someone take complete control of her
     GENERIC,
 };

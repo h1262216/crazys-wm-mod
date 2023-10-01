@@ -268,7 +268,7 @@ function MasturbateSex(girl)
     Dialog("Her back is toward you as you enter the room. You notice that one of her hands is between her legs.")
     Dialog("You sneak around her side to get a better view. A few moments later she gasps and jumps up as she notices you standing there.")
     Dialog("\"Oh, you don't have to stop on my account.\" you say with a wink.")
-    if girl:obey_check(wm.ACTIVITIES.STRIPPING) then
+    if girl:obey_check(wm.ACTIVITIES.TEASING) then
         wm.UpdateImage(wm.IMG.STRIP)
         girl:experience(6)
         girl:tiredness(2)
