@@ -1362,8 +1362,10 @@ bool HandleDrug(sGirl &girl, const char *drug_trait, const char* drug, std::init
             }
             else
             {
-                for(auto& w : withdrawals) {
-                    girl.upd_base_stat(w.stat, w.change);
+                if(girl.m_Withdrawals > 3) {
+                    for (auto& w: withdrawals) {
+                        girl.upd_base_stat(w.stat, w.change);
+                    }
                 }
                 if (!withdraw)
                 {
@@ -2437,7 +2439,7 @@ void cGirls::GirlFucks(sGirl* girl, bool Day0Night1, sCustomer* customer, bool g
     }    //end switch
 
     auto result = girl->CallScriptFunction(event, customer);
-    message += girl->Interpolate(boost::get<std::string>(result)) + '\n';
+    message += girl->Interpolate(std::get<std::string>(result)) + '\n';
 
 
     message += (SexType == SKILL_GROUP) ? "\nThe customers " : "\nThe customer ";

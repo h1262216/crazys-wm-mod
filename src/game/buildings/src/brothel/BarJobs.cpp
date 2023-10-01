@@ -63,24 +63,17 @@ cBarMaidJob::cBarMaidJob() : cSimpleJob(JOB_BARMAID, "BarMaid.xml") {
 
 void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     //    Job setup                //
-    int roll_jp = shift.d100(), roll_e = shift.d100(), roll_c = shift.d100();
+    int roll_e = shift.d100();
     auto& brothel = shift.building();
     auto& ss = shift.data().EventMessage;
+
+    int pte = 15 + (int)m_PerformanceToEarnings((float)shift.data().Performance);
+    int drinkssold = pte / 3;
 
     int fame = 0;                // girl
     int Bhappy = 0, Bfame = 0, Bfilth = 0;    // brothel
 
     //    Job Performance            //
-
-    int numbarmaid = brothel.num_girls_on_job(JOB_BARMAID, shift.is_night_shift());
-    int numbarwait = brothel.num_girls_on_job(JOB_WAITRESS, shift.is_night_shift());
-    int numbargirls = numbarmaid + numbarwait;
-    int numallcust = brothel.m_TotalCustomers;
-    int numhercust = (numallcust / numbargirls)
-                     + shift.uniform(0, (girl.charisma() / 10) - 3)
-                     + shift.uniform(0, (girl.beauty() / 10) - 1);
-    if (numhercust < 0) numhercust = 1;
-    if (numhercust > numallcust) numhercust = numallcust;
 
     if (shift.chance(20))
     {
@@ -117,8 +110,6 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
         shift.add_literal("\n \n");
     }
 
-
-    double drinkssold = 0;                                            // how many drinks she can sell in a shift
     double drinkswasted = 0;                                        // for when she messes up an order
 
     //a little pre-game randomness
@@ -131,11 +122,6 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
             drinkswasted += shift.uniform(10, 20);
         }
         shift.add_literal("\n \n");
-    }
-
-    for (int i = 0; i < numhercust; i++)
-    {
-        drinkssold += 1 + shift.uniform(0, shift.performance() / 30);    // 200jp can serve up to 7 drinks per customer
     }
 
     add_performance_text(shift);

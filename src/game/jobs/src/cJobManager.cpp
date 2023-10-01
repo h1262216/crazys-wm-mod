@@ -93,7 +93,7 @@ void cJobManager::setup(const std::function<void(std::string)>& callback)
 
     // - Bar Jobs
     JobFilters[JOBFILTER_BAR] = sJobFilter{"Bar", "Bar", "These are jobs for running a bar."};
-    register_filter(JOBFILTER_BAR, JOB_BARMAID, JOB_BARCOOK, {});
+    JobFilters[JOBFILTER_BAR].Contents.push_back(JOB_ESCORT);
     // - Gambling Hall Jobs
     JobFilters[JOBFILTER_GAMBHALL] = sJobFilter{"Gambling", "Gambling Hall", "These are jobs for running a gambling hall."};
     register_filter(JOBFILTER_GAMBHALL, JOB_DEALER, JOB_WHOREGAMBHALL, {});
