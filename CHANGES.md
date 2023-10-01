@@ -1,8 +1,19 @@
 # Version 7.2.2alpha1
-Started reworking the UI
+Started reworking the UI: There is now a new main screen, the player's office.
+Significant gameplay changes as listed below. The new primary/secondary enjoyments for different
+jobs, and th obedience modifiers, can be found [here](Docs&Tools/jobs.html).
+In addition, there are huge internal changes on how jobs are handled in the code, but so far
+they shouldn't have any effect on gameplay.
 
 ## Gameplay
-* New Enjoyment system.
+* New (unified) Enjoyment system: Now there are the following categories for enjoyment:
+  - Fighting, Fucking, Teasing, Crafting, Farming, Cooking,
+    Physical, Social, Mental, Medical, Performing, Service,
+    Submission
+  - Jobs usually have a primary and secondary category, based on which it is determined how well the girl likes the job.
+  - If she enjoyed the shift a lot, this will lead to an increase of her enjoyment values for these categories.
+* Started unifying mechanism for job obedience calculation.
+* New scenes for the Movie studio: Horror, Comedy, JOI
 * Tweaked slave buy/sell prices: 
   - Skills developed > 75 give extra boost to worth
   - Each level increases price by 100 gold
