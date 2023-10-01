@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Movie Maker">
 <Window     Name="Movie Maker Window"                                       XPos="10"       YPos="14"       Width="1005"    Height="740"    Border="1"  />
 
 <Text       Name="Scenes"               Text="Available Scenes"             XPos="7"       YPos="12"       Width="412"     Height="20"           FontSize="12"            />

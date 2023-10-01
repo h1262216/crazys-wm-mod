@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Gangs">
 <Window     Name="Gang Management Window"                                   XPos="10"       YPos="14"       Width="1005"    Height="740"    Border="1"  />
 <Text       Name="txtControlledGangs"   Text="Controlled Gangs"             XPos="7"       YPos="2"        Width="375"     Height="32"     FontSize="18"  />
 <Button     Name="Next Week"            Image="NextWeek"                    XPos="847"     YPos="10"       Width="120"     Height="32"     Transparency="true"/>

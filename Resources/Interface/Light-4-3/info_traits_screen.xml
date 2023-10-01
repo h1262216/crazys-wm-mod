@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Info Traits">
     <Window     Name="Traits Info"                                    XPos="10"       YPos="14"       Width="1005"    Height="740"    Border="1"  />
 
     <Text       Name="TraitsListTxt"        Text="Traits"             XPos="7"        YPos="17"       Width="200"     Height="28"     FontSize="18"            />

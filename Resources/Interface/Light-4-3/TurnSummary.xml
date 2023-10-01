@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Turn Summary">
 <Window     Name="Turn Summary"                             XPos="10"       YPos="14"       Width="1005"    Height="740"    Border="1"  />
 <Text       Name="CurrentBrothel"       Text=""             XPos="7"       YPos="2"        Width="592"     Height="32"     FontSize="11"  />
 

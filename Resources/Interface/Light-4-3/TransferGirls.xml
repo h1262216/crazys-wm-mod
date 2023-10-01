@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Transfer Screen">
 <Window     Name="Transfer Girls"                                           XPos="10"      YPos="14"       Width="1005"    Height="740"    Border="1"  />
 <Text       Name="LabelLeft"            Text="Buildings"                    XPos="15"      YPos="2"        Width="150"     Height="32"     FontSize="11"  />
 <Text       Name="LabelRight"           Text="Buildings"                    XPos="855"     YPos="2"        Width="150"     Height="32"     FontSize="11"  />

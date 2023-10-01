@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Town">
 <Window     Name="Town Screen Window"                                       XPos="10"      YPos="14"       Width="1005"    Height="740"    Border="1"  />
 <Image      Name="TownMap"              File="townmap.png"                  XPos="7"       YPos="10"       Width="774"    Height="720"     Dir="Backdrops" />
 <Button     Name="Next Week"            Image="NextWeek"                    XPos="825"     YPos="10"       Width="120"     Height="32"     Transparency="true"/>

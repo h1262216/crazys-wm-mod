@@ -1,4 +1,4 @@
-<Screen>
+<Screen Name="Dungeon">
 <Window     Name="Dungeon Window"                                           XPos="10"       YPos="14"       Width="1005"    Height="740"    Border="1"  />
 <Text       Name="DungeonHeader"        Text="Dungeon Screen"               XPos="7"       YPos="2"        Width="375"     Height="32"     FontSize="18"  />
 <Text       Name="Gold"                 Text="Player Gold: 0"               XPos="600"      YPos="2"        Width="225"     Height="32"     FontSize="18"  />
