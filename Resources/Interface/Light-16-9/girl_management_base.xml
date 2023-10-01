@@ -6,7 +6,7 @@
     <Image      Name="GirlImage"            File=""                     XPos="1448"     YPos="65"       Width="422"     Height="422"     />
     <Button     Name="ViewDetailsButton"    Image="ViewDetails"         XPos="1546"     YPos="495"      Width="225"     Height="45"     Transparency="true"/>
     <Text       Name="GirlDescription"      Text=""                     XPos="1448"     YPos="545"      Width="436"     Height="338"    FontSize="14"  />
-    <Button     Name="TransferButton"       Image="TransferGirls"       XPos="1616"     YPos="844"      Width="225"     Height="45"     Transparency="true" ReplaceWindow="Transfer Screen"/>
+    <Button     Name="TransferButton"       Image="TransferGirls"       XPos="1616"     YPos="844"      Width="225"     Height="45"     Transparency="true" PushWindow="Transfer Screen"/>
     <Button     Name="FreeSlaveButton"      Image="FreeSlave"           XPos="1265"      YPos="844"      Width="225"     Height="45"     Transparency="true"/>
     <Button     Name="SellSlaveButton"      Image="SellSlave"           XPos="1265"      YPos="914"      Width="225"     Height="45"     Transparency="true"/>
     <Button     Name="FireButton"           Image="FireGirl"            XPos="1265"      YPos="982"      Width="225"     Height="45"     Transparency="true"/>
