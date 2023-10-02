@@ -272,6 +272,7 @@ cSurface cFont::RenderTable(const std::string& text, int max_width) const {
     // at this point, we have the chance to split overlong lines
     for(int i = 0; i < cells.size(); ++i) {
         if(!cells[i].render) continue;
+        if(cells[i].content.empty()) continue;
         int x_pos = tab_start[cells[i].tabs] + cells[i].render.GetWidth();
         if(x_pos > max_width && cells[i].content.size() > 1) {
             // split
