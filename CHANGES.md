@@ -1,3 +1,8 @@
+# Version 7.2.2alpha2
+Bugfix release
+
+* Fixed in-game menu for 4:3 interface 
+
 # Version 7.2.2alpha1
 Started reworking the UI: There is now a new main screen, the player's office.
 Significant gameplay changes as listed below. The new primary/secondary enjoyments for different

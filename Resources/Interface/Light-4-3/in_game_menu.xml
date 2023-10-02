@@ -1,5 +1,4 @@
-
-<Screen>
+<Screen Name="Game Menu">
 <Window     Name="In-Game Menu"                            XPos="402"     YPos="240"     Width="220"    Height="204"  Border="1"/>
 <Button     Name="SaveBtn"         Image="Save"            XPos="50"      YPos="36"      Width="120"    Height="32"   Transparency="true"/>
 <Button     Name="QuitBtn"         Image="Quit"            XPos="50"      YPos="86"      Width="120"    Height="32"   Transparency="true"/>
