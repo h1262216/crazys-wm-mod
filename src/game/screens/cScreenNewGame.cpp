@@ -64,8 +64,8 @@ void cScreenNewGame::update_birthday()
     std::stringstream ss;
     g_Game->player().SetBirthDay(SliderValue(m_PlayerBirthDay_id));
     SliderValue(m_PlayerBirthDay_id, g_Game->player().BirthDay());
-    g_Game->player().SetBirthMonth(SliderValue(m_PlayerBirthDay_id));
-    SliderValue(m_PlayerBirthDay_id, g_Game->player().BirthMonth());
+    g_Game->player().SetBirthMonth(SliderValue(m_PlayerBirthMonth_id));
+    SliderValue(m_PlayerBirthMonth_id, g_Game->player().BirthMonth());
     ss << g_Game->player().BirthDay();
     EditTextItem(ss.str(), m_PlayerBirthDayNum_id);
     ss.str("");
