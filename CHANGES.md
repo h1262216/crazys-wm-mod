@@ -1,7 +1,7 @@
 # Version 7.2.2alpha2
 Bugfix release
 
-* Fixed in-game menu for 4:3 interface 
+* Fixed in-game menu and slave market for 4:3 interface 
 * Added missing files
 * Fixed month slider in new game screen
 * Fixed a potential infinite loop

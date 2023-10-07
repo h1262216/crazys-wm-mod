@@ -8,7 +8,10 @@
 <Image      Name="GirlImage"            File=""                             XPos="157"      YPos="10"       Width="690"     Height="650"    MinWidth="240" MinHeight="320" />
 
 <Text       Name="Gold"                 Text="Gold: 0"                      XPos="847"     YPos="2"        Width="157"     Height="32"     FontSize="15"          />
-<ListBox    Name="SlaveList"                                                XPos="847"     YPos="35"       Width="150"     Height="255" FontSize="10" RowHeight="19" Border="1"         Events="true"         Multi="true"          />
+<ListBox    Name="SlaveList"                                                XPos="847"     YPos="35"       Width="150"     Height="255" FontSize="10" RowHeight="19" Border="1" Events="true" Multi="true" ShowHeaders="true" HeaderDiv="true" HeaderClicksSort="true">
+    <Column Name="Name"     Header="Name"                  Offset="0"  />
+    <Column Name="Price"    Header="Price"                 Offset="105"  />
+</ListBox>
 <Button     Name="BuySlaveButton"       Image="BuySlave"                    XPos="862"     YPos="300"      Width="120"     Height="32"  Transparency="true"/>
 <Text       Name="GirlDesc"             Text=""                             XPos="847"     YPos="340"      Width="150"     Height="200" FontSize="9"          />
 
