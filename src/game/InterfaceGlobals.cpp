@@ -133,60 +133,61 @@ T* load_window(const char* name, bool nonav, Args&&... args)
 
 void register_global_nav_keys(cInterfaceWindow& window) {
     window.AddKeyCallback(SDLK_F1, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
+        window_manager().push("Brothel Management");
         window_manager().push("Girl Management");
     });
 
     window.AddKeyCallback(SDLK_F2, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Gangs");
     });
 
     window.AddKeyCallback(SDLK_F3, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Dungeon");
     });
 
     window.AddKeyCallback(SDLK_F4, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Town");
         window_manager().push("Slave Market");
     });
 
     window.AddKeyCallback(SDLK_F5, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Item Management");
     });
 
     window.AddKeyCallback(SDLK_F6, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Transfer Screen");
     });
 
     window.AddKeyCallback(SDLK_F7, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Prison");
     });
 
     window.AddKeyCallback(SDLK_F8, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Town");
         window_manager().push("Mayor");
     });
-/*
+
     window.AddKeyCallback(SDLK_F9, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Town");
         window_manager().push("Bank");
     });
-*/
+
     window.AddKeyCallback(SDLK_F10, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Town");
     });
 
     window.AddKeyCallback(SDLK_F11, []() {
-        window_manager().PopToWindow("Brothel Management");
+        window_manager().PopToWindow("Player's Office");
         window_manager().push("Turn Summary");
     });
     /*

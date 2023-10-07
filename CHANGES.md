@@ -6,6 +6,7 @@ Bugfix release
 * Fixed month slider in new game screen
 * Fixed a potential infinite loop
 * Fixed Escort job
+* Use Player Office as basic screen when using shortcuts
 
 # Version 7.2.2alpha1
 Started reworking the UI: There is now a new main screen, the player's office.
