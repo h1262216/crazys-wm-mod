@@ -560,6 +560,13 @@ int cGenericJob::CalculateBasicEnjoyment(cGirlShift& shift) const {
 void cGenericJob::HandleWorkImpossible(cGirlShift& shift) const {
     shift.data().EventImage = EImageBaseType::PROFILE;
     shift.data().EventType = EVENT_WARNING;
+    if(shift.data().EventMessage.tellg() < 1) {
+        g_LogFile.warning("job", "Empty message for impossible work in job ", get_job_name(shift.data().Job));
+        shift.data().EventMessage
+            << "Error: This girl could not perform her job, "
+            << "but the game failed to provide an adequate warning message.\n"
+            << "Please report this problem to the developers.";
+    }
     shift.generate_event();
 }
 

@@ -21,6 +21,7 @@
 #include <tuple>
 #include "cEvents.h"
 #include "interface/constants.h"
+#include "CLog.h"
 
 
 std::string CEvent::TitleText() const
@@ -162,6 +163,9 @@ bool CEvent::IsCombat() const {
 
 void cEvents::AddMessage(std::string message, sImageSpec image, EEventType event_type)
 {
+    if(message.empty()) {
+        g_LogFile.warning("message", "Adding an empty message of type: ", event_type);
+    }
     events.emplace_back(event_type, image, std::move(message), nullptr);
     m_bSorted = false;
 }

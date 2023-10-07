@@ -1563,8 +1563,6 @@ namespace {
 }
 
 void cJobManager::register_job(std::unique_ptr<cGenericJob> job) {
-    m_OOPJobs[0] = std::make_unique<NullJob>((JOBS)0); // TODO special invalid job marker
-    m_OOPJobs[127] = std::make_unique<NullJob>((JOBS)0); // TODO special invalid job marker
     assert(job != nullptr);
     try {
         job->OnRegisterJobManager(*this);
