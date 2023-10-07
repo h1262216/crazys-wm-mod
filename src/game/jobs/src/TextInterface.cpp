@@ -43,6 +43,10 @@ int cJobTextInterface::LookupNumber(const std::string& name) const {
         } else if(name == "Tips") {
             return m_Shift->data().Tips;
         }
+        auto cjob = dynamic_cast<const cGenericJob*>(m_Job);
+        if(int var = cjob->FindVariable(name); var != -1) {
+            return std::get<int>(m_Shift->get_variable(var));
+        }
         g_LogFile.error("job", "Unknown variable ", name);
         BOOST_THROW_EXCEPTION(std::runtime_error("Unknown variable: " + name));
     } else {
