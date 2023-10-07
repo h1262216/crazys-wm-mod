@@ -63,7 +63,12 @@ void cJobTextInterface::SetVariable(const std::string& name, int value) const {
     } else if(name == "Tips") {
         m_Shift->data().Tips = value;
     } else {
-        BOOST_THROW_EXCEPTION(std::runtime_error("Unknown variable: " + name));
+        auto cjob = dynamic_cast<const cGenericJob*>(m_Job);
+        if(int var = cjob->FindVariable(name); var != -1) {
+            m_Shift->get_variable(var) = value;
+        } else {
+            BOOST_THROW_EXCEPTION(std::runtime_error("Unknown variable: " + name));
+        }
     }
 }
 
