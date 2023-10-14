@@ -81,6 +81,11 @@ class cJobGains {
 public:
     void apply(cGirlShift& shift) const;
     void load(const tinyxml2::XMLElement& source);
+
+    int xp() const { return XP; }
+    int skill() const { return Skill; }
+    const std::vector<sWeightedStatSkill>& gains() const { return Gains; }
+    const  std::vector<sTraitChange>& traits() const { return TraitChanges; }
 private:
     void gain_traits(cGirlShift& shift) const;
 

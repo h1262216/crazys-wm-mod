@@ -1,6 +1,7 @@
 <Screen Name="Game Menu">
-    <Window     Name="In-Game Menu"                            XPos="700"      YPos="240"     Width="520"    Height="408"  Border="1"/>
+    <Window     Name="In-Game Menu"                            XPos="700"      YPos="240"     Width="520"    Height="508"  Border="1"/>
     <Button     Name="SaveBtn"         Image="Save"            XPos="100"      YPos="72"      Width="320"    Height="64"   Transparency="true"/>
-    <Button     Name="QuitBtn"         Image="Quit"            XPos="100"      YPos="172"     Width="320"    Height="64"   Transparency="true"/>
-    <Button     Name="ContinueBtn"     Image="ContinueBtn"     XPos="100"      YPos="272"     Width="320"    Height="64"   Transparency="true"  ReplaceWindow="<back>"/>
+    <Button     Name="HelpBtn"         Image="Help"            XPos="100"      YPos="172"     Width="320"    Height="64"   Transparency="true"/>
+    <Button     Name="QuitBtn"         Image="Quit"            XPos="100"      YPos="272"     Width="320"    Height="64"   Transparency="true"/>
+    <Button     Name="ContinueBtn"     Image="ContinueBtn"     XPos="100"      YPos="372"     Width="320"    Height="64"   Transparency="true"  ReplaceWindow="<back>"/>
 </Screen>

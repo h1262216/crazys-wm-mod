@@ -417,6 +417,8 @@ enum JOBS {
     JOB_UNSET = 255
 };// End JOBS enum
 
+constexpr const EnumRange<JOBS, JOB_RESTING, NUM_JOBS> JobsRange = {};
+
 static_assert(JOB_UNSET > NUM_JOBS, "");
 
 #if 0

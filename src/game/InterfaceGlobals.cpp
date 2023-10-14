@@ -108,6 +108,7 @@ void LoadInterface(const cConfig& cfg)
     load_window_easy<screens::cMovieMakerScreenBase>(false);
     load_window_easy<screens::cMovieMarketScreenBase>(false);
     load_window_easy<screens::cInfoTraitsScreenBase>(false);
+    load_window_easy<screens::cInfoJobsScreenBase>(false);
     load_window_easy<screens::cInGameMenuBase>(true);
     load_window<cScreenGameConfig>("GameSetup", false, false);
     load_window<cScreenGameConfig>("UserSettings", false, true);

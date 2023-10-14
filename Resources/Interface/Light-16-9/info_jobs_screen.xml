@@ -1,0 +1,38 @@
+<Screen Name="Info Jobs">
+    <Window     Name="Jobs Info"                                    XPos="18"     YPos="20"   Width="1883" Height="1041"    Border="1"  />
+
+    <Text       Name="JobListTxt"        Text="Jobs"               XPos="14"      YPos="17"   Width="450"  Height="28"     FontSize="22"            />
+    <ListBox    Name="JobList"                                     XPos="20"      YPos="49"   Width="600"  Height="951"    FontSize="17"       RowHeight="30"      Border="1"          Events="true"      Multi="true"   ShowHeaders="true"   HeaderDiv="true"   HeaderClicksSort="true"   >
+        <Column     Name="Job"             Header="Job"       Offset="0"  />
+        <Column     Name="PrimaryAction"   Header="Primary"   Offset="200"  />
+        <Column     Name="SecondaryAction" Header="Secondary" Offset="300"  />
+        <Column     Name="Wages"           Header="Wages"     Offset="400"  />
+        <Column     Name="Enjoy"           Header="Enjoy"     Offset="465"  />
+        <Column     Name="XP"              Header="XP"        Offset="530"  />
+    </ListBox>
+
+    <Text       Name="DescrTxt"             Text="Description"        XPos="714"  YPos="49"   Width="390"  Height="28"     FontSize="22"            />
+    <Text       Name="Description"          Text=""                   XPos="720"  YPos="79"   Width="700"  Height="120"    FontSize="17" />
+
+    <Text       Name="GainsTxt"             Text="Gains and Losses"   XPos="714"  YPos="167"  Width="390"  Height="28"     FontSize="22"            />
+    <Text       Name="XP_Skill"             Text=""                   XPos="720"  YPos="195"  Width="390"  Height="28"     FontSize="17"            />
+    <ListBox    Name="StatGainsList"                                  XPos="720"  YPos="220"  Width="370"  Height="200"    FontSize="17"       RowHeight="30"      Border="1"          Events="true"      Multi="true"   ShowHeaders="true"   HeaderDiv="true"   HeaderClicksSort="true"   >
+        <Column     Name="Target" Header="Stat/Skill" Offset="0"  />
+        <Column     Name="Weight" Header="Weight" Offset="150"  />
+        <Column     Name="Min" Header="Min" Offset="230"  />
+        <Column     Name="Max" Header="Max" Offset="300"  />
+    </ListBox>
+
+    <Text       Name="TraitsTxt"            Text="Traits"             XPos="720"  YPos="440"  Width="390"  Height="28"     FontSize="17"            />
+    <ListBox    Name="TraitGainList"                                  XPos="720"  YPos="465"  Width="370"  Height="200"    FontSize="17"       RowHeight="30"      Border="1"          Events="true"      Multi="true"   ShowHeaders="false">
+        <Column Name="Mode" Header="Target" Offset="0"  />
+        <Column Name="Trait" Header="Target" Offset="100"  />
+    </ListBox>
+
+
+    <Text       Name="HelpLbl"     Text="Jobs: An Overview" XPos="1400"      YPos="20" Width="390" Height="28" FontSize="22" />
+    <Text       Name="HelpText"    Text="TEXT"                XPos="1406"      YPos="49" Width="390" Height="800" FontSize="17" />
+
+    <Button     Name="BackButton"           Image="Back"                        XPos="1588"     YPos="970"      Width="281"     Height="56"     Transparency="true" PushWindow="<back>"/>
+
+</Screen>

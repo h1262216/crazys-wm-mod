@@ -46,6 +46,8 @@ public:
     double GetPerformance(const sGirl& girl, bool estimate) const override;
     sDisobeyData calculate_disobey_chance(cGirlShift& shift) const;
 
+    const cJobGains& get_gains() const { return m_Gains; }
+
 protected:
     void apply_gains(cGirlShift& shift) const;
 

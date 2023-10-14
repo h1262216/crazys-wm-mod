@@ -34,6 +34,16 @@ void cScreenGameMenu::setup_callbacks()
         pop_window();
         push_message("Game Saved", COLOR_POSITIVE);
     });
+
+    SetButtonCallback(m_HelpBtn_id, [this]() {
+        input_choice("Topic?", {"Traits", "Jobs"}, [this](int choice){
+            if(choice == 0) {
+                push_window("Info Traits");
+            } else if (choice == 1) {
+                push_window("Info Jobs");
+            }
+        });
+    });
 }
 
 void cScreenGameMenu::init(bool back)

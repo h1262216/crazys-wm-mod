@@ -509,8 +509,37 @@ namespace screens {
     
         protected:
             int m_ContinueBtn_id     = -1;
+            int m_HelpBtn_id         = -1;
             int m_QuitBtn_id         = -1;
             int m_SaveBtn_id         = -1;
+    };
+
+    class cInfoJobsScreenBase : public cInterfaceWindowXML 
+    {
+        public:
+            cInfoJobsScreenBase();
+            
+            static std::shared_ptr<cInterfaceWindow> create();
+            
+        private:
+            void process() override { };
+            void set_ids() override;
+            
+            virtual void setup_callbacks() = 0;
+    
+        protected:
+            int m_BackBtn_id         = -1;
+            int m_DescrTxt_id        = -1;
+            int m_Description_id     = -1;
+            int m_GainsTxt_id        = -1;
+            int m_HelpLbl_id         = -1;
+            int m_HelpText_id        = -1;
+            int m_JobListTxt_id      = -1;
+            int m_JobList_id         = -1;
+            int m_StatGainsList_id   = -1;
+            int m_TraitGainList_id   = -1;
+            int m_TraitsTxt_id       = -1;
+            int m_XpSkill_id         = -1;
     };
 
     class cInfoTraitsScreenBase : public cInterfaceWindowXML 

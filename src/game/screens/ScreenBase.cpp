@@ -351,8 +351,28 @@ cInGameMenuBase::cInGameMenuBase() : cInterfaceWindowXML("in_game_menu.xml") { }
 
 void cInGameMenuBase::set_ids() {
     m_ContinueBtn_id     = get_id("ContinueBtn");
+    m_HelpBtn_id         = get_id("HelpBtn");
     m_QuitBtn_id         = get_id("QuitBtn");
     m_SaveBtn_id         = get_id("SaveBtn");
+
+    setup_callbacks();
+}
+
+cInfoJobsScreenBase::cInfoJobsScreenBase() : cInterfaceWindowXML("info_jobs_screen.xml") { };
+
+void cInfoJobsScreenBase::set_ids() {
+    m_BackBtn_id         = get_id("BackButton");
+    m_DescrTxt_id        = get_id("DescrTxt");
+    m_Description_id     = get_id("Description");
+    m_GainsTxt_id        = get_id("GainsTxt");
+    m_HelpLbl_id         = get_id("HelpLbl");
+    m_HelpText_id        = get_id("HelpText");
+    m_JobListTxt_id      = get_id("JobListTxt");
+    m_JobList_id         = get_id("JobList");
+    m_StatGainsList_id   = get_id("StatGainsList");
+    m_TraitGainList_id   = get_id("TraitGainList");
+    m_TraitsTxt_id       = get_id("TraitsTxt");
+    m_XpSkill_id         = get_id("XP_Skill");
 
     setup_callbacks();
 }

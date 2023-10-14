@@ -31,6 +31,7 @@ set(SCREENS_SRC
         screens/cGameWindow.cpp
         screens/cScreenGameConfig.cpp
         screens/cScreenInfoTraits.cpp
+        screens/cScreenInfoJobs.cpp
         screens/cScreenGameMenu.cpp
         screens/cScreenPlayerOffice.cpp)
 
