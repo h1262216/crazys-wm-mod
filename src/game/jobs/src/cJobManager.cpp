@@ -1637,7 +1637,7 @@ const sJobFilter& cJobManager::get_filter(EJobFilter filter) const {
 }
 
 
-bool cJobManager::assign_job(sGirl& girl, JOBS job, EJobShift shift) const {
+std::string cJobManager::assign_job(sGirl& girl, JOBS job, EJobShift shift) const {
     if(is_full_time(job)) {
         shift = EJobShift::FULL;
     }
@@ -1646,23 +1646,20 @@ bool cJobManager::assign_job(sGirl& girl, JOBS job, EJobShift shift) const {
     if(shift == EJobShift::FULL || shift == EJobShift::DAY) {
         auto check = get_job(job)->IsJobValid(girl, false);
         if(!check) {
-            g_Game->push_message(girl.Interpolate(check.Reason), 0);
-            return false;
+            return girl.Interpolate(check.Reason);
         }
     }
     if(shift == EJobShift::FULL || shift == EJobShift::NIGHT) {
         auto check = get_job(job)->IsJobValid(girl, true);
         if(!check) {
-            g_Game->push_message(girl.Interpolate(check.Reason), 0);
-            return false;
+            return girl.Interpolate(check.Reason);
         }
     }
 
     // Additional checks
     if(get_job_info(job).Singleton) {
         if (girl.m_Building->num_girls_on_job(job, shift == EJobShift::NIGHT) > 0) {
-            g_Game->push_message("There can be only one " + get_job_name(job) + "!", 0);
-            return false;
+            return "There can be only one " + get_job_name(job) + "!";
         }
     }
 
@@ -1682,7 +1679,6 @@ bool cJobManager::assign_job(sGirl& girl, JOBS job, EJobShift shift) const {
         }
     } else {
         g_Game->push_message("Invalid shift. This is a bug!", COLOR_WARNING);
-        return false;
     }
-    return true;
+    return {};
 }

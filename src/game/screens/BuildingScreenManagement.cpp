@@ -248,7 +248,8 @@ void IBuildingScreenManagement::assign_job(sGirl& girl, JOBS new_job, int girl_s
         shift = EJobShift::FULL;
 
     // if assign_job returns false, the job assignment was cancelled
-    if (!job_manager().assign_job(girl, new_job, shift)) {
+    if (auto error = job_manager().assign_job(girl, new_job, shift); !error.empty()) {
+        g_Game->push_message(error, 0);
         return;
     }
 
