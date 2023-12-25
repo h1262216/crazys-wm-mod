@@ -101,7 +101,7 @@ public:
 
     const sJobFilter& get_filter(EJobFilter filter) const override;
 
-    bool assign_job(sGirl& girl, JOBS job, EJobShift shift) const override;
+    std::string assign_job(sGirl& girl, JOBS job, EJobShift shift) const override;
 
     std::array<sJobFilter, NUMJOBTYPES> JobFilters;
 

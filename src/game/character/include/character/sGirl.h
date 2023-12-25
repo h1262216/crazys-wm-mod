@@ -111,6 +111,7 @@ struct sGirl : public ICharacter, public std::enable_shared_from_this<sGirl>
 
     /// gets the girls job for the day or night shift
     JOBS get_job(bool night_shift) const;
+    void set_job(JOBS job, bool night_shift);
     void FullJobReset(JOBS job);
     JOBS m_DayJob;                            // id for what job the girl is currently doing
     JOBS m_NightJob;                          // id for what job the girl is currently doing

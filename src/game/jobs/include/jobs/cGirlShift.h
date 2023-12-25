@@ -29,10 +29,10 @@ public:
     cGirlShift(sGirlShiftData* data, const cGenericJob* job);
 
     sGirlShiftData& data();
-    const sGirlShiftData& data() const;
-    sGirl& girl();
-    cBuilding& building();
-    bool is_night_shift() const;
+    [[nodiscard]] const sGirlShiftData& data() const;
+    [[nodiscard]] sGirl& girl();
+    [[nodiscard]] cBuilding& building();
+    [[nodiscard]] bool is_night_shift() const;
 
     // rng utilities
     cRng& rng();
@@ -43,10 +43,10 @@ public:
 
     // variables
     void set_variable(int id, int value);
-    sGirlShiftData::JobStateVar_t get_variable(int index) const;
+    [[nodiscard]] sGirlShiftData::JobStateVar_t get_variable(int index) const;
 
-    int performance() const;
-    int enjoyment() const;
+    [[nodiscard]] int performance() const;
+    [[nodiscard]] int enjoyment() const;
 
     // resources
     int consume_resource(const std::string& name, int amount);
@@ -56,7 +56,7 @@ public:
     // one-on-one interactions
     void provide_interaction(const std::string& name, int amount);
     sGirl* request_interaction(const std::string& name);
-    bool has_interaction(const std::string& name) const;
+    [[nodiscard]] bool has_interaction(const std::string& name) const;
 
     // message generation
     using LocalSubstitutions = std::initializer_list<std::pair<std::string, std::string>>;

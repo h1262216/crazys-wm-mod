@@ -1309,7 +1309,10 @@ scripting::sAsyncScriptHandle sGirl::TriggerEvent(const scripting::sEventID& id)
 
 JOBS sGirl::get_job(bool night_shift) const {
     return JOBS(night_shift ? m_NightJob : m_DayJob);
+}
 
+void sGirl::set_job(JOBS job, bool night_shift) {
+    (night_shift ? m_NightJob : m_DayJob) = job;
 }
 
 void sGirl::FullJobReset(JOBS job) {

@@ -591,7 +591,7 @@ void cBuilding::AddAntiPreg(int amount) // unused
         m_AntiPregPotions = 700;
 }
 
-bool cBuilding::SetupMatron(bool is_night)
+sGirl* cBuilding::SetupMatron(bool is_night)
 {
     m_ActiveMatron = nullptr;
     int has_matron = num_girls_on_job(m_MatronJob, is_night);
@@ -622,7 +622,7 @@ bool cBuilding::SetupMatron(bool is_night)
     });
     
     if(!matron_candidate)
-        return false;
+        return nullptr;
     
     // 1) back-to-work
     if(has_matron < 1) {
@@ -643,7 +643,7 @@ bool cBuilding::SetupMatron(bool is_night)
         ss << "${name} continued to help the other girls throughout the night.";
         matron_candidate->AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
         m_ActiveMatron = matron_candidate;
-        return true;
+        return m_ActiveMatron;
     }
     else if (matron_candidate->disobey_check(EActivity::SOCIAL, JOB_MATRON))
     {
@@ -655,7 +655,7 @@ bool cBuilding::SetupMatron(bool is_night)
         m_Fame -= matron_candidate->fame();
         ss << "${name} refused to work as the " << get_job_name(m_MatronJob) << ".";
         matron_candidate->AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_NOWORK);
-        return false;
+        return nullptr;
     }
     else    // so there is less chance of a matron refusing the entire turn
     {
@@ -671,7 +671,7 @@ bool cBuilding::SetupMatron(bool is_night)
         ss << "${name} earned a total of " << totalGold << " gold directly from you. She gets to keep it all.";
         matron_candidate->AddMessage(ss.str(), EImageBaseType::PROFILE, sum);
         m_ActiveMatron = matron_candidate;
-        return true;
+        return m_ActiveMatron;
     }
 }
 

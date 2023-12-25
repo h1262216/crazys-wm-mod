@@ -151,7 +151,7 @@ public:
 
     /// Looks for a matron and decides whether she works.
     /// Returns true if the matron for this shift does work.
-    bool SetupMatron(bool is_night);
+    sGirl* SetupMatron(bool is_night);
 
     virtual void Update();
     virtual void UpdateGirls(bool is_night) = 0;
