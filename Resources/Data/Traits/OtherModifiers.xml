@@ -22,6 +22,7 @@
         <Trait Name="Open Minded" Value="-0.5" /> <!-- 'I can sleep anywhere' -->
         <Trait Name="Dependent" Value="-1.0" /> <!-- she will take what you give her -->
         <Trait Name="Adventurer" Value="-1.0" /> <!-- she likes sleeping under the stars -->
+        <Trait Name="Gladiatrix" Value="-0.5" />
         <Trait Name="Farmers Daughter" Value="-1.5" />
         <Trait Name="Country Gal" Value="-1.5" />
         <Trait Name="Maid" Value="-1.0" />
@@ -122,6 +123,7 @@
 
     <Modifier Name="fight-back-chance">
         <Trait Name="Adventurer" Value="5" />
+        <Trait Name="Gladiatrix" Value="10" />
         <Trait Name="Aggressive" Value="10" />
         <Trait Name="Agile" Value="2" />
         <Trait Name="Assassin" Value="10" />
@@ -252,6 +254,7 @@
     <!-- Chance for critical hits -->
     <Modifier Name="combat.melee.crit">
         <Trait Name="Adventurer" Value="1" />
+        <Trait Name="Gladiatrix" Value="1" />
         <Trait Name="Heroine" Value="1" />
         <Trait Name="Assassin" Value="3" />
     </Modifier>
@@ -305,6 +308,7 @@
         <Trait Name="Tough" Value="2" />
         <Trait Name="Strong" Value="1" />
         <Trait Name="Adventurer" Value="1" />
+        <Trait Name="Gladiatrix" Value="1" />
         <Trait Name="Manly" Value="1" />
         <Trait Name="Muscular" Value="1" />
         <Trait Name="Heroine" Value="1" />
@@ -332,6 +336,7 @@
         <Trait Name="Powerful Magic" Value="3" />
 
         <Trait Name="Adventurer" Value="1" />
+        <Trait Name="Gladiatrix" Value="1" />
         <Trait Name="Heroine" Value="1" />
     </Modifier>
     <!-- Blind "Bad Eyesight" "Sharp-Eyed" "Clumsy" "Strong" "Hunter" "Priestess" "Flight"
@@ -569,6 +574,117 @@
         <Trait Name="Blind" Value="-2" />                   <!-- She can't see her partner to time it right -->
         <Trait Name="Deaf" Value="-2" />                    <!-- She can't hear what she sounds like -->
         <Trait Name="Botox Treatment" Value="-2" />         <!-- Is she faking it? can't tell by her face -->
+    </Modifier>
+
+    <Modifier Name="fear-bonus">
+        <Trait Name="Fearless" Value="40" />
+        <Trait Name="Broken Will" Value="25" />
+        <Trait Name="Alcoholic" Value="5" />                <!-- Less afraid under the influence -->
+        <Trait Name="Retarded" Value="5" />
+        <Trait Name="Country Gal" Value="3" />
+        <Trait Name="Farmers Daughter" Value="3" />
+        <Trait Name="City Girl" Value="3" />
+        <Trait Name="Farmer" Value="3" />
+        <Trait Name="Hunter" Value="10" />
+        <Trait Name="Heroine" Value="15" />
+        <Trait Name="Priestess" Value="5" />
+        <Trait Name="Adventurer" Value="10" />
+        <Trait Name="Assassin" Value="10" />
+        <Trait Name="Aggressive" Value="5" />
+        <Trait Name="Audacity" Value="10" />
+        <Trait Name="Dependent" Value="-10" />
+        <Trait Name="Iron Will" Value="5" />
+        <Trait Name="Masochist" Value="5" />
+        <Trait Name="Meek" Value="-5" />
+        <Trait Name="Mind Fucked" Value="20" />
+        <Trait Name="Optimist" Value="5" />
+        <Trait Name="Pessimist" Value="-5" />
+        <Trait Name="Tomboy" Value="3" />
+        <Trait Name="Yandere" Value="3" />
+        <Trait Name="Recently Scolded" Value="8" />
+        <Trait Name="Recently Punished" Value="10" />
+        <Trait Name="Fragile" Value="-10" />
+        <Trait Name="Tough" Value="5" />
+        <Trait Name="Delicate" Value="-5" />
+        <Trait Name="Agile" Value="3" />
+        <Trait Name="Brawler" Value="5" />
+        <Trait Name="Fleet of Foot" Value="3" />
+        <Trait Name="Strong" Value="3" />
+        <Trait Name="Noble" Value="-10" />
+        <Trait Name="Princess" Value="-10" />
+        <Trait Name="Queen" Value="-10" />
+        <Trait Name="Cool Person" Value="1" />
+        <Trait Name="Nerd" Value="-1" />
+        <Trait Name="Undead" Value="15" />
+        <Trait Name="Zombie" Value="15" />
+        <Trait Name="Skeleton" Value="15" />
+        <Trait Name="Vampire" Value="15" />
+        <Trait Name="Angel" Value="10" />
+        <Trait Name="Construct" Value="3" />
+        <Trait Name="Demon" Value="10" />
+        <Trait Name="Dryad" Value="-10" />
+        <Trait Name="Fallen Goddess" Value="-5" />
+        <Trait Name="Goddess" Value="5" />
+        <Trait Name="Incorporeal" Value="10" />
+        <Trait Name="Cool Scars" Value="3" />
+        <Trait Name="Horrific Scars" Value="-5" />
+        <Trait Name="Bruises" Value="-10" />
+    </Modifier>
+
+    <Modifier Name="fear-bonus">
+        <Trait Name="Fearless" Value="40" />
+        <Trait Name="Broken Will" Value="25" />
+        <Trait Name="Alcoholic" Value="5" />                <!-- Less afraid under the influence -->
+        <Trait Name="Retarded" Value="5" />
+        <Trait Name="Country Gal" Value="3" />
+        <Trait Name="Farmers Daughter" Value="3" />
+        <Trait Name="City Girl" Value="3" />
+        <Trait Name="Farmer" Value="3" />
+        <Trait Name="Hunter" Value="10" />
+        <Trait Name="Heroine" Value="15" />
+        <Trait Name="Priestess" Value="5" />
+        <Trait Name="Adventurer" Value="10" />
+        <Trait Name="Gladiatrix" Value="20" />
+        <Trait Name="Assassin" Value="10" />
+        <Trait Name="Aggressive" Value="5" />
+        <Trait Name="Audacity" Value="10" />
+        <Trait Name="Dependent" Value="-10" />
+        <Trait Name="Iron Will" Value="5" />
+        <Trait Name="Masochist" Value="5" />
+        <Trait Name="Meek" Value="-5" />
+        <Trait Name="Mind Fucked" Value="20" />
+        <Trait Name="Optimist" Value="5" />
+        <Trait Name="Pessimist" Value="-5" />
+        <Trait Name="Tomboy" Value="3" />
+        <Trait Name="Yandere" Value="3" />
+        <Trait Name="Recently Scolded" Value="8" />
+        <Trait Name="Recently Punished" Value="10" />
+        <Trait Name="Fragile" Value="-10" />
+        <Trait Name="Tough" Value="5" />
+        <Trait Name="Delicate" Value="-5" />
+        <Trait Name="Agile" Value="3" />
+        <Trait Name="Brawler" Value="5" />
+        <Trait Name="Fleet of Foot" Value="3" />
+        <Trait Name="Strong" Value="3" />
+        <Trait Name="Noble" Value="-10" />
+        <Trait Name="Princess" Value="-10" />
+        <Trait Name="Queen" Value="-10" />
+        <Trait Name="Cool Person" Value="1" />
+        <Trait Name="Nerd" Value="-1" />
+        <Trait Name="Undead" Value="15" />
+        <Trait Name="Zombie" Value="15" />
+        <Trait Name="Skeleton" Value="15" />
+        <Trait Name="Vampire" Value="15" />
+        <Trait Name="Angel" Value="10" />
+        <Trait Name="Construct" Value="3" />
+        <Trait Name="Demon" Value="10" />
+        <Trait Name="Dryad" Value="-10" />
+        <Trait Name="Fallen Goddess" Value="-5" />
+        <Trait Name="Goddess" Value="5" />
+        <Trait Name="Incorporeal" Value="10" />
+        <Trait Name="Cool Scars" Value="3" />
+        <Trait Name="Horrific Scars" Value="-5" />
+        <Trait Name="Bruises" Value="-10" />
     </Modifier>
 </TraitMods>
 

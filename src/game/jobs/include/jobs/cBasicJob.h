@@ -34,6 +34,9 @@ struct sDisobeyData {
     int Hate     = 0;    /// Chance that she refuses because she hates you
     int Rebel    = 0;    /// Chance that she refuses because of general rebelliousness
     int Lust     = 0;    /// How much she might want to do this job because she is horny
+
+    // debug help data
+    int FearValue = 0;
 };
 
 float chance_to_disobey(const sDisobeyData& data);
@@ -69,7 +72,7 @@ protected:
 
     template<class T>
     T performance_based_lookup(const cGirlShift& shift, T worst, T bad, T ok, T good, T great, T perfect) const {
-        switch(get_performance_class(shift.data().Performance)) {
+        switch(get_performance_class(shift.performance())) {
             case 0: return worst;
             case 1: return bad;
             case 2: return ok;

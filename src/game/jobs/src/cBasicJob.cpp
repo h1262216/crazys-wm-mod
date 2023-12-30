@@ -357,6 +357,12 @@ sDisobeyData cBasicJob::calculate_disobey_chance(cGirlShift& shift) const {
     obed_offset += std::max(0, obedience - 60) / 4;
 
     int obd_fear = m_Obedience.Fear;
+
+    // reduce fear effect based on how much she likes the job
+    if(m_Info.PrimaryAction != EActivity::GENERIC && girl.enjoyment(m_Info.PrimaryAction) > 0) {
+        obd_fear -= girl.enjoyment(m_Info.PrimaryAction) / 10;
+    }
+
     if(m_Info.PrimaryAction == EActivity::SOCIAL) {
         obd_fear += 5 - girl.confidence() / 10;
         if(girl.any_active_trait({traits::SHY, traits::NERVOUS})) {
@@ -367,18 +373,30 @@ sDisobeyData cBasicJob::calculate_disobey_chance(cGirlShift& shift) const {
             obd_fear += 5 + obd_fear / 3;
         }
     } else if(m_Info.PrimaryAction == EActivity::FIGHTING) {
-        obd_fear += 10 - girl.combat() / 10 - (girl.strength() + girl.constitution()) / 20;
+        obd_fear += 10 - girl.combat() / 5 - (girl.strength() + girl.constitution() + girl.confidence()) / 20;
+        if(girl.combat() > 50) {
+            obd_fear -= (girl.combat() - 50) / 5;
+        }
+        if(girl.health() < 50) {
+            obd_fear += 10 - girl.health() / 10;
+            if(girl.health() < 20) {
+                obd_fear += 10;
+            }
+        } else if (girl.health() > 95 && girl.tiredness() < 15) {
+            obd_fear -= 5;
+        }
     }
 
     // Is she afraid of this job?
     if(obd_fear > 0) {
         int trust_offset = std::max(0, girl.pclove() - 50) / 5;
-        int job_fear = obd_fear - trust_offset - obed_offset - lust;
-        int fear_chance = sigmoid(job_fear, girl.pcfear(), 15, 100);
-
-        if(girl.any_active_trait({traits::FEARLESS, traits::BROKEN_WILL})) {
-            fear_chance /= 2;
+        if(girl.pcfear() < -50) {
+            trust_offset += (-girl.pcfear() - 50) / 5;
         }
+        int job_fear = obd_fear - trust_offset - obed_offset - lust;
+        job_fear -= girl.get_trait_modifier(traits::modifiers::FEAR_BONUS);
+        int fear_chance = sigmoid(job_fear, std::max(0, girl.pcfear()), 15, 100);
+        disobey.FearValue = job_fear;
         disobey.Fear = fear_chance;
         obedience -= fear_chance / 10;
     }
@@ -408,7 +426,9 @@ sDisobeyData cBasicJob::calculate_disobey_chance(cGirlShift& shift) const {
             trust_offset += (-girl.pcfear() - 50) / 5;
         }
         int job_fear = obd_fear - trust_offset - obed_offset - lust;
+        job_fear -= girl.get_trait_modifier(traits::modifiers::FEAR_BONUS);
         int fear_chance = sigmoid(job_fear, std::max(0, girl.pcfear()), 15, 100);
+        disobey.FearValue = job_fear;
         disobey.Fear = fear_chance;
         obedience -= fear_chance / 10;
     }
@@ -442,21 +462,25 @@ void cBasicJob::disobey_check(cGirlShift& shift) const {
     auto chances = calculate_disobey_chance(shift);
 
     if(get_setting_bool(settings::USER_SHOW_NUMBERS)) {
-        shift.data().DebugMessage << "Obedience:\n" << " Fear: " << chances.Fear << "% [" << m_Obedience.Fear << "]\n";
+        shift.data().DebugMessage << "Obedience:\n";
+        shift.data().DebugMessage << " Fear: " << chances.Fear << "% [" << m_Obedience.Fear << " -> " << chances.FearValue << " / " << girl.pcfear() << "]\n";
         shift.data().DebugMessage << " Dignity: " << chances.Dignity << "% [" << girl.dignity() << " / " << m_Obedience.MaxDignity << "]\n";
         shift.data().DebugMessage << " Hate: " << chances.Hate << "%\n";
         shift.data().DebugMessage << " Rebel: " << chances.Rebel << "% [" << m_Obedience.Obedience << " / " << girl.obedience() << "]\n";
-        shift.data().DebugMessage << " Lust: " << chances.Lust << "\n";
+        shift.data().DebugMessage << " Lust Bonus: " << chances.Lust << "\n";
     }
 
     if(shift.chance_capped(chances.Fear)) {
         shift.set_result(ECheckWorkResult::REFUSE_FEAR);
+        shift.data().DebugMessage << "Disobey due to fear.\n";
         if(shift.chance(10)) {
             girl.obedience(-1);
             girl.pclove(-2);
+            girl.pcfear(-1);
         }
     } else if(shift.chance_capped(chances.Dignity)) {
         shift.set_result(ECheckWorkResult::REFUSE_DIGNITY);
+        shift.data().DebugMessage << "Disobey due to dignity.\n";
         if(shift.chance(10)) {
             girl.dignity(-1);
             girl.obedience(-1);
@@ -464,6 +488,7 @@ void cBasicJob::disobey_check(cGirlShift& shift) const {
         }
         girl.happiness(-1);
     } else if(shift.chance_capped(chances.Hate)) {
+        shift.data().DebugMessage << "Disobey due to hate.\n";
         shift.set_result(ECheckWorkResult::REFUSE_HATE);
         if(shift.chance(10)) {
             girl.pclove(1);
@@ -471,6 +496,7 @@ void cBasicJob::disobey_check(cGirlShift& shift) const {
         }
         girl.happiness(1);
     } else if (shift.chance_capped(chances.Rebel)) {
+        shift.data().DebugMessage << "Disobey due to rebel.\n";
         shift.set_result(ECheckWorkResult::REFUSES);
         if(shift.chance(10)) {
             girl.obedience(-1);
@@ -479,6 +505,7 @@ void cBasicJob::disobey_check(cGirlShift& shift) const {
     } else if(m_Info.PrimaryAction != EActivity::FUCKING && m_Info.SecondaryAction != EActivity::FUCKING
         && girl.lust() > 80 && will_masturbate(girl, true, sPercent(0.33f))) {
         // Her lust got the better of her
+        shift.data().DebugMessage << "Disobey due to horniness.\n";
         shift.set_result(ECheckWorkResult::REFUSE_HORNY);
         if(shift.chance(10)) {
             girl.obedience(-1);

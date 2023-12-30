@@ -1425,18 +1425,40 @@ sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
 }
 
 void cJobManager::handle_pre_shift(sGirlShiftData& shift) {
+    auto job_id = shift.Job;
+    do {
+        job_id = shift.Job;
+        pre_shift_internal(shift);
+    } while (shift.Job != job_id);
+
+    if(is_refused(shift.Refused)) {
+        if(shift.girl().has_active_trait(traits::RECENTLY_SCOLDED)) {
+            shift.girl().add_temporary_trait(traits::REFUSED_JOB_II, 3);
+            shift.girl().obedience(-5);
+            shift.girl().pcfear(-3);
+        } else {
+            shift.girl().add_temporary_trait(traits::REFUSED_JOB, 2);
+        }
+    }
+}
+
+void cJobManager::pre_shift_internal(sGirlShiftData& shift) {
+    if(shift.girl().is_dead())
+        return;
 
     auto job_id = shift.Job;
     auto ctx{g_Game->push_error_context("pre@job: " + get_job_name(job_id))};
+
+    cGirls::UseItems(shift.girl());
+    cGirls::CalculateGirlType(shift.girl());       // update the fetish traits
+    cGirls::UpdateAskPrice(shift.girl(), true);    // Calculate the girls asking price
+
     auto& job_exe = m_OOPJobs.at(job_id);
     if(job_exe == nullptr) {
         g_Game->error("Missing job executor for job " + std::to_string(job_id));
         return;
     }
     job_exe->PreShift(shift);
-    if(shift.Job != job_id) {
-        handle_pre_shift(shift);
-    }
 }
 
 void cJobManager::handle_main_shift(sGirlShiftData& shift) {

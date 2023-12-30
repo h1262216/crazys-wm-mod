@@ -1,10 +1,20 @@
 # Version 7.2.2alpha3
 Bugfix release
-
 * Bedwarmer job now also allowed for slave girls
 * Double-clicking on a building in the transfer screen jumps to that building
 * Some more interaction dialogues
+* Added trait effects on refusing a job out of fear
 * Added `Gladiatrix` trait
+* Adjusted Fear-based job disobedience
+* Further improvements to scolding/punishment mechanics:
+  * When a girl refuses a job, she gets the `Refused Job` temporary trait for one week, 
+    which makes her less obedient.
+  * If you scold (punish) her while this trait is active, the trait will be removed immediately,
+    and she gains 1 (2) extra point of obedience.
+  * If she refuses to do her job after she's been scolded, this severely
+    undermines your credibility, and she gets the `Refused Job II` trait with
+    even stronger obedience malus.
+  * To remove this trait, you now _have to_ punish her; scolding again does no good. 
 
 # Version 7.2.2alpha2
 Bugfix release

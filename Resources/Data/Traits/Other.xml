@@ -50,6 +50,7 @@
         <description>You have recently punished this girl. Her fear and obedience are increased.</description>
         <Modifiers>
             <Modifier Name="stat:PCFear" Value="15" />
+            <Modifier Name="stat:PCLove" Value="-5" />
             <Modifier Name="stat:Obedience" Value="15" />
             <Modifier Name="stat:Spirit" Value="-5" />
         </Modifiers>
@@ -62,6 +63,25 @@
             <Modifier Name="stat:Obedience" Value="5" />
             <Modifier Name="stat:Spirit" Value="-2" />
             <Modifier Name="stat:Confidence" Value="-2" />
+        </Modifiers>
+    </Trait>
+
+    <Trait InheritChance="0" RandomChance="0" Name="Refused Job" Type="Temporary">
+        <description>She refused to do her job this week.</description>
+        <Modifiers>
+            <Modifier Name="stat:Obedience" Value="-10" />
+        </Modifiers>
+    </Trait>
+
+    <Trait InheritChance="0" RandomChance="0" Name="Refused Job II" Type="Temporary">
+        <description>She refused to do her job even after you have scolded her.
+        Such behaviour should not go unpunished.
+        </description>
+        <Modifiers>
+            <Modifier Name="stat:Obedience" Value="-20" />
+            <Modifier Name="stat:Spirit" Value="2" />
+            <Modifier Name="stat:Confidence" Value="2" />
+            <Modifier Name="stat:PCFear" Value="-10" />
         </Modifiers>
     </Trait>
 </Traits>

@@ -126,4 +126,7 @@ public:
     std::vector<std::unique_ptr<IGenericJob>> m_OOPJobs;
 
     void register_job(std::unique_ptr<cGenericJob> job);
+
+    private:
+        void pre_shift_internal(sGirlShiftData& shift);
 };

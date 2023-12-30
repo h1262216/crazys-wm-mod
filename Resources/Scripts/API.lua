@@ -107,11 +107,26 @@ function ScoldGirl(girl)
         girl:pclove(-1)
         girl:happiness(-1)
     end
+
+    -- if your last scolding was ineffective, this one will be even less useful
+    if girl:has_trait(wm.TRAITS.REFUSED_JOB_II) then
+        girl:remove_trait(wm.TRAITS.REFUSED_JOB_II)
+        spirit = spirit + 20
+        girl:obedience(-1)
+        girl:pcfear(-1)
+    end
+
     -- if she has been punished recently, the effect is increased
     if girl:has_trait(wm.TRAITS.RECENTLY_PUNISHED) then
         spirit = spirit - 10
         girl:pcfear(1)
         girl:spirit(-1)
+    end
+
+    -- if she has disobeyed recently, that status is removed
+    if girl:has_trait(wm.TRAITS.REFUSED_JOB) then
+        girl:remove_trait(wm.TRAITS.REFUSED_JOB)
+        girl:obedience(1)
     end
 
     if spirit <= 10 then
@@ -160,12 +175,41 @@ end
 
 ---@param girl wm.Girl
 function PunishGirl(girl)
-    local choice = ChoiceBox("", "\"Guard the door, I'm going to teach this bitch a lesson!\"",
+    local choice = ChoiceBox("", "\"Guard the door, I'm going to teach this bitch a lesson!\" [Rape her]",
             "\"Boys, help me teach this whore some manners!\"",
             "\"Hold her! I'm going to beat some sense into her!\"",
             "\"Throw her into the beast pit for a while!\"",
             "\"Nothing.  She's had enough.  Take her back to her room.\""
     )
+
+    -- if she has disobeyed recently, that status is removed
+    local has_reason = false
+    if girl:has_trait(wm.TRAITS.REFUSED_JOB) then
+        girl:remove_trait(wm.TRAITS.REFUSED_JOB)
+        girl:obedience(2)
+        has_reason = true
+    end
+
+    if girl:has_trait(wm.TRAITS.REFUSED_JOB_II) then
+        girl:remove_trait(wm.TRAITS.REFUSED_JOB_II)
+        girl:obedience(5)
+        has_reason = true
+    end
+
+    if girl:has_trait(wm.TRAITS.RECENTLY_SCOLDED) then
+        if has_reason then
+            girl:obedience(2)
+        end
+        girl:remove_trait(wm.TRAITS.RECENTLY_SCOLDED)
+    end
+
+    if girl:has_trait(wm.TRAITS.RECENTLY_PUNISHED)  then
+        if wm.Percent(33) then
+            girl:progress_trait(wm.TRAITS.MIND_BROKEN, 100)
+        end
+        girl:sanity(-1)
+    end
+
     if choice == 0 then
         PlayerRapeGirl(girl)
         wm.SetPlayerDisposition(-40)
