@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Mrkt">
+<Job ShortName="Mrkt" Title="Marketer">
     <Description>
         She will buy and sell things.
     </Description>

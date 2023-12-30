@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CM">
+<Job ShortName="CM" Title="Director">
     <Description>
         She will direct the scenes. One Director can film at most 3 scenes per week.
     </Description>

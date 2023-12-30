@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CS">
+<Job ShortName="CS" Title="Customer Service">
     <Description>
         She will look after customer needs.
     </Description>

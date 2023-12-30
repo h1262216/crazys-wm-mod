@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Anger Management" ShortName="AMng">
+<Treatment Name="Anger Management" ShortName="AMng" Title="Patient">
     <Description>
         She will go to anger management to get over her anger problems. (Aggressive, Tsundere, Yandere)
     </Description>

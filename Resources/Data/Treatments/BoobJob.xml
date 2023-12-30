@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Boob Job" ShortName="BbJb">
+<Treatment Name="Boob Job" ShortName="BbJb" Title="Patient">
     <Description>
         She will undergo surgery to "enhance" her bust.
         *(Takes up to 3 turns per level, less if a Nurse is on duty)

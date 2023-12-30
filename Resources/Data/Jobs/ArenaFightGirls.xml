@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Cage">
+<Job ShortName="Cage" Title="Gladiatrix">
     <Description>
         She will fight against other girls. Dangerous.
     </Description>

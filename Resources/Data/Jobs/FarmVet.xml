@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Vet">
+<Job ShortName="Vet" Title="Veterinarian">
     <Description>
         She will tend to sick animals.
     </Description>

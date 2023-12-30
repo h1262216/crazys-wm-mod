@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Breast Reduction Surgery" ShortName="BRS">
+<Treatment Name="Breast Reduction Surgery" ShortName="BRS" Title="Patient">
     <Description>
         She will undergo breast reduction surgery.
         *(Takes up to 3 turns per level, less if a Nurse is on duty)

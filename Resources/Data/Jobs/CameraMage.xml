@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CM">
+<Job ShortName="CM" Title="Camera Mage">
     <Description>
         She will film the scenes. One CameraMage can film at most 3 scenes per week.
     </Description>

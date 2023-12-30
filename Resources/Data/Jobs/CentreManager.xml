@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CMgr">
+<Job ShortName="CMgr" Title="Manager">
     <Description>
         She will look after the girls working in the centre.
     </Description>

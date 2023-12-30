@@ -37,6 +37,7 @@ struct sJobInfo {
     std::string Name;
     std::string ShortName;
     std::string Description;
+    std::string Title;          //! What's her job title
 
     EJobShift Shift = EJobShift::ANY;
     bool FreeOnly = false;

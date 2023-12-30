@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Doc">
+<Job ShortName="Doc" Title="Doctor">
     <Description>
         She will become a doctor. Doctors earn extra cash from treating locals. (requires at least 1 to perform surgeries)
     </Description>

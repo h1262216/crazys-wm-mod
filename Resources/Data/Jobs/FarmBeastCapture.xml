@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="BCpt">
+<Job ShortName="BCpt" Title="Beast Catcher">
     <Description>
         She will go out into the wilds to capture beasts.
     </Description>

@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Rancher">
+<Job ShortName="Rancher" Title="Rancher">
     <Description>
         She will tend to larger animals.
     </Description>

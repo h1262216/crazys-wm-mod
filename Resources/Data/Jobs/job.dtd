@@ -1,5 +1,5 @@
 <!ELEMENT Job (Description, Performance, Modifiers?, Gains, Requirements?, Config?, Treatment?, Messages?)>
-<!ATTLIST Job ShortName CDATA #REQUIRED>
+<!ATTLIST Job ShortName CDATA #REQUIRED Title CDATA #REQUIRED>
 
 <!ELEMENT Description (#PCDATA)>
 

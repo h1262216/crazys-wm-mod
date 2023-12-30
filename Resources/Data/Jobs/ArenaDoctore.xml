@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Dtre">
+<Job ShortName="Dtre" Title="Doctore">
     <Description>
         She will watch over the girls in the arena.
     </Description>

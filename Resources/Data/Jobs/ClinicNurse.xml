@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Nurs">
+<Job ShortName="Nurs" Title="Nurse">
     <Description>
         Will help the doctor and heal sick people.
     </Description>

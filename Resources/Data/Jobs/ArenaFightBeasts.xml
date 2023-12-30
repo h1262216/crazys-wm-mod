@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="FiBs">
+<Job ShortName="FiBs" Title="Gladiatrix">
     <Description>
         She will fight to the death against beasts you own. Dangerous.
     </Description>

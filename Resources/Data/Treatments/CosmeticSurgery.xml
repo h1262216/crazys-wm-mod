@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Cosmetic Surgery" ShortName="CosS">
+<Treatment Name="Cosmetic Surgery" ShortName="CosS" Title="Patient">
     <Description>
         She will undergo magical surgery to "enhance" her appearance.
         *(Takes up to 5 turns, less if a Nurse is on duty)

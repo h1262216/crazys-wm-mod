@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Dlr">
+<Job ShortName="Dlr" Title="Card Dealer">
     <Description>
         She will manage a game in the gambling hall.
     </Description>

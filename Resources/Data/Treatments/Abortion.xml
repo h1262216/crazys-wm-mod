@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Abortion" ShortName="Abrt">
+<Treatment Name="Abortion" ShortName="Abrt" Title="Patient">
     <Description>
         She will get an abortion, removing pregnancy and/or insemination.
     </Description>

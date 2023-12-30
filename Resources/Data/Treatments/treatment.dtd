@@ -1,5 +1,5 @@
 <!ELEMENT Treatment (Description, Config, Therapy?, Outcomes, Surgery?, Messages?)>
-<!ATTLIST Treatment Name CDATA #REQUIRED ShortName CDATA #REQUIRED>
+<!ATTLIST Treatment Name CDATA #REQUIRED ShortName CDATA #REQUIRED Title CDATA #REQUIRED>
 
 <!ELEMENT Description (#PCDATA)>
 

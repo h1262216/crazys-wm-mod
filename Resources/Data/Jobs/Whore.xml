@@ -1,6 +1,6 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
 <!-- TODO currently using Dummy values because there are different variations of the job -->
-<Job ShortName="DUMMY">
+<Job ShortName="DUMMY" Title="Whore">
     <Description>
        DUMMY
     </Description>

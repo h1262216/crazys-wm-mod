@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Arse Job" ShortName="AssJ">
+<Treatment Name="Arse Job" ShortName="AssJ" Title="Patient">
     <Description>
         She will undergo surgery to "enhance" her ass.
         *(Takes 5 turns, less if a Nurse is on duty)

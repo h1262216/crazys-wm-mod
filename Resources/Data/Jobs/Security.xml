@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Sec">
+<Job ShortName="Sec" Title="Security Guard">
     <Description>
         She will patrol the building, stopping mis-deeds.
     </Description>

@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Bksm">
+<Job ShortName="Bksm" Title="Blacksmith">
     <Description>
         She will make weapons and armor.
     </Description>

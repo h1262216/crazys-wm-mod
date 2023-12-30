@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CRnc">
+<Job ShortName="CRnc" Title="Catacomb Rancher">
     <Description>
         She will tend to strange beasts.
     </Description>

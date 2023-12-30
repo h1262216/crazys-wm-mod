@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="HGrl">
+<Job ShortName="HGrl" Title="Head Girl">
     <Description>
         She takes care of the girls in your house.
     </Description>

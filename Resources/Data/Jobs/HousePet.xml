@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Hpet">
+<Job ShortName="Hpet" Title="Pet">
     <Description>
         She will be trained to become the house pet.
     </Description>

@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="MktRs">
+<Job ShortName="MktRs" Title="Market Researcher">
     <Description>
         She will gather information about the different target groups of your movie studio.
     </Description>

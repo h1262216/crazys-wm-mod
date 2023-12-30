@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Cnsl">
+<Job ShortName="Cnsl" Title="Counselor">
     <Description>
         She will help girls get over their addictions and problems.
     </Description>

@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Get Healing" ShortName="Heal">
+<Treatment Name="Get Healing" ShortName="Heal" Title="Patient">
     <Description>
         She will have her wounds attended.
     </Description>

@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Bchr">
+<Job ShortName="Bchr" Title="Butcher">
     <Description>
         She will produce food from animals you own.
     </Description>

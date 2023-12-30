@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="FCmd">
+<Job ShortName="FCmd" Title="Comedian">
     <Description>
         She will star in a comedy movie.
     </Description>

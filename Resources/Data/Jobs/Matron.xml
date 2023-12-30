@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Mtrn">
+<Job ShortName="Mtrn" Title="Matron">
     <Description>
         This girl will look after the other girls.
     </Description>

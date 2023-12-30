@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Cure Diseases" ShortName="Cure">
+<Treatment Name="Cure Diseases" ShortName="Cure" Title="Patient">
     <Description>
         She will try to get her diseases cured.
     </Description>

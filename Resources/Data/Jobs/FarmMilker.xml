@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Mlkr">
+<Job ShortName="Mlkr" Title="Milker">
     <Description>
         She will milk the various animals and girls you own.
     </Description>

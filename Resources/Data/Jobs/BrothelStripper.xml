@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="BStp">
+<Job ShortName="BStp" Title="Stripper">
     <Description>
         She will strip for the customers.
     </Description>

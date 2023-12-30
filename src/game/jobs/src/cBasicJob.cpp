@@ -488,30 +488,33 @@ void cBasicJob::disobey_check(cGirlShift& shift) const {
 bool cBasicJob::CheckRefuseWork(cGirlShift& shift) const {
     disobey_check(shift);
 
-    auto refuse_with_text = [&](const char* text){
+    auto refuse_with_text = [&](const char* text, const char* fallback){
         if(has_text(text)) {
             shift.add_text(text);
         } else if (has_text("refuse")) {
             shift.add_text("refuse");
+        } else {
+            shift.add_literal(fallback);
         }
     };
+
     switch(shift.data().Refused) {
         case ECheckWorkResult::REFUSE_FEAR:
-            refuse_with_text("refuse.fear");
+            refuse_with_text("refuse.fear", "${name} refused to work as a ${job-title} to${shift} because she is afraid of this job.");
             break;
         case ECheckWorkResult::REFUSE_DIGNITY:
-            refuse_with_text("refuse.dignity");
+            refuse_with_text("refuse.dignity", "${name} refused to work as a ${job-title} to${shift} because she thinks this job is beneath her.");
             break;
         case ECheckWorkResult::REFUSE_HATE:
-            refuse_with_text("refuse.hate");
+            refuse_with_text("refuse.hate", "${name} refused to do what you ordered and work as a ${job-title} to${shift} because she hates you.");
             break;
         case ECheckWorkResult::REFUSE_HORNY:
-            refuse_with_text("refuse.horny");
+            refuse_with_text("refuse.horny", "${name}'s lust got the better of her to${shift}, and she masturbated instead of working as a ${job-title} .");
             shift.girl().lust_release_regular();
             shift.set_image(EImagePresets::MASTURBATE);
             break;
         case ECheckWorkResult::REFUSES:
-            refuse_with_text("refuse.generic");
+            refuse_with_text("refuse.generic", "${name} refused to work as a ${job-title} to${shift}.");
             break;
         default:
             break;

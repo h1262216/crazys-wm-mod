@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Rcrt">
+<Job ShortName="Rcrt" Title="Recruiter">
     <Description>
         She will go out and try and recruit girls for you.
     </Description>

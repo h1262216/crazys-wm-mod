@@ -2,18 +2,22 @@
 <Messages>
     <Message Name="enjoy.love">
         <Text>She loves this job.</Text>
+        <Text>She loves working as a ${job-name}</Text>
     </Message>
 
     <Message Name="enjoy.like">
         <Text>${name} likes this job.</Text>
+        <Text>${name} likes working as a ${job-name}</Text>
     </Message>
 
     <Message Name="enjoy.dislike">
         <Text>She does not like this job.</Text>
+        <Text>She does not like working as a ${job-name}</Text>
     </Message>
 
     <Message Name="enjoy.hate">
         <Text>${name} hates this job.</Text>
+        <Text>${name} hates working as a ${job-name}</Text>
     </Message>
 
     <Message Name="shift.bad">

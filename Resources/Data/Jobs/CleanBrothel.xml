@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Cln">
+<Job ShortName="Cln" Title="Cleaner">
     <Description>
         She will clean the building, as filth will put off some customers.
     </Description>

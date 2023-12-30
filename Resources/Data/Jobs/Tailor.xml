@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Talr">
+<Job ShortName="Talr" Title="Tailor">
     <Description>
         She will make clothes and other items from fabrics.
     </Description>

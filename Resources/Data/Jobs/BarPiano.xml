@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Pno">
+<Job ShortName="Pno" Title="Pianist">
     <Description>
         She will play the piano for the customers.
     </Description>

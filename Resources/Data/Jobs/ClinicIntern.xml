@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Ntrn">
+<Job ShortName="Ntrn" Title="Intern">
     <Description>
         Will train in how to be a nurse.
     </Description>

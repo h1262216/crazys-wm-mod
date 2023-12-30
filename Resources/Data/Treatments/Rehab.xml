@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Rehab" ShortName="Rehb">
+<Treatment Name="Rehab" ShortName="Rehb" Title="Patient">
     <Description>
         She will go to rehab to get over her addictions.
     </Description>

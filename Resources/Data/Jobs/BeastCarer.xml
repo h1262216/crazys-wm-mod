@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="BstC">
+<Job ShortName="BstC" Title="Beast Carer">
     <Description>
         She will look after the needs of the beasts in your Brothel.
     </Description>

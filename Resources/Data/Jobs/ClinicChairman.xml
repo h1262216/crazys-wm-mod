@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Crmn">
+<Job ShortName="Crmn" Title="Chairman">
     <Description>
         She will watch over the staff of the clinic.
     </Description>

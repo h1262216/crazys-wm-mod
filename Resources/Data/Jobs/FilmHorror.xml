@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="FHor">
+<Job ShortName="FHor" Title="Horror Actress">
     <Description>
         She will star in a horror movie.
     </Description>

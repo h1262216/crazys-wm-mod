@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="MkPt">
+<Job ShortName="MkPt" Title="Potion Master">
     <Description>
         She will make various potions.
     </Description>

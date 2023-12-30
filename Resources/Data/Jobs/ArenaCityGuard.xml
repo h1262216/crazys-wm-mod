@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CGrd">
+<Job ShortName="CGrd" Title="City Guard">
     <Description>
         She will help keep Crossgate safe.
     </Description>

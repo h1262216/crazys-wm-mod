@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Adv">
+<Job ShortName="Adv" Title="Advertiser">
     <Description>
         She will advertise the building's features in the city.
     </Description>

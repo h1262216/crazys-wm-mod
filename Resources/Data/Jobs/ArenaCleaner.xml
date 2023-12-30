@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="GKpr">
+<Job ShortName="GKpr" Title="Groundskeeper">
     <Description>
         She will clean the arena.
     </Description>

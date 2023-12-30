@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="ExC">
+<Job ShortName="ExC" Title="Explorer">
     <Description>
         She will explore the catacombs looking for treasure and capturing monsters and monster girls.
         Needless to say, this is a dangerous job.

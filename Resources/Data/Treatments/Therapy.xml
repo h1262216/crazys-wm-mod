@@ -1,5 +1,5 @@
 <!DOCTYPE Treatment SYSTEM "treatment.dtd">
-<Treatment Name="Therapy" ShortName="Thrp">
+<Treatment Name="Therapy" ShortName="Thrp" Title="Patient">
     <Description>
         She will go to therapy to get over her mental problems. (Nervous, Dependent, Pessimist)
     </Description>

@@ -114,6 +114,8 @@ void cGirlShift::add_literal(const std::string& text, LocalSubstitutions subs) {
             return is_night_shift() ? "night" : "day";
         } else if (var == "progress") {
             return std::to_string(girl().get_treatment_progress()) + "%";
+        } else if (var == "job-title") {
+            return m_JobClass->m_Info.Title;
         } else {
             for(auto& job_var : m_JobClass->m_Variables) {
                 if(job_var.Name == var) {
@@ -358,6 +360,8 @@ void cGenericJob::load_job() {
             m_Info.Name = GetStringAttribute(*job_data, "Name");
             m_Info.JobId = get_job_id(m_Info.Name);
         }
+
+        m_Info.Title = GetStringAttribute(*job_data, "Title");
 
         if(const auto* desc_el = job_data->FirstChildElement("Description")) {
             if(const char* description = desc_el->GetText()) {

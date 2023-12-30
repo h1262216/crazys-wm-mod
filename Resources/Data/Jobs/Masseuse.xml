@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Msus">
+<Job ShortName="Msus" Title="Masseuse">
     <Description>
         She will give massages to the customers.
     </Description>

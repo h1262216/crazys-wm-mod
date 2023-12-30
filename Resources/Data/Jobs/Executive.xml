@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="Exec">
+<Job ShortName="Exec" Title="Executive">
     <Description>
         She manages your studio and takes care of the girls there.
     </Description>

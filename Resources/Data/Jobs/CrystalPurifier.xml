@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CP">
+<Job ShortName="CP" Title="Crystal Purifier">
     <Description>
         She will clean up the filmed scenes. One Purifier can process at most 3 scenes per week.
     </Description>
