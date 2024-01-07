@@ -405,6 +405,7 @@ bool ICharacter::lose_trait(const char *trait_name, bool hide, int chance) {
     }
 
     bool lost = false;
+    lost |= m_Traits->remove_temporary_trait(trait_name);
     lost |= m_Traits->disable_inherent_trait(trait_name);
     if(hide) {
         lost |= m_Traits->disable_permanent_trait(trait_name);

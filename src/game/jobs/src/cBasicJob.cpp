@@ -221,9 +221,9 @@ bool cBasicJob::check_refuse_action(cGirlShift& shift, EActivity action) const {
     return false;
 }
 
-void cBasicJob::add_performance_text(cGirlShift& shift) const {
+void cBasicJob::add_performance_text(cGirlShift& shift, cGirlShift::LocalSubstitutions subs) const {
     shift.add_text(performance_based_lookup(
-            shift, "work.worst", "work.bad", "work.ok", "work.good", "work.great", "work.perfect")
+            shift, "work.worst", "work.bad", "work.ok", "work.good", "work.great", "work.perfect"), std::move(subs)
             );
     shift.add_literal("\n\n");
 }
@@ -383,9 +383,8 @@ sDisobeyData cBasicJob::calculate_disobey_chance(cGirlShift& shift) const {
         obedience -= fear_chance / 10;
     }
 
-    int obd_dignity = m_Obedience.MaxDignity;
-
     // Is she too dignified to do this
+    int obd_dignity = m_Obedience.MaxDignity;
     if(obd_dignity < 100) {
         int love_offset = std::max(0, girl.pclove() - 50) / 5;
         int fear_offset = std::max(0, girl.pcfear() - 50) / 5;
@@ -399,6 +398,19 @@ sDisobeyData cBasicJob::calculate_disobey_chance(cGirlShift& shift) const {
         }
         disobey.Dignity = dig_chance;
         obedience -= dig_chance / 10;
+    }
+
+
+    // Is she afraid of this job?
+    if(obd_fear > 0) {
+        int trust_offset = std::max(0, girl.pclove() - 50) / 5;
+        if(girl.pcfear() < -50) {
+            trust_offset += (-girl.pcfear() - 50) / 5;
+        }
+        int job_fear = obd_fear - trust_offset - obed_offset - lust;
+        int fear_chance = sigmoid(job_fear, std::max(0, girl.pcfear()), 15, 100);
+        disobey.Fear = fear_chance;
+        obedience -= fear_chance / 10;
     }
 
     // does she just want to spite you?
@@ -433,7 +445,7 @@ void cBasicJob::disobey_check(cGirlShift& shift) const {
         shift.data().DebugMessage << "Obedience:\n" << " Fear: " << chances.Fear << "% [" << m_Obedience.Fear << "]\n";
         shift.data().DebugMessage << " Dignity: " << chances.Dignity << "% [" << girl.dignity() << " / " << m_Obedience.MaxDignity << "]\n";
         shift.data().DebugMessage << " Hate: " << chances.Hate << "%\n";
-        shift.data().DebugMessage << " Rebel: " << chances.Rebel << "% [" << m_Obedience.Obedience << "]\n";
+        shift.data().DebugMessage << " Rebel: " << chances.Rebel << "% [" << m_Obedience.Obedience << " / " << girl.obedience() << "]\n";
         shift.data().DebugMessage << " Lust: " << chances.Lust << "\n";
     }
 

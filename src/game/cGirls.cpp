@@ -590,13 +590,13 @@ string cGirls::GetMoreDetailsString(const sGirl& girl, bool purchase)
                          "Obedience : \t", "Spirit : \t", "Agility : \t", "Strength : \t", "Fame : \t", "Dignity : \t",
                          "Lactation : \t", "PCFear : \t", "PCLove : \t", "Gold : \t" };
 
-    const int show = statnumsize - 3;
+    const int show = statnumsize - 1;
 
     for (int i = 0; i < show; i++) ss << '\n' << statstr[i] << girl.stat_with_change_str((STATS) statnum[i]);
 
     if (!purchase)
     {
-        ss << '\n' << statstr[14];
+        ss << '\n' << statstr[16];
         if (g_Game->gang_manager().GetGangOnMission(MISS_SPYGIRLS))
         {
             ss << girl.m_Money;

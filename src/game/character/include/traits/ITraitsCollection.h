@@ -147,6 +147,8 @@ namespace traits {
         /// call update.
         virtual void decay_temporary_trait(sTraitID trait, int decay) = 0;
 
+        virtual bool remove_temporary_trait(sTraitID trait) = 0;
+
         /// Checks whether the given trait is present in the trait collation, and is not blocked (i.e. it is active).
         virtual bool has_active_trait(sTraitID trait) const = 0;
 

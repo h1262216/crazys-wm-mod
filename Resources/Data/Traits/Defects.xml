@@ -65,6 +65,8 @@
             <Modifier Name="fetish:Elegant" Value="-10" />
             <Modifier Name="fetish:Dangerous" Value="10" />
             <Modifier Name="fetish:Sexy" Value="-5" />
+            <Modifier Name="stat:Charisma" Value="-10" />
+            <Modifier Name="stat:Beauty" Value="-10" />
         </Modifiers>
         <Properties>
             <Setting Name="incest:chance" Value="10" />
@@ -266,8 +268,8 @@
     <Trait  Name="No Teeth">
         <description>This girl no longer has any teeth. Customers need not fear any 'accidents' and are willing to use her more roughly. (-looks)</description>
         <Modifiers>
-            <Modifier Name="stat:Charisma" Value="-10" />
-            <Modifier Name="stat:Beauty" Value="-10" />
+            <Modifier Name="stat:Charisma" Value="-15" />
+            <Modifier Name="stat:Beauty" Value="-15" />
             <Modifier Name="skill:OralSex" Value="10" />
             <Modifier Name="skill-cap:OralSex" Value="5" />
             <Modifier Name="fetish:Freak" Value="40" />

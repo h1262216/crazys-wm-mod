@@ -379,6 +379,28 @@ void cTraitsCollection::decay_temporary_trait(sTraitID id, int decay) {
     update();
 }
 
+bool cTraitsCollection::remove_temporary_trait(sTraitID id) {
+    auto trait = id_to_spec(id);
+    bool removed = false;
+    for(auto& t : m_DynamicTraits) {
+        if(t.spec == trait && t.remaining_time > 0) {
+            t.remaining_time = 0;
+            removed = true;
+        }
+    }
+
+    if(removed) {
+        auto new_end = std::remove_if(begin(m_DynamicTraits), end(m_DynamicTraits),
+                                      [](const DynamicTrait& e) { return e.remaining_time == 0; });
+        if (erase_if(m_DynamicTraits, [](const DynamicTrait& e) { return e.remaining_time == 0; })) {
+            m_DirtyFlag = true;
+        }
+        // if at least one trait was removed, recalculate trait effects.
+        update();
+    }
+    return removed;
+}
+
 void cTraitsCollection::_remove_dynamic_trait(std::uint64_t h) {
     if(erase_if(m_DynamicTraits, [&](const DynamicTrait& e) { return e.id == h; })) {
         m_DirtyFlag = true;

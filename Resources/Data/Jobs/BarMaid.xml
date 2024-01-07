@@ -29,7 +29,6 @@
 
         <!-- good traits -->
         <Trait Name="Psychic" Value="10"/>
-        <Trait Name="Mixologist" Value="15"/>
 
         <Trait Name="Fleet of Foot" Value="10"/>    <!-- fast worker -->
         <Trait Name="Optimist" Value="5"/>          <!-- cheerful -->

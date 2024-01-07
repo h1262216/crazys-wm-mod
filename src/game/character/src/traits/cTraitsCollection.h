@@ -38,6 +38,7 @@ namespace traits {
         void save_to_xml(tinyxml2::XMLElement& root) override;
 
         void decay_temporary_trait(sTraitID trait, int decay) override;
+        bool remove_temporary_trait(sTraitID trait) override;
 
         /// gets the fetish rating that the active traits produce
         const std::array<int, NUM_STATS>& stat_effects() const override { return m_StatEffect; }

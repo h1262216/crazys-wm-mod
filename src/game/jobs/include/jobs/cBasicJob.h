@@ -49,7 +49,7 @@ public:
 protected:
     void apply_gains(cGirlShift& shift) const;
 
-    void add_performance_text(cGirlShift& shift) const;
+    void add_performance_text(cGirlShift& shift, cGirlShift::LocalSubstitutions subs={}) const;
 
     void InitWork(cGirlShift& shift) const override;
     // void RegisterVariable(std::string name, sImagePreset& preset);
