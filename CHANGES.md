@@ -1,3 +1,9 @@
+# Version 7.2.2alpha3
+Bugfix release
+
+* Bedwarmer job now also allowed for slave girls
+* Double-clicking on a building in the transfer screen jumps to that building
+
 # Version 7.2.2alpha2
 Bugfix release
 
