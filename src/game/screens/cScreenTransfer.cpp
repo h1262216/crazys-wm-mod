@@ -47,6 +47,13 @@ void cScreenTransfer::setup_callbacks() {
 
     SetListBoxSelectionCallback(m_BrothelLeft_id, [this](int selected) { select_brothel(Side::Left, selected); });
     SetListBoxSelectionCallback(m_BrothelRight_id, [this](int selected) { select_brothel(Side::Right, selected); });
+    auto go_to_building = [&](int index){
+        auto* tgt = getBuilding(index);
+        set_active_building(tgt);
+        push_window("Girl Management");
+    };
+    SetListBoxDoubleClickCallback(m_BrothelLeft_id, go_to_building);
+    SetListBoxDoubleClickCallback(m_BrothelRight_id, go_to_building);
 }
 
 
