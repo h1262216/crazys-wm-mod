@@ -180,7 +180,7 @@
             <Group Condition="skill:BDSM < 30 ^ skill:BDSM > 10">
                 <Text>
                     ${mistress} is trying to get ${name} used to some light BDSM play. She orders her
-                    to lie on her stomach, and proceeds to spank her ass until the the skin turns bright red.
+                    to lie on her stomach, and proceeds to spank her ass until the skin turns bright red.
                     She takes out a flogger, and ${name} -- with panic in her eyes -- begs her to stop. Given
                     ${name}'s lack of BDSM experience, ${mistress} decides to take it easy. She lets ${name}
                     beg for a few more minutes, but then puts the flogger away.
@@ -211,6 +211,20 @@
                     prevent her from thrashing around and hurting herself. Nonetheless, her body shows some bruising
                     after the session.
                 </Text>
+                <Text>
+                    ${mistress} decides to introduce ${name} to a new bondage technique. She ties ${name} into a hogtie,
+                    her ankles bound tightly behind her back. It looks very uncomfortable...
+                </Text>
+                <Text Condition="Massive Melons|Abnormally Large Boobs|Titanic Tits|Big Boobs|Busty Boobs|Giant Juggs" Chance="33">
+                    ${mistress} ties ${name}'s ample breasts with rope. It's a classic bondage technique that highlights
+                    their beauty and prepares her for future clients who might request it.
+
+                    Given ${name}'s limited experience, ${mistress} makes the ropes tight enough to cause some discomfort, but not so tight that it becomes unbearable.
+                </Text>
+                <Text>
+                    Some clients might prefer to watch ${name} tying up herself, so ${mistress} has her practice some self-bondage.
+                    At the end of the session, ${name} knows several basic ways to bind herself effectively without requiring any help.
+                </Text>
             </Group>
             <Group Condition="skill:BDSM < 75 ^ skill:BDSM > 45">
                 <Group Condition="Tough | stat:Constitution>75">
@@ -232,12 +246,80 @@
                     </Text>
                 </Group>
                 <Text>
-                    TODO
+                    ${mistress} ties ${name} into a hogtie, her ankles bound tightly behind her back. The ropes dig
+                    deep into her skin, but ${name} seems unfazed by this. She's had enough training to know how to deal
+                    with this kind of bondage. ${mistress} exploits her helpless position and flogs her ass until it
+                    becomes bright red.
+                </Text>
+                <Text>
+                    ${name} is tied to the ceiling, suspended high above the ground. She's been trained well enough
+                    to handle this level of bondage, so she doesn't panic. ${mistress} leaves her in this stressful
+                    position for 10 minutes before releasing her.
+                </Text>
+                <Text Condition="Massive Melons|Abnormally Large Boobs|Titanic Tits|Big Boobs|Busty Boobs|Giant Juggs" Chance="33">
+                    ${name} is tied up in a breast bondage setup that accentuates her curves. Her big tits wrapped
+                    tightly in ropes, making them stand, making them stand out prominently. To push ${name} further,
+                    ${mistress} attaches clamps to her nipples.
+
+                    ${name} squirms uncomfortably, but doesn't beg for mercy. She is making progress.
+                </Text>
+                <Text>
+                    ${mistress} teaches ${name} some more advanced techniques for self-bondage. As you pass by to oversee
+                    her training, ${mistress} instructs ${name} to demonstrate to you what she has learned, setting her a
+                    time limit of two minutes.
+
+                    She begins by trying ropes around her ankles and connecting them to the bedposts. She pulles the ropes taut,
+                    spreading her legs wide open. Securing her left wrist to the headboard with handcuffs is easy, but then
+                    she struggles for a minute before managing to get her right hand tied to the other side as well.
+                    In the end, she is spread-eagled across the bed, completely immobilized and helpless.
+
+                    "Two minutes twenty-four seconds", ${mistress} notes, "She's made some progress, but still has a long way to go."
+                    ${mistress} takes out a whip. "She gets one lash for every ten seconds that she's late", she explains to you.
+                    By the welts criss-crossing her body, you surmise that ${name} has been too slow many times already today.
+                </Text>
+                <Text Condition="Strong">
+                    ${mistress} introduces ${name} to predicament bondage. She ties ${name} to a wooden pole, hands secured behind her back.
+                    She puts clamps on ${name}'s nipples, then grabs her foot and raises it up until her leg is folded snugly against her upper body.
+                    ${name} expects ${mistress} to tie her leg in place with more rope, and is surprised when she sees her measuring out a small piece of
+                    thin twine.
+                    Only when ${mistress} connects it to the clamps and then loops it around her big too does ${name} understand the insidiousness of this setup.
+                    If she cannot maintain her position, she will experience excruciating pain as the clamps pull on her nipples.
+
+                    For several minutes, ${name} holds her leg in place, but eventually, fatigue starts to set in even for someone as Strong as her.
+                    Her left leg starts shaking, sweat is pouring for every pore, yet she cannot stop her right leg from slowly slipping down, tugging on her nipples
+                    with increasing violence. Finally, her strength falters, and with a muffled scream, her leg crashes to the ground, snapping the twine.
                 </Text>
             </Group>
-            <Text>
-                BDSM training.
-            </Text>
+            <Group Condition="skill:BDSM > 70">
+                <Text>
+                    ${name} is quite experienced, so ${mistress} doesn't hold back. To test her limits, she puts her
+                    into a strict hogtie. ${mistress} then proceeds to use all sorts of implements on ${name}, from whips
+                    to canes, floggers and paddles. For an hour, ${name} has to endure every form of BDSM imaginable,
+                    until finally ${mistress} releases her from her bonds.
+                    She is now ready for even the most depraved clients.
+                </Text>
+                <Text>
+                    As part of her advanced training, ${mistress} suspends ${name} upside down from the ceiling.
+                    She inserts a large dildo into ${name}'s pussy and starts fucking her vigorously. The inverted position
+                    makes ${name}'s blood rush to her head, intensifying the sensations of pleasure and pain alike.
+
+                    When she finally cums, the juices spewing out of her pussy come raining down onto her face, and like
+                    a good submissive, she opens her mouth wide to receive them.
+                </Text>
+                <Text Condition="Massive Melons|Abnormally Large Boobs|Titanic Tits|Big Boobs|Busty Boobs|Giant Juggs" Chance="33">
+                    ${mistress} wraps ${name}'s huge tits in rope so tightly that they turn purple. She attaches multiple clothespins
+                    to each breast, then uses her whip to remove them again. Someone less accustomed to ${mistress}'s harsh treatments
+                    would be screaming right now, but ${name} only inhales sharply whenever the whip makes contact with her sensitive skin.
+                </Text>
+                <Text>
+                    To challenge tests ${name}'s, ${mistress} orders her to tie herself up in a complicated shibari. The catch:
+                    She has to do this blindfolded.
+
+                    It takes her half an hour, but in the end, she has successfully bound herself into an intricate pose, ropes
+                    criss-crossing all over her body, turning her into a work of art. She has mangaged to tie herself up so tightly
+                    that ${mistress} had to get the safety scissors to cut her free.
+                </Text>
+            </Group>
             <Text Condition="Masochist ^ skill:BDSM > 95" Chance="5">
                 Masochistic ${name} begs ${mistress} to be allowed to devise her own punishments.
 
@@ -262,8 +344,45 @@
         </Message>
 
         <Message Name="train.Beastiality">
-            <Text>
-                Bestiality training.
+            <!-- very low skill -->
+            <Text Condition="skill:Beastiality < 20">
+                ${name} has never been intimate with a beast before, so ${mistress} gets the tamest tentacle beast from your pens.
+                She instructs ${name} to tough it, who is very reluctant but obeys her Mistress, reaching out with her hand to grab
+                one of the appendages. In reflex, the tentacle wraps around her wrist, causing ${name} to panic for a moment.
+                With some effort, ${name} manages to pry herself free.
+
+                "Don't worry", ${mistress} reassures her, "it's not going to hurt you."
+            </Text>
+
+            <!-- low skill, high lust -->
+            <Text Condition="skill:Beastiality < 30 ^ skill:Beastiality > 10 ^ stat:Lust>75">
+                ${name} has never been intimate with a beast before, so ${mistress} gets the tamest tentacle monster from your pens.
+                ${mistress} instructs her to hold its body, and the beast's tentacles begin slithering up and down ${name}'s arms,
+                leaving slimy trails. Her initial disgust subsides as the chemicals in the tentacles' secretions start working their magic.
+                Heat rises within her, and she doesn't pull away as the beast starts fondling her breasts.
+            </Text>
+
+            <!-- low skill, low lust -->
+            <Text Condition="skill:Beastiality < 30 ^ skill:Beastiality > 10">
+                ${name} has never been intimate with a beast before, so ${mistress} gets the tamest tentacle monster from your pens.
+                ${mistress} instructs her to hold its body, and the beast's tentacles begin slithering up and down ${name}'s arms,
+                leaving slimy trails. She feels very uncomfortable, and when the beast attempts to fondle her chest, she tries to
+                push it away.
+                "Let it explore your body", ${mistress} instructs sternly, "it won't hurt you."
+            </Text>
+
+            <!-- medium skill, high lust -->
+            <Text Condition="skill:Beastiality < 50 ^ skill:Beastiality > 25 ^ stat:Lust>75">
+                While ${name} is still inexperienced around bests, ${mistress} decides that she is ready to pop that particular cherry.
+                She selects a docile and experienced creature from your pens for this occasion.
+                "Just relax and let him take the lead", ${mistress} advises as she guides ${name} to lie down on the bed.
+                The beast approaches her, and its tentacles start gently caressing her skin. ${name} starts breathing faster as her arousal grows.
+                Tentacles wrap around her thighs, pulling them apart to give the creature better access. As it begins probing her pussy with
+                one of its appendages, ${name} can't help but moan in pleasure. Her hips start bucking involuntarily, urging the beast deeper inside.
+                Its thrusts increase in tempo and force until she explodes into her first tentacle-induced, screaming and trembling beneath
+                her new lover's tender ministrations.
+
+                ${mistress} is confident that from now on, ${name} will be more than eager to get fucked by a tentacle beast at a client's behest.
             </Text>
         </Message>
 

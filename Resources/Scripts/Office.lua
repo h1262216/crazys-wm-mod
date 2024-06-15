@@ -5,8 +5,17 @@ function InteractOffice(girl)
     if choice == 0 then
         if girl:obey_check(wm.ACTIVITIES.SERVICE) then
             wm.UpdateImage(wm.IMG.MAID)
-            Dialog("She puts on her maid's attire and sets about tidying up your office.  You always enjoy being around a women in a maid's outfit .")
+            if girl:pcfear() > 50 then
+                wm.Dialog("\"I need you to clean my office for me.\" ${name} looks down nervously before slowly coming over to stand in front of you. \"Yes, sir,\" she says quietly.")
+                wm.Dialog("As she begins to clean, she keeps stealing glances at you from the corner of her eye. It's clear that she's still intimidated by you.")
+            end
+            local text = ""
+            if girl:has_trait(wm.TRAITS.CUTE) then
+                text = "As she cleans, you can't help but notice how cute she looks bending over to pick things up off the floor."
+            end
+            Dialog("She puts on her maid's attire and sets about tidying up your office. You always enjoy being around a women in a maid's outfit. " .. text)
             girl:clean_building();
+            return
         else
             Dialog("She refuses to clean your office.")
             return girl:trigger("girl:refuse")
@@ -67,80 +76,7 @@ function InteractOffice(girl)
             return girl:trigger("girl:refuse")
         end
     elseif choice == 4 then
-        if girl:has_trait(wm.TRAITS.LOLITA) then
-            Dialog("You look up at her, \"Are you sure this parchment is correct?  You barely look of legal age.\"")
-        elseif girl:age() > 30 then
-            Dialog("Looking down the parchment:  \"Hmm, a little older than most perhaps...\"")
-        else
-            Dialog("You seem to be the right age for our needs.")
-        end
-
-        Dialog("Remove your clothing.  I want to get a better look my investment.")
-
-        if girl:obey_check(wm.ACTIVITIES.TEASING) then
-            girl:strip(2)
-            wm.UpdateImage(wm.IMG.STRIP)
-            if girl:has_trait(wm.TRAITS.EXHIBITIONIST, wm.TRAITS.NYMPHOMANIAC) and girl:pclove() > 0 then
-                Dialog("She eagerly removes her clothing and stands before you.")
-                girl:happiness(1)
-                girl:make_horny(1)
-            elseif girl:strip() < 40 or girl:has_trait(wm.TRAITS.CHASTE, wm.TRAITS.SHY) then
-                Dialog("She removes her clothing and stands nervously before you.")
-                girl:happiness(-2)
-            else
-                Dialog("She removes her clothing and stands before you.")
-            end
-
-            if girl:has_trait(wm.TRAITS.FUTANARI) then
-                Dialog("Oh! Hmm...I didn't realize you were a dick girl...")
-            elseif girl:lust() > 90 then
-                Dialog("${firstname} stiff nipples and glistening pussy indicate that this girl is desperate for some sexual release.")
-            end
-
-            if girl:beauty() >= 50 then
-                Dialog("I see you put a lot of effort into you appearance....Yes, quite beautiful.")
-            else
-                Dialog("You're not much to look at, are you.")
-            end
-
-            Dialog("You stand up and begin to slowly circle her.")
-            if girl:has_trait(wm.TRAITS.GREAT_FIGURE) then
-                Dialog("Ahh, you do have a nice figure don't you.  Very nicely proportioned.")
-            end
-            if girl:has_trait(wm.TRAITS.LONG_LEGS) then
-                Dialog("Wow, those legs certainly do go all the way up, don't they.")
-            end
-            if girl:has_trait(wm.TRAITS.GREAT_ARSE) then
-                Dialog("You stop circling directly behind her and gently pressing between her shoulder blades until she is bent over with her hands on your desk.  Your eyes are glued to her ass.  Now, that is truly a magnificent ass.")
-            end
-
-            if girl:breast_size() >= 8 then
-                Dialog("Oh My Goddess!  Those are some gigantic breasts.  How do you even stand up straight?")
-            elseif girl:breast_size() >= 6  then
-                Dialog("You stare a moment at her tits.  You have truly been blessed with some healthy breasts.")
-            elseif girl:breast_size() <= 3  then
-                Dialog("You reach out to her chest and try to cup one of her breasts in your hand.  \"Well, a little less than a handful, but on you my dear they seem right.\"")
-            end
-
-            if girl:has_trait(wm.TRAITS.PERKY_NIPPLES) then
-                Dialog("You run your palms across her perky nipples.  You give them a little pinch.")
-            elseif girl:has_trait(wm.TRAITS.PUFFY_NIPPLES) then
-                Dialog("Running your hands over her breasts you take a moment to admire her soft, puffy nipples.")
-            end
-
-            if girl:has_trait(wm.TRAITS.STRONG) then
-                Dialog("You examine her finely toned muscles.  Squeezing her biceps you feel the strength there.  \"You are strong. That is good.\"")
-            end
-
-            if girl:has_trait(wm.TRAITS.HORRIFIC_SCARS) then
-                Dialog("You have noticed them the entire time, but you debate whether or not to comment on the awful scars covering large portions of her body.")
-            end
-
-            Dialog("You sit back down and allow her to get dressed and leave your office.")
-        else
-            Dialog("She refuses to be inspected like some prize heifer.")
-            return girl:trigger("girl:refuse")
-        end
+        return Inspect(girl)
     elseif choice == 5 then
         if ManageTattoos(girl) then
             return
@@ -155,6 +91,110 @@ function InteractOffice(girl)
         end
     elseif choice == 7 then
        return girl:trigger("girl:interact:brothel")
+    end
+end
+
+---@param girl wm.Girl
+function Inspect(girl)
+    if girl:has_trait(wm.TRAITS.LOLITA) then
+        Dialog("You look up at her, \"Are you sure this parchment is correct?  You barely look of legal age.\"")
+    elseif girl:age() > 30 then
+        Dialog("Looking down the parchment:  \"Hmm, a little older than most perhaps...\"")
+    else
+        Dialog("You seem to be the right age for our needs.")
+    end
+
+    Dialog("Remove your clothing. I want to get a better look my investment.")
+
+    if girl:obey_check(wm.ACTIVITIES.TEASING) then
+        girl:strip(2)
+        wm.UpdateImage(wm.IMG.STRIP)
+        if girl:has_trait(wm.TRAITS.NYMPHOMANIAC) and girl:pclove() > 0 and (girl:beauty() > 66 or girl:has_trait(wm.TRAITS.LONG_LEGS)) and girl:breast_size() >= 6 and wm.Percent(50) then
+            Dialog("You look ${name} over. She seems to be the right age for your establishment. \"Remove your clothing,\" you tell her.")
+            Dialog("She eagerly does as instructed, standing before you naked.\n" ..
+                    "Her body is exactly what you had hoped it would be. Her breasts are large and firm, and she has long, toned legs that stretch out from her hips.")
+            Dialog("You're quite beautiful,\" you say, allowing yourself to be drawn into the sight of her nude form.\nYou rise from your seat and walk around her, taking in every detail of her body.")
+            Dialog("${name} bites her lip. \"Maybe you want to sample the wares?\"")
+            local choice = ChoiceBox("You pause, considering her offer.", "Decline her", "Have sex")
+            if choice == 0 then
+                Dialog("\"Not right now, my dear\" you say firmly but politely. \"We will have plenty of opportunities later.\"")
+                Dialog("${name} looks a little disappointed but doesn't seem too upset. \"Of course, boss.\" She gathers her clothes and heads out of your office.")
+                girl:happiness(-1)
+                girl:make_horny(1)
+                return
+            elseif choice == 1 then
+                Dialog("\"Very well,\" you say with a sly grin. ${name}'s eyes light up with excitement as she watches you remove your clothes.")
+                wm.UpdateImage(wm.IMG.SEX, ImageOptions.HETERO)
+                Dialog("You guide her to the desk and push her down onto it, spreading her legs wide apart. You enter her slowly, savoring the feel of her tightness around your length.\n" ..
+                    "As you begin to thrust, ${name} moans loudly, her hands grasping at the edge of the desk. She's clearly enjoying this, and you can't help but feel the same way.\n" ..
+                    "The two of you continue like this until you both reach climax.")
+
+                wm.UpdateImage(wm.IMG.NUDE, ImageOptions.HETERO)
+                Dialog("Afterward, ${name} looks up at you with a satisfied expression. \"That was amazing,\" she says, a little breathlessly.\n"..
+                    "It seems you inspected her a little more thoroughly than originally intended :P")
+                SheJustCame(girl, 5)
+                return
+            end
+        elseif girl:has_trait(wm.TRAITS.EXHIBITIONIST, wm.TRAITS.NYMPHOMANIAC) and girl:pclove() > 0 then
+            Dialog("She eagerly removes her clothing and stands before you.")
+            girl:happiness(1)
+            girl:make_horny(1)
+        elseif girl:strip() < 40 or girl:has_trait(wm.TRAITS.CHASTE, wm.TRAITS.SHY) then
+            Dialog("She removes her clothing and stands nervously before you.")
+            girl:happiness(-2)
+        else
+            Dialog("She removes her clothing and stands before you.")
+        end
+
+        if girl:has_trait(wm.TRAITS.FUTANARI) then
+            Dialog("Oh! Hmm...I didn't realize you were a dick girl...")
+        elseif girl:lust() > 90 then
+            Dialog("${firstname} stiff nipples and glistening pussy indicate that this girl is desperate for some sexual release.")
+        end
+
+        if girl:beauty() >= 50 then
+            Dialog("I see you put a lot of effort into you appearance....Yes, quite beautiful.")
+        else
+            Dialog("You're not much to look at, are you.")
+        end
+
+        Dialog("You stand up and begin to slowly circle her.")
+        if girl:has_trait(wm.TRAITS.GREAT_FIGURE) then
+            Dialog("Ahh, you do have a nice figure don't you. Very nicely proportioned.")
+        end
+        if girl:has_trait(wm.TRAITS.LONG_LEGS) then
+            Dialog("Wow, those legs certainly do go all the way up, don't they.")
+        end
+        if girl:has_trait(wm.TRAITS.GREAT_ARSE, wm.TRAITS.DELUXE_DERRIERE) then
+            Dialog("You stop circling directly behind her and gently pressing between her shoulder blades until she is bent over with her hands on your desk. Your eyes are glued to her ass. Now, that is truly a magnificent ass.")
+        end
+
+        if girl:breast_size() >= 8 then
+            Dialog("Oh My Goddess! Those are some gigantic breasts. How do you even stand up straight?")
+        elseif girl:breast_size() >= 6  then
+            Dialog("You stare a moment at her tits. You have truly been blessed with some healthy breasts.")
+        elseif girl:breast_size() <= 3  then
+            Dialog("You reach out to her chest and try to cup one of her breasts in your hand. \"Well, a little less than a handful, but on you my dear they seem right.\"")
+        end
+
+        if girl:has_trait(wm.TRAITS.PERKY_NIPPLES) then
+            Dialog("You run your palms across her perky nipples. You give them a little pinch.")
+        elseif girl:has_trait(wm.TRAITS.PUFFY_NIPPLES) then
+            Dialog("Running your hands over her breasts you take a moment to admire her soft, puffy nipples.")
+        end
+
+        if girl:has_trait(wm.TRAITS.STRONG) then
+            Dialog("You examine her finely toned muscles.  Squeezing her biceps you feel the strength there.  \"You are strong. That is good.\"")
+        end
+
+        if girl:has_trait(wm.TRAITS.HORRIFIC_SCARS) then
+            Dialog("You have noticed them the entire time, but you debate whether or not to comment on the awful scars covering large portions of her body.")
+        end
+
+        Dialog("You sit back down and allow her to get dressed and leave your office.")
+    else
+        Dialog("She refuses to be inspected like some prize heifer.")
+        return girl:trigger("girl:refuse")
     end
 end
 
@@ -210,7 +250,7 @@ function ManageTattoos(girl)
             Dialog("${firstname}'s body is already covered in tattoos.")
             return false
         else
-            if wm.Percent(20)and girl:has_trait(wm.TRAITS.SMALL_TATTOOS) then
+            if wm.Percent(20) and girl:has_trait(wm.TRAITS.SMALL_TATTOOS) then
                 girl:remove_trait(wm.TRAITS.SMALL_TATTOOS)
                 girl:add_trait(wm.TRAITS.TATTOOED)
             else
