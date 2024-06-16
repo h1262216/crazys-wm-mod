@@ -4,6 +4,7 @@ Bugfix release
 * Bedwarmer job now also allowed for slave girls
 * Double-clicking on a building in the transfer screen jumps to that building
 * Some more interaction dialogues
+* Added `Gladiatrix` trait
 
 # Version 7.2.2alpha2
 Bugfix release

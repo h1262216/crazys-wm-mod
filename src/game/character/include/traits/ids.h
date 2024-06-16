@@ -249,6 +249,9 @@ namespace traits {
     /// This girl loves adventure. (+combat skills/stats)
     constexpr const char* ADVENTURER = "Adventurer";
 
+    /// This girl loves to fight in an arena. (+combat skills/stats)
+    constexpr const char* GLADIATRIX = "Gladiatrix";
+
     /// This girl has been trained to kill, if the price is right. (+combat
     /// skills/stats)
     constexpr const char* ASSASSIN = "Assassin";
@@ -419,6 +422,13 @@ namespace traits {
     /// You have recently scolded this girl. Her fear and obedience are increased.
     /// Scolding her again will be less effective.
     constexpr const char* RECENTLY_SCOLDED = "Recently Scolded";
+
+    /// She refused to do her job this week.
+    constexpr const char* REFUSED_JOB = "Refused Job";
+
+    /// She refused to do her job even after you have scolded her.         Such
+    /// behaviour should not go unpunished.
+    constexpr const char* REFUSED_JOB_II = "Refused Job II";
 
 
 
@@ -870,6 +880,7 @@ namespace traits {
         constexpr const char* DETECT_DISEASE = "detect-disease";
         constexpr const char* DISEASE_RECOVERY = "disease.recovery";
         constexpr const char* FAKE_ORGASM = "fake-orgasm";
+        constexpr const char* FEAR_BONUS = "fear-bonus";
         constexpr const char* FERTILITY = "fertility";
         constexpr const char* FIGHT_BACK_CHANCE = "fight-back-chance";
         constexpr const char* INSEMINATED_ABORT_HAPPY = "inseminated.abort.happy";

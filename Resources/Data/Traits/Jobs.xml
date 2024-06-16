@@ -408,6 +408,25 @@
         </Properties>
     </Trait>
 
+    <Trait Name="Gladiatrix">
+        <description>This girl loves to fight in an arena. (+combat skills/stats)</description>
+        <Modifiers>
+            <Modifier Name="skill:Combat" Value="15" />
+            <Modifier Name="skill-cap:Combat" Value="15" />
+            <Modifier Name="enjoy:Fighting" Value="15" />
+            <Modifier Name="enjoy:Physical" Value="10" />
+            <Modifier Name="fetish:Dangerous" Value="20" />
+            <Modifier Name="fetish:Cool" Value="10" />
+            <Modifier Name="fetish:Nerd" Value="-20" />
+            <Modifier Name="fetish:Elegant" Value="-5" />
+        </Modifiers>
+
+        <Properties>
+            <Setting Name="random:chance" Value="10" />
+            <Setting Name="level-up:add-chance" Value="1"/>
+        </Properties>
+    </Trait>
+
     <Trait Name="Assassin">
         <description>This girl has been trained to kill, if the price is right. (+combat skills/stats)</description>
         <Modifiers>
