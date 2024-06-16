@@ -42,6 +42,7 @@ namespace settings{
     extern const char* WORLD_ENCOUNTER_UNIQUE;
     extern const char* BALANCING_FATIGUE_REGAIN;
     extern const char* BALANCING_HEALTH_REGAIN;
+    extern const char* USER_ITEMS_AUTO_USE;
 }
 
 void updateGirlTurnBrothelStats(sGirl& girl);
@@ -176,73 +177,14 @@ void cBuilding::BeginWeek()
             m_Girls->TakeGirl(dead);
         }
     }
-}
 
-void cBuilding::HandleRestingGirls(bool is_night)
-{
-    std::stringstream ss;
-    m_Girls->apply([&](sGirl& current){
-        unsigned int sw = current.get_job(is_night);
-        if (current.is_dead() || sw != JOB_RESTING)
-        {    // skip dead girls and anyone not resting
-            return;
-        }
-        auto sum = EVENT_SUMMARY;
-        std::string summary;
-        ss.str("");
-        const auto& girlName = current.FullName();
+    // Moved to here so Security drops once per day instead of everytime a girl works security -PP
+    m_SecurityLevel -= 10;
+    m_SecurityLevel -= girls().num();    //`J` m_SecurityLevel is extremely overpowered.
+    // Reducing it's power a lot.
+    if (m_SecurityLevel <= 0) m_SecurityLevel = 0;     // crazy added
 
-        if (current.m_PregCooldown == g_Game->settings().get_integer(settings::PREG_COOL_DOWN))
-        {
-            ss << girlName << " is on maternity leave.";
-        }
-        else if (handle_resting_girl(current, is_night, m_ActiveMatron != nullptr, ss)) {
-            // nothing to do her, handle_resting_girl did all the work.
-        }
-        else if (current.health() < 80 || current.tiredness() > 20)
-        {
-            g_Game->job_manager().do_job(JOB_RESTING, current, is_night);
-        }
-        else if (m_ActiveMatron)    // send her back to work
-        {
-            int psw = is_night ? current.m_PrevNightJob : current.m_PrevDayJob;
-            if (psw != JOB_RESTING && psw != 255)
-            {    // if she had a previous job, put her back to work.
-                if(!handle_back_to_work(current, ss, is_night)) {
-                    if (is_night == SHIFT_DAY)
-                    {
-                        current.m_DayJob = current.m_PrevDayJob;
-                        if (current.m_NightJob == JOB_RESTING && current.m_PrevNightJob != JOB_RESTING && current.m_PrevNightJob != 255)
-                            current.m_NightJob = current.m_PrevNightJob;
-                    }
-                    else
-                    {
-                        if (current.m_DayJob == JOB_RESTING && current.m_PrevDayJob != JOB_RESTING && current.m_PrevDayJob != 255)
-                            current.m_DayJob = current.m_PrevDayJob;
-                        current.m_NightJob = current.m_PrevNightJob;
-                    }
-                    ss << "The " << get_job_name(m_MatronJob) << " puts " << girlName << " back to work.\n";
-                }
-            }
-            else if (current.m_DayJob == JOB_RESTING && current.m_NightJob == JOB_RESTING)
-            {
-                auto_assign_job(current, ss, is_night);
-            }
-            current.m_PrevDayJob = current.m_PrevNightJob = JOB_UNSET;
-            sum = EVENT_BACKTOWORK;
-        }
-        else if (current.health() < 100 || current.tiredness() > 0)    // if there is no matron to send her somewhere just do resting
-        {
-            g_Game->job_manager().do_job(JOB_RESTING, current, is_night);
-        }
-        else    // no one to send her back to work
-        {
-            ss << "WARNING " << girlName << " is doing nothing!\n";
-            sum = EVENT_WARNING;
-        }
-
-        if (ss.str().length() > 0) current.AddMessage(ss.str(), EImageBaseType::PROFILE, sum);
-    });
+    OnBeginWeek();
 }
 
 void cBuilding::Update()
@@ -251,6 +193,69 @@ void cBuilding::Update()
     UpdateGirls(false);       // Run the Day Shift
     UpdateGirls(true);        // Run the Night Shift
     EndWeek();
+}
+
+void cBuilding::UpdateGirls(bool is_night) {
+    g_LogFile.info("shift", "Running shift: ", is_night ? "night": "day", " for ", name());
+    BeginShift(is_night);
+    g_LogFile.info("shift", "Running Prepare phase");
+    UpdatePhase(EJobPhase::PREPARE);
+    OnShiftPrepared(is_night);
+    g_LogFile.info("shift", "Running Production phase");
+    UpdatePhase(EJobPhase::PRODUCE);
+    g_LogFile.info("shift", "Running Main phase");
+    UpdatePhase(EJobPhase::MAIN);
+    g_LogFile.info("shift", "Running Late phase");
+    UpdatePhase(EJobPhase::LATE);
+    g_LogFile.info("shift", "Running end shift");
+    EndShift(is_night);
+}
+
+void cBuilding::UpdatePhase(EJobPhase phase) {
+    m_Girls->apply([&](sGirl& current) {
+        auto& shift = get_girl_data(current);
+        if(shift.Refused == ECheckWorkResult::ACCEPTS) {
+            auto* job = g_Game->job_manager().get_job(shift.Job);
+            if (job->phases() & phase) {
+                g_LogFile.info("shift", "PRODUCE ", get_job_name(shift.Job), " ", job->phases(), "", phase);
+                g_Game->job_manager().handle_main_shift(shift);
+            }
+        }
+    });
+}
+
+void cBuilding::BeginShift(bool is_night) {
+    setup_resources();
+    m_AdvertisingLevel = 1.0;  // base multiplier
+
+    m_GirlShiftData.clear();
+    g_LogFile.info("shift", "Set up ", m_Girls->num(), " girls");
+    m_Girls->apply([&](sGirl& girl) {
+        if(!girl.is_dead()) {
+            m_GirlShiftData.emplace(girl.GetID(),
+                                    sGirlShiftData{&girl, this, girl.get_job(is_night), is_night});
+        }
+    });
+
+    SetupMatron(is_night);
+
+    g_LogFile.info("shift", "Running pre-shift handlers");
+    m_Girls->apply([&](sGirl& girl){
+        cGirls::UseItems(girl);
+        cGirls::CalculateGirlType(girl);       // update the fetish traits
+        cGirls::UpdateAskPrice(girl, true);    // Calculate the girls asking price
+        auto& shift = get_girl_data(girl);
+        g_Game->job_manager().handle_pre_shift(shift);
+    });
+}
+
+sGirlShiftData& cBuilding::get_girl_data(const sGirl& girl) {
+    auto found = m_GirlShiftData.find(girl.GetID());
+    if(found != m_GirlShiftData.end()) {
+        return found->second;
+    } else {
+        BOOST_THROW_EXCEPTION(std::runtime_error("Error trying to get data for girl " + girl.FullName()));
+    }
 }
 
 
@@ -262,6 +267,8 @@ void cBuilding::EndShift(bool Day0Night1)
             return;
         GirlEndShift(current, Day0Night1);
     });
+
+    OnEndShift(Day0Night1);
 }
 
 void cBuilding::GirlEndShift(sGirl& girl, bool is_night) {
@@ -567,20 +574,6 @@ void cBuilding::save_xml(tinyxml2::XMLElement& root) const
 sGirl* cBuilding::get_girl(int index)
 {
     return m_Girls->get_girl(index);
-}
-
-void cBuilding::BeginShift(bool is_night)
-{
-    setup_resources();
-
-    m_Girls->apply([this, is_night](sGirl& girl){
-        if (girl.is_dead())
-            return;
-        GirlBeginShift(girl, is_night);
-    });
-
-    SetupMatron(is_night);
-    HandleRestingGirls(is_night);
 }
 
 //void cBrothelManager::AddAntiPreg(int amount)
@@ -1687,6 +1680,8 @@ void cBuilding::EndWeek() {
     // cap filthiness and security at 0
     if (m_Filthiness < 0)       m_Filthiness = 0;
     if (m_SecurityLevel < 0)    m_SecurityLevel = 0;
+
+    OnEndWeek();
 }
 
 std::shared_ptr<sGirl> cBuilding::TryEncounter() {
@@ -1721,13 +1716,6 @@ std::string cBuilding::meet_no_luck() const {
 
 bool cBuilding::CanEncounter() const {
     return !m_HasDoneEncounter;
-}
-
-void cBuilding::GirlBeginShift(sGirl& girl, bool is_night) {
-    cGirls::UseItems(girl);
-    cGirls::CalculateGirlType(girl);        // update the fetish traits
-    cGirls::UpdateAskPrice(girl, true);    // Calculate the girls asking price
-    g_Game->job_manager().handle_pre_shift(girl, is_night);
 }
 
 void cBuilding::declare_resource(const std::string& name) {
@@ -1843,6 +1831,10 @@ void cBuilding::AddMessage(std::string message, EEventType event) {
 
 void cBuilding::end_of_week_update(sGirl& girl) {
     do_daily_items(girl);
+
+    // Myr: Automate the use of a number of different items. See the function itself for more comments.
+    // Enabled or disabled based on config option.
+    if (g_Game->settings().get_bool(settings::USER_ITEMS_AUTO_USE)) g_Game->player().apply_items(girl);
 
     // Natural healing, 2% health and 4% tiredness per day
     girl.upd_base_stat(STAT_HEALTH, g_Game->settings().get_integer(settings::BALANCING_HEALTH_REGAIN), false);

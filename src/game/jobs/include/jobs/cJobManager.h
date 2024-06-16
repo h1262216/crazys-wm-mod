@@ -73,18 +73,10 @@ public:
     cJobManager();
     ~cJobManager() override;
     ///////////////// TODO LEGACY
-    sWorkJobResult do_job(sGirl& girl, bool is_night);
     sWorkJobResult do_job(JOBS job, sGirl& girl, bool is_night);
-    // does the whole package of job processing: Runs the job, in case of refusal creates an event, and processes
-    // pay for the building.
-    void handle_simple_job(sGirl& girl, bool is_night);
 
     // return a job description along with a count of how many girls are on it
     bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments
-
-    /// does the pre-shift setup part of the job processing
-    void handle_pre_shift(sGirl& girl, bool is_night);
-    /////////////////
 
     bool job_filter(int Filter, JOBS jobs) const;
 
@@ -93,11 +85,11 @@ public:
     bool is_free_only(JOBS job) const;
 
     /// does the pre-shift setup part of the job processing
-    void handle_pre_shift(sGirlShiftData& shift) override {};
+    void handle_pre_shift(sGirlShiftData& shift) override;
 
-    void handle_main_shift(sGirlShiftData& shift) override {};
+    void handle_main_shift(sGirlShiftData& shift) override;
 
-    void handle_post_shift(sGirlShiftData& shift) override {};
+    void handle_post_shift(sGirlShiftData& shift) override;
 
     const sJobFilter& get_filter(EJobFilter filter) const override;
 

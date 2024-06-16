@@ -249,8 +249,7 @@ void cGenericJob::PreShift(sGirlShiftData& shift) {
     if(is_impossible(shift.Refused)) {
         HandleWorkImpossible(wrapped);
     } else if(is_refused(shift.Refused)) {
-        /// TODO in specific cases, this can overwrite image/eventz types
-        /// That we set deliberately earlier.
+        /// TODO in specific cases, this can overwrite image/event types that we set earlier.
         shift.EventImage = EImageBaseType::REFUSE;
         shift.EventType = EVENT_NOWORK;
         wrapped.generate_event();
@@ -436,6 +435,17 @@ void cGenericJob::load_job() {
             }
 
             std::string phase = GetDefaultedStringAttribute(*config_el, "Phase", "main");
+            std::vector<std::string> phases;
+            boost::algorithm::split(phases, phase, boost::is_any_of("|"));
+            m_Info.Phases = EJobPhase(0);
+            for(auto& p : phases) {
+                m_Info.Phases = EJobPhase(m_Info.Phases | get_phase_id(p));
+            }
+
+            if(m_Info.Phases == 0) {
+                m_Info.Phases = EJobPhase::MAIN;
+            }
+
             m_Info.BaseWages = config_el->IntAttribute("BaseWages");
 
             const auto* enjoy_el = config_el->FirstChildElement("Enjoyment");
@@ -564,7 +574,7 @@ int cGenericJob::CalculateBasicEnjoyment(cGirlShift& shift) const {
 void cGenericJob::HandleWorkImpossible(cGirlShift& shift) const {
     shift.data().EventImage = EImageBaseType::PROFILE;
     shift.data().EventType = EVENT_WARNING;
-    if(shift.data().EventMessage.tellg() < 1) {
+    if(shift.data().EventMessage.tellp() < 1) {
         g_LogFile.warning("job", "Empty message for impossible work in job ", get_job_name(shift.data().Job));
         shift.data().EventMessage
             << "Error: This girl could not perform her job, "
@@ -578,3 +588,17 @@ int cGenericJob::get_setting_bool(const char* key) const {
     return g_Game->settings().get_bool(key);
 }
 
+const std::array<const char*, 4>& get_all_phases() {
+    static std::array<const char*, 4> phases {
+        "prepare", "produce", "main", "late"};
+    return phases;
+}
+
+const id_lookup_t<EJobPhase>& get_phase_lookup() {
+    static auto lookup = create_lookup_table<EJobPhase>(get_all_phases());
+    return lookup;
+}
+
+EJobPhase get_phase_id(const std::string& name) {
+    return EJobPhase(1u << (unsigned)lookup_with_error(get_phase_lookup(), name, "Unknown Job Phase: "));
+}

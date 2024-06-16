@@ -33,13 +33,6 @@
 #include "utils/string.hpp"
 #include "cGirls.h"
 
-// fwd-declare the relevant settings
-namespace settings {
-    extern const char* PREG_COOL_DOWN;
-    extern const char* USER_ITEMS_AUTO_USE;
-    extern const char* BALANCING_FATIGUE_REGAIN;
-}
-
 extern cRng                    g_Dice;
 
 // // ----- Strut sBrothel Create / destroy
@@ -55,197 +48,18 @@ sBrothel::sBrothel() :
 
 sBrothel::~sBrothel() = default;
 
-void sBrothel::UpdateGirls(bool is_night)
-{
-    m_AdvertisingLevel = 1.0;  // base multiplier
-    IterateGirls(is_night, {JOB_ADVERTISING},
-                 [&](auto& current) {
-                     g_Game->job_manager().handle_simple_job(current, is_night);
-                 });
+void sBrothel::OnShiftPrepared(bool is_night) {
     g_Game->customers().GenerateCustomers(*this, is_night);
     m_TotalCustomers += g_Game->GetNumCustomers();
-
-    IterateGirls(is_night, {JOB_BARMAID, JOB_WAITRESS, JOB_SINGER, JOB_PIANO, JOB_DEALER, JOB_ENTERTAINMENT,
-                            JOB_XXXENTERTAINMENT, JOB_SLEAZYBARMAID, JOB_SLEAZYWAITRESS, JOB_BARSTRIPPER, JOB_MASSEUSE,
-                            JOB_BROTHELSTRIPPER, JOB_PEEP, JOB_WHOREBROTHEL, JOB_BARWHORE, JOB_WHOREGAMBHALL},
-                 [&](auto& current) {
-                     g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    bool matron = num_girls_on_job(m_MatronJob, false) >= 1;
-    std::stringstream ss;
-
-    /*
-    *    as for the rest of them...
-    */
-    m_Girls->apply([&](sGirl& current){
-        bool refused = false;
-        auto sum = EVENT_SUMMARY;
-
-        /*
-        *        ONCE DAILY processing
-        *        at start of Day Shift
-        */
-        if (is_night == SHIFT_DAY)
-        {
-            // Back to work
-            if (current.m_NightJob == JOB_RESTING && current.m_DayJob == JOB_RESTING && current.m_PregCooldown < g_Game->settings().get_integer(settings::PREG_COOL_DOWN) &&
-                current.health() >= 80 && current.tiredness() <= 20)
-            {
-                if ((matron || current.m_PrevDayJob == m_MatronJob)                    // do we have a director, or was she the director and made herself rest?
-                    && current.m_PrevDayJob != JOB_UNSET && current.m_PrevNightJob != JOB_UNSET)    // 255 = nothing, in other words no previous job stored
-                {
-                    g_Game->job_manager().HandleSpecialJobs(current, current.m_PrevDayJob, current.m_DayJob, false);
-                    if (current.m_DayJob == current.m_PrevDayJob)  // only update night job if day job passed HandleSpecialJobs
-                        current.m_NightJob = current.m_PrevNightJob;
-                    else
-                        current.m_NightJob = JOB_RESTING;
-                    current.m_PrevDayJob = current.m_PrevNightJob = JOB_UNSET;
-                    current.AddMessage("The Matron puts ${name} back to work.\n", EImageBaseType::PROFILE, EVENT_BACKTOWORK);
-                }
-                else
-                {;
-                    current.AddMessage("WARNING ${name} is doing nothing!\n", EImageBaseType::PROFILE, EVENT_WARNING);
-                }
-            }
-        }
-
-        /*
-        *        EVERY SHIFT processing
-        */
-
-        // Sanity check! Don't process dead girls
-        if (current.is_dead())
-        {
-            return;
-        }
-        cGirls::UseItems(current);                        // Girl uses items she has
-        cGirls::UpdateAskPrice(current, true);        // Calculate the girls asking price
-
-        /*
-        *        JOB PROCESSING
-        */
-        JOBS sw = current.get_job(is_night);
-
-        // Sanity check! Don't process runaways
-        if (sw == JOB_RUNAWAY)        // `J` added for .06.03.00
-        {
-            return;
-        }
-
-        // do their job
-        // advertising and whoring are handled earlier.
-        if (sw == JOB_ADVERTISING || sw == JOB_WHOREGAMBHALL || sw == JOB_WHOREBROTHEL ||
-            sw == JOB_BARWHORE || sw == JOB_BARMAID || sw == JOB_WAITRESS ||
-            sw == JOB_SINGER || sw == JOB_PIANO || sw == JOB_DEALER || sw == JOB_ENTERTAINMENT ||
-            sw == JOB_XXXENTERTAINMENT || sw == JOB_SLEAZYBARMAID || sw == JOB_SLEAZYWAITRESS ||
-            sw == JOB_BARSTRIPPER || sw == JOB_MASSEUSE || sw == JOB_BROTHELSTRIPPER || sw == JOB_PIANO || sw == JOB_PEEP)
-        {
-            // these jobs are already done so we skip them
-        }
-        else {
-            g_Game->job_manager().handle_simple_job(current, is_night);
-        }
-
-        // Runaway, Depression & Drug checking
-        if (runaway_check(current))
-        {
-            current.run_away();
-            return;
-        }
-
-        /*
-        *        MATRON CODE START
-        */
-
-        // Lets try to compact multiple messages into one.
-        bool matron = (num_girls_on_job(JOB_MATRON, true) >= 1 || num_girls_on_job(JOB_MATRON, false) >= 1);
-
-        std::string MatronWarningMsg;
-        std::string MatronMsg;
-
-        if (current.tiredness() > 80)
-        {
-            if (matron)
-            {
-                if (current.m_PrevNightJob == 255 && current.m_PrevDayJob == 255)
-                {
-                    current.m_PrevDayJob = current.m_DayJob;
-                    current.m_PrevNightJob = current.m_NightJob;
-                    current.m_DayJob = current.m_NightJob = JOB_RESTING;
-                    MatronWarningMsg += "Your matron takes ${name} off duty to rest due to her tiredness.\n";
-                }
-                else
-                {
-                    if (g_Dice.percent(70))
-                    {
-                        MatronMsg += "Your matron helps ${name} to relax.\n";
-                        current.tiredness(-5);
-                    }
-                }
-            }
-            else if (is_night && current.m_NightJob != JOB_RESTING)
-                MatronWarningMsg += "CAUTION! This girl desperately needs rest. Give her some free time\n";
-        }
-
-        if (current.happiness() < 40 && matron && g_Dice.percent(70))
-        {
-            MatronMsg = "Your matron helps cheer up ${name} after she feels sad.\n";
-            current.happiness(5);
-        }
-
-        if (current.health() < 40)
-        {
-            if (matron)
-            {
-                if (current.m_PrevNightJob == 255 && current.m_PrevDayJob == 255)
-                {
-                    current.m_PrevDayJob = current.m_DayJob;
-                    current.m_PrevNightJob = current.m_NightJob;
-                    current.m_DayJob = current.m_NightJob = JOB_RESTING;
-                    MatronWarningMsg += "${name} is taken off duty by your matron to rest due to her low health.\n";
-                }
-                else
-                {
-                    MatronMsg = "Your matron helps heal ${name}.\n";
-                    current.health(5);
-                }
-            }
-            else
-            {
-                MatronWarningMsg = "DANGER ${name}'s health is very low!\nShe must rest or she will die!\n";
-            }
-        }
-
-        if (!MatronMsg.empty())
-        {
-            current.AddMessage(MatronMsg, EImageBaseType::PROFILE, is_night ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT);
-            MatronMsg = "";
-        }
-
-        if (!MatronWarningMsg.empty())
-        {
-            current.AddMessage(MatronWarningMsg, EImageBaseType::PROFILE, EVENT_WARNING);
-            MatronWarningMsg = "";
-        }
-        /*
-        *        MATRON CODE END
-        */
-
-        // Do item check at the end of the day
-        if (is_night == SHIFT_NIGHT)
-        {
-            // Myr: Automate the use of a number of different items. See the function itself for more comments.
-            //      Enabled or disabled based on config option.
-            if (g_Game->settings().get_bool(settings::USER_ITEMS_AUTO_USE)) g_Game->player().apply_items(current);
-
-            end_of_week_update(current);
-        }
-
-        // Level the girl up if necessary
-        cGirls::LevelUp(current);
-    });
 }
+//        // Runaway, Depression & Drug checking
+//        if (runaway_check(current))
+//        {
+//            current.run_away();
+//            return;
+//        }
+//    });
+//}
 
 bool sBrothel::runaway_check(sGirl& girl)
 {
@@ -390,26 +204,9 @@ bool sBrothel::runaway_check(sGirl& girl)
     return false;
 }
 
-void sBrothel::Update()
-{
+void sBrothel::OnEndWeek() {
+
     std::stringstream ss;
-    BeginWeek();
-
-    // Moved to here so Security drops once per day instead of everytime a girl works security -PP
-    m_SecurityLevel -= 10;
-    m_SecurityLevel -= girls().num();    //`J` m_SecurityLevel is extremely over powered.
-    // Reducing it's power a lot.
-    if (m_SecurityLevel <= 0) m_SecurityLevel = 0;     // crazy added
-
-
-    // Generate customers for the brothel for the day shift and update girls
-    UpdateGirls(false);
-
-    // update the girls and satisfy the customers for this brothel during the night
-    UpdateGirls(true);
-
-#pragma region //    Shift Summary            //
-
     // get the misc customers
     m_TotalCustomers += m_MiscCustomers;
 
@@ -500,11 +297,7 @@ void sBrothel::Update()
         }
         AddMessage(ss.str());
     }
-
-#pragma endregion
-    EndWeek();
 }
-
 
 // ----- Stats
 

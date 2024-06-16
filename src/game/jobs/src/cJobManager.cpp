@@ -1401,24 +1401,6 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
     return retval;
 }
 
-void cJobManager::handle_simple_job(sGirl& girl, bool is_night)
-{
-    auto sw = girl.get_job(is_night);;
-    auto brothel = girl.m_Building;
-    if(!brothel) {
-        g_LogFile.error("jobs", "Could not handle simple job, because girl '", girl.FullName(), "' is not in any building");
-        return;
-    }
-
-    // do their job
-    do_job(girl, is_night);
-}
-
-sWorkJobResult cJobManager::do_job(sGirl& girl, bool is_night)
-{
-    return do_job(girl.get_job(is_night), girl, is_night);
-}
-
 sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
 {
     auto ctx{g_Game->push_error_context("job: " + get_job_name(job_id))};
@@ -1442,13 +1424,48 @@ sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
     return result;
 }
 
-void cJobManager::handle_pre_shift(sGirl& girl, bool is_night) {
-    /*
-    auto job_id = girl.get_job(is_night);
+void cJobManager::handle_pre_shift(sGirlShiftData& shift) {
+
+    auto job_id = shift.Job;
     auto ctx{g_Game->push_error_context("pre@job: " + get_job_name(job_id))};
-    assert(m_OOPJobs[job_id] != nullptr);
-    m_OOPJobs[job_id]->PreShift(girl, is_night, g_Dice);
-     */
+    auto& job_exe = m_OOPJobs.at(job_id);
+    if(job_exe == nullptr) {
+        g_Game->error("Missing job executor for job " + std::to_string(job_id));
+        return;
+    }
+    job_exe->PreShift(shift);
+    if(shift.Job != job_id) {
+        handle_pre_shift(shift);
+    }
+}
+
+void cJobManager::handle_main_shift(sGirlShiftData& shift) {
+    if(shift.girl().is_dead())
+        return;
+
+    auto job_id = shift.Job;
+    auto ctx{g_Game->push_error_context("main@job: " + get_job_name(job_id))};
+    auto& job_exe = m_OOPJobs.at(job_id);
+    if(job_exe == nullptr) {
+        g_Game->error("Missing job executor for job " + std::to_string(job_id));
+        return;
+    }
+    job_exe->Work(shift);
+}
+
+void cJobManager::handle_post_shift(sGirlShiftData& shift) {
+    if(shift.girl().is_dead())
+        return;
+
+    auto job_id = shift.Job;
+    auto ctx{g_Game->push_error_context("post@job: " + get_job_name(job_id))};
+
+    auto& job_exe = m_OOPJobs.at(job_id);
+    if(job_exe == nullptr) {
+        g_Game->error("Missing job executor for job " + std::to_string(job_id));
+        return;
+    }
+    job_exe->PostShift(shift);
 }
 
 

@@ -37,6 +37,8 @@
 #include "tinyxml2.h"
 #include "character/sGirl.h"
 #include "character/cGirlPool.h"
+#include "jobs/IGenericJob.h"
+#include "jobs/sGirlShiftData.h"
 
 struct sWorkJobResult;
 
@@ -154,11 +156,12 @@ public:
     sGirl* SetupMatron(bool is_night);
 
     virtual void Update();
-    virtual void UpdateGirls(bool is_night);
-
-
-    /// Handles all resting girls.
-    void HandleRestingGirls(bool is_night);
+    void UpdateGirls(bool is_night);
+    void UpdatePhase(EJobPhase phase);
+    virtual void OnBeginWeek() {}
+    virtual void OnEndWeek() {}
+    virtual void OnShiftPrepared(bool is_night) {};
+    virtual void OnEndShift(bool is_night) {}
 
     /// This function is called for every resting girl that is not on maternity leave. If it returns
     /// true, processing for this girl is assuemd to be finished.
@@ -204,14 +207,13 @@ public:
     int GetInteractionConsumed(const std::string& name) const;
 
     void AddMessage(std::string message, EEventType event = EEventType::EVENT_BUILDING);
+
+    sGirl* get_active_matron() { return m_ActiveMatron; }
 protected:
     std::string m_Name;
     std::unique_ptr<cGirlPool> m_Girls;
 
-    virtual void GirlBeginShift(sGirl& girl, bool is_night);
     virtual void GirlEndShift(sGirl& girl, bool is_night);
-
-    sGirl* get_active_matron() { return m_ActiveMatron; }
 
     struct sMeetGirlData {
         SpawnReason Spawn = SpawnReason::COUNT;
@@ -269,6 +271,8 @@ private:
         static constexpr const char* default_message() { return "Unknown Interaction"; }
     };
     id_lookup_t<sInteractionData, InteractionPolicy> m_ShiftInteractions;
+    std::unordered_map<std::uint64_t, sGirlShiftData> m_GirlShiftData;
+    sGirlShiftData& get_girl_data(const sGirl& girl);
 
     void setup_resources();
 };
