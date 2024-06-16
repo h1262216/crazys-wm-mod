@@ -26,6 +26,7 @@
 #include <vector>
 #include <array>
 #include <iomanip>
+#include <mutex>
 
 enum class ELogLevel {
     VERBOSE,            // written only to log file in verbose mode
@@ -48,6 +49,7 @@ public:
     /// on `channel`.
     template<class... Args>
     void log(const char* channel, ELogLevel ll, Args&&... data) {
+        std::lock_guard<std::mutex> lck(m_Mutex);
         write_log_level(ll, channel);
         using expand_type = int[];
         (void)expand_type{0, (log_raw(ll, std::forward<Args>(data)), 0)...};
@@ -57,6 +59,7 @@ public:
     // legacy support -- try to reduce usage in the future
     template<class... Args>
     void log(ELogLevel ll, Args&&... data) {
+        std::lock_guard<std::mutex> lck(m_Mutex);
         write_log_level(ll, nullptr);
         using expand_type = int[];
         (void)expand_type{0, (log_raw(ll, std::forward<Args>(data)), 0)...};
@@ -90,6 +93,7 @@ public:
 
     template<class... Args>
     void debug_table(const char* channel, const char* header, Args&&... values) {
+        std::lock_guard<std::mutex> lck(m_Mutex);
         write_log_level(ELogLevel::VERBOSE, channel);
         log_raw(ELogLevel::VERBOSE, header);
         log_raw(ELogLevel::VERBOSE, ":\n");
@@ -133,6 +137,8 @@ private:
     //! stream matching: Every output level will relay its message to all the streams
     //! given here.
     std::array<std::vector<std::ostream*>, 5> m_Streams;
+
+    std::mutex m_Mutex;
 };
 
 extern CLog g_LogFile;
