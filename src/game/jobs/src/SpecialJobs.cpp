@@ -99,6 +99,7 @@ public:
         m_Info.ShortName = "BdWm";
         m_Info.Description = "She will stay in your bed at night with you.";
         m_Info.Shift = EJobShift::NIGHT;
+        m_Info.Phases = EJobPhase::PRODUCE;
         m_Info.FreeOnly = false;
     }
 

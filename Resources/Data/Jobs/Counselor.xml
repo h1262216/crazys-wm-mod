@@ -4,7 +4,7 @@
         She will help girls get over their addictions and problems.
     </Description>
 
-    <Config BaseWages="25" Shift="full" DefaultImage="Teacher">
+    <Config BaseWages="25" Shift="full" DefaultImage="Teacher" Phase="Produce">
         <Enjoyment PrimaryAction="Social" SecondaryAction="Mental"/>
         <Obedience Difficulty="20" Fear="10" Dignity="80" />
     </Config>

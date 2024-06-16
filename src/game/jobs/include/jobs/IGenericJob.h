@@ -32,6 +32,20 @@ class cRng;
 struct sGirlShiftData;
 class cGirlShift;
 
+enum EJobPhase {
+    //! Preparations to make the building ready for work: Cleaning, Security, Advertisement. This will happen
+    //! before any customers arrive.
+    PREPARE = 1,
+    //! Production phase. Any job that produces some form of resource that is needed by the main job should run here
+    PRODUCE = 2,
+    //! Main jobs
+    MAIN = 4,
+    //! Any "clean-up" type processing
+    LATE = 8
+};
+
+EJobPhase get_phase_id(const std::string& name);
+
 struct sJobInfo {
     JOBS        JobId;
     std::string Name;
@@ -43,6 +57,7 @@ struct sJobInfo {
     bool FreeOnly = false;
     bool Singleton = false;
     bool IsFightingJob = false;
+    EJobPhase Phases = EJobPhase::MAIN;
 
     int BaseWages = 0;
 
@@ -84,6 +99,7 @@ public:
     // queries
     virtual const sJobInfo& get_info() const = 0;
     JOBS job() const { return get_info().JobId; }
+    EJobPhase phases() const { return get_info().Phases; }
 
     /// Gets an estimate or actual value of how well the girl performs at this job
     virtual double GetPerformance(const sGirl& girl, bool estimate) const = 0;

@@ -41,27 +41,6 @@ bool cFilmSceneJob::CheckCanWork(cGirlShift& shift) const {
         return false;
     }
 
-    // No film crew... then go home
-    if (!shift.has_interaction(DirectorInteractionId) ||
-        !shift.has_interaction(CamMageInteractionId)  ||
-        !shift.has_interaction(CrystalPurifierInteractionId) )
-    {
-        if(brothel->NumInteractors(DirectorInteractionId) != 0 && brothel->NumInteractors(CamMageInteractionId) != 0 &&
-           brothel->NumInteractors(CrystalPurifierInteractionId) != 0) {
-            girl.AddMessage("There were more scenes scheduled for filming today than you crew could handle. ${name} took the day off.",
-                            EImageBaseType::PROFILE, EVENT_NOWORK);
-        } else {
-            girl.AddMessage("There was no crew to film the scene, so she took the day off. You need at least a Director, a Camera Mage,"
-                            "and a Crystal Purifier to film a scene.", EImageBaseType::PROFILE, EVENT_NOWORK);
-        }
-        // still, we notify the building that we wanted these interactions.
-        // TODO maybe have a separate function for this.
-        shift.request_interaction(DirectorInteractionId);
-        shift.request_interaction(CamMageInteractionId);
-        shift.request_interaction(CrystalPurifierInteractionId);
-        return false;
-    }
-
     // other conditions in which she cannot work:
     if (girl.health() < m_MinimumHealth)
     {
@@ -182,6 +161,28 @@ bool cFilmSceneJob::check_is_forced(const cGirlShift& shift) const {
 
 void cFilmSceneJob::DoWork(cGirlShift& shift) const {
     auto brothel = dynamic_cast<sMovieStudio*>(&shift.building());
+
+    // No film crew... then go home
+    if (!shift.has_interaction(DirectorInteractionId) ||
+        !shift.has_interaction(CamMageInteractionId)  ||
+        !shift.has_interaction(CrystalPurifierInteractionId) )
+    {
+        if(brothel->NumInteractors(DirectorInteractionId) != 0 && brothel->NumInteractors(CamMageInteractionId) != 0 &&
+           brothel->NumInteractors(CrystalPurifierInteractionId) != 0) {
+            shift.add_literal("There were more scenes scheduled for filming today than you crew could handle.");
+        } else {
+            shift.add_literal("There was no crew to film the scene. You need at least a Director, a Camera Mage,"
+                              "and a Crystal Purifier to film a scene.");
+        }
+        // still, we notify the building that we wanted these interactions.
+        // TODO maybe have a separate function for this.
+        shift.request_interaction(DirectorInteractionId);
+        shift.request_interaction(CamMageInteractionId);
+        shift.request_interaction(CrystalPurifierInteractionId);
+        shift.set_result(ECheckWorkResult::IMPOSSIBLE);
+        return;
+    }
+
     auto& girl = shift.girl();
     assert(brothel);
 

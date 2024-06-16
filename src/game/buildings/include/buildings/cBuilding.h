@@ -154,7 +154,7 @@ public:
     sGirl* SetupMatron(bool is_night);
 
     virtual void Update();
-    virtual void UpdateGirls(bool is_night) = 0;
+    virtual void UpdateGirls(bool is_night);
 
 
     /// Handles all resting girls.

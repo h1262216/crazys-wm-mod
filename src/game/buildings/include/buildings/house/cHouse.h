@@ -31,7 +31,6 @@ struct sHouse : public cBuilding
     ~sHouse();                        // destructor
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
-    void UpdateGirls(bool is_night) override;
 };
 
 

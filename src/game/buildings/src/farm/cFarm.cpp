@@ -36,34 +36,6 @@ sFarm::sFarm() : cBuilding(BuildingType::FARM, "Farm")
 
 sFarm::~sFarm()    = default;
 
-// Run the shifts
-void sFarm::UpdateGirls(bool is_night)        // Start_Building_Process_B
-{
-    // `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >> cFarm.cpp
-    std::stringstream ss;
-    std::string girlName;
-
-    //////////////////////////////////////////////////////
-    //  Handle the start of shift stuff for all girls.  //
-    //////////////////////////////////////////////////////
-    BeginShift(is_night);
-
-    IterateGirls(is_night, {JOB_VETERINARIAN, JOB_FARMHAND, JOB_RESEARCH, JOB_FARMER, JOB_GARDENER,
-                            JOB_SHEPHERD, JOB_RANCHER, JOB_CATACOMBRANCHER, JOB_BEASTCAPTURE, JOB_MILKER,
-                            JOB_MILK, JOB_BUTCHER, JOB_BAKER, JOB_BREWER, JOB_MAKEITEM, JOB_MAKEPOTIONS},
-                 [&](sGirl& girl) {
-        g_Game->job_manager().handle_simple_job(girl, is_night);
-    });
-    
-    //////////////////////////////////////////////////////////////
-    //  Do Marketer last so she can sell what the others made.  //
-    //////////////////////////////////////////////////////////////
-    IterateGirls(is_night, {JOB_MARKETER}, [&](sGirl& girl) {
-        g_Game->job_manager().handle_simple_job(girl, is_night);
-    });
-
-    EndShift(is_night);
-}
 
 void sFarm::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {

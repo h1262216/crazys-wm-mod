@@ -4,7 +4,7 @@
         Will help the doctor and heal sick people.
     </Description>
 
-    <Config DefaultImage="Nurse" Shift="full">
+    <Config DefaultImage="Nurse" Shift="full" Phase="Produce">
         <Filter>ClinicStaff</Filter>
         <Enjoyment PrimaryAction="Medical" SecondaryAction="Social" />
         <Obedience Difficulty="15" Fear="0" Dignity="80"/>

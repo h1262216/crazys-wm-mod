@@ -42,21 +42,6 @@ sArena::sArena() : cBuilding(BuildingType::ARENA, "Arena")
 
 sArena::~sArena() = default;
 
-// Run the shifts
-void sArena::UpdateGirls(bool is_night)    // Start_Building_Process_B
-{
-    //  Handle the start of shift stuff for all girls.  //
-    BeginShift(is_night);
-
-    IterateGirls(is_night, {JOB_FIGHTBEASTS, JOB_FIGHTARENAGIRLS, JOB_FIGHTTRAIN, JOB_CITYGUARD,
-                            JOB_BLACKSMITH, JOB_COBBLER, JOB_JEWELER, JOB_GROUNDSKEEPER},
-                 [&](auto& current) {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    EndShift(is_night);
-}
-
 void sArena::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {
     // shortcut

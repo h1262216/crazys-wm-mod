@@ -4,7 +4,7 @@
         She assists in film production and cleans the studio.
     </Description>
 
-    <Config BaseWages="25" DefaultImage="Stagehand">
+    <Config BaseWages="25" DefaultImage="Stagehand" Phase="Produce">
         <Enjoyment BaseEnjoyment="0" PrimaryAction="Service" SecondaryAction="Crafting" />
         <Obedience Difficulty="20" Fear="0" Dignity="80" />
         <Filter>StudioCrew</Filter>

@@ -41,25 +41,6 @@ sCentre::sCentre() : cBuilding(BuildingType::CENTRE, "Centre")
 
 sCentre::~sCentre()    = default;
 
-// Run the shifts
-void sCentre::UpdateGirls(bool is_night)
-{
-    //  Handle the start of shift stuff for all girls.  //
-    BeginShift(is_night);
-
-    IterateGirls(is_night, {JOB_FEEDPOOR, JOB_COMUNITYSERVICE, JOB_CLEANCENTRE, JOB_COUNSELOR}, [&](auto& current)
-    {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    IterateGirls(is_night, {JOB_REHAB, JOB_ANGER, JOB_EXTHERAPY, JOB_THERAPY}, [&](auto& current)
-    {
-        g_Game->job_manager().do_job(current, is_night);
-    });
-
-    EndShift(is_night);
-}
-
 void sCentre::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {
     std::stringstream& ss = message;
