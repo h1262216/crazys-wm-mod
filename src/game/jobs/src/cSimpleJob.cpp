@@ -40,10 +40,10 @@ cSimpleJob::cSimpleJob(JOBS job, const char* xml) : cBasicJob(job, xml) {
 }
 
 void cSimpleJob::gain_fame(cGirlShift& shift, int fame) const {
-    if (shift.girl().fame() < 10 && shift.data().Performance >= 70)     { fame += 1; }
-    if (shift.girl().fame() < 20 && shift.data().Performance >= 100)    { fame += 1; }
-    if (shift.girl().fame() < 40 && shift.data().Performance >= 145)    { fame += 1; }
-    if (shift.girl().fame() < 60 && shift.data().Performance >= 185)    { fame += 1; }
+    if (shift.girl().fame() < 10 && shift.performance() >= 70)     { fame += 1; }
+    if (shift.girl().fame() < 20 && shift.performance() >= 100)    { fame += 1; }
+    if (shift.girl().fame() < 40 && shift.performance() >= 145)    { fame += 1; }
+    if (shift.girl().fame() < 60 && shift.performance() >= 185)    { fame += 1; }
     shift.girl().fame(fame);
 }
 

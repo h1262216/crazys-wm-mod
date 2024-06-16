@@ -67,7 +67,7 @@ void cBarMaidJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     auto& brothel = shift.building();
     auto& ss = shift.data().EventMessage;
 
-    int pte = 15 + (int)m_PerformanceToEarnings((float)shift.data().Performance);
+    int pte = 15 + (int)m_PerformanceToEarnings((float)shift.performance());
     int drinkssold = pte / 3;
 
     int fame = 0;                // girl
@@ -295,7 +295,7 @@ void cBarWaitressJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     int fame = 0;
 
-    shift.data().Earnings = 15 + (int)m_PerformanceToEarnings((float)shift.data().Performance);
+    shift.data().Earnings = 15 + (int)m_PerformanceToEarnings((float)shift.performance());
 
     int HateLove = girl.pclove();
 
@@ -307,7 +307,7 @@ void cBarWaitressJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     shift.add_text("post-work-text");
 
     //base tips, aprox 10-20% of base wages
-    shift.data().Tips += (int)(((10 + shift.data().Performance / 22) * shift.data().Earnings) / 100);
+    shift.data().Tips += (int)(((10 + shift.performance() / 22) * shift.data().Earnings) / 100);
 
     //try and add randomness here
     if (check_public_sex(girl, ESexParticipants::ANY, SKILL_STRIP, sPercent(50), true))
@@ -318,7 +318,7 @@ void cBarWaitressJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     if (shift.building().num_girls_on_job( JOB_BARMAID, false) >= 1 && shift.chance(25))
     {
-        if (shift.data().Performance < 125)
+        if (shift.performance() < 125)
         {
             ss << "${name} wasn't good enough at her job to use " << barmaidname << " to her advantage.\n";
         }
@@ -423,7 +423,7 @@ void cBarPianoJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     //    Job Performance            //
 
-    shift.data().Tips = (int)((shift.data().Performance / 8.0) * ((shift.rng() % (girl.beauty() + girl.charisma()) / 20.0) + (girl.performance() / 5.0)));
+    shift.data().Tips = (int)((shift.performance() / 8.0) * ((shift.rng() % (girl.beauty() + girl.charisma()) / 20.0) + (girl.performance() / 5.0)));
 
     add_performance_text(shift);
 
@@ -439,7 +439,7 @@ void cBarPianoJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     if (shift.building().num_girls_on_job(JOB_SINGER, false) >= 1 && shift.chance(25))
     {
-        if (shift.data().Performance < 125)
+        if (shift.performance() < 125)
         {
             ss << "${name} played poorly with " << singername << " making people leave.\n";
             shift.data().Tips = int(shift.data().Tips * 0.8);
@@ -504,7 +504,7 @@ void cBarSingerJob::JobProcessing(sGirl& girl, cGirlShift& shift) const
     int happy = 0, fame = 0;
     EImageBaseType imagetype = EImageBaseType::SINGING;
 
-    shift.data().Earnings = 15 + (int)m_PerformanceToEarnings((float)shift.data().Performance);
+    shift.data().Earnings = 15 + (int)m_PerformanceToEarnings((float)shift.performance());
 
     const sGirl* pianoonduty = random_girl_on_job(*girl.m_Building, JOB_PIANO, shift.is_night_shift());
     std::string pianoname = (pianoonduty ? "Pianist " + pianoonduty->FullName() + "" : "the Pianist");
@@ -516,14 +516,14 @@ void cBarSingerJob::JobProcessing(sGirl& girl, cGirlShift& shift) const
     add_performance_text(shift);
 
     //base tips, aprox 5-30% of base wages
-    shift.data().Tips += (int)(((5 + shift.data().Performance / 8) * shift.data().Earnings) / 100);
+    shift.data().Tips += (int)(((5 + shift.performance() / 8) * shift.data().Earnings) / 100);
 
     //try and add randomness here
     shift.add_text("post-work-text");
 
     if (shift.building().num_girls_on_job(JOB_PIANO, shift.is_night_shift()) >= 1 && shift.chance(25))
     {
-        if (shift.data().Performance < 125)
+        if (shift.performance() < 125)
         {
             ss << "${name}'s singing was out of tune with " << pianoname << " causing customers to leave with their fingers in their ears.\n";
             shift.data().Tips -= 10;

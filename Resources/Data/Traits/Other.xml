@@ -43,7 +43,7 @@
 
 
     <Trait InheritChance="0" Name="Emprisoned Customer" RandomChance="0" Type="Temporary">
-        <description>This girl was was a customer but broke the law in some way, allowing you to take her as a slave.</description>
+        <description>This girl was a customer but broke the law in some way, allowing you to take her as a slave.</description>
     </Trait>
 
     <Trait InheritChance="0" RandomChance="0" Name="Recently Punished" Type="Temporary">

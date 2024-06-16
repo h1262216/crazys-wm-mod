@@ -811,7 +811,7 @@ void cBrothelStripper::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     }
 
     add_performance_text(shift);
-    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.data().Performance);
+    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.performance());
 
     //base tips, aprox 5-40% of base wages
     shift.data().Tips += (int) (((5 + shift.data().Performance / 6) * shift.data().Earnings) / 100);
@@ -1171,14 +1171,14 @@ void ClubStripper::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.data().Performance);
     add_performance_text(shift);
-    if (shift.data().Performance >= 245) {
+    if (shift.performance() >= 245) {
         shift.building().m_Fame += 5;
         shift.data().Tips += 15;
-    } else if (shift.data().Performance >= 185) {
+    } else if (shift.performance() >= 185) {
         shift.data().Tips += 10;
-    } else if (shift.data().Performance >= 145) {
+    } else if (shift.performance() >= 145) {
         shift.data().Tips += 5;
-    } else if (shift.data().Performance < 70) {
+    } else if (shift.performance() < 70) {
         shift.building().m_Happiness -= 5;
         shift.building().m_Fame -= 5;
     }
@@ -1285,28 +1285,28 @@ void ClubWaitress::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     }
 
     add_performance_text(shift);
-    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.data().Performance);
-    if (shift.data().Performance >= 245) {
+    shift.data().Earnings += (int) m_PerformanceToEarnings((float) shift.performance());
+    if (shift.performance() >= 245) {
         shift.building().m_Fame += 5;
         shift.data().Tips += 15;
-    } else if (shift.data().Performance >= 185) {
+    } else if (shift.performance() >= 185) {
         shift.data().Tips += 10;
-    } else if (shift.data().Performance >= 145) {
+    } else if (shift.performance() >= 145) {
         shift.data().Tips += 5;
-    } else if (shift.data().Performance < 70) {
+    } else if (shift.performance() < 70) {
         shift.building().m_Happiness -= 5;
         shift.building().m_Fame -= 5;
     }
 
 
     //base tips, aprox 10-20% of base wages
-    shift.data().Tips += (((10.0 + shift.data().Performance / 22.0) * (double) shift.data().Earnings) / 100.0);
+    shift.data().Tips += (((10.0 + shift.performance() / 22.0) * (double) shift.data().Earnings) / 100.0);
 
     //try and add randomness here
     shift.add_text("event.post");
 
     if (girl.has_active_trait(traits::GREAT_ARSE) && shift.chance(15)) {
-        if (shift.data().Performance >= 185) //great
+        if (shift.performance() >= 185) //great
         {
             ss << "A patron reached out to grab her ass. But she skillfully avoided it";
             if (girl.lust() > 70 && likes_men(girl)) {
@@ -1437,10 +1437,10 @@ void ClubWaitress::JobProcessing(sGirl& girl, cGirlShift& shift) const {
                 ss << " and with a laugh and told him that her ass wasn't on the menu. He laughed so hard he increased her tip!\n";
                 shift.data().Tips += 25;
             }
-        } else if (shift.data().Performance >= 135) //decent or good
+        } else if (shift.performance() >= 135) //decent or good
         {
             ss << "A patron reached out and grabbed her ass. She's use to this and skilled enough so she didn't drop anything.\n";
-        } else if (shift.data().Performance >= 85) //bad
+        } else if (shift.performance() >= 85) //bad
         {
             ss << "A patron reached out and grabbed her ass. She was startled and ended up dropping half an order.\n";
             shift.data().Earnings -= 10;
@@ -1663,12 +1663,12 @@ void ClubWaitress::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     }
 
     if (shift.building().num_girls_on_job(JOB_SLEAZYBARMAID, false) >= 1 && shift.chance(25)) {
-        if (shift.data().Performance > 100) {
+        if (shift.performance() > 100) {
             ss
                     << "\nWith help from the Barmaid, ${name} provided better service to the customers, increasing her tips.\n";
             shift.data().Tips *= 1.2;
         }
-    } else if (shift.building().num_girls_on_job(JOB_SLEAZYBARMAID, false) == 0 && shift.data().Performance <= 100) {
+    } else if (shift.building().num_girls_on_job(JOB_SLEAZYBARMAID, false) == 0 && shift.performance() <= 100) {
         ss << "\n${name} had a hard time attending all the customers without the help of a barmaid.\n";
         shift.data().Tips *= 0.9;
     }
@@ -1714,9 +1714,9 @@ void AdvertisingJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     //    Job Performance            //
 
     if (girl.is_unpaid())
-        shift.data().Performance = shift.data().Performance * 90 / 100;    // unpaid slaves don't seem to want to advertise as much.
+        shift.data().Performance = shift.performance() * 90 / 100;    // unpaid slaves don't seem to want to advertise as much.
     if (girl.is_free())
-        shift.data().Performance = shift.data().Performance * 110 / 100;    // paid free girls seem to attract more business
+        shift.data().Performance = shift.performance() * 110 / 100;    // paid free girls seem to attract more business
 
     // add some more randomness
 #if 0 // work in progress
@@ -1754,12 +1754,12 @@ void AdvertisingJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
             ss << "Other then that she mostly just spent her time trying to not breakdown and cry.\n";
             fame -= shift.uniform(0, 1);
         }
-        shift.data().Performance = shift.data().Performance * 80 / 100;
+        shift.data().Performance = shift.performance() * 80 / 100;
         fame -= shift.uniform(0, 1);
     } else if (roll_a >= 90) {
         shift.data().Enjoyment += shift.uniform(1, 3);
         ss << "She made sure many people were interested in the buildings facilities.\n";
-        shift.data().Performance = shift.data().Performance * 100 / 100;
+        shift.data().Performance = shift.performance() * 100 / 100;
         fame += shift.uniform(0, 2);
     } else {
         shift.data().Enjoyment += shift.uniform(0, 1);
@@ -1788,7 +1788,7 @@ void AdvertisingJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     //    Money                    //
 
-    ss << "She managed to stretch the effectiveness of your advertising budget by about " << int(shift.data().Performance)
+    ss << "She managed to stretch the effectiveness of your advertising budget by about " << int(shift.performance())
        << "%.";
     // if you pay slave girls out of pocket  or if she is a free girl  pay them
     if (!girl.is_unpaid()) {
@@ -1802,7 +1802,7 @@ void AdvertisingJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     //    Finish the shift            //
 
     // now to boost the brothel's advertising level accordingly
-    shift.building().m_AdvertisingLevel += (shift.data().Performance / 100);
+    shift.building().m_AdvertisingLevel += shift.performance() / 100;
 }
 
 
@@ -2020,7 +2020,7 @@ void SecurityJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     std::string whorename = (whoreonduty ? "Whore " + whoreonduty->FullName() + "" : "the Whore");
 
 
-    double SecLev = shift.data().Performance;
+    double SecLev = shift.performance();
 
     // Complications
     if (roll_a <= 25) {

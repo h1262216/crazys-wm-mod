@@ -409,8 +409,8 @@ namespace traits {
     /// This girl was taken from her family.
     constexpr const char* KIDNAPPED = "Kidnapped";
 
-    /// This girl was was a customer but broke the law in some way, allowing you to take
-    /// her as a slave.
+    /// This girl was a customer but broke the law in some way, allowing you to take her
+    /// as a slave.
     constexpr const char* EMPRISONED_CUSTOMER = "Emprisoned Customer";
 
     /// You have recently punished this girl. Her fear and obedience are increased.

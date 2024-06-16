@@ -19,8 +19,8 @@
 
 #pragma once
 
-#ifndef CRAZYS_WM_MOD_IBUILDING_HPP
-#define CRAZYS_WM_MOD_IBUILDING_HPP
+#ifndef CRAZYS_WM_MOD_CBUILDING_H
+#define CRAZYS_WM_MOD_CBUILDING_H
 
 #include <string>
 #include <vector>
@@ -302,4 +302,4 @@ struct HasJob {
 
 const char* building_type_to_str(BuildingType type);
 
-#endif //CRAZYS_WM_MOD_IBUILDING_HPP
+#endif //CRAZYS_WM_MOD_CBUILDING_H

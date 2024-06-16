@@ -89,7 +89,7 @@
             <Text>${name} was stripping in the brothel.</Text>
         </Message>
         <Message Name="refuse">
-            <Text>"${name} refused to strip for customers in your brothel to${shift}</Text>
+            <Text>${name} refused to strip for customers in your brothel to${shift}</Text>
         </Message>
 
         <Message Name="work.perfect">

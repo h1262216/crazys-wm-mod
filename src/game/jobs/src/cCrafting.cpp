@@ -148,8 +148,8 @@ cMakeItemJob::cMakeItemJob() :
 
 void cMakeItemJob::DoWorkEvents(sGirl& girl, cGirlShift& shift) const {
     auto& ss = shift.data().EventMessage;
-    int tired = (300 - (int)shift.data().Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
-    int roll_a = shift.uniform(0, 100) + (shift.data().Performance - 75) / 20;
+    int tired = (300 - (int)shift.performance());    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
+    int roll_a = shift.uniform(0, 100) + (shift.performance() - 75) / 20;
     int roll_b = shift.uniform(0, 100);
     if (roll_a <= 10)
     {
@@ -209,7 +209,7 @@ cMakePotionsJob::cMakePotionsJob() :
 
 void cMakePotionsJob::DoWorkEvents(sGirl& girl, cGirlShift& shift) const {
     auto& ss = shift.data().EventMessage;
-    int roll =shift.uniform(0, 100) + (shift.data().Performance - 75) / 20;
+    int roll =shift.uniform(0, 100) + (shift.performance() - 75) / 20;
     //enjoyed the work or not
     if (roll >= 90)
     {
@@ -251,8 +251,8 @@ cTailorJob::cTailorJob() :
 
 void cTailorJob::DoWorkEvents(sGirl& girl, cGirlShift& shift) const {
     auto& ss = shift.data().EventMessage;
-    int tired = (300 - (int)shift.data().Performance);    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
-    int roll_a = shift.uniform(0, 100) + (shift.data().Performance - 75) / 20;
+    int tired = (300 - (int)shift.performance());    // this gets divided in roll_a by (8, 10 or 12) so it will end up around 0-40 tired
+    int roll_a = shift.uniform(0, 100) + (shift.performance() - 75) / 20;
     int roll_b = shift.uniform(0, 100);
     if (roll_a <= 10)
     {

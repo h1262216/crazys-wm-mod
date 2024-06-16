@@ -583,13 +583,13 @@ void cFarmJobMilker::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     //    Job Performance            //
 
-    double drinks = shift.data().Performance / 2;
+    double drinks = shift.performance() / 2;
 
     drinks *= performance_based_lookup(shift, 0.8, 1.0, 2.0, 3.0, 4.0, 5.0);
     roll_a += performance_based_lookup(shift, -10, -2, 0, 2, 5, 10);
     roll_b += performance_based_lookup(shift, -10, -5, 0, 10, 18, 25);
 
-    if (shift.data().Performance < 70)
+    if (shift.performance() < 70)
     {
         shift.data().Wages -= 10;
     }

@@ -90,7 +90,7 @@
             <Text>${name} worked as a stripper in the club.</Text>
         </Message>
         <Message Name="refuse">
-            <Text>"${name} refused to strip off in front of the creeps in your club to${shift}</Text>
+            <Text>${name} refused to strip off in front of the creeps in your club to${shift}</Text>
         </Message>
         <Message Name="event.nympho">
             <Text>

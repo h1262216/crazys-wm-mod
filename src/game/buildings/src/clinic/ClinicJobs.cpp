@@ -74,7 +74,7 @@ void NurseJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     sCustomer Cust = cJobManager::GetMiscCustomer(shift.building());
 
     add_performance_text(shift);
-    shift.data().Wages += (int)m_PerformanceToEarnings((float)shift.data().Performance);
+    shift.data().Wages += (int)m_PerformanceToEarnings((float)shift.performance());
     int basic_care = performance_based_lookup(shift, 4, 6, 8, 12, 16, 20);
     int quality_care = performance_based_lookup(shift, 0, 0, 0, 2, 6, 10);
 
@@ -96,7 +96,7 @@ void NurseJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     if (girl.has_active_trait(traits::PESSIMIST) && shift.chance(5))
     {
-        if (shift.data().Performance < 125)
+        if (shift.performance() < 125)
         {
             shift.data().Wages -= 10;
             ss << "Her pessimistic mood depressed the patients making them tip less.\n";
@@ -110,7 +110,7 @@ void NurseJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
 
     if (girl.has_active_trait(traits::OPTIMIST) && shift.chance(20))
     {
-        if (shift.data().Performance < 125)
+        if (shift.performance() < 125)
         {
             shift.data().Wages -= 10;
             ss << "${name} was in a cheerful mood but the patients thought she needed to work more on her services.\n";
@@ -212,11 +212,11 @@ void NurseJob::JobProcessing(sGirl& girl, cGirlShift& shift) const {
     if (girl.is_unpaid())
     {
         shift.data().Performance *= 0.9;
-        patients += (int)(shift.data().Performance / 5);        // `J` 1 patient per 5 point of performance
+        patients += (int)(shift.performance() / 5);        // `J` 1 patient per 5 point of performance
     }
     else
     {
-        patients += (int)(shift.data().Performance / 5);        // `J` 1 patient per 5 point of performance
+        patients += (int)(shift.performance() / 5);        // `J` 1 patient per 5 point of performance
         shift.data().Wages += patients * 2;                // `J` pay her 2 for each patient you send to her
     }
 
