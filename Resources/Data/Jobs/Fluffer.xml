@@ -4,7 +4,7 @@
         She will keep the porn stars aroused.
     </Description>
 
-    <Config DefaultImage="Blowjob" BaseWages="50">
+    <Config DefaultImage="Blowjob" BaseWages="50" Phase="Produce">
         <Enjoyment BaseEnjoyment="-10" PrimaryAction="Fucking" SecondaryAction="Service" />
         <Filter>StudioCrew</Filter>
         <Obedience Dignity="50" Difficulty="20" Fear="5" />

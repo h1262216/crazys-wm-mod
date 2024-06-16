@@ -4,7 +4,7 @@
         She will become a doctor. Doctors earn extra cash from treating locals. (requires at least 1 to perform surgeries)
     </Description>
 
-    <Config Shift="full" BaseWages="100" DefaultImage="Nurse">
+    <Config Shift="full" BaseWages="100" DefaultImage="Nurse" Phase="Produce">
         <Filter>ClinicStaff</Filter>
         <Enjoyment BaseEnjoyment="5" PrimaryAction="Medical" SecondaryAction="Mental" />
         <Obedience Difficulty="10" Fear="0" Dignity="95" />

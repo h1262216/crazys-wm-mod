@@ -40,24 +40,6 @@ sHouse::sHouse() : cBuilding(BuildingType::HOUSE, "House")
 
 sHouse::~sHouse() = default;
 
-// Run the shifts
-void sHouse::UpdateGirls(bool is_night)    // Start_Building_Process_B
-{
-    BeginShift(is_night);
-
-    //  Do all Personal Bed Warmers together. Mistress needs to run before all the training jobs
-    IterateGirls(is_night, {JOB_PERSONALBEDWARMER, JOB_MISTRESS}, [&](auto& current) {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    IterateGirls(is_night, {JOB_RECRUITER, JOB_HOUSECOOK, JOB_CLEANHOUSE, JOB_PERSONALTRAINING, JOB_TRAINING,
-                            JOB_FAKEORGASM, JOB_SO_STRAIGHT, JOB_SO_BISEXUAL, JOB_SO_LESBIAN, JOB_HOUSEPET}, [&](auto& current) {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    EndShift(is_night);
-}
-
 void sHouse::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
 {
     std::stringstream& ss = message;

@@ -34,7 +34,6 @@ public:
     std::string meet_no_luck() const override;
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
-    void UpdateGirls(bool is_night) override;
 };
 
 

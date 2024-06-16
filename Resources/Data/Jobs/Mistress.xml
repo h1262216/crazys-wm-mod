@@ -4,7 +4,7 @@
         She will train the other girls. This will boost the effectiveness of Practice Skills drastically.
     </Description>
 
-    <Config>
+    <Config DefaultImage="Dominatrix" Phase="Produce">
         <Filter>HouseTraining</Filter>
         <Enjoyment BaseEnjoyment="5" />
         <Obedience Difficulty="15" Fear="0" Dignity="80"/>

@@ -34,9 +34,9 @@ struct sMovieStudio : public cBuilding
     ~sMovieStudio();                        // destructor
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
-    void UpdateGirls(bool is_night) override;
 
-    void Update() override;
+    void OnBeginWeek() override;
+    void OnEndShift(bool is_night) override;
 
     std::string meet_no_luck() const override;
 
@@ -44,6 +44,8 @@ struct sMovieStudio : public cBuilding
 private:
     void auto_create_movies();
     void check_overuse(const std::string& resource, const std::string& message);
+
+    int m_NumScenesWeekStart;
 };
 
 #endif  /* __CMOVIESTUDIO_H */

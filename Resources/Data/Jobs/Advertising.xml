@@ -4,7 +4,7 @@
         She will advertise the building's features in the city.
     </Description>
 
-    <Config DefaultImage="Advertise">
+    <Config DefaultImage="Advertise" Phase="Prepare">
         <Enjoyment PrimaryAction="Social"/>
         <Obedience Difficulty="15" Fear="5" Dignity="90" />
     </Config>

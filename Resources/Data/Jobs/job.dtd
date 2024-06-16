@@ -11,7 +11,7 @@
 
 <!ELEMENT Config (Filter, Enjoyment, Obedience, Pleasure)>
 <!ATTLIST Config Shift (both|day-only|night-only|full) DefaultImage CDATA #IMPLIED
-        Phase (prepare|produce|main|late) #IMPLIED FightingJob (0|1) #IMPLIED BaseWages CDATA #IMPLIED>
+        Phase (Prepare|Produce|Main|Late) #IMPLIED FightingJob (0|1) #IMPLIED BaseWages CDATA #IMPLIED>
 <!ELEMENT Filter (#PCDATA)>
 <!ELEMENT Enjoyment EMPTY>
 <!ATTLIST Enjoyment PrimaryAction CDATA #IMPLIED SecondaryAction CDATA #IMPLIED BaseEnjoyment CDATA #IMPLIED>

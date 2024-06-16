@@ -4,7 +4,7 @@
         She will direct the scenes. One Director can film at most 3 scenes per week.
     </Description>
 
-    <Config DefaultImage="Director" BaseWages="75">
+    <Config DefaultImage="Director" BaseWages="75" Phase="Prepare">
         <Enjoyment BaseEnjoyment="5" PrimaryAction="Crafting" SecondaryAction="Social" />
         <Obedience Difficulty="10" Fear="0" Dignity="95" />
         <Filter>StudioCrew</Filter>

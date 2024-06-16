@@ -4,7 +4,7 @@
         She will buy and sell things.
     </Description>
 
-    <Config BaseWages="20">
+    <Config BaseWages="20" Phase="Late">
         <Enjoyment PrimaryAction="Social"/>
         <Obedience Difficulty="15" Fear="5" Dignity="90" />
     </Config>

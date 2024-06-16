@@ -1,5 +1,5 @@
 <!DOCTYPE Job SYSTEM "job.dtd">
-<Job ShortName="CT">
+<Job ShortName="CT" Title="Trainee">
     <Description>
         She will practice combat.
     </Description>
