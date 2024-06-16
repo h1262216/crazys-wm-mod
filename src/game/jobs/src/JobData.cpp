@@ -36,7 +36,7 @@ namespace settings {
 
 float cJobPerformance::eval(const sGirl& girl, bool estimate) const {
     float performance = 0.f;
-    float weights = 0.f;
+    float weights = 1e-5f;
     for(auto& fac : Factors) {
         float add = std::max(fac.Minimum, std::min(fac.Maximum, (float)girl.get_attribute(fac.Source)));
         add = 100.f * (add - fac.Minimum) / (fac.Maximum - fac.Minimum);

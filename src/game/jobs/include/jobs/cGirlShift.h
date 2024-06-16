@@ -23,6 +23,7 @@
 #include "sGirlShiftData.h"
 
 class cGenericJob;
+class IBuildingShift;
 
 class cGirlShift {
 public:
@@ -32,6 +33,7 @@ public:
     [[nodiscard]] const sGirlShiftData& data() const;
     [[nodiscard]] sGirl& girl();
     [[nodiscard]] cBuilding& building();
+    [[nodiscard]] IBuildingShift& shift();
     [[nodiscard]] bool is_night_shift() const;
 
     // rng utilities
@@ -47,6 +49,16 @@ public:
 
     [[nodiscard]] int performance() const;
     [[nodiscard]] int enjoyment() const;
+
+    // money
+    [[nodiscard]] int tips() const;
+    [[nodiscard]] int earnings() const;
+    [[nodiscard]] int wages() const;
+    [[nodiscard]] int cost() const;
+
+    void receive_tip(int min, int max=-1);
+    void earn_money(int min, int max=-1);
+    void incur_cost(int min, int max=-1);
 
     // resources
     int consume_resource(const std::string& name, int amount);

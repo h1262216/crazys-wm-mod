@@ -29,11 +29,10 @@
 #include "utils/lookup.h"
 #include "sGirlShiftData.h"
 
-sGirlShiftData::sGirlShiftData(sGirl* girl, cBuilding* building, JOBS job, bool shift) :
+sGirlShiftData::sGirlShiftData(sGirl* girl, IBuildingShift* shift, JOBS job) :
     Job(job),
-    IsNightShift(shift),
     m_Girl(girl),
-    m_Building(building),
+    m_Shift(shift),
     EventImage(EImageBaseType::PROFILE),
     m_Rng(&g_Dice)
 {

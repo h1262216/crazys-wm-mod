@@ -31,6 +31,7 @@
 #include "events.h"
 #include "cGirls.h"
 #include "studio/manager.h"
+#include "jobs/IBuildingShift.h"
 
 extern const char* const FluffPointsId = "FluffPoints";
 extern const char* const StageHandPtsId = "StageHandPoints";
@@ -127,14 +128,14 @@ void sMovieStudio::auto_create_movies() {
 }
 
 void sMovieStudio::check_overuse(const std::string& resource, const std::string& message) {
-    int total_scenes = GetInteractionConsumed(resource);
-    int possible_scenes = GetInteractionProvided(resource);
+    int total_scenes = shift().GetInteractionConsumed(resource);
+    int possible_scenes = shift().GetInteractionProvided(resource);
 
 
     if(total_scenes > possible_scenes) {
         auto lookup = [&](const std::string& key) {
             if(key == "workers") {
-                return std::to_string(NumInteractors(resource));
+                return std::to_string(shift().NumInteractors(resource));
             } else if (key == "possible") {
                 return std::to_string(possible_scenes);
             } else if (key == "total") {
@@ -180,9 +181,9 @@ void sMovieStudio::OnEndShift(bool is_night) {
                   "${possible} scenes each week, but you wanted ${total} scenes this week.");
 
     // was there a crew to film
-    bool could_film = GetInteractionProvided(CamMageInteractionId) > 0 &&
-            GetInteractionProvided(CrystalPurifierInteractionId) > 0 &&
-            GetInteractionProvided(DirectorInteractionId) > 0;
+    bool could_film = shift().GetInteractionProvided(CamMageInteractionId) > 0 &&
+            shift().GetInteractionProvided(CrystalPurifierInteractionId) > 0 &&
+            shift().GetInteractionProvided(DirectorInteractionId) > 0;
     std::stringstream summary;
 
 
@@ -192,10 +193,10 @@ void sMovieStudio::OnEndShift(bool is_night) {
                    "and Fluffers.";
     } else {
         // Add an event with info
-        summary << "You have " << NumInteractors(CrystalPurifierInteractionId) << " crystal purifiers, " << NumInteractors(CamMageInteractionId) << " camera mages ";
-        summary << "and " << NumInteractors(DirectorInteractionId) << " working.\n";
-        summary << "Your stagehands provide a total of " << GetResourceAmount(StageHandPtsId) << " stagehand points.\n";
-        summary << "Your fluffers provide a total of " << GetResourceAmount(FluffPointsId) << " fluffer points.\n";
+        summary << "You have " << shift().NumInteractors(CrystalPurifierInteractionId) << " crystal purifiers, " << shift().NumInteractors(CamMageInteractionId) << " camera mages ";
+        summary << "and " << shift().NumInteractors(DirectorInteractionId) << " working.\n";
+        summary << "Your stagehands provide a total of " << shift().GetResourceAmount(StageHandPtsId) << " stagehand points.\n";
+        summary << "Your fluffers provide a total of " << shift().GetResourceAmount(FluffPointsId) << " fluffer points.\n";
 
         int num_scenes_after = g_Game->movie_manager().get_scenes().size();
         summary << "A total of " << num_scenes_after - m_NumScenesWeekStart << " scenes were filmed at the studio today.\n";

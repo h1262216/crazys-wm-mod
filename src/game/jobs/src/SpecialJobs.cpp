@@ -20,6 +20,7 @@
 #include "cGenericJob.h"
 #include "cJobManager.h"
 #include "character/sGirl.h"
+#include "IBuildingShift.h"
 #include "IGame.h"
 #include "buildings/cBuilding.h"
 
@@ -58,7 +59,7 @@ private:
 
     void on_pre_shift(cGirlShift& shift) const override {
         auto& girl = shift.girl();
-        auto* matron = shift.building().get_active_matron();
+        auto* matron = shift.shift().ActiveMatron();
         if(girl.health() > 80 && girl.tiredness() < 20 && matron) {
             int psw = shift.is_night_shift() ? girl.m_PrevNightJob : girl.m_PrevDayJob;
             if (psw != JOB_RESTING && psw != 255)

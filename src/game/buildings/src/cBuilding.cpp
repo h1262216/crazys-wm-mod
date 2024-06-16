@@ -35,6 +35,7 @@
 #include "CLog.h"
 #include "character/lust.h"
 #include "utils/lookup.h"
+#include "jobs/IBuildingShift.h"
 
 namespace settings{
     extern const char* PREG_COOL_DOWN;
@@ -181,83 +182,32 @@ void cBuilding::BeginWeek()
     // Moved to here so Security drops once per day instead of everytime a girl works security -PP
     m_SecurityLevel -= 10;
     m_SecurityLevel -= girls().num();    //`J` m_SecurityLevel is extremely overpowered.
-    // Reducing it's power a lot.
+    // Reducing its power a lot.
     if (m_SecurityLevel <= 0) m_SecurityLevel = 0;     // crazy added
 
     OnBeginWeek();
 }
 
-void cBuilding::Update()
-{
-    BeginWeek();
-    UpdateGirls(false);       // Run the Day Shift
-    UpdateGirls(true);        // Run the Night Shift
-    EndWeek();
-}
-
-void cBuilding::UpdateGirls(bool is_night) {
+void cBuilding::RunShift(bool is_night) {
     g_LogFile.info("shift", "Running shift: ", is_night ? "night": "day", " for ", name());
     BeginShift(is_night);
     g_LogFile.info("shift", "Running Prepare phase");
-    UpdatePhase(EJobPhase::PREPARE);
+    m_Shift->update_girls(EJobPhase::PREPARE);
     OnShiftPrepared(is_night);
     g_LogFile.info("shift", "Running Production phase");
-    UpdatePhase(EJobPhase::PRODUCE);
+    m_Shift->update_girls(EJobPhase::PRODUCE);
     g_LogFile.info("shift", "Running Main phase");
-    UpdatePhase(EJobPhase::MAIN);
+    m_Shift->update_girls(EJobPhase::MAIN);
     g_LogFile.info("shift", "Running Late phase");
-    UpdatePhase(EJobPhase::LATE);
+    m_Shift->update_girls(EJobPhase::LATE);
     g_LogFile.info("shift", "Running end shift");
     EndShift(is_night);
 }
 
-void cBuilding::UpdatePhase(EJobPhase phase) {
-    m_Girls->apply([&](sGirl& current) {
-        auto& shift = get_girl_data(current);
-        if(shift.Refused == ECheckWorkResult::ACCEPTS) {
-            auto* job = g_Game->job_manager().get_job(shift.Job);
-            if (job->phases() & phase) {
-                g_LogFile.info("shift", "PRODUCE ", get_job_name(shift.Job), " ", job->phases(), "", phase);
-                g_Game->job_manager().handle_main_shift(shift);
-            }
-        }
-    });
-}
-
 void cBuilding::BeginShift(bool is_night) {
-    setup_resources();
+    m_Shift->begin_shift(is_night);
     m_AdvertisingLevel = 1.0;  // base multiplier
-
-    m_GirlShiftData.clear();
-    g_LogFile.info("shift", "Set up ", m_Girls->num(), " girls");
-    m_Girls->apply([&](sGirl& girl) {
-        if(!girl.is_dead()) {
-            m_GirlShiftData.emplace(girl.GetID(),
-                                    sGirlShiftData{&girl, this, girl.get_job(is_night), is_night});
-        }
-    });
-
-    SetupMatron(is_night);
-
-    g_LogFile.info("shift", "Running pre-shift handlers");
-    m_Girls->apply([&](sGirl& girl){
-        cGirls::UseItems(girl);
-        cGirls::CalculateGirlType(girl);       // update the fetish traits
-        cGirls::UpdateAskPrice(girl, true);    // Calculate the girls asking price
-        auto& shift = get_girl_data(girl);
-        g_Game->job_manager().handle_pre_shift(shift);
-    });
 }
-
-sGirlShiftData& cBuilding::get_girl_data(const sGirl& girl) {
-    auto found = m_GirlShiftData.find(girl.GetID());
-    if(found != m_GirlShiftData.end()) {
-        return found->second;
-    } else {
-        BOOST_THROW_EXCEPTION(std::runtime_error("Error trying to get data for girl " + girl.FullName()));
-    }
-}
-
 
 void cBuilding::EndShift(bool Day0Night1)
 {
@@ -265,10 +215,9 @@ void cBuilding::EndShift(bool Day0Night1)
     {
         if (current.is_dead())
             return;
-        GirlEndShift(current, Day0Night1);
+        GirlEndShift(current, m_Shift->IsNightShift());
     });
-
-    OnEndShift(Day0Night1);
+    m_Shift->end_shift();
 }
 
 void cBuilding::GirlEndShift(sGirl& girl, bool is_night) {
@@ -283,7 +232,7 @@ void cBuilding::GirlEndShift(sGirl& girl, bool is_night) {
     JOBS sw = girl.get_job(is_night);
     if (girl.happiness() < 40)
     {
-        if (sw != m_MatronJob && m_ActiveMatron && num_girls() > 1 && g_Dice.percent(70))
+        if (sw != m_MatronJob && m_Shift->ActiveMatron() && num_girls() > 1 && g_Dice.percent(70))
         {
             ss << "The " << get_job_name(m_MatronJob) << " helps cheer up ${name} when she is feeling sad.\n";
             girl.happiness(g_Dice % 10 + 5);
@@ -345,7 +294,7 @@ void cBuilding::GirlEndShift(sGirl& girl, bool is_night) {
     }
     else if (t > 80 || h < 40)
     {
-        if (!m_ActiveMatron)    // do no matron first as it is the easiest
+        if (!m_Shift->ActiveMatron())    // do no matron first as it is the easiest
         {
             ss << "WARNING! ${name}";
             /* */if (t > 80 && h < 20)    ss << " is in real bad shape, she is tired and injured.\nShe should go to the Clinic.\n";
@@ -445,7 +394,8 @@ void cBuilding::load_girls_xml(const tinyxml2::XMLElement& root)
 cBuilding::cBuilding(BuildingType type, std::string name) :
     m_Type(type), m_Finance(0),
     m_Name(std::move(name)),
-    m_Girls(std::make_unique<cGirlPool>())
+    m_Girls(std::make_unique<cGirlPool>()),
+    m_Shift(IBuildingShift::create(this))
 {
 
 }
@@ -586,7 +536,6 @@ void cBuilding::AddAntiPreg(int amount) // unused
 
 sGirl* cBuilding::SetupMatron(bool is_night)
 {
-    m_ActiveMatron = nullptr;
     int has_matron = num_girls_on_job(m_MatronJob, is_night);
     
     sGirl* matron_candidate = m_Girls->get_first_girl([&](const sGirl& current){
@@ -635,8 +584,7 @@ sGirl* cBuilding::SetupMatron(bool is_night)
     {
         ss << "${name} continued to help the other girls throughout the night.";
         matron_candidate->AddMessage(ss.str(), EImageBaseType::PROFILE, EVENT_SUMMARY);
-        m_ActiveMatron = matron_candidate;
-        return m_ActiveMatron;
+        return matron_candidate;
     }
     else if (matron_candidate->disobey_check(EActivity::SOCIAL, JOB_MATRON))
     {
@@ -653,6 +601,7 @@ sGirl* cBuilding::SetupMatron(bool is_night)
     else    // so there is less chance of a matron refusing the entire turn
     {
         // TODO this should be reworked
+        /*
         std::string summary;
         auto result = g_Game->job_manager().do_job(m_MatronJob, *matron_candidate, is_night);
         int totalGold = result.Earnings + result.Tips + result.Wages;
@@ -663,8 +612,8 @@ sGirl* cBuilding::SetupMatron(bool is_night)
         m_Fame += matron_candidate->fame();
         ss << "${name} earned a total of " << totalGold << " gold directly from you. She gets to keep it all.";
         matron_candidate->AddMessage(ss.str(), EImageBaseType::PROFILE, sum);
-        m_ActiveMatron = matron_candidate;
-        return m_ActiveMatron;
+        return matron_candidate;
+        */
     }
 }
 
@@ -1719,91 +1668,13 @@ bool cBuilding::CanEncounter() const {
 }
 
 void cBuilding::declare_resource(const std::string& name) {
-    auto result = m_ShiftResources.insert(std::make_pair(name, 0));
-    assert(result.second);
-}
-
-void cBuilding::setup_resources() {
-    for(auto& res : m_ShiftResources) {
-        res.second = 0;
-    }
-
-    for(auto& ia : m_ShiftInteractions) {
-        ia.second.TotalConsumed = 0;
-        ia.second.TotalProvided = 0;
-        ia.second.Workers.clear();
-    }
-}
-
-int cBuilding::GetResourceAmount(const std::string& name) const {
-    return m_ShiftResources.at(name);
-}
-
-int cBuilding::ConsumeResource(const std::string& name, int amount) {
-    int has = m_ShiftResources.at(name);
-    if(has >= amount) {
-        m_ShiftResources[name] -= amount;
-        return amount;
-    } else {
-        m_ShiftResources[name] = 0;
-        return has;
-    }
-}
-
-bool cBuilding::TryConsumeResource(const std::string& name, int amount) {
-    int has = m_ShiftResources.at(name);
-    if(has >= amount) {
-        m_ShiftResources[name] -= amount;
-        return true;
-    }
-    return false;
-}
-
-void cBuilding::ProvideResource(const std::string& name, int amount) {
-    m_ShiftResources.at(name) += amount;
+    m_Shift->declare_resource(name);
 }
 
 void cBuilding::declare_interaction(const std::string& name) {
-    auto result = m_ShiftInteractions.insert(std::make_pair(name, sInteractionData{}));
-    assert(result.second);
+    m_Shift->declare_interaction(name);
 }
 
-void cBuilding::ProvideInteraction(const std::string& name, sGirl* source, int amount) {
-    sInteractionData& data = m_ShiftInteractions.at(name);
-    data.TotalProvided += amount;
-    data.Workers.push_back(sInteractionWorker{source, amount});
-}
-
-sGirl* cBuilding::RequestInteraction(const std::string& name) {
-    sInteractionData& data = m_ShiftInteractions.at(name);
-    auto& candidates = data.Workers;
-    data.TotalConsumed += 1;
-    auto res = std::max_element(begin(candidates), end(candidates),
-                                [](auto&& a, auto&& b){ return a.Amount < b.Amount; });
-    if(res == end(candidates))  return nullptr;
-    if(res->Amount == 0) return nullptr;
-    res->Amount -= 1;
-    return res->Worker;
-}
-
-bool cBuilding::HasInteraction(const std::string& name) const {
-    const sInteractionData& data = m_ShiftInteractions.at(name);
-    auto& candidates = data.Workers;
-    return std::any_of(begin(candidates), end(candidates),[](auto&& a){ return a.Amount > 0; });
-}
-
-int cBuilding::NumInteractors(const std::string& name) const {
-    const sInteractionData& data = m_ShiftInteractions.at(name);
-    return data.Workers.size();
-}
-
-int cBuilding::GetInteractionProvided(const std::string& name) const {
-    return m_ShiftInteractions.at(name).TotalProvided;
-}
-
-int cBuilding::GetInteractionConsumed(const std::string& name) const {
-    return m_ShiftInteractions.at(name).TotalConsumed;
-}
 
 void cBuilding::IterateGirls(bool is_night, std::initializer_list<JOBS> jobs, const std::function<void(sGirl&)>& handler) {
     m_Girls->apply([&](sGirl& girl) {

@@ -38,11 +38,12 @@
 #include "character/sGirl.h"
 #include "character/cGirlPool.h"
 #include "jobs/IGenericJob.h"
-#include "jobs/sGirlShiftData.h"
+#include "IBuilding.h"
 
 struct sWorkJobResult;
+class IBuildingShift;
 
-class cBuilding
+class cBuilding : public IBuilding
 {
 public:
     explicit cBuilding(BuildingType type, std::string name);
@@ -146,8 +147,10 @@ public:
     cGold            m_Finance;                      // for keeping track of how well the place is doing (for the last week)
 
     // helper functions
-    void BeginWeek();
-    void EndWeek();
+    void BeginWeek() override;
+    void EndWeek() override;
+    void RunShift(bool is_night) override;
+
     void BeginShift(bool is_night);
     void EndShift(bool is_night);
 
@@ -155,9 +158,6 @@ public:
     /// Returns true if the matron for this shift does work.
     sGirl* SetupMatron(bool is_night);
 
-    virtual void Update();
-    void UpdateGirls(bool is_night);
-    void UpdatePhase(EJobPhase phase);
     virtual void OnBeginWeek() {}
     virtual void OnEndWeek() {}
     virtual void OnShiftPrepared(bool is_night) {};
@@ -178,37 +178,8 @@ public:
     bool CanEncounter() const;
     std::shared_ptr<sGirl> TryEncounter();
 
-
-    // resource management
-    //  bulk resources
-    /// Returns how many points of the resource `name` are available.
-    int GetResourceAmount(const std::string& name) const;
-
-    /// Consumes up to `amount` points of the given resource. If less is available,
-    /// that amount will we consumed. Returns the amount of actual consumption.
-    int ConsumeResource(const std::string& name, int amount);
-
-    /// Provides `amount` points of the given resource.
-    void ProvideResource(const std::string& name, int amount);
-
-    /// Tries to consume `amount` of the given resource. If not enough is available,
-    /// no resource is consumed and false is returned.
-    bool TryConsumeResource(const std::string& name, int amount);
-
-    //  one-on-one interactions
-    void ProvideInteraction(const std::string& name, sGirl* source, int amount);
-    sGirl* RequestInteraction(const std::string& name);
-
-    bool HasInteraction(const std::string& name) const;
-    /// Returns how many girls are working as "interactors" of the given type.
-    int NumInteractors(const std::string& name) const;
-
-    int GetInteractionProvided(const std::string& name) const;
-    int GetInteractionConsumed(const std::string& name) const;
-
     void AddMessage(std::string message, EEventType event = EEventType::EVENT_BUILDING);
 
-    sGirl* get_active_matron() { return m_ActiveMatron; }
 protected:
     std::string m_Name;
     std::unique_ptr<cGirlPool> m_Girls;
@@ -229,6 +200,8 @@ protected:
 
     /// regain of health and decrease of tiredness every week, and runs item updates.
     void end_of_week_update(sGirl& girl);
+
+    const IBuildingShift& shift() { return *m_Shift; }
 private:
     std::unordered_set<SKILLS> m_ForbiddenSexType;
 
@@ -245,36 +218,7 @@ private:
     virtual std::shared_ptr<sGirl> meet_girl() const;
     virtual std::string meet_no_luck() const;
 
-    sGirl* m_ActiveMatron;
-
-
-    // job processing cache
-    struct ResourcePolicy {
-        static constexpr const char* error_channel() { return "shift"; }
-        static constexpr const char* default_message() { return "Unknown Resource"; }
-    };
-    id_lookup_t<int, ResourcePolicy> m_ShiftResources;
-
-    struct sInteractionWorker {
-        sGirl* Worker;
-        int Amount;
-    };
-
-    struct sInteractionData {
-        int TotalProvided = 0;
-        int TotalConsumed = 0;
-        std::vector<sInteractionWorker> Workers = {};
-    };
-
-    struct InteractionPolicy {
-        static constexpr const char* error_channel() { return "shift"; }
-        static constexpr const char* default_message() { return "Unknown Interaction"; }
-    };
-    id_lookup_t<sInteractionData, InteractionPolicy> m_ShiftInteractions;
-    std::unordered_map<std::uint64_t, sGirlShiftData> m_GirlShiftData;
-    sGirlShiftData& get_girl_data(const sGirl& girl);
-
-    void setup_resources();
+    std::unique_ptr<IBuildingShift> m_Shift;
 };
 
 // predicates

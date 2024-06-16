@@ -409,6 +409,18 @@ void cGame::SaveGame(tinyxml2::XMLElement& root) {
 //                                       Game Progression
 // ---------------------------------------------------------------------------------------------------------------------
 
+namespace {
+    template<class F, class... Args>
+    void checked_call(cGame& game, cBuilding& building, F&& callable, Args&& ... args) {
+        try {
+            (building.*callable)(std::forward<Args>(args)...);
+        } catch (std::exception& exception) {
+            g_LogFile.error("girls", "Error when processing building ", building.name(), ": ", exception.what());
+            game.error("Error when processing building " + building.name() + ": " + exception.what());
+        }
+    }
+}
+
 void cGame::NextWeek()
 {
     auto start_time_turn = std::chrono::steady_clock::now();
@@ -418,14 +430,24 @@ void cGame::NextWeek()
     g_LogFile.info("turn", "Start processing next week");
     gang_manager().GangStartOfShift();
 
-    g_LogFile.info("turn", "Processing buildings");
-    for(auto& building : buildings().buildings()) {
-        try {
-            building->Update();
-        } catch (std::exception& exception) {
-            g_LogFile.error("girls", "Error when processing building ", building->name(), ": ", exception.what());
-            g_Game->error("Error when processing building " + building->name() + ": " + exception.what());
+    auto parallel_buildings = [&](auto&& f){
+        for(auto& building : buildings().buildings()) {
+            f(*building);
         }
+    };
+
+    g_LogFile.info("turn", "Processing buildings: BeginWeek");
+    parallel_buildings([&](auto& b){ checked_call(*this, b, &cBuilding::BeginWeek); });
+
+    g_LogFile.info("turn", "Processing buildings: Day Shift");
+    parallel_buildings([&](auto& b){ checked_call(*this, b, &cBuilding::RunShift, false); });
+
+    g_LogFile.info("turn", "Processing buildings: Night Shift");
+    parallel_buildings([&](auto& b){ checked_call(*this, b, &cBuilding::RunShift, true); });
+
+    g_LogFile.info("turn", "Processing buildings: EndWeek");
+    for(auto& building : buildings().buildings()) {
+        checked_call(*this, *building, &cBuilding::EndWeek);
     }
 
     // clear the events of dungeon girls

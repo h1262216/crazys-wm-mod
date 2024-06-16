@@ -26,6 +26,7 @@
 #include "character/predicates.h"
 #include "events.h"
 #include "cGirls.h"
+#include "jobs/IBuildingShift.h"
 
 
 extern cRng    g_Dice;
@@ -114,8 +115,8 @@ sClinic::~sClinic()    = default;
 */
 
 void sClinic::OnEndShift(bool is_night) {
-    int total_doctor_actions = GetInteractionConsumed(DoctorInteractionId);
-    int possible_doctor_actions = GetInteractionProvided(DoctorInteractionId);
+    int total_doctor_actions = shift().GetInteractionConsumed(DoctorInteractionId);
+    int possible_doctor_actions = shift().GetInteractionProvided(DoctorInteractionId);
 
     if(total_doctor_actions > possible_doctor_actions) {
         std::stringstream msg;

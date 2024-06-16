@@ -20,8 +20,9 @@
 #include "studio/fwd.h"
 #include "studio/manager.h"
 #include "character/sGirl.h"
-#include "studio/cMovieStudio.h"
 #include "buildings/cBuildingManager.h"
+#include "jobs/cGirlShift.h"
+#include "jobs/IBuildingShift.h"
 #include <sstream>
 
 extern const char* const FluffPointsId;
@@ -33,8 +34,8 @@ extern const char* const CrystalPurifierInteractionId;
 namespace {
     const float STAGEHAND_MAX_MALUS = 0.1f;
 
-    sGirl& select_worker(sMovieStudio& studio, const char* id) {
-        auto wrk = studio.RequestInteraction(id);
+    sGirl& select_worker(IBuildingShift& shift, const char* id) {
+        auto wrk = shift.RequestInteraction(id);
         if(wrk == nullptr) throw std::logic_error("Tried to film a scene, but crew could not be found");
         return *wrk;
     }
@@ -58,15 +59,14 @@ namespace {
     }
 }
 
-const MovieScene& film_scene(cMovieManager& mgr, sGirl& girl, int quality, SceneType scene_type, bool forced) {
+const MovieScene& film_scene(cMovieManager& mgr, cGirlShift& shift, int quality, SceneType scene_type, bool forced) {
+    auto& girl = shift.girl();
     std::string girlName = girl.FullName();
 
-    auto& studio = dynamic_cast<sMovieStudio&>(*girl.m_Building);
-
     // Let camera mage and purifier work
-    auto& camera_mage = select_worker(studio, CamMageInteractionId);
-    auto& purifier = select_worker(studio, CrystalPurifierInteractionId);
-    auto& director = select_worker(studio, DirectorInteractionId);
+    auto& camera_mage = select_worker(shift.shift(), CamMageInteractionId);
+    auto& purifier = select_worker(shift.shift(), CrystalPurifierInteractionId);
+    auto& director = select_worker(shift.shift(), DirectorInteractionId);
     float cam_quality = work_on_scene(camera_mage, JOB_CAMERAMAGE);
     float pur_quality = work_on_scene(purifier, JOB_CRYSTALPURIFIER);
     float dir_quality = work_on_scene(director, JOB_DIRECTOR);
@@ -82,7 +82,7 @@ const MovieScene& film_scene(cMovieManager& mgr, sGirl& girl, int quality, Scene
 
     // Fluffer influence
     float fluff_needed = static_cast<float>(get_fluffer_required(scene_type)) * std::max(0.f, (110.f - quality) / 110.f);
-    float fluff_available = studio.ConsumeResource(FluffPointsId, (int)fluff_needed);
+    float fluff_available = shift.shift().ConsumeResource(FluffPointsId, (int)fluff_needed);
     float fluff_ratio = fluff_needed > 0 ? fluff_available / fluff_needed : 1.f;
     quality *= 0.9f + fluff_ratio * 0.1f;
 
@@ -92,13 +92,13 @@ const MovieScene& film_scene(cMovieManager& mgr, sGirl& girl, int quality, Scene
     technical_quality = std::max(0, std::min(technical_quality, 100));
 
     // malus for dirtiness
-    int dirt = static_cast<int>(5.f * std::log(std::max(studio.m_Filthiness, 1)));
+    int dirt = static_cast<int>(5.f * std::log(std::max(shift.building().m_Filthiness, 1)));
     quality = std::max(quality/2, quality - dirt);
     technical_quality = std::max(technical_quality/2, technical_quality - dirt);
 
     // Stage Hand
     int stage_needed = get_stage_points_required(scene_type);
-    int stage_avail  = studio.ConsumeResource(FluffPointsId, (int)stage_needed);
+    int stage_avail  = shift.shift().ConsumeResource(FluffPointsId, (int)stage_needed);
     float stage_ratio = stage_needed > 0 ? float(stage_avail) / float(stage_needed) : 1.f;
     quality *= (1.f - STAGEHAND_MAX_MALUS) + stage_ratio * STAGEHAND_MAX_MALUS;
     technical_quality *= (1.f - STAGEHAND_MAX_MALUS) + stage_ratio * STAGEHAND_MAX_MALUS;
@@ -152,7 +152,7 @@ const MovieScene& film_scene(cMovieManager& mgr, sGirl& girl, int quality, Scene
     event << " > Camera: " << scene.CameraMage << " [" << int(cam_quality) << "]\n";
     event << " > Purifier: " << scene.CrystalPurifier << " [" << int(pur_quality) << "]\n";
 
-    studio.AddMessage(event.str());
+    shift.building().AddMessage(event.str());
 
     return scene;
 }

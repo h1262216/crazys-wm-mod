@@ -14,6 +14,7 @@ set(JOBS_SRC
         src/SpecialJobs.cpp
         src/Treatment.cpp
         src/sAttributeCondition.cpp
+        src/cBuildingShift.cpp
         )
 
 add_library(WmJobsInterface INTERFACE)

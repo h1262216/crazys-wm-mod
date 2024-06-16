@@ -72,8 +72,6 @@ class cJobManager : public IJobManager
 public:
     cJobManager();
     ~cJobManager() override;
-    ///////////////// TODO LEGACY
-    sWorkJobResult do_job(JOBS job, sGirl& girl, bool is_night);
 
     // return a job description along with a count of how many girls are on it
     bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments
@@ -86,9 +84,7 @@ public:
 
     /// does the pre-shift setup part of the job processing
     void handle_pre_shift(sGirlShiftData& shift) override;
-
     void handle_main_shift(sGirlShiftData& shift) override;
-
     void handle_post_shift(sGirlShiftData& shift) override;
 
     const sJobFilter& get_filter(EJobFilter filter) const override;

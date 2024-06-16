@@ -21,6 +21,7 @@
 #include "cGenericJob.h"
 #include "TextInterface.h"
 #include "cJobManager.h"
+#include "IBuildingShift.h"
 
 #include "IGame.h"
 #include "CLog.h"
@@ -34,6 +35,8 @@
 #include "utils/string.hpp"
 #include "xml/util.h"
 #include "xml/getattr.h"
+#include "cGirlShift.h"
+
 
 cGirlShift::cGirlShift(sGirlShiftData* data, const cGenericJob* job) :
     m_Data(data), m_JobClass(job)
@@ -49,7 +52,7 @@ sGirl& cGirlShift::girl() {
 }
 
 bool cGirlShift::is_night_shift() const  {
-    return m_Data->IsNightShift;
+    return m_Data->shift().IsNightShift();
 }
 
 
@@ -80,27 +83,27 @@ int cGirlShift::uniform(int min_, int max_) {
 
 
 int cGirlShift::consume_resource(const std::string& name, int amount)  {
-    return building().ConsumeResource(name, amount);
+    return shift().ConsumeResource(name, amount);
 }
 
 void cGirlShift::provide_resource(const std::string& name, int amount) {
-    return building().ProvideResource(name, amount);
+    return shift().ProvideResource(name, amount);
 }
 
 bool cGirlShift::try_consume_resource(const std::string& name, int amount)  {
-    return building().TryConsumeResource(name, amount);
+    return shift().TryConsumeResource(name, amount);
 }
 
 void cGirlShift::provide_interaction(const std::string& name, int amount) {
-    return building().ProvideInteraction(name, &girl(), amount);
+    return shift().ProvideInteraction(name, &girl(), amount);
 }
 
 sGirl* cGirlShift::request_interaction(const std::string& name) {
-    return building().RequestInteraction(name);
+    return shift().RequestInteraction(name);
 }
 
 bool cGirlShift::has_interaction(const std::string& name) const {
-    return m_Data->building().HasInteraction(name);
+    return m_Data->shift().HasInteraction(name);
 }
 
 namespace {
@@ -116,6 +119,14 @@ void cGirlShift::add_literal(const std::string& text, LocalSubstitutions subs) {
             return std::to_string(girl().get_treatment_progress()) + "%";
         } else if (var == "job-title") {
             return m_JobClass->m_Info.Title;
+        } else if (var == "tips") {
+            return std::to_string(m_Data->Tips);
+        } else if (var == "wages") {
+            return std::to_string(m_Data->Wages);
+        } else if (var == "earnings") {
+            return std::to_string(m_Data->Earnings);
+        } else if (var == "cost") {
+            return std::to_string(m_Data->Cost);
         } else {
             for(auto& job_var : m_JobClass->m_Variables) {
                 if(job_var.Name == var) {
@@ -186,8 +197,43 @@ const sGirlShiftData& cGirlShift::data() const {
     return *m_Data;
 }
 
+IBuildingShift& cGirlShift::shift() {
+    return m_Data->shift();
+}
+
 cBuilding& cGirlShift::building() {
-    return m_Data->building();
+    return *m_Data->shift().Building();
+}
+
+int cGirlShift::tips() const {
+    return m_Data->Tips;
+}
+
+int cGirlShift::earnings() const {
+    return m_Data->Earnings;
+}
+
+int cGirlShift::wages() const {
+    return m_Data->Wages;
+}
+
+int cGirlShift::cost() const {
+    return m_Data->Cost;
+}
+
+void cGirlShift::receive_tip(int min, int max) {
+    int amount = max == -1 ? min : uniform(min, max);
+    m_Data->Tips += amount;
+}
+
+void cGirlShift::earn_money(int min, int max)  {
+    int amount = max == -1 ? min : uniform(min, max);
+    m_Data->Earnings += amount;
+}
+
+void cGirlShift::incur_cost(int min, int max)  {
+    int amount = max == -1 ? min : uniform(min, max);
+    m_Data->Cost += amount;
 }
 
 cGenericJob::cGenericJob(JOBS j, std::string xml_file, EJobClass job_class) :
@@ -217,7 +263,7 @@ void cGenericJob::Work(sGirlShiftData& shift) {
         girl.m_NightJob = job();
     }
 
-    if(shift.IsNightShift) {
+    if(shift.shift().IsNightShift()) {
         girl.m_Refused_To_Work_Night = false;
     } else {
         girl.m_Refused_To_Work_Day = false;
@@ -227,7 +273,7 @@ void cGenericJob::Work(sGirlShiftData& shift) {
         shift.set_var(var.Index, var.DefaultValue);
     }
 
-    shift.EventType = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    shift.EventType = shift.shift().IsNightShift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
     shift.EventImage = m_Info.DefaultImage;
     shift.Wages = m_Info.BaseWages;
     shift.Enjoyment = m_Info.BaseEnjoyment;
@@ -594,11 +640,20 @@ const std::array<const char*, 4>& get_all_phases() {
     return phases;
 }
 
+id_lookup_t<EJobPhase> build_phase_lookup() {
+    id_lookup_t<EJobPhase> lookup;
+    lookup["prepare"] = EJobPhase::PREPARE;
+    lookup["produce"] = EJobPhase::PRODUCE;
+    lookup["main"] = EJobPhase::MAIN;
+    lookup["late"] = EJobPhase::LATE;
+    return std::move(lookup);
+}
+
 const id_lookup_t<EJobPhase>& get_phase_lookup() {
-    static auto lookup = create_lookup_table<EJobPhase>(get_all_phases());
+    static auto lookup = build_phase_lookup();
     return lookup;
 }
 
 EJobPhase get_phase_id(const std::string& name) {
-    return EJobPhase(1u << (unsigned)lookup_with_error(get_phase_lookup(), name, "Unknown Job Phase: "));
+    return lookup_with_error(get_phase_lookup(), name, "Unknown Job Phase: ");
 }

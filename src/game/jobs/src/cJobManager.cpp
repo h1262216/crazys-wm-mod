@@ -43,6 +43,8 @@
 #include "character/lust.h"
 #include "jobs/cGenericJob.h"
 #include "jobs/sGirlShiftData.h"
+#include "IBuildingShift.h"
+#include "cBuildingShift.h"
 
 extern cRng g_Dice;
 
@@ -1366,12 +1368,11 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
     retval.PlayerGets -= shift.Cost;
 
     // TODO check where we are handling the money processing for girl's payment
-    shift.building().m_Finance.girl_support(shift.Wages);
+    shift.shift().Finance().girl_support(shift.Wages);
 
     retval.PlayerGets -= shift.Wages;
     shift.girl().m_Money += shift.Wages;    // she gets it all
     retval.GirlGets += shift.Wages;
-
 
     // work out how much gold (if any) she steals
     double steal_factor = calc_pilfering(shift.girl());
@@ -1387,7 +1388,7 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
     shift.girl().m_Money += shift.Earnings - house;               // The girl collects her part of the pay
     retval.GirlGets += shift.Earnings - house;
     // TODO ditto
-    shift.building().m_Finance.brothel_work(house);                         // and add the rest to the brothel finances
+    shift.shift().Finance().brothel_work(house);                         // and add the rest to the brothel finances
 
     if (!stolen) return retval;                                    // If she didn't steal anything, we're done
     sGang* gang = g_Game->gang_manager().GetGangOnMission(MISS_SPYGIRLS);    // if no-one is watching for theft, we're done
@@ -1401,31 +1402,13 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
     return retval;
 }
 
-sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
-{
-    auto ctx{g_Game->push_error_context("job: " + get_job_name(job_id))};
-    assert(m_OOPJobs[job_id] != nullptr);
-    sGirlShiftData data{&girl, girl.m_Building, job_id, is_night};
-    m_OOPJobs[job_id]->PreShift(data);
-    if(data.Refused == ECheckWorkResult::ACCEPTS) {
-        m_OOPJobs[job_id]->Work(data);
-        m_OOPJobs[job_id]->PostShift(data);
-    }
-    sWorkJobResult result;
-    result.Wages = data.Wages;
-    result.Earnings = data.Earnings;
-    result.Tips = data.Tips;
-    result.Refused = data.Refused != ECheckWorkResult::ACCEPTS;
-    if(is_night) {
-        girl.m_Refused_To_Work_Night = result.Refused;
-    } else {
-        girl.m_Refused_To_Work_Day = result.Refused;
-    }
-    return result;
-}
-
 void cJobManager::handle_pre_shift(sGirlShiftData& shift) {
     auto job_id = shift.Job;
+
+    cGirls::UseItems(shift.girl());
+    cGirls::CalculateGirlType(shift.girl());       // update the fetish traits
+    cGirls::UpdateAskPrice(shift.girl(), true);    // Calculate the girls asking price
+
     do {
         job_id = shift.Job;
         pre_shift_internal(shift);
@@ -1448,10 +1431,6 @@ void cJobManager::pre_shift_internal(sGirlShiftData& shift) {
 
     auto job_id = shift.Job;
     auto ctx{g_Game->push_error_context("pre@job: " + get_job_name(job_id))};
-
-    cGirls::UseItems(shift.girl());
-    cGirls::CalculateGirlType(shift.girl());       // update the fetish traits
-    cGirls::UpdateAskPrice(shift.girl(), true);    // Calculate the girls asking price
 
     auto& job_exe = m_OOPJobs.at(job_id);
     if(job_exe == nullptr) {

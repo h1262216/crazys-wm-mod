@@ -30,16 +30,16 @@
 class sGirl;
 class cRng;
 class cBuilding;
+class IBuildingShift;
 
 constexpr const int NUM_JOB_VARIABLES = 5;
 
 struct sGirlShiftData {
-    sGirlShiftData(sGirl* girl, cBuilding* building, JOBS job, bool shift);
+    sGirlShiftData(sGirl* girl, IBuildingShift* shift, JOBS job);
 
     // Keeping track of things that change over the course of shift processing.
     // Not all variables are relevant for all jobs
     JOBS Job;
-    bool IsNightShift;
     ECheckWorkResult Refused = ECheckWorkResult::ACCEPTS;   // Whether she actually worked
     int Tips = 0;               // how much she received in tips
     int Earnings = 0;           // how much money did she make you directly
@@ -52,7 +52,7 @@ struct sGirlShiftData {
 
     [[nodiscard]] sGirl& girl() { return *m_Girl; }
     [[nodiscard]] const sGirl& girl() const { return *m_Girl; }
-    [[nodiscard]] cBuilding& building() { return *m_Building; }
+    [[nodiscard]] IBuildingShift& shift() { return *m_Shift; }
     [[nodiscard]] cRng& rng() { return *m_Rng; }
     [[nodiscard]] JobStateVar_t get_var(int index) const { return m_ProcessingCache.at(index); }
     [[nodiscard]] JobStateVar_t& get_var_ref(int index) { return m_ProcessingCache.at(index); }
@@ -67,7 +67,7 @@ struct sGirlShiftData {
     std::stringstream DebugMessage;
 private:
     sGirl* m_Girl = nullptr;
-    cBuilding* m_Building = nullptr;
+    IBuildingShift* m_Shift = nullptr;
     cRng* m_Rng;
 
     std::array<JobStateVar_t, NUM_JOB_VARIABLES> m_ProcessingCache;

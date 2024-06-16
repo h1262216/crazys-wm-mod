@@ -26,6 +26,7 @@
 #include "IGame.h"
 #include "CLog.h"
 #include "xml/getattr.h"
+#include "jobs/IBuildingShift.h"
 
 extern const char* const DirectorInteractionId;
 extern const char* const CamMageInteractionId;
@@ -34,6 +35,7 @@ extern const char* const FluffPointsId;
 extern const char* const StageHandPtsId;
 
 bool cFilmSceneJob::CheckCanWork(cGirlShift& shift) const {
+    auto& bs = shift.shift();
     auto& girl = shift.girl();
     auto brothel = dynamic_cast<sMovieStudio*>(&shift.building());
     if(!brothel) {
@@ -167,8 +169,8 @@ void cFilmSceneJob::DoWork(cGirlShift& shift) const {
         !shift.has_interaction(CamMageInteractionId)  ||
         !shift.has_interaction(CrystalPurifierInteractionId) )
     {
-        if(brothel->NumInteractors(DirectorInteractionId) != 0 && brothel->NumInteractors(CamMageInteractionId) != 0 &&
-           brothel->NumInteractors(CrystalPurifierInteractionId) != 0) {
+        if(shift.shift().NumInteractors(DirectorInteractionId) != 0 && shift.shift().NumInteractors(CamMageInteractionId) != 0 &&
+                shift.shift().NumInteractors(CrystalPurifierInteractionId) != 0) {
             shift.add_literal("There were more scenes scheduled for filming today than you crew could handle.");
         } else {
             shift.add_literal("There was no crew to film the scene. You need at least a Director, a Camera Mage,"
@@ -264,7 +266,7 @@ void cFilmSceneJob::DoWork(cGirlShift& shift) const {
     }
 
     try {
-        auto& scene = film_scene(g_Game->movie_manager(), girl, quality, m_SceneType, is_forced);
+        auto& scene = film_scene(g_Game->movie_manager(), shift, quality, m_SceneType, is_forced);
     } catch (std::runtime_error& error)  {
         g_Game->error(error.what());
     }
