@@ -35,10 +35,10 @@ struct sBrothel : public cBuilding
     // currently unused for brothel
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override {};
 
-    void Update() override;
-    void UpdateGirls(bool is_night) override;
-
     bool runaway_check(sGirl& girl);
+
+    void OnEndWeek() override;
+    void OnBeginWeek() override;
 };
 
 #endif  /* __CBROTHEL_H */

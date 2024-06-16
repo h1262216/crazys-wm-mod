@@ -23,6 +23,7 @@
 #include "sGirlShiftData.h"
 
 class cGenericJob;
+class IBuildingShift;
 
 class cGirlShift {
 public:
@@ -32,6 +33,7 @@ public:
     [[nodiscard]] const sGirlShiftData& data() const;
     [[nodiscard]] sGirl& girl();
     [[nodiscard]] cBuilding& building();
+    [[nodiscard]] IBuildingShift& shift();
     [[nodiscard]] bool is_night_shift() const;
 
     // rng utilities

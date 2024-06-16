@@ -176,80 +176,15 @@ void cBuilding::BeginWeek()
             m_Girls->TakeGirl(dead);
         }
     }
-}
 
-void cBuilding::HandleRestingGirls(bool is_night)
-{
-    std::stringstream ss;
-    m_Girls->apply([&](sGirl& current){
-        unsigned int sw = current.get_job(is_night);
-        if (current.is_dead() || sw != JOB_RESTING)
-        {    // skip dead girls and anyone not resting
-            return;
-        }
-        auto sum = EVENT_SUMMARY;
-        std::string summary;
-        ss.str("");
-        const auto& girlName = current.FullName();
-
-        if (current.m_PregCooldown == g_Game->settings().get_integer(settings::PREG_COOL_DOWN))
-        {
-            ss << girlName << " is on maternity leave.";
-        }
-        else if (handle_resting_girl(current, is_night, m_ActiveMatron != nullptr, ss)) {
-            // nothing to do her, handle_resting_girl did all the work.
-        }
-        else if (current.health() < 80 || current.tiredness() > 20)
-        {
-            g_Game->job_manager().do_job(JOB_RESTING, current, is_night);
-        }
-        else if (m_ActiveMatron)    // send her back to work
-        {
-            int psw = is_night ? current.m_PrevNightJob : current.m_PrevDayJob;
-            if (psw != JOB_RESTING && psw != 255)
-            {    // if she had a previous job, put her back to work.
-                if(!handle_back_to_work(current, ss, is_night)) {
-                    if (is_night == SHIFT_DAY)
-                    {
-                        current.m_DayJob = current.m_PrevDayJob;
-                        if (current.m_NightJob == JOB_RESTING && current.m_PrevNightJob != JOB_RESTING && current.m_PrevNightJob != 255)
-                            current.m_NightJob = current.m_PrevNightJob;
-                    }
-                    else
-                    {
-                        if (current.m_DayJob == JOB_RESTING && current.m_PrevDayJob != JOB_RESTING && current.m_PrevDayJob != 255)
-                            current.m_DayJob = current.m_PrevDayJob;
-                        current.m_NightJob = current.m_PrevNightJob;
-                    }
-                    ss << "The " << get_job_name(m_MatronJob) << " puts " << girlName << " back to work.\n";
-                }
-            }
-            else if (current.m_DayJob == JOB_RESTING && current.m_NightJob == JOB_RESTING)
-            {
-                auto_assign_job(current, ss, is_night);
-            }
-            current.m_PrevDayJob = current.m_PrevNightJob = JOB_UNSET;
-            sum = EVENT_BACKTOWORK;
-        }
-        else if (current.health() < 100 || current.tiredness() > 0)    // if there is no matron to send her somewhere just do resting
-        {
-            g_Game->job_manager().do_job(JOB_RESTING, current, is_night);
-        }
-        else    // no one to send her back to work
-        {
-            ss << "WARNING " << girlName << " is doing nothing!\n";
-            sum = EVENT_WARNING;
-        }
-
-        if (ss.str().length() > 0) current.AddMessage(ss.str(), EImageBaseType::PROFILE, sum);
-    });
+    OnBeginWeek();
 }
 
 void cBuilding::Update()
 {
     BeginWeek();
-    UpdateGirls(false);       // Run the Day Shift
-    UpdateGirls(true);        // Run the Night Shift
+    g_Game->job_manager().handle_shift(this, false);
+    g_Game->job_manager().handle_shift(this, true);
     EndWeek();
 }
 
@@ -262,6 +197,8 @@ void cBuilding::EndShift(bool Day0Night1)
             return;
         GirlEndShift(current, Day0Night1);
     });
+
+    OnEndShift(Day0Night1);
 }
 
 void cBuilding::GirlEndShift(sGirl& girl, bool is_night) {
@@ -567,20 +504,6 @@ void cBuilding::save_xml(tinyxml2::XMLElement& root) const
 sGirl* cBuilding::get_girl(int index)
 {
     return m_Girls->get_girl(index);
-}
-
-void cBuilding::BeginShift(bool is_night)
-{
-    setup_resources();
-
-    m_Girls->apply([this, is_night](sGirl& girl){
-        if (girl.is_dead())
-            return;
-        GirlBeginShift(girl, is_night);
-    });
-
-    SetupMatron(is_night);
-    HandleRestingGirls(is_night);
 }
 
 //void cBrothelManager::AddAntiPreg(int amount)
@@ -1684,6 +1607,8 @@ void cBuilding::EndWeek() {
         cGirls::EndDayGirls(*this, girl);
     });
 
+    OnEndWeek();
+
     // cap filthiness and security at 0
     if (m_Filthiness < 0)       m_Filthiness = 0;
     if (m_SecurityLevel < 0)    m_SecurityLevel = 0;
@@ -1721,13 +1646,6 @@ std::string cBuilding::meet_no_luck() const {
 
 bool cBuilding::CanEncounter() const {
     return !m_HasDoneEncounter;
-}
-
-void cBuilding::GirlBeginShift(sGirl& girl, bool is_night) {
-    cGirls::UseItems(girl);
-    cGirls::CalculateGirlType(girl);        // update the fetish traits
-    cGirls::UpdateAskPrice(girl, true);    // Calculate the girls asking price
-    g_Game->job_manager().handle_pre_shift(girl, is_night);
 }
 
 void cBuilding::declare_resource(const std::string& name) {

@@ -82,18 +82,16 @@ public:
     // return a job description along with a count of how many girls are on it
     bool HandleSpecialJobs(sGirl& Girl, JOBS JobID, JOBS OldJobID, bool Day0Night1, bool fulltime = false );  // check for and handle special job assignments
 
-    /// does the pre-shift setup part of the job processing
-    void handle_pre_shift(sGirl& girl, bool is_night);
-    /////////////////
-
     bool job_filter(int Filter, JOBS jobs) const;
 
     const IGenericJob* get_job(JOBS job) const override;
 
     bool is_free_only(JOBS job) const;
 
+    void handle_shift(cBuilding* building, bool is_night) override;
+
     /// does the pre-shift setup part of the job processing
-    void handle_pre_shift(sGirlShiftData& shift) override {};
+    void handle_pre_shift(sGirlShiftData& shift) override;
 
     void handle_main_shift(sGirlShiftData& shift) override {};
 

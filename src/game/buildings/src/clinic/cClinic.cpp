@@ -50,27 +50,7 @@ sClinic::sClinic() : cBuilding(BuildingType::CLINIC, "Clinic")
 
 sClinic::~sClinic()    = default;
 
-// Run the shifts
-void sClinic::UpdateGirls(bool is_night)    // Start_Building_Process_B
-{
-    // `J` When modifying Jobs, search for "J-Change-Jobs"  :  found in >> cClinic.cpp
-    std::stringstream ss;
-    std::string girlName;
-
-    BeginShift(is_night);
-
-    //  Do all the Clinic staff jobs.
-    IterateGirls(is_night, {JOB_INTERN, JOB_NURSE, JOB_JANITOR, JOB_DOCTOR},
-                 [is_night](auto& current) {
-        g_Game->job_manager().handle_simple_job(current, is_night);
-    });
-
-    //  Do all the surgery jobs.
-    IterateGirls(is_night, {JOB_GETHEALING, JOB_GETABORT, JOB_COSMETICSURGERY,
-                            JOB_LIPO, JOB_BREASTREDUCTION, JOB_BOOBJOB, JOB_VAGINAREJUV, JOB_FACELIFT,
-                            JOB_ASSJOB, JOB_TUBESTIED, JOB_CUREDISEASES, JOB_FERTILITY}, [is_night](auto& current) {
-        g_Game->job_manager().do_job(current, is_night);
-    });
+// TODO re-enable the following code
 
     //  Finally, treat external patients. This depends on how many treatment points and free doctors we still have
     /*
@@ -134,8 +114,8 @@ void sClinic::UpdateGirls(bool is_night)    // Start_Building_Process_B
          }
      });
 */
-    EndShift(is_night);
 
+void sClinic::OnEndShift(bool is_night) {
     int total_doctor_actions = GetInteractionConsumed(DoctorInteractionId);
     int possible_doctor_actions = GetInteractionProvided(DoctorInteractionId);
 
@@ -148,7 +128,6 @@ void sClinic::UpdateGirls(bool is_night)    // Start_Building_Process_B
         msg << "Your clinic has enough doctors for " << possible_doctor_actions << " patients. This week you requested treatment for " << total_doctor_actions << " girls.\n";
         AddMessage(msg.str(), EEventType::EVENT_BUILDING);
     }
-
 }
 
 void sClinic::auto_assign_job(sGirl& target, std::stringstream& message, bool is_night)
@@ -309,17 +288,4 @@ std::string sClinic::meet_no_luck() const {
                 "got daddy's gold.  Looks like nothing to gain here today. "
             }
     );
-}
-
-void sClinic::GirlBeginShift(sGirl& girl, bool is_night) {
-    cBuilding::GirlBeginShift(girl, is_night);
-
-    if (girl.has_active_trait(traits::AIDS) && (
-            is_in((JOBS)girl.m_DayJob, {JOB_DOCTOR, JOB_INTERN, JOB_NURSE}) ||
-            is_in((JOBS)girl.m_NightJob, {JOB_DOCTOR, JOB_INTERN, JOB_NURSE})))
-    {
-        girl.m_DayJob = girl.m_NightJob = JOB_RESTING;
-        girl.AddMessage("Health laws prohibit anyone with AIDS from working in the Medical profession so ${name} was sent to the waiting room.",
-                        EImageBaseType::PROFILE, EVENT_WARNING);
-    }
 }

@@ -21,6 +21,7 @@
 #include "cGenericJob.h"
 #include "TextInterface.h"
 #include "cJobManager.h"
+#include "IBuildingShift.h"
 
 #include "IGame.h"
 #include "CLog.h"
@@ -49,7 +50,7 @@ sGirl& cGirlShift::girl() {
 }
 
 bool cGirlShift::is_night_shift() const  {
-    return m_Data->IsNightShift;
+    return m_Data->shift().IsNightShift();
 }
 
 
@@ -100,7 +101,7 @@ sGirl* cGirlShift::request_interaction(const std::string& name) {
 }
 
 bool cGirlShift::has_interaction(const std::string& name) const {
-    return m_Data->building().HasInteraction(name);
+    return m_Data->shift().HasInteraction(name);
 }
 
 namespace {
@@ -186,8 +187,12 @@ const sGirlShiftData& cGirlShift::data() const {
     return *m_Data;
 }
 
+IBuildingShift& cGirlShift::shift() {
+    return m_Data->shift();
+}
+
 cBuilding& cGirlShift::building() {
-    return m_Data->building();
+    return *m_Data->shift().Building();
 }
 
 cGenericJob::cGenericJob(JOBS j, std::string xml_file, EJobClass job_class) :
@@ -217,7 +222,7 @@ void cGenericJob::Work(sGirlShiftData& shift) {
         girl.m_NightJob = job();
     }
 
-    if(shift.IsNightShift) {
+    if(shift.shift().IsNightShift()) {
         girl.m_Refused_To_Work_Night = false;
     } else {
         girl.m_Refused_To_Work_Day = false;
@@ -227,7 +232,7 @@ void cGenericJob::Work(sGirlShiftData& shift) {
         shift.set_var(var.Index, var.DefaultValue);
     }
 
-    shift.EventType = shift.IsNightShift ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
+    shift.EventType = shift.shift().IsNightShift() ? EVENT_NIGHTSHIFT : EVENT_DAYSHIFT;
     shift.EventImage = m_Info.DefaultImage;
     shift.Wages = m_Info.BaseWages;
     shift.Enjoyment = m_Info.BaseEnjoyment;

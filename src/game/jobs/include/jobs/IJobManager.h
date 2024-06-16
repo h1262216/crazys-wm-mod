@@ -34,6 +34,7 @@ struct sJobFilter {
 };
 
 struct sGirl;
+class cBuilding;
 
 class IJobManager {
 public:
@@ -47,6 +48,8 @@ public:
     const std::string& get_job_name(JOBS job) const;
     const std::string& get_job_brief(JOBS job) const;
     bool is_full_time(JOBS job) const;
+
+    virtual void handle_shift(cBuilding* building, bool is_night) = 0;
 
     /// does the pre-shift setup part of the job processing
     virtual void handle_pre_shift(sGirlShiftData& shift) = 0;

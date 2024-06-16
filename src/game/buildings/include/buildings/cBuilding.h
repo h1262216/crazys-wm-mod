@@ -146,19 +146,16 @@ public:
     // helper functions
     void BeginWeek();
     void EndWeek();
-    void BeginShift(bool is_night);
     void EndShift(bool is_night);
 
     /// Looks for a matron and decides whether she works.
     /// Returns true if the matron for this shift does work.
     sGirl* SetupMatron(bool is_night);
 
-    virtual void Update();
-    virtual void UpdateGirls(bool is_night);
-
-
-    /// Handles all resting girls.
-    void HandleRestingGirls(bool is_night);
+    void Update();
+    virtual void OnBeginWeek() {}
+    virtual void OnEndWeek() {}
+    virtual void OnEndShift(bool is_night) {}
 
     /// This function is called for every resting girl that is not on maternity leave. If it returns
     /// true, processing for this girl is assuemd to be finished.
@@ -208,7 +205,6 @@ protected:
     std::string m_Name;
     std::unique_ptr<cGirlPool> m_Girls;
 
-    virtual void GirlBeginShift(sGirl& girl, bool is_night);
     virtual void GirlEndShift(sGirl& girl, bool is_night);
 
     sGirl* get_active_matron() { return m_ActiveMatron; }

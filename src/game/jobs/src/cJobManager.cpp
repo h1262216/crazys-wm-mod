@@ -43,6 +43,8 @@
 #include "character/lust.h"
 #include "jobs/cGenericJob.h"
 #include "jobs/sGirlShiftData.h"
+#include "IBuildingShift.h"
+#include "cBuildingShift.h"
 
 extern cRng g_Dice;
 
@@ -1366,7 +1368,7 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
     retval.PlayerGets -= shift.Cost;
 
     // TODO check where we are handling the money processing for girl's payment
-    shift.building().m_Finance.girl_support(shift.Wages);
+    shift.shift().Finance().girl_support(shift.Wages);
 
     retval.PlayerGets -= shift.Wages;
     shift.girl().m_Money += shift.Wages;    // she gets it all
@@ -1387,7 +1389,7 @@ sPaymentData cJobManager::CalculatePay(sGirlShiftData& shift) const
     shift.girl().m_Money += shift.Earnings - house;               // The girl collects her part of the pay
     retval.GirlGets += shift.Earnings - house;
     // TODO ditto
-    shift.building().m_Finance.brothel_work(house);                         // and add the rest to the brothel finances
+    shift.shift().Finance().brothel_work(house);                         // and add the rest to the brothel finances
 
     if (!stolen) return retval;                                    // If she didn't steal anything, we're done
     sGang* gang = g_Game->gang_manager().GetGangOnMission(MISS_SPYGIRLS);    // if no-one is watching for theft, we're done
@@ -1421,6 +1423,7 @@ sWorkJobResult cJobManager::do_job(sGirl& girl, bool is_night)
 
 sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
 {
+    /*
     auto ctx{g_Game->push_error_context("job: " + get_job_name(job_id))};
     assert(m_OOPJobs[job_id] != nullptr);
     sGirlShiftData data{&girl, girl.m_Building, job_id, is_night};
@@ -1440,15 +1443,22 @@ sWorkJobResult cJobManager::do_job(JOBS job_id, sGirl& girl, bool is_night)
         girl.m_Refused_To_Work_Day = result.Refused;
     }
     return result;
+     */
 }
 
-void cJobManager::handle_pre_shift(sGirl& girl, bool is_night) {
-    /*
-    auto job_id = girl.get_job(is_night);
+void cJobManager::handle_pre_shift(sGirlShiftData& shift) {
+
+    auto job_id = shift.Job;
     auto ctx{g_Game->push_error_context("pre@job: " + get_job_name(job_id))};
-    assert(m_OOPJobs[job_id] != nullptr);
-    m_OOPJobs[job_id]->PreShift(girl, is_night, g_Dice);
-     */
+    auto& job_exe = m_OOPJobs.at(job_id);
+    if(job_exe == nullptr) {
+        g_Game->error("Missing job executor for job " + std::to_string(job_id));
+        return;
+    }
+    job_exe->PreShift(shift);
+    if(shift.Job != job_id) {
+        handle_pre_shift(shift);
+    }
 }
 
 
@@ -1681,4 +1691,9 @@ std::string cJobManager::assign_job(sGirl& girl, JOBS job, EJobShift shift) cons
         g_Game->push_message("Invalid shift. This is a bug!", COLOR_WARNING);
     }
     return {};
+}
+
+void cJobManager::handle_shift(cBuilding* building, bool is_night) {
+    cBuildingShift shift(building, is_night);
+    shift.run_shift();
 }
