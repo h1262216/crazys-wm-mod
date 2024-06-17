@@ -203,3 +203,9 @@ void sMovieStudio::OnEndShift(bool is_night) {
     }
     AddMessage(summary.str(), EVENT_SUMMARY);
 }
+
+void sMovieStudio::RunShift(bool is_night) {
+    if(is_night) {
+        cBuilding::RunShift(is_night);
+    }
+}

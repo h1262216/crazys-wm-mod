@@ -126,6 +126,37 @@ namespace {
         }
     };
 
+    struct FilmAction : cFilmSceneJob {
+        FilmAction() : cFilmSceneJob(JOB_FILMACTION, "FilmAction.xml", SceneType::ACTION) {}
+        void Narrate(cGirlShift& shift) const override {
+            if (shift.performance() >= 350) {
+                shift.add_literal("${name} made an outstanding action scene, ");
+                shift.add_line("story");
+                shift.add_literal("It will definitely win her some fans.");
+            } else if (shift.performance() >= 245) {
+                shift.add_literal("${name} made a great action scene, ");
+                shift.add_line("story");
+                shift.add_literal("It should win her some fans.");
+            } else if (shift.performance() >= 185) {
+                shift.add_literal("${name} made a fairly good action scene, ");
+                shift.add_line("story");
+                shift.add_literal("Her fans will enjoy it.");
+            } else if (shift.performance() >= 145) {
+                shift.add_literal("${name} made an uninspired action scene, ");
+                shift.add_line("story");
+                shift.add_literal("Her diehard fans might enjoy it.");
+            } else if (shift.performance() >= 100) {
+                shift.add_literal("${name} made a weak action scene, ");
+                shift.add_line("story");
+            } else {
+                shift.add_literal("${name} made an awful action scene, ");
+                shift.add_line("story");
+                shift.add_literal("Even her fans will hate it.");
+            }
+        }
+    };
+
+
     struct FilmRandom : cGenericJob {
         FilmRandom() : cGenericJob(JOB_FILMRANDOM) {
             m_Info.ShortName = "FRnd";
@@ -175,39 +206,23 @@ namespace {
 // film registry
 void RegisterFilmingJobs(cJobManager& mgr) {
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMTITTY, "FilmTitty.xml", SceneType::TITTY));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMHANDJOB, "FilmHand.xml", SceneType::HAND));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMFOOTJOB, "FilmFoot.xml",  SceneType::FOOT));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMMAST, "FilmMast.xml", SceneType::MAST));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMANAL, "FilmAnal.xml", SceneType::ANAL));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMLESBIAN, "FilmLes.xml", SceneType::LES));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMSTRIP, "FilmStrip.xml", SceneType::STRIP));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMTEASE, "FilmTease.xml", SceneType::TEASE));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMCOMEDY, "FilmComedy.xml", SceneType::COMEDY));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMHORROR, "FilmHorror.xml", SceneType::HORROR));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMMUSIC, "FilmMusic.xml", SceneType::MUSIC));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMJOI, "FilmJOI.xml", SceneType::JOI));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMSEX, "FilmSex.xml", SceneType::SEX, cFilmSceneJob::SexAction::HUMAN));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMCHEF, "FilmChef.xml", SceneType::CHEF));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMBONDAGE, "FilmBondage.xml", SceneType::BDSM, cFilmSceneJob::SexAction::HUMAN));
-
     mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMGROUP, "FilmGroup.xml", SceneType::GROUP, cFilmSceneJob::SexAction::HUMAN));
 
-    mgr.register_job(std::make_unique<cFilmSceneJob>(JOB_FILMACTION, "FilmAction.xml", SceneType::ACTION));
-
+    mgr.register_job(std::make_unique<FilmAction>());
     mgr.register_job(std::make_unique<FilmOral>());
     mgr.register_job(std::make_unique<FilmThroat>());
     mgr.register_job(std::make_unique<FilmBeast>());

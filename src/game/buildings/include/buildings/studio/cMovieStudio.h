@@ -35,6 +35,7 @@ struct sMovieStudio : public cBuilding
 
     void auto_assign_job(sGirl& target, std::stringstream& message, bool is_night) override;
 
+    void RunShift(bool is_night) override;
     void OnBeginWeek() override;
     void OnEndShift(bool is_night) override;
 

@@ -182,6 +182,7 @@ void cFilmSceneJob::DoWork(cGirlShift& shift) const {
         shift.request_interaction(CamMageInteractionId);
         shift.request_interaction(CrystalPurifierInteractionId);
         shift.set_result(ECheckWorkResult::IMPOSSIBLE);
+        shift.generate_event();
         return;
     }
 
